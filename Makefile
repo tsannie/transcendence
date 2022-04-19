@@ -4,7 +4,7 @@ SRC = ./docker-compose.yml
 ${NAME}: all
 
 all:
-	docker-compose -f ${SRC} up --build
+	docker-compose -f ${SRC} up --build -d
 
 build:
 	docker-compose -f ${SRC} build
