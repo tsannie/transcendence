@@ -3,3 +3,8 @@ version: '3.8'
 services:
   nestjs:
     container_name: nestjs_transcendence
+    image: nestjs
+    build: ./srcs/back_nestjs
+    ports:
+      - "3000:3000"
+    restart: always
