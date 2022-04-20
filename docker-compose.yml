@@ -7,4 +7,6 @@ services:
     build: ./srcs/back_nestjs
     ports:
       - "3000:3000"
+    volumes:
+      - ./srcs/back_nestjs:/nestjs
     restart: always
