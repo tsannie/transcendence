@@ -5,8 +5,27 @@ services:
     container_name: nestjs_transcendence
     image: nestjs
     build: ./srcs/back_nestjs
+    depends_on:
+      - postgres
     ports:
       - "3000:3000"
+    networks:
+      - transcendence
     volumes:
       - ./srcs/back_nestjs:/nestjs
     restart: always
+
+
+  postgres:
+    container_name: postgres_transcendence
+    image: postgres:14.2-alpine
+    environment:
+      - POSTGRES_USER=phbdg
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    networks:
+      - transcendence
+
+networks:
+  transcendence:
