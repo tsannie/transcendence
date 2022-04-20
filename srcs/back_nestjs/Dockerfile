@@ -1,9 +1,5 @@
-FROM node:17.9.0-alpine3.15
+FROM node:16-alpine
 
 WORKDIR /nestjs
 
-COPY . .
-
-RUN yarn install
-
-CMD ["yarn", "start"]
+CMD ["sh", "launch-dev.sh"]
