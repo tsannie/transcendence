@@ -8,13 +8,26 @@ services:
     depends_on:
       - postgres
     ports:
-      - "3000:3000"
+      - "4000:3000"
     networks:
       - transcendence
     volumes:
       - ./srcs/back_nestjs:/nestjs
     restart: always
 
+  react:
+    container_name: react_transcendence
+    image: react
+    build: ./srcs/front_react
+    depends_on:
+      - nestjs
+    ports:
+      - "3000:3000"
+    networks:
+      - transcendence
+    volumes:
+      - ./srcs/front_react:/react
+    restart: always
 
   postgres:
     container_name: postgres_transcendence
