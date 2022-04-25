@@ -1,20 +1,6 @@
 version: '3.8'
 
 services:
-  nestjs:
-    container_name: nestjs_transcendence
-    image: nestjs
-    build: ./srcs/back_nestjs
-    depends_on:
-      - postgres
-    ports:
-      - "4000:3000"
-    networks:
-      - transcendence
-    volumes:
-      - ./srcs/back_nestjs:/nestjs
-    restart: always
-
   react:
     container_name: react_transcendence
     image: react
@@ -29,14 +15,29 @@ services:
       - ./srcs/front_react:/react
     restart: always
 
+  nestjs:
+    container_name: nestjs_transcendence
+    image: nestjs
+    build: ./srcs/back_nestjs
+    depends_on:
+      - postgres
+    ports:
+      - "4000:3000"
+    env_file:
+      - .env
+    networks:
+      - transcendence
+    volumes:
+      - ./srcs/back_nestjs:/nestjs
+    restart: always
+
   postgres:
     container_name: postgres_transcendence
     image: postgres:14.2-alpine
-    environment:
-      - POSTGRES_USER=phbdg
-      - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
+    env_file:
+      - .env
     networks:
       - transcendence
 
