@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { UserService } from '../service/user.service';
 import { IUser } from '../models/user.interface';
@@ -14,6 +14,7 @@ export class UserController {
 		}
 
 		@Get()
+		@Header('Access-Control-Allow-Origin', '*')
 		getAllUser(): Observable<IUser[]> {
 			return this.userService.getAllUser();
 		}
