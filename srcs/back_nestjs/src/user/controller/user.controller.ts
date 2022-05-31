@@ -9,19 +9,19 @@ export class UserController {
 
   constructor( private userService: UserService ) {}
 
-    @Post()
-    add(@Body() user: UserDto): Observable<IUser> {
-      return this.userService.add(user);
-    }
+  @Post()
+  add(@Body() user: UserDto): Observable<UserDto> {
+    return this.userService.add(user);
+  }
 
-    @Get()
-    @Header('Access-Control-Allow-Origin', '*')
-    getAllUser(): Observable<IUser[]> {
-      return this.userService.getAllUser();
-    }
+  @Get()
+  @Header('Access-Control-Allow-Origin', '*')
+  getAllUser(): Observable<UserDto[]> {
+    return this.userService.getAllUser();
+  }
 
-    @Delete()
-    cleanAllUser(): Observable<void> {
-      return this.userService.cleanAllUser();
-    }
+  @Delete()
+  cleanAllUser(): Observable<void> {
+    return this.userService.cleanAllUser();
+  }
 }
