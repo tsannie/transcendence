@@ -3,23 +3,29 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 @Entity()
 export class UserEntity {
 
-	@PrimaryGeneratedColumn()
-	id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-	@Column({unique: true})
-	name: string;
+  @Column({unique: true})
+  name: string;
 
-	@Column({unique: true})
-	email: string;
+  @Column({unique: true})
+  email: string;
 
-	@Column()
-	password: string;
+  @Column()
+  password: string;
 
-	@Column()
-	@CreateDateColumn()
-	createdAt: Date;
+  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
 
-	@Column()
-	@CreateDateColumn()
-	updatedAt: Date;
+  @Column()
+  @CreateDateColumn()
+  updatedAt: Date;
+
+  // TODO HASH PASSWORD
+
+  async goodPassword(tryPassword: string): Promise<boolean> {
+    return (tryPassword === this.password)
+  }
 }
