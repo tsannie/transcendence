@@ -22,7 +22,7 @@ componentDidMount() {
 render() {
   return (
    <ul>
-    { this.state.posts.map(post => <li>{post.name}</li>)}
+    { /* this.state.posts.map(post => <li>{post.name}</li>) */}
    </ul>
   )
  }
