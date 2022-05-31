@@ -7,11 +7,11 @@ const api = axios.create({
 })
 
 export interface IUser {
-  id: number,
-  name: string,
+  id?: number,
+  name?: string,
 }
 
-export default function UserList(props: IUser) {
+export default function UserList() {
 
   // Declare a new state variable
   const [name, setName] = React.useState('');
@@ -21,19 +21,20 @@ export default function UserList(props: IUser) {
 
   function getUser() {
     api.get('/user').then(res => {
-      setId(res.data.id);
-      setName(res.data.name);
+      //console.log(res.data)
+      console.log(res.data[0])
+      setId(res.data[0].id);
+      setName(res.data[0].name);
      })
-  }
+    }
 
-  useEffect(() => {
-    getUser();
-
+    useEffect(() => {
+      getUser();
   });
 
   return (
-   <ul>
-    { this.state.posts.map(post => <li>{post.name}</li>)}
-   </ul>
+    <ul>
+      <li key={id}>{name}</li>
+    </ul>
   )
 }
