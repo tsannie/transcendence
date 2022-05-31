@@ -13,11 +13,11 @@ export class UserService {
       private allUser: Repository<UserEntity>
   ) {}
 
-  add(user: UserDto): Observable<IUser> {
+  add(user: UserDto): Observable<UserDto> {
     return from(this.allUser.save(user));
   }
 
-  getAllUser(): Observable<IUser[]> {
+  getAllUser(): Observable<UserDto[]> {
     return from(this.allUser.find());
   }
 
