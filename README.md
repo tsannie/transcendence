@@ -9,3 +9,4 @@
  - https://developer.mozilla.org/fr/docs/Web/JavaScript/A_re-introduction_to_JavaScript doc js incr
  - https://fr.reactjs.org/docs/hello-world.html doc react incr
 
+ - https://levelup.gitconnected.com/how-to-create-a-nestjs-app-with-authentication-c0ae845ff6ac auth
