@@ -19,8 +19,8 @@ import { UserModule } from './user/user.module';
       autoLoadEntities: true,   // TODO check that
       synchronize: true
     }),
-    UserModule
-    //ChatModule
+    UserModule,
+    ChatModule
   ],
   controllers: [AppController],
   providers: [AppService],
