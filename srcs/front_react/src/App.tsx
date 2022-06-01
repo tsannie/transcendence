@@ -1,4 +1,5 @@
 import React from 'react';
+import Msg from './chat/chat';
 
 function App() {
   return (
