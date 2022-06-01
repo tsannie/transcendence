@@ -24,6 +24,9 @@ export class UserEntity {
   updatedAt: Date;
 
   // TODO HASH PASSWORD
+  async hashPassword() {
+    this.password = await bcrypt
+  }
 
   async goodPassword(tryPassword: string): Promise<boolean> {
     return (tryPassword === this.password)
