@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+import { AuthResolver } from './auth/auth.resolver';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,9 +18,10 @@ import { UserModule } from './user/user.module';
       autoLoadEntities: true,   // TODO check that
       synchronize: true
     }),
-    UserModule
+    UserModule,
+    AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthResolver],
 })
 export class AppModule {}
