@@ -1,29 +1,48 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:4000/'
 })
 
-
-export default class PostList extends React.Component {
- state = {
-  posts: []
+export interface IUser {
+  id?: number,
+  name?: string,
 }
 
-componentDidMount() {
-  api.get('/user').then(res => {
-    const posts = res.data;
-    this.setState({ posts });
-   })
-}
+export default function UserList() {
 
-render() {
+  // Declare a new state variable
+  const [name, setName] = React.useState('');
+  const [id, setId] = React.useState(0);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+
+  function getUser() {
+    api.get('/user').then(res => {
+      //console.log(res.data)
+      console.log(res.data);
+      setId(res.data[0].id);
+      setName(res.data[0].name);
+      setEmail(res.data[0].email);
+      setPassword(res.data[0].password);
+    })
+  }
+
+  // Similar to componentDidMount and componentDidUpdate
+    useEffect(() => {
+      getUser();
+  });
+
   return (
-   <ul>
-    { this.state.posts.map(post => <li>{post.name}</li>)}
-   </ul>
+    <ul>
+      <li key={id}>{name}</li>
+        <ul>
+          <li>{email}</li>
+          <li>{password}</li>
+        </ul>
+    </ul>
   )
- }
 }
