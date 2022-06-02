@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import Msg from './chat/chat';
+import Msg from './chat/Chat';
 import PostList from './userlist/UserListItem';
 
 ReactDOM.render(
