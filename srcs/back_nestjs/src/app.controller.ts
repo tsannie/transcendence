@@ -14,7 +14,8 @@ export class AppController {
   @Post('auth/login')
   async login(@Request() req) {
     console.log('hello')
-    return req.user;
+    //console.log("secret=" + process.env.JWT_SECRET)
+    return this.authService.login(req.user);
   }
 
   @Get()
