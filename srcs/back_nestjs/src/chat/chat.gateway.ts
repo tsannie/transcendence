@@ -9,42 +9,42 @@ import {
     OnGatewayDisconnect,
     OnGatewayInit,
     WsResponse} from "@nestjs/websockets";
-import { Socket } from "dgram";
 import { from, map, Observable } from "rxjs";
-import { Server } from "socket.io";
-
-const newlog: Logger = new Logger();
-
-newlog.log('abricot')
+import { Socket, Server } from "socket.io";
 
 // cree une websocket sur le port par defaut
-@WebSocketGateway({
+@WebSocketGateway(3000, {
     cors: {
-        origin: '*'
-    },
+        origin: '*',
+    }
 })
-export class ChatGateway {
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
 
-  private readonly logger = new Logger()
-  /* @WebSocketServer()
-  server: Server; */
+  @WebSocketServer() server: Server;
+  private logger: Logger = new Logger('ChatGateway');
 
   @SubscribeMessage('events')
-  handleEvent(client: Socket, data: string): string {
-  /* handleEvent(
+    handleEvent(
     @MessageBody() data: string)
-  : string { */
-    this.logger.log('bien recu !');
-    return data;
+    : string {
+    this.logger.log(data)
+    //this.server.emit('msgToClient', data);
+    return (data);
   }
 
-  /* @SubscribeMessage('events')
-  findAll(@MessageBody() data: any): Observable<WsResponse<number>> {
-      return from([1, 2, 3]).pipe(map(item => ({ event: 'events', data: item })));
+  afterInit(server: Server) {
+    console.log("Init")
+    //server.send('salut les clients')
+    this.logger.log('Init')
   }
 
-  @SubscribeMessage('identity')
-  async identity(@MessageBody() data: number): Promise<number> {
-      return data;
-  } */
+  handleConnection(client: Socket, ...args: any[]) {
+    console.log("connected")
+    this.logger.log(`Client connected: ${client.id}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log("disconnected")
+    this.logger.log(`Client disconnected: ${client.id}`);
+  }
 }

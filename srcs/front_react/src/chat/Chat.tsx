@@ -1,28 +1,31 @@
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-const socket = io('http://localhost:3000');
+const socket = io('http://localhost:4000');
+
+function Recv_msg() {
+  socket.on('events', (data) => {
+    console.log('msgToClient', data);
+  });
+}
+
+function Send_msg() {
+  //console.log('send_msg');
+  socket.on('connect', () => {
+    console.log('Connected');
+    socket.emit('events', 'reactToNest');
+  });
+}
 
 function Msg() {
-  console.log('fewef');
-  socket.emit('events', { name: 'Nest'}, (data: string) => {
-    console.log(data);
-  });
-  //socket.on('events', (data) => console.log(data));
-  /* socket.on('connection', () => {
-    console.log('Connected in front')
-    socket.emit('events', { test: 'test'});
-  });
-  socket.on('events', (data) => {
-    console.log('event', data);
-  });
-  socket.on('disconnect', () => {
-    console.log('Disconnected');
-  }); */
+  //console.log('msg');
+  Recv_msg();
+  Send_msg();
   return (
   <h1>
       { }
   </h1>
   );
 }
+
 export default Msg;
