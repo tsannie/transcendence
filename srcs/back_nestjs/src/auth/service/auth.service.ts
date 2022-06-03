@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UserDto } from 'src/user/dto/user.dto';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/service/user.service';
 
 @Injectable()
@@ -14,16 +13,16 @@ export class AuthService {
     const user = await this.userService.findByName(username);
     if (user && user.password === password) // TODO check password with hash ???
     {
-      const { password, ...result } = user;
-      return result; // return user object without password
+      const { password, ...result } = user;  // user object without password
+      return result;
     }
     return null;
   }
 
-  async login(user: UserDto) {
+  async login(user: any) { // TODO replace all any with IUser but with password with null value ??
     const payload = {
       username: user.username,
-      id: user.id
+      sub: user.id    // sub for jwt norm
     };
     return {
       access_token: this.jwtTokenService.sign(payload)  // generate our jwt
