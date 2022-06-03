@@ -11,7 +11,7 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.userService.findByName(username)
+    const user = await this.userService.findByName(username);
     if (user && user.password === password) // TODO check password with hash ???
     {
       const { password, ...result } = user;
@@ -24,7 +24,7 @@ export class AuthService {
     const payload = {
       username: user.username,
       id: user.id
-    }
+    };
     return {
       access_token: this.jwtTokenService.sign(payload)  // generate our jwt
     };
