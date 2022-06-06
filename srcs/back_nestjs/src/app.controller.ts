@@ -10,12 +10,17 @@ export class AppController {
     private authService: AuthService
   ) {}
 
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(AuthGuard('local'))    // TODO switch to auth controler
   @Post('auth/login')
   async login(@Request() req) {
     console.log('hello')
-    //console.log("secret=" + process.env.JWT_SECRET)
     return this.authService.login(req.user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
   }
 
   @Get()

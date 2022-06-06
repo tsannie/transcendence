@@ -11,7 +11,7 @@ import { UserService } from './user/service/user.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './auth/local.strategy';
+import { LocalStrategy } from './auth/strategy/local.strategy';
 
 @Module({
   imports: [

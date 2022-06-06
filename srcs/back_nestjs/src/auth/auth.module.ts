@@ -8,19 +8,20 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import * as dotenv from 'dotenv'; // TODO delte that ?? and module
-import { LocalStrategy } from './local.strategy';
+import { LocalStrategy } from './strategy/local.strategy';
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 dotenv.config()
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity]),
     JwtModule.register({secret: 'secret'}), // Why dont work ??
+    TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     PassportModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtService, UserService, LocalStrategy],
+  providers: [AuthService, JwtService, UserService, LocalStrategy, JwtStrategy],
   exports: [AuthService]
 })
 

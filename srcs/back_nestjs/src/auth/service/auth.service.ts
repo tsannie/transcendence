@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/service/user.service';
 
 @Injectable()
@@ -24,8 +24,14 @@ export class AuthService {
       username: user.username,
       sub: user.id    // sub for jwt norm
     };
-    return {
-      access_token: await this.jwtTokenService.sign(payload, {secret:'secret'})  // generate our jwt
+    console.log('CRASHHH')
+    const ret = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
+        secret:'secret',
+        expiresIn: '1h'
+      })    // TODO patch this shiit to be in auth.module
     };
+    const res = this.jwtTokenService.verify(ret.access_token, {secret:'secret'});
+    console.log(res)
+    return ret
   }
 }
