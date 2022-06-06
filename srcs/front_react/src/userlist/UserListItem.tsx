@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 
-const api = axios.create({
+export const api = axios.create({   // TODO moove to a constant file
   baseURL: 'http://localhost:4000/'
 })
 
@@ -38,7 +38,7 @@ export default function UserList() {
 
   return (
     <ul>
-      <li key={id}>{name}</li>
+      <li key={id}>{username}</li>
         <ul>
           <li>{email}</li>
           <li>{password}</li>

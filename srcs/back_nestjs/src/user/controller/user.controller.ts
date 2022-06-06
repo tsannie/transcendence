@@ -10,8 +10,9 @@ export class UserController {
   constructor( private userService: UserService ) {}
 
   @Post()
-  add(@Body() user: UserDto): Observable<UserDto> {
-    return this.userService.add(user);
+  @Header('Access-Control-Allow-Origin', '*')
+  async add(@Body() user: UserDto): Promise<UserDto> {
+    return await this.userService.add(user);
   }
 
   @Get()
