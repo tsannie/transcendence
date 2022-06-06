@@ -11,6 +11,6 @@ export class ChatController {
 		@Get()
     @Header('Access-Control-Allow-Origin', '*')
     handleEvent() : string {
-      return this.chatGateway.handleEvent('msgdata');
+      return this.chatGateway.handleEvent('events');
     }
 }

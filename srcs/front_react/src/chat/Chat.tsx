@@ -12,8 +12,8 @@ function Recv_msg() {
 function Send_msg() {
   //console.log('send_msg');
   socket.on('connect', () => {
-    console.log('Connected');
-    socket.emit('events', 'reactToNest');
+    console.log(`Connected with ${socket.id}`);
+    socket.emit('events', { name: 'Nest' }, (data: string) => console.log(data));
   });
 }
 
@@ -21,6 +21,9 @@ function Msg() {
   //console.log('msg');
   Recv_msg();
   Send_msg();
+  socket.on('disconnect', () => {
+    console.log(`Disconnected with ${socket.id}`);
+  });
   return (
   <h1>
       { }
