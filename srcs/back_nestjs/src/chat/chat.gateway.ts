@@ -10,7 +10,7 @@ import {
     OnGatewayInit,
     WsResponse} from "@nestjs/websockets";
 import { from, map, Observable } from "rxjs";
-import { Socket, Server } from "socket.io";
+import { Socket, Server, Namespace } from "socket.io";
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -21,33 +21,34 @@ import { Socket, Server } from "socket.io";
 })
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
 
-  @WebSocketServer() server: Server;
-  private logger: Logger = new Logger('ChatGateway');
+  @WebSocketServer() io: Namespace;
+  private readonly logger: Logger = new Logger('ChatGateway');
 
   @SubscribeMessage('events')
     handleEvent(
     @MessageBody() data: string)
     : string {
     this.logger.log(data)
-    //this.server.emit('msgToClient', data);
     return (data);
   }
 
-  afterInit(server: Server) {
-    console.log("Init")
-    //server.send('salut les clients')
+  afterInit() {
     this.logger.log('Init')
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
-    //throw new Error('Method not implemented');
-    console.log("connected")
+  handleConnection(client: Socket) {
+    const socket = this.io.sockets;
+
     this.logger.log(`Client connected: ${client.id}`);
+    this.logger.debug(`Number of connected sockets: ${socket.size}`);
+
+    this.io.emit('hello', `from ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    //throw new Error('Method not implemented');
-    console.log("disconnected")
+    const socket = this.io.sockets;
+
     this.logger.log(`Client disconnected: ${client.id}`);
+    this.logger.debug(`Number of connected sockets: ${socket.size}`);
   }
 }
