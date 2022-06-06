@@ -12,3 +12,5 @@
  - https://levelup.gitconnected.com/how-to-create-a-nestjs-app-with-authentication-c0ae845ff6ac auth
 
  - https://progressivecoder.com/how-to-implement-nestjs-jwt-authentication-using-jwt-strategy/ jwt
+
+ - https://www.newline.co/@bespoyasov/how-to-use-react-hook-form-with-typescript--af5ca316 form react

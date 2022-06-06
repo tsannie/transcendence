@@ -19,8 +19,8 @@ export class UserService {
     });
   }
 
-  add(user: UserDto): Observable<UserDto> {
-    return from(this.allUser.save(user));
+  async add(user: UserDto): Promise<UserDto> {
+    return await this.allUser.save(user);
   }
 
   getAllUser(): Observable<UserDto[]> {
