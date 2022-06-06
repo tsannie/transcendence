@@ -29,11 +29,13 @@
     "@nestjs/typeorm": "^8.0.3",
     "@nestjs/websockets": "^8.4.6",
     "@types/socket.io": "^3.0.2",
+    "cors": "^2.8.5",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "socket.io": "^4.5.1",
+    "socket.io-adapter": "^2.4.0",
     "typeorm": "^0.2.45"
   },
   "devDependencies": {

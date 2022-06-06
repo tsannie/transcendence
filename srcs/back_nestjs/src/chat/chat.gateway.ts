@@ -13,7 +13,8 @@ import { from, map, Observable } from "rxjs";
 import { Socket, Server } from "socket.io";
 
 // cree une websocket sur le port par defaut
-@WebSocketGateway(3000, {
+@WebSocketGateway({
+  namespace: 'chat',
     cors: {
         origin: '*',
     }
@@ -39,11 +40,13 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   handleConnection(client: Socket, ...args: any[]) {
+    //throw new Error('Method not implemented');
     console.log("connected")
     this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
+    //throw new Error('Method not implemented');
     console.log("disconnected")
     this.logger.log(`Client disconnected: ${client.id}`);
   }
