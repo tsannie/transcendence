@@ -25,7 +25,7 @@ export class AuthService {
       sub: user.id    // sub for jwt norm
     };
     return {
-      access_token: this.jwtTokenService.sign(payload)  // generate our jwt
+      access_token: await this.jwtTokenService.sign(payload, {secret:'secret'})  // generate our jwt
     };
   }
 }
