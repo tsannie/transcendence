@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/service/user.service';
+
+export interface IToken {
+  access_token: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -19,19 +24,23 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) { // TODO replace all any with IUser but with password with null value ??
+  async register(user: UserDto): Promise<UserDto> {
+    return await this.userService.add(user);
+  }
+
+
+  async login(user: any): Promise<IToken> { // TODO replace all any with IUser but with password with null value ??
     const payload = {
       username: user.username,
       sub: user.id    // sub for jwt norm
     };
-    console.log('CRASHHH')
-    const ret = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
+    const token = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
         secret:'secret',
         expiresIn: '1h'
       })    // TODO patch this shiit to be in auth.module
     };
-    const res = this.jwtTokenService.verify(ret.access_token, {secret:'secret'});
+    const res = await this.jwtTokenService.verify(token.access_token, {secret:'secret'});
     console.log(res)
-    return ret
+    return token;
   }
 }
