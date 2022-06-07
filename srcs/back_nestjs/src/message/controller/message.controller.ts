@@ -12,8 +12,7 @@ export class MessageController {
 	constructor( private messageGateway: MessageGateway ) {}
 
   @Get('all')
-  getAllMessages()
-  {
+  getAllMessages() {
     return (this.messageGateway.getAllMessages());
   }
 }
