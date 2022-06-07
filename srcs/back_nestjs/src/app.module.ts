@@ -3,9 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChatModule } from './chat/chat.module';
-import { ChatController } from './chat/controller/chat.controller';
-import { ChatService } from './chat/service/chat.service';
+import { MessageModule } from './message/message.module';
+import { MessageController } from './message/controller/message.controller';
+import { MessageService } from './message/service/message.service';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -20,7 +20,7 @@ import { UserModule } from './user/user.module';
       synchronize: true
     }),
     UserModule,
-    ChatModule
+    MessageModule
   ],
   controllers: [AppController],
   providers: [AppService],
