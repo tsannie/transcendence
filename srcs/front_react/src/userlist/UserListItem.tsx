@@ -8,13 +8,13 @@ const api = axios.create({
 
 export interface IUser {
   id?: number,
-  name?: string,
+  username?: string,
 }
 
 export default function UserList() {
 
   // Declare a new state variable
-  const [name, setName] = React.useState('');
+  const [username, setUsername] = React.useState('');
   const [id, setId] = React.useState(0);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -25,7 +25,7 @@ export default function UserList() {
       //console.log(res.data)
       console.log(res.data);
       setId(res.data[0].id);
-      setName(res.data[0].name);
+      setUsername(res.data[0].name);
       setEmail(res.data[0].email);
       setPassword(res.data[0].password);
     })

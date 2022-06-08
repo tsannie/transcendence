@@ -6,7 +6,7 @@ export class UserDto {
 
   @IsDefined()
   @IsNotEmpty()
-  name: string;
+  username: string;
 
   @IsDefined()
   @IsEmail()

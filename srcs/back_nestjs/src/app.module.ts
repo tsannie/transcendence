@@ -4,6 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+//import { AuthResolver } from './auth/auth.resolver';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/service/auth.service';
+import { UserService } from './user/service/user.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { UserEntity } from './user/models/user.entity';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './auth/strategy/local.strategy';
 
 @Module({
   imports: [
@@ -16,9 +24,12 @@ import { UserModule } from './user/user.module';
       autoLoadEntities: true,   // TODO check that
       synchronize: true
     }),
-    UserModule
+    TypeOrmModule.forFeature([UserEntity]),
+    UserModule,
+    AuthModule,
+    PassportModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtService, AuthService, UserService, LocalStrategy], // AuthResolver
 })
 export class AppModule {}
