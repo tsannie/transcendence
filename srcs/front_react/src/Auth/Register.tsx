@@ -1,9 +1,6 @@
-import axios from "axios";
-import React, { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { api } from "../userlist/UserListItem";
-import { wait } from "@testing-library/user-event/dist/utils";
+import { api } from "../userlist/UserListItem"; // TODO replace to constant value
 
 interface IFormRegister {
   username: string;
@@ -12,7 +9,9 @@ interface IFormRegister {
 }
 
 export default function Register() {
-  const [error, setError] = React.useState(null);
+  const [errorUsername, setErrorUsername] = React.useState('');
+  const [errorEmail, setErrorEmail] = React.useState('');
+  const [errorPassword, setErrorPassword] = React.useState('');
 
   const {
     register,
@@ -27,14 +26,27 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<IFormRegister> = async data => {
     console.log(data);
-    const ret = await api.post('/user', data)
+    setErrorUsername('');
+    setErrorEmail('')
+    setErrorPassword('');
+    const ret = await api.post('/auth/register', data)
       .then(response => {
         console.log('success')
         console.log(response)
       }).catch(err => {
         console.log('failed')
-        console.log(err)
-        setError(err)
+        const allError = err.response.data.message;
+        console.log(err.response.data.message)
+
+        allError.forEach((element: string) => {
+          if (element.startsWith('email')) {
+            setErrorEmail(element.substring(6));
+          } else if (element.startsWith('username')) {
+            setErrorUsername(element.substring(9));
+          } else if (element.startsWith('password')) {
+            setErrorPassword(element.substring(9));
+          }
+        });
       });
   };
 
@@ -47,6 +59,9 @@ export default function Register() {
       { errors?.username?.type === 'required' && (
         <p>This field is required.</p>
       )}
+      {
+        errorUsername && <p>{errorUsername}</p>
+      }
 
       <label>email:</label>
       <input {...register("email", {
@@ -55,6 +70,8 @@ export default function Register() {
       { errors?.email?.type === 'required' && (
         <p>This field is required.</p>
       )}
+      { errorEmail && <p>{errorEmail}</p> }
+
 
       <label>password:</label>
       <input {...register("password", {
@@ -63,6 +80,7 @@ export default function Register() {
       { errors?.password?.type === 'required' && (
         <p>This field is required.</p>
       )}
+      { errorPassword && <p>{errorPassword}</p> }
 
       <button disabled={isSubmitting} type="submit">
         Register
