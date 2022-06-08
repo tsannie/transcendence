@@ -25,19 +25,18 @@ export default function Register() {
   } = useForm<IFormRegister>();
 
   const onSubmit: SubmitHandler<IFormRegister> = async data => {
-    console.log(data);
+
     setErrorUsername('');
     setErrorEmail('')
     setErrorPassword('');
-    const ret = await api.post('/auth/register', data)
+
+    await api.post('/auth/register', data)
       .then(response => {
         console.log('success')
         console.log(response)
       }).catch(err => {
         console.log('failed')
         const allError = err.response.data.message;
-        console.log(err.response.data.message)
-
         allError.forEach((element: string) => {
           if (element.startsWith('email')) {
             setErrorEmail(element.substring(6));
