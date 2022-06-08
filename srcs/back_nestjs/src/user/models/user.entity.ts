@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+//import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class UserEntity {
@@ -7,7 +8,7 @@ export class UserEntity {
   id: number;
 
   @Column({unique: true})
-  name: string;
+  username: string;
 
   @Column({unique: true})
   email: string;
@@ -24,6 +25,9 @@ export class UserEntity {
   updatedAt: Date;
 
   // TODO HASH PASSWORD
+  async hashPassword() {
+    //this.password = await bcrypt.hash();
+  }
 
   async goodPassword(tryPassword: string): Promise<boolean> {
     return (tryPassword === this.password)
