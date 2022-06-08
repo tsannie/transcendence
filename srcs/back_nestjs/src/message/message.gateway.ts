@@ -16,6 +16,7 @@ import { Socket, Server, Namespace } from "socket.io";
 import { Repository } from "typeorm";
 import { MessageEntity } from "./models/message.entity";
 import { IMessage } from "./models/message.interface";
+import { Adapter } from "socket.io-adapter";
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -24,11 +25,17 @@ import { IMessage } from "./models/message.interface";
         origin: '*',
     }
 })
-export class MessageGateway /* implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect */{
+export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  constructor(
+		@InjectRepository(MessageEntity)
+		private allMessages: Repository<MessageEntity>
+	) {}
+
+  connectedClients = [];
+  private readonly logger: Logger = new Logger('messageGateway');
 
   @WebSocketServer()
-  server: Namespace;
-  private readonly logger: Logger = new Logger('messageGateway');
+  server: Server;
 
   @SubscribeMessage('message')
     handleEvent(
@@ -45,7 +52,7 @@ export class MessageGateway /* implements OnGatewayInit, OnGatewayConnection, On
     return (data);
   }
 
-  /* afterInit() {
+  afterInit() {
     this.logger.log('Init')
   }
 
@@ -53,8 +60,8 @@ export class MessageGateway /* implements OnGatewayInit, OnGatewayConnection, On
     const socket = this.server.sockets;
 
     this.logger.log(`Client connected: ${client.id}`);
-    this.logger.debug(`Number of connected sockets: ${socket.size}`);
-
+    //this.logger.debug(`Number of connected sockets: ${socket.size}`);
+    this.connectedClients.push(client);
     this.server.emit('hello', `from ${client.id}`);
   }
 
@@ -62,11 +69,11 @@ export class MessageGateway /* implements OnGatewayInit, OnGatewayConnection, On
     const socket = this.server.sockets;
 
     this.logger.log(`Client disconnected: ${client.id}`);
-    this.logger.debug(`Number of connected sockets: ${socket.size}`);
+    this.connectedClients = this.connectedClients.filter( (connectedClient) => {
+      return connectedClient !== client.id
+    })
+    //this.logger.debug(`Number of connected sockets: ${socket.size}`);
   }
- */
-  @InjectRepository(MessageEntity)
-  private allMessages: Repository<MessageEntity>
 
   add(message: IMessage) : Observable<IMessage>{
     return (from(this.allMessages.save(message)));
@@ -74,4 +81,24 @@ export class MessageGateway /* implements OnGatewayInit, OnGatewayConnection, On
   getAllMessages(): Observable<IMessage[]> {
 		return from(this.allMessages.find());
 	}
+
+  // Quand tu doubles cliques sur un utilisateur, cela va cree une room pour pouvoir le dm
+
+  @SubscribeMessage('createRoom')
+    createRoom(
+    @MessageBody() data: string,
+    @ConnectedSocket() client: Socket) {
+    const socket = this.server.sockets;
+
+    // client rejoint la room
+    client.join(data);
+
+    // parcourt mon tableau de client et affiche les id des clients dispo !
+    /* this.connectedClients.forEach( (connectedClient) => {
+      console.log(connectedClient.id);
+    }); */
+    //client.to(data).emit('createRoom', {room: data});
+    //client.broadcast.emit('createRoom')
+    this.logger.log(`Room created with client: ${client.id}`);
+  }
 }
