@@ -25,10 +25,23 @@ function Msg() {
     console.log(`Disconnected with ${socket.id}`);
   });
   return (
-  <h1>
-      { }
-  </h1>
+  <input type="text" id="inputmessage" title="inputmessage" placeholder="Envoyez un message a" >
+
+  </input>
   );
+}
+
+export function required() {
+
+  const inputValue = (document.getElementById("inputmessage") as HTMLInputElement).value
+
+  if (inputValue.length === 0)
+  {
+     alert("Nom incorrect");
+     return false;
+  }
+  return true;
+
 }
 
 export default Msg;

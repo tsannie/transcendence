@@ -38,7 +38,7 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   server: Server;
 
   @SubscribeMessage('message')
-    handleEvent(
+    addMessage(
     @MessageBody() data: string)
     : string {
     this.logger.log(data)
@@ -47,6 +47,8 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
       id: newUuid,
       content: data
     }
+    //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
+      // join room
     this.add(newMessage);
     this.server.emit('message', data);
     return (data);
