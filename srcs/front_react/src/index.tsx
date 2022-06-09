@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import Msg from './chat/Chat';
+import SubmitButton from './components/button/SubmitButton';
+import Msg from './components/message/Message';
 import PostList from './userlist/UserListItem';
 
 ReactDOM.render(
@@ -9,6 +10,7 @@ ReactDOM.render(
     <App />
     <PostList />
     <Msg />
+    <SubmitButton />
   </React.StrictMode>,
   document.getElementById('root')
 )
