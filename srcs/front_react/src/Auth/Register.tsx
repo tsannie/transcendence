@@ -32,10 +32,10 @@ export default function Register() {
 
     await api.post('/auth/register', data)
       .then(response => {
-        console.log('success')
-        console.log(response)
+        console.log('success');
+        console.log(response);
       }).catch(err => {
-        console.log('failed')
+        console.log('failed');
         const allError = err.response.data.message;
         allError.forEach((element: string) => {
           if (element.startsWith('email')) {

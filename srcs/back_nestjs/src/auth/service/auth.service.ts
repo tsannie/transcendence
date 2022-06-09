@@ -40,7 +40,7 @@ export class AuthService {
       })    // TODO patch this shiit to be in auth.module
     };
     const res = await this.jwtTokenService.verify(token.access_token, {secret:'secret'});
-    console.log(res)
+    //console.log(res)
     return token;
   }
 }

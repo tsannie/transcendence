@@ -13,20 +13,21 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('/login')
   async login(@Request() req): Promise<IToken> {
-    console.log('hello')
+    console.log('new login')
     return await this.authService.login(req.user);
   }
 
   @Post('/register')
   @Header('Access-Control-Allow-Origin', '*')
   async register(@Body() user: UserDto): Promise<UserDto> {
+    console.log('new register')
     return await this.authService.register(user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   getProfile(@Request() req) {
-    console.log(req)
+    //console.log(req)
     return req.user;
   }
 }
