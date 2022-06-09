@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from "react-dom/client";
 import App from './App';
+import Login from './Auth/Login';
 import Register from './Auth/Register';
 import UserList from './userlist/UserListItem';
 
@@ -11,5 +12,6 @@ root.render(
     <App />
     <UserList />
     <Register />
+    <Login />
   </React.StrictMode>,
 )
