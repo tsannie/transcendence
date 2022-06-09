@@ -10,3 +10,6 @@
  - https://fr.reactjs.org/docs/hello-world.html doc react incr
 
  - https://www.postgresqltutorial.com/postgresql-administration/psql-commands/ doc cmd postgre
+ - https://levelup.gitconnected.com/how-to-create-a-nestjs-app-with-authentication-c0ae845ff6ac auth
+
+ - https://progressivecoder.com/how-to-implement-nestjs-jwt-authentication-using-jwt-strategy/ jwt
