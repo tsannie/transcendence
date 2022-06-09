@@ -28,6 +28,11 @@ export class AuthService {
     return await this.userService.add(user);
   }
 
+  async oauth42(code: string) {
+    console.log(code)
+    //return req.user;
+  }
+
 
   async login(user: any): Promise<IToken> { // TODO replace all any with IUser but with password with null value ??
     const payload = {
