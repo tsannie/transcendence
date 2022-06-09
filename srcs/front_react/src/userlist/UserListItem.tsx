@@ -2,7 +2,7 @@
 import React from 'react';
 import axios from 'axios';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: 'http://localhost:4000/'
 })
 
