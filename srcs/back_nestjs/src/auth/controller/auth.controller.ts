@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Header, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto/user.dto';
-import { UserService } from 'src/user/service/user.service';
-import { AuthService, IToken } from '../service/auth.service';
+import { IToken } from '../auth.const';
+import { AuthService } from '../service/auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -24,10 +24,10 @@ export class AuthController {
     return await this.authService.register(user);
   }
 
-  @Get('/')
+  @Post('/')
   async oauth42(@Query('code') code: string) {
     console.log(code)
-    return await this.oauth42(code);
+    return await this.authService.oauth42(code);
   }
 
   @UseGuards(AuthGuard('jwt'))
