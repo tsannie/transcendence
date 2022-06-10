@@ -1,11 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AxiosError } from 'axios';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/service/user.service';
-
-export interface IToken {
-  access_token: string;
-}
+import { apiOAuth42, data_req, IToken, URL_API42 } from '../auth.const';
 
 @Injectable()
 export class AuthService {
@@ -28,9 +26,14 @@ export class AuthService {
     return await this.userService.add(user);
   }
 
-  async oauth42(code: string) {
-    console.log(code)
-    //return req.user;
+  async oauth42(code: string): Promise<any>  {
+    const res = await apiOAuth42.post(URL_API42, {...data_req, code})
+    .catch(() => {
+        throw new UnauthorizedException();  // connexion failed
+    }).then((res: any) => {
+      return res.data;
+    });
+    return res;
   }
 
 
