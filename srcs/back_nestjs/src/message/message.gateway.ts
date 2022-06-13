@@ -62,7 +62,7 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const socket = this.server.sockets;
 
     this.logger.log(`Client connected: ${client.id}`);
-    //this.logger.debug(`Number of connected sockets: ${socket.size}`);
+    //this.logg er.debug(`Number of connected sockets: ${socket.size}`);
     this.connectedClients.push(client);
     this.server.emit('hello', `from ${client.id}`);
   }

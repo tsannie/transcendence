@@ -1,8 +1,12 @@
 import React from 'react';
+import Chat from './components/chat/Chat';
+import MessagesHeader from './components/messages-header/Messages-header';
 
 function App() {
   return (
-    <h1>Hello react !</h1>
+    <div>
+      <Chat />
+    </div>
   );
 }
 
