@@ -3,10 +3,19 @@ import { io, Socket } from "socket.io-client";
 
 const socket = io('http://localhost:4000/chat');
 
+interface IMessage {
+  room: string,
+  author: string,
+  content: string,
+  time: string
+}
+
 export default function Chat() {
 
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
+  const [currentMessage, setCurrentMessage] = useState('');
+  const [messagesList, setMessagesList] = useState<Array<string>>([]);
 
   function joinRoom() {
     //console.log(username);
@@ -17,22 +26,37 @@ export default function Chat() {
     }
   }
 
-  function Recv_msg() {
-    socket.on('events', (data) => {
-      console.log('msgToClient', data);
-    });
+  async function sendMessage() {
+    //const minutes =
+    if (currentMessage !== "") {
+      const messageData : IMessage = {
+        room: room,
+        author: username,
+        content: currentMessage,
+        time:
+          new Date(Date.now()).getHours() +
+          ":" +
+          String(new Date(Date.now()).getMinutes()).padStart(2, '0'),
+      };
+
+      console.log(messageData.author);
+      await socket.emit("message", messageData);
+      setMessagesList((list) => [...list, currentMessage]);
+      setCurrentMessage("");
+    }
   }
 
-  function Send_msg() {
-    //console.log('send_msg');
-    socket.on('connect', () => {
-      console.log(`Connected with ${socket.id}`);
-      socket.emit('events', { name: 'Nest' }, (data: string) => console.log(data));
-    });
-  }
-  socket.on('disconnect', () => {
+  // listen message from backend
+  useEffect(() => {
+    socket.on("message", (data) => {
+      console.log(data);
+      //setMessagesList((list) => [...list, data]);
+    })
+  }, [socket]);
+
+  /* socket.on('disconnect', () => {
     console.log(`Disconnected with ${socket.id}`);
-  });
+  }); */
 
   return (
   <div>
@@ -56,8 +80,16 @@ export default function Chat() {
       </div>
       <div className="chat-header">
         <p> Live chat</p>
-        <input type="text" placeholder="Enter an user" />
-        <input type="submit" />
+        <input
+          type="text"
+          placeholder="Enter a message"
+          onChange={(event) => {
+          setCurrentMessage(event.target.value);
+        }} />
+        <input
+          type="submit"
+          onClick={sendMessage}
+          />
       </div>
       <div className="chat-body"></div>
       <div className="chat-footer"></div>
