@@ -39,19 +39,35 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage('message')
     addMessage(
-    @MessageBody() data: string)
-    : string {
-    this.logger.log(data)
+    @MessageBody() data: string[],
+    @ConnectedSocket() client: Socket)
+    : void {
+    //this.logger.log(data);
+    //this.logger.log(data.find(x => x.search("room")))
+
+    const a = Object.keys(data);
+
+
+    //const b = a.split()
+    this.logger.log(a);
+
+    //this.logger.log(d)
+
+    //this.logger.log(b);
     let newUuid = uuidv4();
     const newMessage: IMessage = {
       id: newUuid,
-      content: data
+      room: a.find(x => x === "room"),
+      author: a.find(x => x === "author"),
+      content: a.find(x => x === "content"),
+      time: a.find(x => x === "time"),
     }
+    this.add(newMessage);
+    const b = Object.keys(newMessage);
+    //this.logger.log(newMessage.author);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
       // join room
-    this.add(newMessage);
-    this.server.emit('message', data);
-    return (data);
+    client.to(b).emit("message", data);
   }
 
   afterInit() {
@@ -93,7 +109,6 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const socket = this.server.sockets;
 
     // client 1 rejoint la room
-    this.logger.log(`client a rejoint la room ${data}`);
     client.join(data);
 
     // parcourt mon tableau de client et affiche les id des clients dispo !
@@ -102,6 +117,6 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     }); */
     //client.to(data).emit('joinRoom', {room: data});
     //client.broadcast.emit('joinRoom')
-    this.logger.log(`Room created with client: ${client.id}`);
+    this.logger.log(`client ${client.id} join room ${data} `);
   }
 }

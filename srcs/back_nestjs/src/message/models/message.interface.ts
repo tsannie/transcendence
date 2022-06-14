@@ -1,4 +1,9 @@
+import { MessageEntity } from "./message.entity";
+
 export interface IMessage {
   id: string,
-  content: string
+  room: string,
+  author: string,
+  content: string,
+  time: string
 }
