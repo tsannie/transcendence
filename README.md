@@ -12,3 +12,9 @@
  - https://levelup.gitconnected.com/how-to-create-a-nestjs-app-with-authentication-c0ae845ff6ac auth
 
  - https://progressivecoder.com/how-to-implement-nestjs-jwt-authentication-using-jwt-strategy/ jwt
+
+ - https://www.newline.co/@bespoyasov/how-to-use-react-hook-form-with-typescript--af5ca316 form react
+
+ - https://blog.logrocket.com/persistent-login-in-react-using-refresh-token-rotation/ react
+
+ - https://fr.wikipedia.org/wiki/OAuth#:~:text=OAuth%20est%20un%20protocole%20libre,%C2%AB%20d%C3%A9l%C3%A9gation%20d'autorisation%20%C2%BB. OAuth

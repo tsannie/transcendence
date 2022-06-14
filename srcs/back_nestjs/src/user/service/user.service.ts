@@ -13,14 +13,14 @@ export class UserService {
       private allUser: Repository<UserEntity>
   ) {}
 
+  async add(user: UserDto): Promise<UserDto> {
+    return await this.allUser.save(user);
+  }
+
   async findByName(username: string): Promise<UserDto> { // TODO check observable or promise ??
     return await this.allUser.findOne({
       username: username
     });
-  }
-
-  add(user: UserDto): Observable<UserDto> {
-    return from(this.allUser.save(user));
   }
 
   getAllUser(): Observable<UserDto[]> {
