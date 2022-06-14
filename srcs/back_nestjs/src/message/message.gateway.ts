@@ -20,7 +20,7 @@ import { Adapter } from "socket.io-adapter";
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
-  namespace: 'message',
+  namespace: 'chat',
     cors: {
         origin: '*',
     }
@@ -86,21 +86,22 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   // Quand tu doubles cliques sur un utilisateur, cela va cree une room pour pouvoir le dm
 
-  @SubscribeMessage('createRoom')
-    createRoom(
+  @SubscribeMessage('joinRoom')
+    joinRoom(
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket) {
     const socket = this.server.sockets;
 
-    // client rejoint la room
+    // client 1 rejoint la room
+    this.logger.log(`client a rejoint la room ${data}`);
     client.join(data);
 
     // parcourt mon tableau de client et affiche les id des clients dispo !
     /* this.connectedClients.forEach( (connectedClient) => {
       console.log(connectedClient.id);
     }); */
-    //client.to(data).emit('createRoom', {room: data});
-    //client.broadcast.emit('createRoom')
+    //client.to(data).emit('joinRoom', {room: data});
+    //client.broadcast.emit('joinRoom')
     this.logger.log(`Room created with client: ${client.id}`);
   }
 }

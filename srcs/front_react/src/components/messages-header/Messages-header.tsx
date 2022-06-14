@@ -1,7 +1,16 @@
+import { create } from "domain";
 import { api } from "../../userlist/UserListItem";
-import Message from "../message/Message";
 
 export default function MessagesHeader() {
+
+
+  function createConv(value: string) : any{
+    /* if (isBadUser(value) === false) {
+      console.log('Mauvais user');
+      return ;
+    } */
+    console.log('Bon user');
+  }
 
   function newConv() {
     const newinput = document.createElement("input");
@@ -12,6 +21,8 @@ export default function MessagesHeader() {
     newinput?.setAttribute('required', '');
 
     newsubmit.type = "submit";
+    newsubmit.style.marginTop = "100px";
+    newsubmit.onclick = createConv(newsubmit.value);
     newbutton?.appendChild(newinput);
     newbutton?.appendChild(newsubmit);
     /* if (inputUser.value.length === 0 || isBadUser(inputUser.value) === true) // || Ou qu'elle correspond pas a un user dans la DB
@@ -26,7 +37,7 @@ export default function MessagesHeader() {
     );
   }
 
-  function isBadUser(inputValue: string) {
+ function isBadUser(inputValue: string) : any{
     api.get('/user').then(res => {
       console.log(`res.data.username = ${res.data.username}`);
       console.log(`inputValue = ${inputValue}`);
