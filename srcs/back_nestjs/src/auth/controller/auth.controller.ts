@@ -18,7 +18,6 @@ export class AuthController {
   }
 
   @Post('/register')
-  @Header('Access-Control-Allow-Origin', '*')
   async register(@Body() user: UserDto): Promise<UserDto> {
     console.log('new register')
     return await this.authService.register(user);
@@ -35,5 +34,11 @@ export class AuthController {
   getProfile(@Request() req) {
     //console.log(req)
     return req.user;
+  }
+
+  @UseGuards(AuthGuard('42'))
+  @Get('/')
+  async nothing() {
+    return 'hello';
   }
 }
