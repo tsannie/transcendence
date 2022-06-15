@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Query, Redirect, Request, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto/user.dto';
 import { IToken } from '../auth.const';
@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('profile')
+  @Get('/profile')
   getProfile(@Request() req) {
     //console.log(req)
     return req.user;
@@ -40,5 +40,12 @@ export class AuthController {
   @Get('/')
   async nothing() {
     return 'hello';
+  }
+
+  @UseGuards(AuthGuard('42'))
+  @Get('/42')
+  @Redirect('http://localhost:3000', 301) // TODO env
+  async redirect() {
+    return 'bye';
   }
 }
