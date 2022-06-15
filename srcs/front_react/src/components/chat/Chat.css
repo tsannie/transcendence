@@ -1,0 +1,52 @@
+.chat-join button {
+	background-color:#44c767;
+	border-radius:31px;
+	border:1px solid #18ab29;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:12px;
+	padding:6px 15px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
+}
+.button-join-room:hover {
+	background-color:#5cbf2a;
+}
+.button-join-room:active {
+	position:relative;
+	top:1px;
+}
+
+.chat-header input {
+  padding: 5px;
+  font-size: 11px;
+  border-width: 0px;
+  border-color: #CCCCCC;
+  background-color: #FFFFFF;
+  color: #000000;
+  border-style: solid;
+  border-radius: 0px;
+  box-shadow: 0px 0px 5px rgba(66,66,66,.60);
+}
+
+.chat-header input:focus {
+  outline:none;
+}
+
+.chat-join input {
+  padding: 5px;
+  font-size: 11px;
+  border-width: 0px;
+  border-color: #CCCCCC;
+  background-color: #FFFFFF;
+  color: #000000;
+  border-style: solid;
+  border-radius: 0px;
+  box-shadow: 0px 0px 5px rgba(66,66,66,.60);
+}
+
+.chat-join input:focus {
+  outline:none;
+}

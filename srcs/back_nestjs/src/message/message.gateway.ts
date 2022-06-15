@@ -65,7 +65,6 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const socket = this.server.sockets;
 
     this.logger.log(`Client connected: ${client.id}`);
-    //this.logger.debug(`Number of connected sockets: ${socket.size}`);
     this.connectedClients.push(client);
     this.server.emit('hello', `from ${client.id}`);
   }
@@ -77,7 +76,6 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     this.connectedClients = this.connectedClients.filter( (connectedClient) => {
       return connectedClient !== client.id
     })
-    //this.logger.debug(`Number of connected sockets: ${socket.size}`);
   }
 
   add(message: IMessage) : Observable<IMessage>{
@@ -93,17 +91,12 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     joinRoom(
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket) {
-    const socket = this.server.sockets;
-
-    // client 1 rejoint la room
     client.join(data);
 
     // parcourt mon tableau de client et affiche les id des clients dispo !
     /* this.connectedClients.forEach( (connectedClient) => {
       console.log(connectedClient.id);
     }); */
-    //client.to(data).emit('joinRoom', {room: data});
-    //client.broadcast.emit('joinRoom')
     this.logger.log(`client ${client.id} join room ${data} `);
   }
 }
