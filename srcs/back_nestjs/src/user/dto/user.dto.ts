@@ -2,7 +2,7 @@ import { IsDefined, IsEmail, IsNotEmpty } from "class-validator";
 
 export class UserDto {
 
-  id: number;
+  id?: number;
 
   @IsDefined()
   @IsNotEmpty()
@@ -12,10 +12,6 @@ export class UserDto {
   @IsEmail()
   email: string;
 
-  @IsDefined()
-  @IsNotEmpty()
-  password: string;
-
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
