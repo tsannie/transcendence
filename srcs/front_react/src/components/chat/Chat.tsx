@@ -28,7 +28,6 @@ export default function Chat() {
   }
 
   async function sendMessage() {
-    //const minutes =
     if (currentMessage !== "") {
       const messageData : IMessage = {
         room: room,
@@ -39,7 +38,6 @@ export default function Chat() {
           ":" +
           String(new Date(Date.now()).getMinutes()).padStart(2, '0'),
       };
-
       await socket.emit("message", messageData);
       setMessagesList((list) => [...list, currentMessage]);
       setCurrentMessage("");
@@ -53,10 +51,6 @@ export default function Chat() {
       setMessagesList((list) => [...list, data]);
     })
   }, [socket]);
-
-  /* socket.on('disconnect', () => {
-    console.log(`Disconnected with ${socket.id}`);
-  }); */
 
   return (
     <div className="chat">
