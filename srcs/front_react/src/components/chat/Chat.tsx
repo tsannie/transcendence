@@ -39,7 +39,6 @@ export default function Chat() {
           String(new Date(Date.now()).getMinutes()).padStart(2, '0'),
       };
 
-      console.log(messageData.author);
       await socket.emit("message", messageData);
       setMessagesList((list) => [...list, currentMessage]);
       setCurrentMessage("");
@@ -50,7 +49,7 @@ export default function Chat() {
   useEffect(() => {
     socket.on("message", (data) => {
       console.log(data);
-      //setMessagesList((list) => [...list, data]);
+      setMessagesList((list) => [...list, data]);
     })
   }, [socket]);
 
