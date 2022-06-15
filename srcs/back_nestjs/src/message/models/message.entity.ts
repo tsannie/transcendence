@@ -2,18 +2,18 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class MessageEntity {
-  @PrimaryColumn({default: ''})
-	id!: string;
+	@PrimaryColumn({unique: true})
+  id: string;
 
-	@Column({default: ''})
-	room!: string;
+	@Column()
+	room: string;
 
-	@Column({default: ''})
-	author!: string;
+	@Column()
+	author: string;
 
-	@Column({default: ''})
-	content!: string;
+	@Column()
+	content: string;
 
-	@Column({default: ''})
-	time!: string;
+	@Column()
+	time: string;
 }

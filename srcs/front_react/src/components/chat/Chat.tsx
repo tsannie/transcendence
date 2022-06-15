@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import './Chat.css'
 
 const socket = io('http://localhost:4000/chat');
 
@@ -15,14 +16,14 @@ export default function Chat() {
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
   const [currentMessage, setCurrentMessage] = useState('');
+  const [windowChat, setWindowChat] = useState(false)
   const [messagesList, setMessagesList] = useState<Array<string>>([]);
 
   function joinRoom() {
-    //console.log(username);
-    //console.log(room);
     if (username !== "" && room !== "") {
       socket.emit("joinRoom", room);
-      console.log("socket emit in react front");
+      console.log(`User join room ${room}`);
+      setWindowChat(true);
     }
   }
 
@@ -58,41 +59,44 @@ export default function Chat() {
   }); */
 
   return (
-  <div>
     <div className="chat">
-      <div className="chat-join">
-        <h1> Join a chat </h1>
-        <input
-          type="text"
-          placeholder="client1"
-          onChange={(event) => {
-            setUsername(event.target.value);
-        }}/>
-        <input
-        type="text"
-        placeholder="RoomID"
-        onChange={(event) => {
-          setRoom(event.target.value);
-        }}
-        />
-        <button onClick={joinRoom}> Join a room </button>
-      </div>
-      <div className="chat-header">
-        <p> Live chat</p>
-        <input
-          type="text"
-          placeholder="Enter a message"
-          onChange={(event) => {
-          setCurrentMessage(event.target.value);
-        }} />
-        <input
-          type="submit"
-          onClick={sendMessage}
+      {!windowChat ? (
+        <div className="chat-join">
+          <h1> Join a chat </h1>
+          <input
+            type="text"
+            placeholder="client1"
+            onChange={(event) => {
+              setUsername(event.target.value);
+          }}/>
+          <input
+            type="text"
+            placeholder="RoomID"
+            onChange={(event) => {
+              setRoom(event.target.value);
+          }}
           />
+          <button onClick={joinRoom}> Join a room </button>
+        </div>
+      ) : (
+      <div className="chat-window" >
+        <div className="chat-header">
+          <p> Live chat</p>
+          <input
+            type="text"
+            placeholder="Enter a message"
+            onChange={(event) => {
+            setCurrentMessage(event.target.value);
+          }} />
+          <input
+            type="submit"
+            onClick={sendMessage}
+            />
+        </div>
+        <div className="chat-body"></div>
+        <div className="chat-footer"></div>
       </div>
-      <div className="chat-body"></div>
-      <div className="chat-footer"></div>
+      )}
     </div>
-  </div>
   );
 }
