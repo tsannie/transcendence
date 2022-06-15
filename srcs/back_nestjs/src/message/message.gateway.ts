@@ -39,35 +39,22 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   @SubscribeMessage('message')
     addMessage(
-    @MessageBody() data: string[],
+    @MessageBody() data: IMessage,
     @ConnectedSocket() client: Socket)
     : void {
-    //this.logger.log(data);
-    //this.logger.log(data.find(x => x.search("room")))
-
-    const a = Object.keys(data);
-
-
-    //const b = a.split()
-    this.logger.log(a);
-
-    //this.logger.log(d)
-
-    //this.logger.log(b);
+    this.logger.log(client.id);
     let newUuid = uuidv4();
-    const newMessage: IMessage = {
+    const newMessage: IMessage = { // message de base + uuid
       id: newUuid,
-      room: a.find(x => x === "room"),
-      author: a.find(x => x === "author"),
-      content: a.find(x => x === "content"),
-      time: a.find(x => x === "time"),
+      room: data.room,
+      author: data.author,
+      content: data.content,
+      time: data.time,
     }
     this.add(newMessage);
-    const b = Object.keys(newMessage);
-    //this.logger.log(newMessage.author);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
       // join room
-    client.to(b).emit("message", data);
+    client.to(newMessage.room).emit("message", newMessage);
   }
 
   afterInit() {
@@ -78,7 +65,7 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     const socket = this.server.sockets;
 
     this.logger.log(`Client connected: ${client.id}`);
-    //this.logg er.debug(`Number of connected sockets: ${socket.size}`);
+    //this.logger.debug(`Number of connected sockets: ${socket.size}`);
     this.connectedClients.push(client);
     this.server.emit('hello', `from ${client.id}`);
   }
