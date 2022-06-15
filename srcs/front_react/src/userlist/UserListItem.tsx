@@ -2,7 +2,8 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 
-export const api = axios.create({
+export const api = axios.create({   // TODO moove to a constant file
+
   baseURL: 'http://localhost:4000/'
 })
 
@@ -23,9 +24,9 @@ export default function UserList() {
   function getUser() {
     api.get('/user').then(res => {
       //console.log(res.data)
-      console.log(res.data);
+      //console.log(res.data);
       setId(res.data[0].id);
-      setUsername(res.data[0].name);
+      setUsername(res.data[0].username);
       setEmail(res.data[0].email);
       setPassword(res.data[0].password);
     })

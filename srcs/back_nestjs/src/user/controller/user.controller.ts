@@ -6,13 +6,7 @@ import { UserDto } from '../dto/user.dto';
 
 @Controller('user')
 export class UserController {
-
   constructor( private userService: UserService ) {}
-
-  @Post()
-  add(@Body() user: UserDto): Observable<UserDto> {
-    return this.userService.add(user);
-  }
 
   @Get()
   @Header('Access-Control-Allow-Origin', '*')
