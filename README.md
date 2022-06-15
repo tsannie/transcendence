@@ -1,4 +1,5 @@
  - https://theophile-ordinas.fr/javascript-seo-ssr-ou-csr/ (ssr ou csr ?)
+ 
  - https://fr.wikipedia.org/wiki/Representational_state_transfer api rest
 
  - https://medium.com/@gausmann.simon/nestjs-typeorm-and-postgresql-full-example-development-and-project-setup-working-with-database-c1a2b1b11b8f typeorm pg
@@ -15,3 +16,9 @@
  - https://progressivecoder.com/how-to-implement-nestjs-jwt-authentication-using-jwt-strategy/ jwt
 
  - https://react.semantic-ui.com/ template d'elements html avec react
+
+ - https://www.newline.co/@bespoyasov/how-to-use-react-hook-form-with-typescript--af5ca316 form react
+
+ - https://blog.logrocket.com/persistent-login-in-react-using-refresh-token-rotation/ react
+
+ - https://fr.wikipedia.org/wiki/OAuth#:~:text=OAuth%20est%20un%20protocole%20libre,%C2%AB%20d%C3%A9l%C3%A9gation%20d'autorisation%20%C2%BB. OAuth
