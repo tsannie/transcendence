@@ -43,9 +43,8 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
     @ConnectedSocket() client: Socket)
     : void {
     this.logger.log(client.id);
-    let newUuid = uuidv4();
     const newMessage: IMessage = { // message de base + uuid
-      id: newUuid,
+      id: data.id,
       room: data.room,
       author: data.author,
       content: data.content,
