@@ -35,7 +35,6 @@ export class AuthService {
     return res;
   }
 
-
   async login(user: any): Promise<IToken> {
     const payload = {
       username: user.username,
@@ -46,8 +45,6 @@ export class AuthService {
         expiresIn: '1h'
       })    // TODO patch this shiit to be in auth.module
     };
-    const res = await this.jwtTokenService.verify(token.access_token, {secret:'secret'});
-    //console.log(res)
     return token;
   }
 }
