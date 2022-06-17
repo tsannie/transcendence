@@ -1,8 +1,9 @@
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, CssBaseline, darkScrollbar, TextField, ThemeProvider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid'
 import './Chat.css'
+import { createTheme } from "@mui/material/styles";
 
 const socket = io('http://localhost:4000/chat');
 
@@ -22,6 +23,26 @@ export default function Chat() {
   const [windowChat, setWindowChat] = useState(false)
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
   const [author, setAuthor] = useState('');
+  const theme = createTheme({
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          "@global": {
+            "*::-webkit-scrollbar": {
+              width: "10px"
+            },
+            "*::-webkit-scrollbar-track": {
+              background: "#E4EFEF"
+            },
+            "*::-webkit-scrollbar-thumb": {
+              background: "#1D388F61",
+              borderRadius: "2px"
+            }
+          }
+        }
+      }
+    }
+  });
 
   function joinRoom() {
     if (username !== "" && room !== "") {
@@ -63,19 +84,15 @@ export default function Chat() {
       {!windowChat ? (
         <div className="chat-join">
           <TextField
-            required
             id="standard-basic"
             variant="outlined"
-            type="text"
             placeholder="username"
             onChange={(event) => {
               setUsername(event.target.value);
           }}/>
            <TextField
-            required
             id="standard-basic"
             variant="outlined"
-            type="text"
             placeholder="room"
             onChange={(event) => {
               setRoom(event.target.value);
@@ -89,33 +106,36 @@ export default function Chat() {
         </div>
       ) : (
       <div className="chat-window" >
-        <div className="chat-header">
-          <p> Live chat</p>
-        </div>
-        <div className="chat-body">
-          <div className="messages-list">
-            { messagesList.map((messageData) => {
-              return <div
-                className={ author === messageData.author ? ("sender") : "receiver"}
-                key={ messageData.id }> { messageData.content} </div>
-            })}
+        <div className="scrollbar">
+          <div className="chat-header">
+            <p> Live chat</p>
           </div>
-        </div>
-        <div className="chat-footer">
-          <input
-              type="text"
+          <div className="chat-body">
+            <div className="messages-list">
+              { messagesList.map((messageData) => {
+                return <div
+                  className={ author === messageData.author ? ("sender") : "receiver"}
+                  key={ messageData.id }> { messageData.content} </div>
+              })}
+            </div>
+          </div>
+          <div className="chat-footer">
+            <TextField
+              id="standard-basic"
+              variant="outlined"
               placeholder="Enter a message"
               onChange={(event) => {
-              setCurrentMessage(event.target.value);
-            }} />
-          <img
-            alt="send message img"
-            src={require("../../assets/paperplane.png")}
-            onClick={sendMessage}>
-          </img>
+                setCurrentMessage(event.target.value);
+              }} />
+            <img
+              alt="send message img"
+                src={require("../../assets/paperplane.png")}
+                onClick={sendMessage}>
+              </img>
+            </div>
+          </div>
         </div>
-      </div>
-      )}
+        )}
     </div>
   );
 }

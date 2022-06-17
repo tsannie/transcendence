@@ -51,9 +51,7 @@
   width: fit-content;
   height: 96px;
   margin: auto;
-  border: 1px dashed grey;
   display: flex;
-  background-color: grey;
 }
 
 .chat-footer input {
@@ -74,4 +72,32 @@
   height: 18px;
   margin: auto auto auto 0;
   padding-left: 5px;
+}
+
+.scrollbar {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rebeccapurple green;
+}
+
+.scrollbar ::-webkit-scrollbar-thumb {
+  background: red;
+  border-radius: 10px;
+}
+
+.scrollbar ::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.scrollbar ::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.scrollbar ::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
