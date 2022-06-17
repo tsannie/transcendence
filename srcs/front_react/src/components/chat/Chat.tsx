@@ -1,3 +1,4 @@
+import { Button, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid'
@@ -61,21 +62,30 @@ export default function Chat() {
     <div className="chat">
       {!windowChat ? (
         <div className="chat-join">
-          <h1> Join a chat </h1>
-          <input
+          <TextField
+            required
+            id="standard-basic"
+            variant="outlined"
             type="text"
-            placeholder="client1"
+            placeholder="username"
             onChange={(event) => {
               setUsername(event.target.value);
           }}/>
-          <input
+           <TextField
+            required
+            id="standard-basic"
+            variant="outlined"
             type="text"
-            placeholder="RoomID"
+            placeholder="room"
             onChange={(event) => {
               setRoom(event.target.value);
           }}
           />
-          <button onClick={joinRoom}> Join a room </button>
+          <Button
+            sx={{height: 56}}
+            variant="contained"
+            onClick={joinRoom}> Join a room
+          </Button>
         </div>
       ) : (
       <div className="chat-window" >
@@ -101,7 +111,6 @@ export default function Chat() {
           <img
             alt="send message img"
             src={require("../../assets/paperplane.png")}
-            //src="https://i.pinimg.com/236x/15/c7/d1/15c7d10a7f8dbb14c3d8a8059c593509--tokyo-ghoul.jpg"
             onClick={sendMessage}>
           </img>
         </div>
