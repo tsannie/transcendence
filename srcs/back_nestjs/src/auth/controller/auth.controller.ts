@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Post, Query, Redirect, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Header, Post, Query, Redirect, Req, Request, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto/user.dto';
 import { IToken } from '../auth.const';
@@ -14,6 +14,7 @@ export class AuthController {
   @Post('/login')
   async login(@Request() req): Promise<IToken> {
     console.log('new login')
+    console.log('user')
     return await this.authService.login(req.user);
   }
 
@@ -32,7 +33,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
   getProfile(@Request() req) {
-    //console.log(req)
+    console.log('hello')
     return req.user;
   }
 
@@ -43,9 +44,13 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard('42'))
-  @Get('/42')
-  @Redirect('http://localhost:3000', 301) // TODO env
-  async redirect() {
+  @Get('/redirect')
+  @Redirect('http://localhost:3000/', 301) // TODO env
+  async redirect(@Req() req, @Res({ passthrough: true }) res) {
+    const user = req.user;
+    const accessToken = await this.authService.login(user);
+    res.cookie('AuthToken', accessToken);
+    console.log(accessToken)
     return 'bye';
   }
 }

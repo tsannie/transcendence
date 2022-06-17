@@ -8,12 +8,13 @@ import UserList from './userlist/UserListItem';
 
 const root = createRoot(document.getElementById("root")!);
 
+//    <App />
+//    <Register />
+//    <Login /> TODO delete
+
 root.render(
   <React.StrictMode>
-    <App />
     <UserList />
-    <Register />
-    <Login />
     <ButtonLogin />
   </React.StrictMode>,
 )
