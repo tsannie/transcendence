@@ -1,74 +1,34 @@
-.chat-join button {
-	background-color: #44c767;
-	border-radius: 31px;
-	border: 1px solid #18ab29;
-	display: inline-block;
-	cursor: pointer;
-	color: #ffffff;
-	font-family: Arial;
-	font-size: 12px;
-	padding: 6px 15px;
-	text-decoration: none;
-	text-shadow: 0px 1px 0px #2f6627;
-}
-
-.button-join-room:hover {
-	background-color: #5cbf2a;
-}
-
-.button-join-room:active {
-	position: relative;
-	top:1px;
-}
-
-.chat-join input {
-  padding: 5px;
-  font-size: 11px;
-  border-width: 0px;
-  border-color: #CCCCCC;
-  background-color: #FFFFFF;
-  color: #000000;
-  border-style: solid;
-  border-radius: 0px;
-  box-shadow: 0px 0px 5px rgba(66,66,66,.60);
-}
-
-.chat-join input:focus {
-  outline :none;
-}
-
 .chat-window {
   width: 640px;
   height: 1024px;
   padding-left: 441px;
+  border-right: 1px solid grey;
 }
 
 .chat-header {
   width: 640px;
   height: 80px;
   text-align: center;
-  border-bottom: 1px dashed red;
+  border-bottom: 1px solid grey;
 }
 
 .chat-body {
   width: 640px;
   height: 724px;
+  border-bottom: 1px solid grey;
 }
-
-/* .messages-list {
-
-} */
 
 .sender {
   background-color: #064FBD;
   color: white;
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 16px;
   border-radius: 12px;
   width: fit-content;
   height: fit-content;
-  padding: 16px 8px;
-  margin-right: 50%;
+  padding: 8px 8px;
+  margin-left: auto;
+  margin-bottom: 10px;
   position: relative;
   justify-content: flex-end;
 }
@@ -76,35 +36,42 @@
 .receiver {
   background-color: #F1F1F1;
   color: black;
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 16px;
   border-radius: 12px;
   width: fit-content;
   height: fit-content;
   padding: 16px 8px;
-  margin-left: 50%;
+  margin-right: auto;
   position: relative;
   justify-content: flex-start;
 }
 
 .chat-footer {
-  width: 640px;
+  width: fit-content;
   height: 96px;
-  margin-top: 350px;
+  margin: auto;
+  border: 1px dashed grey;
   display: flex;
+  background-color: grey;
 }
 
 .chat-footer input {
   text-align: center;
   width: fit-content;
   height: fit-content;
-  margin-left: auto;
+  margin: auto 0 auto auto;
+  border: none;
+}
+
+.chat-footer input::placeholder {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: lighter;
 }
 
 .chat-footer img {
   width: 18px;
   height: 18px;
-  padding-left: 8px;
-
-  margin-right: auto;
+  margin: auto auto auto 0;
+  padding-left: 5px;
 }
