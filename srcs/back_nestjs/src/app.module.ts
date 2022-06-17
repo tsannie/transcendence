@@ -15,6 +15,10 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/strategy/local.strategy';
+import { RoomController } from './room/controller/room.controller';
+import { RoomModule } from './room/room.module';
+import { ServiceModule } from './service/service.module';
+import { RoomModule } from './room/room.module';
 
 @Module({
   imports: [
@@ -31,9 +35,11 @@ import { LocalStrategy } from './auth/strategy/local.strategy';
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     AuthModule,
-    PassportModule
+    PassportModule,
+    RoomModule,
+    ServiceModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, RoomController],
   providers: [AppService, JwtService, AuthService, UserService, LocalStrategy], // AuthResolver
 })
 export class AppModule {}
