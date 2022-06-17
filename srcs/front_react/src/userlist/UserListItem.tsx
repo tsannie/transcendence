@@ -17,17 +17,13 @@ export default function UserList() {
   const [username, setUsername] = React.useState('');
   const [id, setId] = React.useState(0);
   const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
 
 
   function getUser() {
-    api.get('/user').then(res => {
-      //console.log(res.data)
-      //console.log(res.data);
+    api.get('/auth/profile').then(res => {
       setId(res.data[0].id);
       setUsername(res.data[0].username);
       setEmail(res.data[0].email);
-      setPassword(res.data[0].password);
     })
   }
 
@@ -37,12 +33,8 @@ export default function UserList() {
   });
 
   return (
-    <ul>
-      <li key={id}>{username}</li>
-        <ul>
-          <li>{email}</li>
-          <li>{password}</li>
-        </ul>
-    </ul>
+    <div>
+      {username ? <h1 key={id}>{username}/{email}</h1> : <h1>Logout</h1>}
+    </div>
   )
 }
