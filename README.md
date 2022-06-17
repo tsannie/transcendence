@@ -22,3 +22,5 @@
  - https://blog.logrocket.com/persistent-login-in-react-using-refresh-token-rotation/ react
 
  - https://fr.wikipedia.org/wiki/OAuth#:~:text=OAuth%20est%20un%20protocole%20libre,%C2%AB%20d%C3%A9l%C3%A9gation%20d'autorisation%20%C2%BB. OAuth
+
+ - https://www.passportjs.org/packages/passport-42/ passeport42

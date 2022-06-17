@@ -10,6 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import * as dotenv from 'dotenv'; // TODO delte that ?? and module
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { FortyTwoStrategy } from './strategy/fortytwo.strategy';
 
 dotenv.config()
 
@@ -21,7 +22,7 @@ dotenv.config()
     PassportModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtService, UserService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, JwtService, UserService, LocalStrategy, JwtStrategy, FortyTwoStrategy],
   exports: [AuthService]
 })
 

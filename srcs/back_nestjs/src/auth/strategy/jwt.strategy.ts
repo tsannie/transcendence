@@ -16,6 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {  // TODO all check for validate jeton
+    console.log(payload)
     return this.userService.findByName(payload.username);
   }
 }
