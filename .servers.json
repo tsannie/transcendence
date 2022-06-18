@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "nestjs",
+            "Group": "Group_1",
+            "Port": 5432,
+            "Username": "phbdg",
+            "Host": "postgres_transcendence",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+	}
+}
