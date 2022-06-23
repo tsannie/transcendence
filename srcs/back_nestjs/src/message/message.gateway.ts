@@ -17,6 +17,9 @@ import { Repository } from "typeorm";
 import { MessageEntity } from "./models/message.entity";
 import { IMessage } from "./models/message.interface";
 import { Adapter } from "socket.io-adapter";
+import { IRoom } from "src/room/models/room.interface";
+import { RoomService } from "src/room/service/room.service";
+import { RoomEntity } from "src/room/models/room.entity";
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -28,7 +31,8 @@ import { Adapter } from "socket.io-adapter";
 export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(
 		@InjectRepository(MessageEntity)
-		private allMessages: Repository<MessageEntity>
+		private allMessages: Repository<MessageEntity>,
+    //private roomService: RoomService
 	) {}
 
   connectedClients = [];
@@ -37,23 +41,27 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('message')
+  @SubscribeMessage('addMessage')
     addMessage(
     @MessageBody() data: IMessage,
     @ConnectedSocket() client: Socket)
     : void {
     this.logger.log(client.id);
+    //this.logger.log(this.server.socketsJoin(data.room))
+
+    //const newRoom : RoomEntity = this.roomService.getRoomById();
     const newMessage: IMessage = { // message de base + uuid
       id: data.id,
       room: data.room,
       author: data.author,
       content: data.content,
       time: data.time,
+      //room: newRoom
     }
     this.add(newMessage);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
       // join room
-    client.to(newMessage.room).emit("message", newMessage);
+    client.to(newMessage.room).emit("addMessage", newMessage);
   }
 
   afterInit() {
@@ -86,8 +94,8 @@ export class MessageGateway implements OnGatewayInit, OnGatewayConnection, OnGat
 
   // Quand tu doubles cliques sur un utilisateur, cela va cree une room pour pouvoir le dm
 
-  @SubscribeMessage('joinRoom')
-    joinRoom(
+  @SubscribeMessage('createRoom')
+    createRoom(
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket) {
     client.join(data);

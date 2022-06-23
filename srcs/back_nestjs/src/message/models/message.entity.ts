@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+//import { RoomEntity } from "src/room/models/room.entity";
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class MessageEntity {
@@ -16,4 +17,7 @@ export class MessageEntity {
 
 	@Column()
 	time: string;
+
+	//@ManyToOne(() => RoomEntity, (room) => room.messages)
+	//room: RoomEntity
 }
