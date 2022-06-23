@@ -1,9 +1,8 @@
-import { Button, CssBaseline, darkScrollbar, TextField, ThemeProvider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid'
 import './Chat.css'
-import { createTheme } from "@mui/material/styles";
+import { Input, Button } from '@chakra-ui/react'
 
 const socket = io('http://localhost:4000/chat');
 
@@ -23,26 +22,6 @@ export default function Chat() {
   const [windowChat, setWindowChat] = useState(false)
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
   const [author, setAuthor] = useState('');
-  const theme = createTheme({
-    components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          "@global": {
-            "*::-webkit-scrollbar": {
-              width: "10px"
-            },
-            "*::-webkit-scrollbar-track": {
-              background: "#E4EFEF"
-            },
-            "*::-webkit-scrollbar-thumb": {
-              background: "#1D388F61",
-              borderRadius: "2px"
-            }
-          }
-        }
-      }
-    }
-  });
 
   function createRoom() {
     if (username !== "" && room !== "") {
@@ -83,24 +62,19 @@ export default function Chat() {
     <div className="chat">
       {!windowChat ? (
         <div className="chat-join">
-          <TextField
-            id="standard-basic"
-            variant="outlined"
+          <Input
             placeholder="username"
             onChange={(event) => {
               setUsername(event.target.value);
           }}/>
-           <TextField
-            id="standard-basic"
-            variant="outlined"
+           <Input
             placeholder="room"
             onChange={(event) => {
               setRoom(event.target.value);
           }}
           />
           <Button
-            sx={{height: 56}}
-            variant="contained"
+            colorScheme='blue'
             onClick={createRoom}> Join a room
           </Button>
         </div>
@@ -120,7 +94,7 @@ export default function Chat() {
             </div>
           </div>
           <div className="chat-footer">
-            <TextField
+            <Input
               id="standard-basic"
               variant="outlined"
               placeholder="Enter a message"
