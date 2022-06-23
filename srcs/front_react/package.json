@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@mui/material": "^5.8.4",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.1.1",
     "@testing-library/user-event": "^13.5.0",
@@ -14,6 +14,7 @@
     "@types/react": "^18.0.6",
     "@types/react-dom": "^18.0.2",
     "axios": "^0.27.2",
+    "framer-motion": "^6.3.13",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-hook-form": "^7.32.1",
