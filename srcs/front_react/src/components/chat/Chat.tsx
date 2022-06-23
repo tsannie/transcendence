@@ -44,9 +44,9 @@ export default function Chat() {
     }
   });
 
-  function joinRoom() {
+  function createRoom() {
     if (username !== "" && room !== "") {
-      socket.emit("joinRoom", room);
+      socket.emit("createRoom", room);
       console.log(`User join room ${room}`);
       setWindowChat(true);
     }
@@ -64,7 +64,7 @@ export default function Chat() {
           ":" +
           String(new Date(Date.now()).getMinutes()).padStart(2, '0'),
       };
-      await socket.emit("message", messageData);
+      await socket.emit("addMessage", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage(messageData.content);
       setAuthor(messageData.author);
@@ -73,7 +73,7 @@ export default function Chat() {
 
   // listen message from backend
   useEffect(() => {
-    socket.on("message", (data) => {
+    socket.on("addMessage", (data) => {
       console.log(data);
       setMessagesList((list) => [...list, data]);
     })
@@ -101,7 +101,7 @@ export default function Chat() {
           <Button
             sx={{height: 56}}
             variant="contained"
-            onClick={joinRoom}> Join a room
+            onClick={createRoom}> Join a room
           </Button>
         </div>
       ) : (
