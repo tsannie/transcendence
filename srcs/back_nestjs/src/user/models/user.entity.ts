@@ -1,5 +1,4 @@
-import { RoomEntity } from "src/room/models/room.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 //import * as bcrypt from 'bcrypt';
 
 @Entity()
@@ -22,6 +21,6 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => RoomEntity, room => room.users)
-  room: RoomEntity
+  //@ManyToOne(() => RoomEntity, room => room.users)
+  //room: RoomEntity
 }

@@ -17,8 +17,8 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/strategy/local.strategy';
 import { RoomController } from './room/controller/room.controller';
 import { RoomModule } from './room/room.module';
-import { ServiceModule } from './service/service.module';
-import { RoomModule } from './room/room.module';
+import { RoomService } from './room/service/room.service';
+import { MessageEntity } from './message/models/message.entity';
 
 @Module({
   imports: [
@@ -36,10 +36,9 @@ import { RoomModule } from './room/room.module';
     UserModule,
     AuthModule,
     PassportModule,
-    RoomModule,
-    ServiceModule
+    RoomModule
   ],
-  controllers: [AppController, RoomController],
-  providers: [AppService, JwtService, AuthService, UserService, LocalStrategy], // AuthResolver
+  controllers: [AppController],
+  providers: [AppService, JwtService, AuthService, UserService, LocalStrategy, RoomService], // AuthResolver
 })
 export class AppModule {}

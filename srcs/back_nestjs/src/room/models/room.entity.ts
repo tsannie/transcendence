@@ -1,6 +1,7 @@
+import { MessageEntity } from "src/message/models/message.entity";
 import { UserController } from "src/user/controller/user.controller";
 import { UserEntity } from "src/user/models/user.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class RoomEntity {
@@ -8,8 +9,15 @@ export class RoomEntity {
   id: number;
 
 	@Column()
+	name: string;
+
+	@Column()
 	userid: number;
 
-	@OneToMany(() => UserEntity, user => user.id)
+	@OneToMany(() => MessageEntity, message => message.room)
+  messages: MessageEntity[];
+
+	@ManyToMany(() => UserEntity)
+	@JoinTable()
 	users: UserEntity[]
 }
