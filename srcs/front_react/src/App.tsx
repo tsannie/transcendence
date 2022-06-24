@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 import Chat from './components/chat/Chat';
+import Sidebar from './components/sidebar/Sidebar';
 import UserList from './userlist/UserListItem';
 
-function App() {
+export default function App() {
+
   return (
-    <div>
-      <Chat />
+    <div className='app'>
+      <Sidebar />
     </div>
   );
 }
-
-export default App;
