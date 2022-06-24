@@ -8,7 +8,6 @@ import Login from './Auth/Login';
 import ButtonLogin from './Auth/Login copy';
 import Register from './Auth/Register';
 import UserList from './userlist/UserListItem';
-import { ChakraProvider } from '@chakra-ui/react'
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -17,7 +16,5 @@ const root = createRoot(document.getElementById("root")!);
 //    <Login /> TODO delete
 
 root.render(
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
+    <App />
 )

@@ -1,0 +1,29 @@
+.sidebar {
+  height: 1024px;
+  width: 88px;
+  border: 1px solid green;
+  position: relative;
+}
+
+.sidebar div {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 83px;
+}
+
+.chat {
+  justify-content: center;
+}
+
+.exit {
+  position: absolute;
+  margin-bottom: 0px !important;
+  bottom: 21px;
+  left: 32px;
+}
+
+.settings {
+  position: absolute;
+  bottom: 50px;
+  left: 32px;
+}
