@@ -6,7 +6,7 @@ import { MessageGateway } from '../message.gateway';
 import { IMessage } from '../models/message.interface';
 import { MessageService } from '../service/message.service';
 
-@Controller('message')
+@Controller('addMessage')
 export class MessageController {
 
 	constructor( private messageGateway: MessageGateway ) {}

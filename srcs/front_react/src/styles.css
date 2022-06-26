@@ -1,3 +1,7 @@
 .app {
   display: flex;
 }
+
+.chat-clicked {
+  border: 1px solid greenyellow
+}
