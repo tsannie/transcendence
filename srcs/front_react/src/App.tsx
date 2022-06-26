@@ -7,9 +7,14 @@ import UserList from './userlist/UserListItem';
 
 export default function App() {
 
+  const [inputChat, setInputChat] = useState(false);
+
   return (
     <div className='app'>
-      <Sidebar />
+      <Sidebar inputChat={inputChat} setInputChat={setInputChat}/>
+      <div className='chat-clicked'>
+        { !inputChat ? <div></div> : <Chat />}
+      </div>
     </div>
   );
 }
