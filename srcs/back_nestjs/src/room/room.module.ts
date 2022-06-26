@@ -5,11 +5,9 @@ import { RoomEntity } from './models/room.entity';
 import { RoomService } from './service/room.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([RoomEntity])
-  ],
+  imports: [TypeOrmModule.forFeature([RoomEntity])],
   providers: [RoomService],
   controllers: [RoomController],
-  exports: [RoomService]
+  exports: [RoomService],
 })
 export class RoomModule {}

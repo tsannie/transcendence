@@ -6,12 +6,10 @@ import { IRoom } from '../models/room.interface';
 
 @Injectable()
 export class RoomService {
-
   /* constructor(
     @InjectRepository(RoomEntity)
     private readonly roomRepository: Repository<RoomEntity>
   ) { } */
-
   /* getRoomById(roomid: number): RoomEntity {
     return this.roomRepository.findByIds(roomid);
   } */
