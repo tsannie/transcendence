@@ -1,7 +1,6 @@
-import { IsDefined, IsEmail, IsNotEmpty } from "class-validator";
+import { IsDefined, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class UserDto {
-
   id?: number;
 
   @IsDefined()

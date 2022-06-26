@@ -1,23 +1,31 @@
-import { MessageEntity } from "src/message/models/message.entity";
-import { UserController } from "src/user/controller/user.controller";
-import { UserEntity } from "src/user/models/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { MessageEntity } from 'src/message/models/message.entity';
+import { UserController } from 'src/user/controller/user.controller';
+import { UserEntity } from 'src/user/models/user.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class RoomEntity {
-	@PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
-	@Column()
-	name: string;
+  @Column()
+  name: string;
 
-	@Column()
-	userid: number;
+  @Column()
+  userid: number;
 
-	@OneToMany(() => MessageEntity, message => message.room)
+  @OneToMany(() => MessageEntity, (message) => message.room)
   messages: MessageEntity[];
 
-	@ManyToMany(() => UserEntity)
-	@JoinTable()
-	users: UserEntity[]
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  users: UserEntity[];
 }

@@ -9,12 +9,8 @@ import { RoomService } from 'src/room/service/room.service';
 import { RoomModule } from 'src/room/room.module';
 
 @Module({
-  imports:
-  [
-    TypeOrmModule.forFeature([MessageEntity])
-  ],
+  imports: [TypeOrmModule.forFeature([MessageEntity])],
   controllers: [MessageController],
-  providers: [MessageService, MessageGateway]
+  providers: [MessageService, MessageGateway],
 })
-
 export class MessageModule {}

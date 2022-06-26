@@ -1,23 +1,29 @@
 //import { RoomEntity } from "src/room/models/room.entity";
-import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class MessageEntity {
-	@PrimaryColumn({unique: true})
+  @PrimaryColumn({ unique: true })
   id: string;
 
-	@Column()
-	room: string;
+  @Column()
+  room: string;
 
-	@Column()
-	author: string;
+  @Column()
+  author: string;
 
-	@Column()
-	content: string;
+  @Column()
+  content: string;
 
-	@Column()
-	time: string;
+  @Column()
+  time: string;
 
-	//@ManyToOne(() => RoomEntity, (room) => room.messages)
-	//room: RoomEntity
+  //@ManyToOne(() => RoomEntity, (room) => room.messages)
+  //room: RoomEntity
 }

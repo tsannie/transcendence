@@ -8,11 +8,10 @@ import { MessageService } from '../service/message.service';
 
 @Controller('addMessage')
 export class MessageController {
-
-	constructor( private messageGateway: MessageGateway ) {}
+  constructor(private messageGateway: MessageGateway) {}
 
   @Get('all')
   getAllMessages() {
-    return (this.messageGateway.getAllMessages());
+    return this.messageGateway.getAllMessages();
   }
 }

@@ -4,7 +4,7 @@ import { RoomService } from '../service/room.service';
 
 @Controller('room')
 export class RoomController {
-  constructor( private roomService: RoomService ) {}
+  constructor(private roomService: RoomService) {}
 
   /* @Get('id')
   getRoomById(): RoomEntity {

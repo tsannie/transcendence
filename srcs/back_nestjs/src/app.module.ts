@@ -23,22 +23,30 @@ import { MessageEntity } from './message/models/message.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
-    TypeOrmModule.forRoot({     // TODO create class database
+    TypeOrmModule.forRoot({
+      // TODO create class database
       type: 'postgres',
       url: process.env.POSTGRES_FORCE,
-      autoLoadEntities: true,   // TODO check that
-      synchronize: true
+      autoLoadEntities: true, // TODO check that
+      synchronize: true,
     }),
     MessageModule,
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     AuthModule,
     PassportModule,
-    RoomModule
+    RoomModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtService, AuthService, UserService, LocalStrategy, RoomService], // AuthResolver
+  providers: [
+    AppService,
+    JwtService,
+    AuthService,
+    UserService,
+    LocalStrategy,
+    RoomService,
+  ], // AuthResolver
 })
 export class AppModule {}
