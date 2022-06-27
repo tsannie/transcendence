@@ -2,10 +2,13 @@
   border: 1px solid green;
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
 }
 
 .chat-window {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 640px;
   height: 1024px;
   padding-left: 441px;
