@@ -77,7 +77,6 @@ export default function Chat() {
             }}
           />
           <Button sx={{ height: 56 }} variant="contained" onClick={createRoom}>
-            {" "}
             Join a room
           </Button>
         </div>
