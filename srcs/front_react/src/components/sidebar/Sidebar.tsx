@@ -10,7 +10,6 @@ import ChatIcon from "../../assets/chat.png";
 import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
-import { green } from "@mui/material/colors";
 import { Drawer } from "@mui/material";
 
 export default function Sidebar(props: any) {
@@ -18,14 +17,7 @@ export default function Sidebar(props: any) {
   //const [displaySettings, setDisplaySettings] = useState(false);
 
   return (
-    <Drawer
-      anchor="left"
-      variant="persistent"
-      sx={{
-        width: 88,
-        height: 1024,
-      }}
-    >
+    <Box sx={{ width: 88, height: 1024, border: "1px solid grey" }}>
       <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
         <img src={LogoIcon}></img>
       </Box>
@@ -47,6 +39,7 @@ export default function Sidebar(props: any) {
       <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
         <img src={ExitIcon}></img>
       </Box>
-    </Drawer>
+    </Box>
+    //</Drawer>
   );
 }
