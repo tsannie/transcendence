@@ -56,30 +56,3 @@
   position: relative;
   justify-content: flex-start;
 }
-
-.chat-footer {
-  width: fit-content;
-  height: 96px;
-  margin: auto;
-  display: flex;
-}
-
-.chat-footer input {
-  text-align: center;
-  width: fit-content;
-  height: fit-content;
-  margin: auto 0 auto auto;
-  border: none;
-}
-
-.chat-footer input::placeholder {
-  font-family: "Montserrat", sans-serif;
-  font-weight: lighter;
-}
-
-.chat-footer img {
-  width: 18px;
-  height: 18px;
-  margin: auto auto auto 0;
-  padding-left: 5px;
-}
