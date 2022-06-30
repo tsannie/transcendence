@@ -92,7 +92,6 @@ export default function Chat() {
         top: 0,
         bottom: 0,
         left: 88,
-        borderRight: "1px solid grey",
       }}
     >
       <Box
@@ -100,7 +99,6 @@ export default function Chat() {
           width: 640,
           height: 80,
           textAlign: "center",
-          borderBottom: "1px solid grey",
         }}
       >
         Live chat
@@ -109,7 +107,6 @@ export default function Chat() {
         sx={{
           width: 640,
           height: 724,
-          borderBottom: "1px solid grey",
         }}
       >
         <Box>
