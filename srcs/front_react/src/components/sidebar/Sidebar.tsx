@@ -13,9 +13,10 @@ import { Box } from "@mui/system";
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
   //const [displaySettings, setDisplaySettings] = useState(false);
+  // chat icon color: #610D7E
 
   return (
-    <Box sx={{ width: 88, height: 1024, border: "1px solid grey" }}>
+    <Box sx={{ width: 88, height: 1024 }}>
       <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
         <img src={LogoIcon}></img>
       </Box>
