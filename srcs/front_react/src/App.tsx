@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import React, { useState } from "react";
 import Login from "./Auth/Login";
 import Register from "./Auth/Register";
@@ -9,9 +10,13 @@ export default function App() {
   const [inputChat, setInputChat] = useState(false);
 
   return (
-    <div className="app">
+    <Box
+      sx={{
+        display: "flex",
+      }}
+    >
       <Sidebar inputChat={inputChat} setInputChat={setInputChat} />
       {inputChat && <Chat />}
-    </div>
+    </Box>
   );
 }

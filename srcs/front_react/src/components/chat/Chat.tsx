@@ -10,7 +10,6 @@ import {
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import "./Chat.css";
 import { createTheme } from "@mui/material/styles";
 import { IMessage } from "./types";
 import Paperplane from "../../assets/paperplane.png";
@@ -85,26 +84,80 @@ export default function Chat() {
   }
 
   return (
-    <div className="chat-window">
-      <div className="chat-header">
-        <p> Live chat </p>
-      </div>
-      <div className="chat-body">
-        <div className="messages-list">
+    <Box
+      sx={{
+        position: "absolute",
+        width: 640,
+        height: 1024,
+        top: 0,
+        bottom: 0,
+        left: 88,
+        borderRight: "1px solid grey",
+      }}
+    >
+      <Box
+        sx={{
+          width: 640,
+          height: 80,
+          textAlign: "center",
+          borderBottom: "1px solid grey",
+        }}
+      >
+        Live chat
+      </Box>
+      <Box
+        sx={{
+          width: 640,
+          height: 724,
+          borderBottom: "1px solid grey",
+        }}
+      >
+        <Box>
           {messagesList.map((messageData) => {
+            if (author === messageData.author)
+              return (
+                <Box
+                  sx={{
+                    width: "fit-content",
+                    height: "fit-content",
+                    backgroundColor: "#064fbd",
+                    color: "white",
+                    fontFamily: "sans-serif",
+                    fontSize: 16,
+                    borderRadius: 12,
+                    ml: "auto",
+                    mr: 0.5,
+                    mb: 1,
+                    p: 1,
+                  }}
+                  key={messageData.id}
+                >
+                  {messageData.content}
+                </Box>
+              );
             return (
-              <div
-                className={
-                  author === messageData.author ? "sender" : "receiver"
-                }
+              <Box
+                sx={{
+                  width: "fit-content",
+                  height: "fit-content",
+                  backgroundColor: "#f1f1f1",
+                  color: "black",
+                  fontFamily: "sans-serif",
+                  fontSize: 16,
+                  borderRadius: 12,
+                  ml: 0.5,
+                  mr: "auto",
+                  mb: 1,
+                  p: 1,
+                }}
                 key={messageData.id}
               >
                 {messageData.content}
-              </div>
+              </Box>
             );
           })}
-        </div>
-      </div>
+        </Box>
+      </Box>
       <Box
         sx={{
           width: "fit-content",
@@ -133,6 +186,6 @@ export default function Chat() {
           }}
         ></Box>
       </Box>
-    </div>
+    </Box>
   );
 }

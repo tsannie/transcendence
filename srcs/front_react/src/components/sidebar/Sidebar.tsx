@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { isJsxAttribute, JsxElement } from "typescript";
 import Chat from "../chat/Chat";
-import "./Sidebar.css";
 import LogoIcon from "../../assets/logo-project.png";
 import HomeIcon from "../../assets/home.png";
 import ProfileIcon from "../../assets/profile.png";
@@ -10,7 +9,6 @@ import ChatIcon from "../../assets/chat.png";
 import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
-import { Drawer } from "@mui/material";
 
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
@@ -40,6 +38,5 @@ export default function Sidebar(props: any) {
         <img src={ExitIcon}></img>
       </Box>
     </Box>
-    //</Drawer>
   );
 }
