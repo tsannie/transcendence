@@ -2,6 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createRoot } from "react-dom/client";
 import Darkmode from "./App";
+import App from './App';
+import Register from './Auth/Register';
+import Game from './game/Game';
 import UserList from './userlist/UserListItem';
 import App from "./App";
 import Chat from "./components/chat/Chat";
@@ -13,10 +16,10 @@ const root = createRoot(document.getElementById("root")!);
 //    <Register />
 
 root.render(<App />);
-/* root.render(
+root.render(
   <React.StrictMode>
     <UserList />
-    <ButtonLogin />
-    <ButtonLogout />
-  </React.StrictMode>,
-) */
+    <Register />
+    <Game/>
+    </React.StrictMode>,
+)
