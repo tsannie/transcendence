@@ -19,6 +19,7 @@ import { MessageEntity } from './message/models/message.entity';
 import { ChannelController } from './channel/controller/channel.controller';
 import { ChannelService } from './channel/service/channel.service';
 import { ChannelModule } from './channel/channel.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ChannelModule } from './channel/channel.module';
     AuthModule,
     PassportModule,
     //ChannelModule,
+    GameModule
   ],
   controllers: [AppController],
   providers: [
