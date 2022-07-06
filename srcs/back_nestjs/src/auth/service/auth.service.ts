@@ -41,8 +41,8 @@ export class AuthService {
       sub: user.id    // sub for jwt norm
     };
     const token = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
-        secret:'secret',
-        expiresIn: '1h'
+        secret:'secret',    // TODO const
+        expiresIn: '1d'     // TODO const with time of cookie
       })    // TODO patch this shiit to be in auth.module
     };
     return token;

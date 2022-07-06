@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import axios from 'axios';
+import { COOKIE_NAME } from '../const';
 
 export const api = axios.create({   // TODO moove to a constant file
   withCredentials: true,
@@ -21,13 +22,17 @@ export default function UserList() {
 
 
   async function getUser() {
-    await api.get('auth/profile').then(res => {
-      setId(res.data.id);
-      setUsername(res.data.username);
-      setEmail(res.data.email);
-    }).catch(res => {
-      console.log(res)
-    })
+    if (document.cookie.includes(COOKIE_NAME))
+    {
+      await api.get('auth/profile').then(res => {
+        setId(res.data.id);
+        setUsername(res.data.username);
+        setEmail(res.data.email);
+      }).catch(res => {
+        console.log('invalid jwt');
+        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+      });
+    }
   }
 
   // Similar to componentDidMount and componentDidUpdate
