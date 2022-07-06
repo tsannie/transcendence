@@ -9,7 +9,7 @@ export class UserController {
   constructor( private userService: UserService ) {}
 
   @Get()
-  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Origin', 'http://localhost:3000')
   getAllUser(): Observable<UserDto[]> {
     return this.userService.getAllUser();
   }
