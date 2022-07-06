@@ -9,6 +9,7 @@ import ChatIcon from "../../assets/chat.png";
 import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
+import { Grid } from "@mui/material";
 
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
@@ -16,28 +17,37 @@ export default function Sidebar(props: any) {
   // chat icon color: #610D7E
 
   return (
-    <Box sx={{ width: 88, height: 1024 }}>
-      <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
+    <Grid
+      spacing={10}
+      alignItems="center"
+      container
+      direction="column"
+      sx={{
+        maxWidth: "fit-content",
+        maxHeight: "fit-content",
+      }}
+    >
+      <Grid item sx={{}}>
         <img src={LogoIcon}></img>
-      </Box>
-      <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
+      </Grid>
+      <Grid item sx={{}}>
         <img src={HomeIcon}></img>
-      </Box>
-      <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
+      </Grid>
+      <Grid item sx={{}}>
         <img src={ProfileIcon}></img>
-      </Box>
-      <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
+      </Grid>
+      <Grid item sx={{}}>
         <img src={GameIcon}></img>
-      </Box>
-      <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
+      </Grid>
+      <Grid item sx={{}}>
         <img src={ChatIcon} onClick={() => props.setInputChat(true)}></img>
-      </Box>
-      <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
+      </Grid>
+      <Grid item sx={{}}>
         <img src={SettingsIcon}></img>
-      </Box>
-      <Box sx={{ display: "flex", mb: 10, justifyContent: "center" }}>
+      </Grid>
+      <Grid item sx={{}}>
         <img src={ExitIcon}></img>
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   );
 }

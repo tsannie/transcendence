@@ -18,9 +18,6 @@ import { Repository } from 'typeorm';
 import { MessageEntity } from './models/message.entity';
 import { IMessage } from './models/message.interface';
 import { Adapter } from 'socket.io-adapter';
-import { IRoom } from 'src/room/models/room.interface';
-import { RoomService } from 'src/room/service/room.service';
-import { RoomEntity } from 'src/room/models/room.entity';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
