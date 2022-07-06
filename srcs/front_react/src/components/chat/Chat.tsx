@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { createTheme } from "@mui/material/styles";
 import { IMessage } from "./types";
 import Paperplane from "../../assets/paperplane.png";
+//import Chat_join from "./Chat_join";
 
 const socket = io("http://localhost:4000/chat");
 
@@ -61,6 +62,9 @@ export default function Chat() {
 
   if (!windowChat) {
     return (
+      /*  <div>
+        <Chat_join />
+      </div> */
       <Box sx={{ position: "absolute", top: 0, left: 88 }}>
         <TextField
           variant="outlined"
