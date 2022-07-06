@@ -32,8 +32,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
+  @Header('Access-Control-Allow-Origin', '*')
   getProfile(@Request() req) {
-    console.log('hello')
+    console.log('req.user:');
+    console.log(req.user);
+    console.log('end');
     return req.user;
   }
 
