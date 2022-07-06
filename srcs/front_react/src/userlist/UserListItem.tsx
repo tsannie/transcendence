@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 
 export const api = axios.create({   // TODO moove to a constant file
-  withCredentials: false,
+  withCredentials: true,
   baseURL: 'http://localhost:4000/'
 })
 
@@ -21,14 +21,10 @@ export default function UserList() {
 
 
   async function getUser() {
-
-    api.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-    api.defaults.withCredentials = true;
-
     await api.get('auth/profile').then(res => {
-      setId(res.data[0].id);
-      setUsername(res.data[0].username);
-      setEmail(res.data[0].email);
+      setId(res.data.id);
+      setUsername(res.data.username);
+      setEmail(res.data.email);
     }).catch(res => {
       console.log(res)
     })
