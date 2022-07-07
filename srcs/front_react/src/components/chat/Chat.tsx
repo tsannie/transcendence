@@ -15,7 +15,7 @@ import { IMessage } from "./types";
 import Paperplane from "../../assets/paperplane.png";
 //import Chat_join from "./Chat_join";
 
-const socket = io("http://localhost:4000/chat");
+const socket = io("http://localhost:4000");
 
 export default function Chat() {
   const [username, setUsername] = useState("");
