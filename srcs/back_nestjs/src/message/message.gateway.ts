@@ -18,21 +18,20 @@ import { Repository } from 'typeorm';
 import { MessageEntity } from './models/message.entity';
 import { IMessage } from './models/message.interface';
 import { Adapter } from 'socket.io-adapter';
+import { MessageChannel } from 'worker_threads';
+import { MessageController } from './controller/message.controller';
+import { MessageService } from './service/message.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
-  namespace: 'chat',
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
   },
 })
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(
-    @InjectRepository(MessageEntity)
-    private allMessages: Repository<MessageEntity>, //private roomService: RoomService
-  ) {}
+  constructor(private messageService: MessageService) {}
 
   connectedClients = [];
   private readonly logger: Logger = new Logger('messageGateway');
@@ -58,7 +57,7 @@ export class MessageGateway
       time: data.time,
       //room: newRoom
     };
-    this.add(newMessage);
+    this.messageService.add(newMessage);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
     // join room
     client.to(newMessage.room).emit('addMessage', newMessage);
@@ -83,13 +82,6 @@ export class MessageGateway
     this.connectedClients = this.connectedClients.filter((connectedClient) => {
       return connectedClient !== client.id;
     });
-  }
-
-  add(message: IMessage): Observable<IMessage> {
-    return from(this.allMessages.save(message));
-  }
-  getAllMessages(): Observable<IMessage[]> {
-    return from(this.allMessages.find());
   }
 
   // Quand tu doubles cliques sur un utilisateur, cela va cree une room pour pouvoir le dm
