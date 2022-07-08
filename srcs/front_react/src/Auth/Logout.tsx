@@ -1,14 +1,15 @@
 import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { COOKIE_NAME } from "../const";
 import { api } from "../userlist/UserListItem";
 
-export default function ButtonLogin() {
+export default function ButtonLogout() {
   function linkLog(event: any) {
-    const link = "http://localhost:4000/auth";
     event.preventDefault();
-    window.location.href = link;
+    document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
+    window.location.reload();
   }
 
-  return <button onClick={linkLog}>OAuth42</button>;
+  return <button onClick={linkLog}>Logout</button>;
 }
