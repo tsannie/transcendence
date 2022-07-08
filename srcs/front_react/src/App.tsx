@@ -10,7 +10,6 @@ import {
 
 import React, { createContext, useContext, useMemo, useState } from "react";
 import Login from "./Auth/Login";
-import Register from "./Auth/Register";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
 import UserList from "./userlist/UserListItem";
