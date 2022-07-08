@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import axios from "axios";
+import { COOKIE_NAME } from "../const";
 
 export const api = axios.create({
   // TODO moove to a constant file
-
+  withCredentials: true,
   baseURL: "http://localhost:4000/",
 });
 
@@ -18,12 +19,20 @@ export default function UserList() {
   const [id, setId] = React.useState(0);
   const [email, setEmail] = React.useState("");
 
-  function getUser() {
-    api.get("/auth/profile").then((res) => {
-      setId(res.data[0].id);
-      setUsername(res.data[0].username);
-      setEmail(res.data[0].email);
-    });
+  async function getUser() {
+    if (document.cookie.includes(COOKIE_NAME)) {
+      await api
+        .get("auth/profile")
+        .then((res) => {
+          setId(res.data.id);
+          setUsername(res.data.username);
+          setEmail(res.data.email);
+        })
+        .catch((res) => {
+          console.log("invalid jwt");
+          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
+        });
+    }
   }
 
   // Similar to componentDidMount and componentDidUpdate
