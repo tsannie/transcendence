@@ -16,4 +16,4 @@ const root = createRoot(document.getElementById("root")!);
 //    <Register />
 //    <Login /> TODO delete
 
-root.render(<Darkmode />);
+root.render(<App />);
