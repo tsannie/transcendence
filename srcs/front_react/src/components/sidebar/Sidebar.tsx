@@ -10,6 +10,7 @@ import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
+import ButtonLogout from "../../Auth/Logout";
 
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
@@ -46,7 +47,7 @@ export default function Sidebar(props: any) {
         <img src={SettingsIcon}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ExitIcon}></img>
+        <img src={ExitIcon} onClick={() => props.setIsConnected(false)}></img>
       </Grid>
     </Grid>
   );

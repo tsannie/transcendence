@@ -68,16 +68,12 @@ export class MessageGateway
   }
 
   handleConnection(client: Socket) {
-    const socket = this.server.sockets;
-
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.push(client);
     this.server.emit('hello', `from ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    const socket = this.server.sockets;
-
     this.logger.log(`Client disconnected: ${client.id}`);
     this.connectedClients = this.connectedClients.filter((connectedClient) => {
       return connectedClient !== client.id;
