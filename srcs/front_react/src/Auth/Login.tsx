@@ -6,8 +6,8 @@ import { api } from "../userlist/UserListItem";
 
 export default function ButtonLogin(props: any) {
   function linkLog(event: any) {
-    props.isLogin(true);
-    console.log("dans login")
+    //props.isLogin(true);
+    console.log("dans login");
     event.preventDefault();
     window.location.href = REDIRECT_LINK_AUTH;
   }

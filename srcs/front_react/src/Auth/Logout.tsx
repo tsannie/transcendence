@@ -1,17 +1,16 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { COOKIE_NAME } from "../const";
+import { COOKIE_NAME, REDIRECT_LINK_AUTH } from "../const";
 import { api } from "../userlist/UserListItem";
 
 export default function ButtonLogout(props: any) {
-    document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-    window.location.reload();
-    props.setIsConnected(false);
-    console.log("dans logout")
-    return (
-      <div>
+  function linkLog(event: any) {
+    //props.isLogin(false);
+    console.log("dans logout");
+    event.preventDefault();
+    window.location.href = REDIRECT_LINK_AUTH;
+  }
 
-      </div>
-    )
+  return <button onClick={linkLog}> Logout</button>;
 }
