@@ -6,23 +6,16 @@ import {
   IconButton,
   ThemeProvider,
   Typography,
-  useTheme,
 } from "@mui/material";
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import ButtonLogin from "./Auth/Login";
-import Login from "./Auth/Login";
-import ButtonLogout from "./Auth/Logout";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+import ButtonLogin from "./Auth/ButtonLogin";
+import ButtonLogout from "./Auth/ButtonLogout";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
 import UserList from "./userlist/UserListItem";
-import LogoIconSvg from "./assets/logo-project.svg";
+import LogoIcon from "./assets/logo-project.png";
 
 export const LoginContext = createContext({});
 
@@ -30,7 +23,6 @@ export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
-  console.log(isLogin);
   useEffect(() => {
     const a = JSON.parse(window.localStorage.getItem("isLogin") || "");
     setIsLogin(a);
@@ -42,12 +34,22 @@ export default function App() {
 
   if (!isLogin)
     return (
-      <Box>
-        <Icon>
-          <img src={LogoIconSvg} />
-        </Icon>
+      <Box
+        sx={{
+          bgcolor: "rgba(0, 0, 0, 0.70)",
+          height: "100vh",
+          pt: "2vh",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <img src={LogoIcon}></img>
+        </Box>
         <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
-        <UserList />
       </Box>
     );
   return (
@@ -64,9 +66,6 @@ export default function App() {
       />
       {inputChat && <Chat />}
       {!isLogin && <ButtonLogout />}
-      {/* <ButtonLogin />
-      <ButtonLogout />
-      <UserList /> */}
     </Box>
   );
 }
