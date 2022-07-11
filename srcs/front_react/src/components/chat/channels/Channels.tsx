@@ -21,8 +21,7 @@ export default function Channels(props: any) {
         sx={{
           fontWeight: "bold"
         }}
-        variant="h5"
-        component="p">
+        variant="h5">
         Channels
       </Typography>
       <img src={Add} onClick={setChannel}></img>
