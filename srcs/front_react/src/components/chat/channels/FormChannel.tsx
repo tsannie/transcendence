@@ -1,30 +1,32 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import React, { useState } from "react";
 import { socket } from "../Chat";
 
 export default function FormChannel(props: any) {
-
-  const [status, setStatus] = useState('Public');
+  const [status, setStatus] = useState("Public");
+  const [enablePassword, setEnablePassword] = useState(false);
 
   function createChannels() {
     console.log("createChannel");
-    socket.emit("createChannels");
+    //socket.emit("createChannels");
   }
 
   return (
-    <Box sx={{ }}>
-      <TextField
-        sx={{
-
-        }}
-        variant="outlined"
-        placeholder="name"
-      />
-      <FormControl fullWidth>
+    <Box sx={{}}>
+      <TextField sx={{}} variant="outlined" placeholder="name" />
+      <FormControl>
         <InputLabel id="channel-status">Status</InputLabel>
         <Select
           sx={{
-            width: "fit-content"
+            width: "fit-content",
           }}
           labelId="channel-status"
           id="channel-status-select"
@@ -32,6 +34,10 @@ export default function FormChannel(props: any) {
           label="Status"
           onChange={(event) => {
             setStatus(event.target.value);
+            if (event.target.value === "Protected")
+              setEnablePassword(true);
+            else
+              setEnablePassword(false);
           }}
         >
           <MenuItem value={"Public"}>Public</MenuItem>
@@ -39,7 +45,8 @@ export default function FormChannel(props: any) {
           <MenuItem value={"Protected"}>Protected</MenuItem>
         </Select>
       </FormControl>
-      <Button sx={{  }} variant="contained" onClick={createChannels}>
+      { enablePassword === true && <TextField variant="outlined" placeholder="password" /> }
+      <Button sx={{}} variant="contained" onClick={createChannels}>
         Create channel
       </Button>
     </Box>
