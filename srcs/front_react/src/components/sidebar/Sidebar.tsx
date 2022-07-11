@@ -47,7 +47,7 @@ export default function Sidebar(props: any) {
         <img src={SettingsIcon}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ExitIcon} onClick={() => props.setIsConnected(false)}></img>
+        <img src={ExitIcon} onClick={() => props.setIsLogin(false)}></img>
       </Grid>
     </Grid>
   );

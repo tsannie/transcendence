@@ -8,19 +8,21 @@ export default function ChatUserlist() {
   }
 
   return (
-    <Grid sx={{
-      position: "absolute",
-      top: 0,
-      right: 0,
-    }}>
+    <Grid
+      sx={{
+        position: "absolute",
+        top: 0,
+        right: 0,
+      }}
+    >
       <Typography
-          sx={{
-            fontWeight: "bold"
-          }}
-          variant="h5"
-          >
-          Users
-        </Typography>
+        sx={{
+          fontWeight: "bold",
+        }}
+        variant="h5"
+      >
+        Users
+      </Typography>
       <Box onClick={ToggleWindowChat}> Chat userlist </Box>
     </Grid>
   );

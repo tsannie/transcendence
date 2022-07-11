@@ -1,6 +1,4 @@
-import {
-  Box, Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
@@ -68,11 +66,7 @@ export default function Chat() {
     );
   }
   return (
-    <Box
-      sx={{
-
-      }}
-    >
+    <Box sx={{}}>
       <Box
         sx={{
           width: 640,
@@ -82,17 +76,17 @@ export default function Chat() {
       >
         <Typography
           sx={{
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
-          variant="h4">
+          variant="h4"
+        >
           Live chat
         </Typography>
       </Box>
       <Box>
         <MessagesList messagesList={messagesList} author={author} />
       </Box>
-      <Box
-      >
+      <Box>
         <PromptMessage
           setCurrentMessage={setCurrentMessage}
           sendMessage={sendMessage}
@@ -101,11 +95,12 @@ export default function Chat() {
       <Box>
         <ChatUserlist />
       </Box>
-      <Box sx={{
-        position: "relative",
-        display: "flex",
-        float: "right",
-      }}
+      <Box
+        sx={{
+          position: "relative",
+          display: "flex",
+          float: "right",
+        }}
       >
         <Channels />
       </Box>

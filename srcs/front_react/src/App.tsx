@@ -9,7 +9,13 @@ import {
   useTheme,
 } from "@mui/material";
 
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import ButtonLogin from "./Auth/Login";
 import Login from "./Auth/Login";
 import ButtonLogout from "./Auth/Logout";
@@ -24,28 +30,43 @@ export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
+  console.log(isLogin);
+  useEffect(() => {
+    const a = JSON.parse(window.localStorage.getItem("isLogin") || "");
+    setIsLogin(a);
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("isLogin", JSON.stringify(isLogin));
+  }, [isLogin]);
+
   if (!isLogin)
     return (
       <Box>
-        <Icon >
-          <img src={LogoIconSvg}/>
+        <Icon>
+          <img src={LogoIconSvg} />
         </Icon>
-        <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin}/>
-        <ButtonLogout isLogin={isLogin} setIsLogin={setIsLogin}/>
+        <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
         <UserList />
       </Box>
-    )
+    );
   return (
     <Box
       sx={{
         display: "flex",
       }}
     >
-      <Sidebar inputChat={inputChat} setInputChat={setInputChat} />
+      <Sidebar
+        inputChat={inputChat}
+        setInputChat={setInputChat}
+        isLogin={isLogin}
+        setIsLogin={setIsLogin}
+      />
       {inputChat && <Chat />}
+      {!isLogin && <ButtonLogout />}
       {/* <ButtonLogin />
       <ButtonLogout />
       <UserList /> */}
     </Box>
-  )
+  );
 }
