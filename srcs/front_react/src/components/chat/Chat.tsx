@@ -8,8 +8,9 @@ import { IMessage } from "./types";
 import Chat_join from "./Chat_join";
 import Messages_list from "./Messages_list";
 import Prompt_message from "./Prompt_message";
+import Channels from "./channels/Channels";
 
-const socket = io("http://localhost:4000");
+export const socket = io("http://localhost:4000");
 
 export default function Chat() {
   const [username, setUsername] = useState("");
@@ -93,6 +94,9 @@ export default function Chat() {
           setCurrentMessage={setCurrentMessage}
           sendMessage={sendMessage}
         />
+      </div>
+      <div>
+        <Channels />
       </div>
     </Box>
   );
