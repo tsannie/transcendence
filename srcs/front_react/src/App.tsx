@@ -16,27 +16,22 @@ import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
 import UserList from "./userlist/UserListItem";
 
+export const LoginContext = createContext({});
+
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
 
-  console.log(isConnected);
-  if (!isConnected)
-    return (
-    <Box>
-      <ButtonLogin isLogin={setIsConnected}/>
-      <UserList />
-    </Box>
-    )
   return (
     <Box
       sx={{
         display: "flex",
       }}
     >
-      <Sidebar inputChat={inputChat} setInputChat={setInputChat}
-        isConnected={isConnected} setIsConnected={setIsConnected} />
-      {inputChat && <Chat /> && <ButtonLogout />}
+      <Sidebar inputChat={inputChat} setInputChat={setInputChat} />
+      {inputChat && <Chat />}
+      {/* <ButtonLogin />
+      <ButtonLogout />
+      <UserList /> */}
     </Box>
-  );
+  )
 }
