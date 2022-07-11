@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { IMessage } from "./types";
-import Chat_join from "./Chat_join";
-import Messages_list from "./Messages_list";
-import Prompt_message from "./Prompt_message";
+import ChatJoin from "./ChatJoin";
+import MessagesList from "./MessagesList";
+import PromptMessage from "./PromptMessage";
 import Channels from "./channels/Channels";
+import ChatUserlist from "./ChatUserlist";
 
 export const socket = io("http://localhost:4000");
 
@@ -58,7 +59,7 @@ export default function Chat() {
   if (!windowChat) {
     return (
       <div>
-        <Chat_join
+        <ChatJoin
           setUsername={setUsername}
           setRoom={setRoom}
           createRoom={createRoom}
@@ -83,20 +84,22 @@ export default function Chat() {
           sx={{
             fontWeight: "bold"
           }}
-          variant="h4"
-          component="p">
+          variant="h4">
           Live chat
         </Typography>
       </Box>
       <Box>
-        <Messages_list messagesList={messagesList} author={author} />
+        <MessagesList messagesList={messagesList} author={author} />
       </Box>
       <Box
       >
-        <Prompt_message
+        <PromptMessage
           setCurrentMessage={setCurrentMessage}
           sendMessage={sendMessage}
         />
+      </Box>
+      <Box>
+        <ChatUserlist />
       </Box>
       <Box sx={{
         position: "relative",

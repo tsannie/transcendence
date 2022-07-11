@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import React from 'react'
 import Paperplane from "../../assets/paperplane.png";
 
-export default function Prompt_message(props: any) {
+export default function PromptMessage(props: any) {
   return (
     <Box
         sx={{

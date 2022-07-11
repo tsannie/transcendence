@@ -1,7 +1,7 @@
 import { Box } from '@mui/system';
 import React from 'react'
 
-export default function Messages_list(props: any) {
+export default function MessagesList(props: any) {
   return (
     <Box
         sx={{
