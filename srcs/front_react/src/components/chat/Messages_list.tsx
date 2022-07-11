@@ -6,7 +6,8 @@ export default function Messages_list(props: any) {
     <Box
         sx={{
           width: 640,
-          height: 724,
+          height: "fit-content",
+          minHeight: 724,
         }}
       >
         <Box>
