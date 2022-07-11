@@ -1,7 +1,7 @@
-import { Box, Button, TextField } from "@mui/material";
-import React from "react";
+import { Box, Button, TextField } from '@mui/material';
+import React from 'react'
 
-export default function Chat_join(props: any) {
+export default function FormChannel(props: any) {
   return (
     <Box sx={{ position: "absolute", top: 0, left: 88 }}>
         <TextField
