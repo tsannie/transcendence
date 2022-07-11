@@ -7,7 +7,6 @@ import FormChannel from "./FormChannel";
 export default function Channels(props: any) {
   const [newChannel, setNewChannel] = useState(false);
   function setChannel() {
-    console.log("hello");
     setNewChannel(true);
   }
 

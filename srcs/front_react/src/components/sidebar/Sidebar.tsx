@@ -10,7 +10,7 @@ import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
-import ButtonLogout from "../../Auth/Logout";
+import ButtonLogout from "../../Auth/ButtonLogout";
 
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
