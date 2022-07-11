@@ -1,5 +1,5 @@
 import {
-  Box,
+  Box, Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
@@ -69,12 +69,7 @@ export default function Chat() {
   return (
     <Box
       sx={{
-        position: "absolute",
-        width: 640,
-        height: 1024,
-        top: 0,
-        bottom: 0,
-        left: 88,
+
       }}
     >
       <Box
@@ -84,20 +79,33 @@ export default function Chat() {
           textAlign: "center",
         }}
       >
-        Live chat
+        <Typography
+          sx={{
+            fontWeight: "bold"
+          }}
+          variant="h4"
+          component="p">
+          Live chat
+        </Typography>
       </Box>
-      <div>
+      <Box>
         <Messages_list messagesList={messagesList} author={author} />
-      </div>
-      <div>
+      </Box>
+      <Box
+      >
         <Prompt_message
           setCurrentMessage={setCurrentMessage}
           sendMessage={sendMessage}
         />
-      </div>
-      <div>
+      </Box>
+      <Box sx={{
+        position: "relative",
+        display: "flex",
+        float: "right",
+      }}
+      >
         <Channels />
-      </div>
+      </Box>
     </Box>
   );
 }

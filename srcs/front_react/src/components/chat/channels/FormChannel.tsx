@@ -1,26 +1,47 @@
-import { Box, Button, TextField } from '@mui/material';
-import React from 'react'
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import React, { useState } from "react";
+import { socket } from "../Chat";
 
 export default function FormChannel(props: any) {
+
+  const [status, setStatus] = useState('Public');
+
+  function createChannels() {
+    console.log("createChannel");
+    socket.emit("createChannels");
+  }
+
   return (
-    <Box sx={{ position: "absolute", top: 0, left: 88 }}>
-        <TextField
-          variant="outlined"
-          placeholder="username"
-          onChange={(event) => {
-            props.setUsername(event.target.value);
+    <Box sx={{ }}>
+      <TextField
+        sx={{
+
+        }}
+        variant="outlined"
+        placeholder="name"
+      />
+      <FormControl fullWidth>
+        <InputLabel id="channel-status">Status</InputLabel>
+        <Select
+          sx={{
+            width: "fit-content"
           }}
-        />
-        <TextField
-          variant="outlined"
-          placeholder="room"
+          labelId="channel-status"
+          id="channel-status-select"
+          value={status}
+          label="Status"
           onChange={(event) => {
-            props.setRoom(event.target.value);
+            setStatus(event.target.value);
           }}
-        />
-        <Button sx={{ height: 56 }} variant="contained" onClick={props.createRoom}>
-          Join a room
-        </Button>
-      </Box>
-  )
+        >
+          <MenuItem value={"Public"}>Public</MenuItem>
+          <MenuItem value={"Private"}>Private</MenuItem>
+          <MenuItem value={"Protected"}>Protected</MenuItem>
+        </Select>
+      </FormControl>
+      <Button sx={{  }} variant="contained" onClick={createChannels}>
+        Create channel
+      </Button>
+    </Box>
+  );
 }
