@@ -12,5 +12,5 @@ export default function ButtonLogout(props: any) {
     window.location.href = REDIRECT_LINK_AUTH;
   }
 
-  return <button onClick={linkLog}> Logout</button>;
+  return <button onClick={linkLog}>Logout</button>;
 }

@@ -34,10 +34,8 @@ export default function FormChannel(props: any) {
           label="Status"
           onChange={(event) => {
             setStatus(event.target.value);
-            if (event.target.value === "Protected")
-              setEnablePassword(true);
-            else
-              setEnablePassword(false);
+            if (event.target.value === "Protected") setEnablePassword(true);
+            else setEnablePassword(false);
           }}
         >
           <MenuItem value={"Public"}>Public</MenuItem>
@@ -45,7 +43,9 @@ export default function FormChannel(props: any) {
           <MenuItem value={"Protected"}>Protected</MenuItem>
         </Select>
       </FormControl>
-      { enablePassword === true && <TextField variant="outlined" placeholder="password" /> }
+      {enablePassword === true && (
+        <TextField variant="outlined" placeholder="password" />
+      )}
       <Button sx={{}} variant="contained" onClick={createChannels}>
         Create channel
       </Button>
