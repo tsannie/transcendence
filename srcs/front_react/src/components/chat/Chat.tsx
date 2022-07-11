@@ -1,19 +1,13 @@
 import {
   Box,
-  Button,
-  CssBaseline,
-  darkScrollbar,
-  TextField,
-  ThemeProvider,
-  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { createTheme } from "@mui/material/styles";
 import { IMessage } from "./types";
-import Paperplane from "../../assets/paperplane.png";
-//import Chat_join from "./Chat_join";
+import Chat_join from "./Chat_join";
+import Messages_list from "./Messages_list";
+import Prompt_message from "./Prompt_message";
 
 const socket = io("http://localhost:4000");
 
@@ -62,31 +56,15 @@ export default function Chat() {
 
   if (!windowChat) {
     return (
-      /*  <div>
-        <Chat_join />
-      </div> */
-      <Box sx={{ position: "absolute", top: 0, left: 88 }}>
-        <TextField
-          variant="outlined"
-          placeholder="username"
-          onChange={(event) => {
-            setUsername(event.target.value);
-          }}
+      <div>
+        <Chat_join
+          setUsername={setUsername}
+          setRoom={setRoom}
+          createRoom={createRoom}
         />
-        <TextField
-          variant="outlined"
-          placeholder="room"
-          onChange={(event) => {
-            setRoom(event.target.value);
-          }}
-        />
-        <Button sx={{ height: 56 }} variant="contained" onClick={createRoom}>
-          Join a room
-        </Button>
-      </Box>
+      </div>
     );
   }
-
   return (
     <Box
       sx={{
@@ -107,86 +85,15 @@ export default function Chat() {
       >
         Live chat
       </Box>
-      <Box
-        sx={{
-          width: 640,
-          height: 724,
-        }}
-      >
-        <Box>
-          {messagesList.map((messageData) => {
-            if (author === messageData.author)
-              return (
-                <Box
-                  sx={{
-                    width: "fit-content",
-                    height: "fit-content",
-                    backgroundColor: "#064fbd",
-                    color: "white",
-                    fontFamily: "sans-serif",
-                    fontSize: 16,
-                    borderRadius: 12,
-                    ml: "auto",
-                    mr: 0.5,
-                    mb: 1,
-                    p: 1,
-                  }}
-                  key={messageData.id}
-                >
-                  {messageData.content}
-                </Box>
-              );
-            return (
-              <Box
-                sx={{
-                  width: "fit-content",
-                  height: "fit-content",
-                  backgroundColor: "#f1f1f1",
-                  color: "black",
-                  fontFamily: "sans-serif",
-                  fontSize: 16,
-                  borderRadius: 12,
-                  ml: 0.5,
-                  mr: "auto",
-                  mb: 1,
-                  p: 1,
-                }}
-                key={messageData.id}
-              >
-                {messageData.content}
-              </Box>
-            );
-          })}
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          width: "fit-content",
-          mx: "auto",
-          position: "relative",
-        }}
-      >
-        <TextField
-          id="standard-basic"
-          variant="outlined"
-          placeholder="Enter a message"
-          onChange={(event) => {
-            setCurrentMessage(event.target.value);
-          }}
+      <div>
+        <Messages_list messagesList={messagesList} author={author} />
+      </div>
+      <div>
+        <Prompt_message
+          setCurrentMessage={setCurrentMessage}
+          sendMessage={sendMessage}
         />
-        <Box
-          component="img"
-          alt="send message img"
-          src={Paperplane}
-          onClick={sendMessage}
-          sx={{
-            width: 18,
-            height: 18,
-            position: "absolute",
-            bottom: 0,
-          }}
-        ></Box>
-      </Box>
+      </div>
     </Box>
   );
 }
