@@ -35,7 +35,6 @@ export default function Chat() {
     inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: IMessage = {
-        id: uuidv4(),
         room: room,
         author: username,
         content: currentMessage,
