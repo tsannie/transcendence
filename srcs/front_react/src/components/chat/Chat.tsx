@@ -28,10 +28,11 @@ export default function Chat() {
   }
 
   async function sendMessage() {
+    const inputMessage = document.getElementById(
+      "input-message"
+    ) as HTMLInputElement;
 
-    const inputMessage = document.getElementById("input-message") as HTMLInputElement;
-
-    inputMessage.value = '';
+    inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: IMessage = {
         id: uuidv4(),
@@ -45,7 +46,7 @@ export default function Chat() {
       };
       await socket.emit("addMessage", messageData);
       setMessagesList((list) => [...list, messageData]);
-      setCurrentMessage('');
+      setCurrentMessage("");
       setAuthor(messageData.author);
     }
   }
