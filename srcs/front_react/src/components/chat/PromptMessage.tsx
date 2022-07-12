@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useState } from "react";
 import Paperplane from "../../assets/paperplane.png";
 
 export default function PromptMessage(props: any) {
@@ -13,7 +13,7 @@ export default function PromptMessage(props: any) {
       }}
     >
       <TextField
-        id="standard-basic"
+        id="input-message"
         variant="outlined"
         placeholder="Enter a message"
         onChange={(event) => {
