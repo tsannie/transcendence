@@ -39,7 +39,7 @@ import { ChannelModule } from './channel/channel.module';
     PassportModule,
     ChannelModule,
   ],
-  controllers: [AppController, ChannelController],
+  controllers: [AppController],
   providers: [
     AppService,
     JwtService,

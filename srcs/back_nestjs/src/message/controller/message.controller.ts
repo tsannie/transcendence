@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MessageBody } from '@nestjs/websockets';
 import { from, Observable } from 'rxjs';
 import { Socket } from 'socket.io';
+import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { MessageGateway } from '../message.gateway';
 import { MessageEntity } from '../models/message.entity';
@@ -11,7 +12,8 @@ import { MessageService } from '../service/message.service';
 
 @Controller('addMessage')
 export class MessageController {
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService,
+    ) {}
 
   @Get('all')
   getAllMessages(): Observable<IMessage[]> {
