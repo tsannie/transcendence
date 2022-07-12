@@ -1,9 +1,12 @@
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, MenuItem, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useState } from "react";
+import UserList from "../../userlist/UserListItem";
+import UserInfos, { IUser } from "../../userlist/UserListItem";
 
-export default function ChatUserlist() {
-  function ToggleWindowChat() {
+export default function ChatUserlist(props: any) {
+
+  function toggleWindowChat() {
     console.log(`J'ai clique sur l'user`);
   }
 
@@ -18,12 +21,15 @@ export default function ChatUserlist() {
       <Typography
         sx={{
           fontWeight: "bold",
+          textAlign: "center",
         }}
         variant="h5"
       >
         Users
       </Typography>
-      <Box onClick={ToggleWindowChat}> Chat userlist </Box>
+      <Box>
+        <UserList />
+      </Box>
     </Grid>
   );
 }

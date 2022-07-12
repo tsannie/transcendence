@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Get, Injectable, Logger, Request, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConnectedSocket,
@@ -21,6 +21,9 @@ import { Adapter } from 'socket.io-adapter';
 import { MessageChannel } from 'worker_threads';
 import { MessageController } from './controller/message.controller';
 import { MessageService } from './service/message.service';
+import { uuid } from 'uuidv4';
+import { AuthGuard } from '@nestjs/passport';
+import { UserService } from 'src/user/service/user.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -31,7 +34,10 @@ import { MessageService } from './service/message.service';
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+  ) {}
+
 
   connectedClients = [];
   private readonly logger: Logger = new Logger('messageGateway');
@@ -50,7 +56,7 @@ export class MessageGateway
     //const newRoom : RoomEntity = this.roomService.getRoomById();
     const newMessage: IMessage = {
       // message de base + uuid
-      id: data.id,
+      id: uuidv4(),
       room: data.room,
       author: data.author,
       content: data.content,
