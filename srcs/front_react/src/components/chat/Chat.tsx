@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { IMessage } from "./types";
@@ -28,6 +28,10 @@ export default function Chat() {
   }
 
   async function sendMessage() {
+
+    const inputMessage = document.getElementById("input-message") as HTMLInputElement;
+
+    inputMessage.value = '';
     if (currentMessage !== "") {
       const messageData: IMessage = {
         id: uuidv4(),
@@ -41,7 +45,7 @@ export default function Chat() {
       };
       await socket.emit("addMessage", messageData);
       setMessagesList((list) => [...list, messageData]);
-      setCurrentMessage(messageData.content);
+      setCurrentMessage('');
       setAuthor(messageData.author);
     }
   }
@@ -89,6 +93,7 @@ export default function Chat() {
       <Box>
         <PromptMessage
           setCurrentMessage={setCurrentMessage}
+          currentMessage={currentMessage}
           sendMessage={sendMessage}
         />
       </Box>
