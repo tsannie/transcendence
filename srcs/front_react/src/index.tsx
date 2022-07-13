@@ -20,6 +20,9 @@ root.render(
   <React.StrictMode>
     <UserList />
     <Register />
+    <App />
+   {/*  <UserList />
+    <Register /> */}
     <Game/>
     </React.StrictMode>,
 )
