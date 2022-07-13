@@ -76,7 +76,9 @@ export class MessageGateway
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.push(client);
-    this.server.emit('hello', `from ${client.id}`);
+    this.connectedClients.forEach(client => {
+      console.log(client.id);
+    });
   }
 
   handleDisconnect(client: Socket) {

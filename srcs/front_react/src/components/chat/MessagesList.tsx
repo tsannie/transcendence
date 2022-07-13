@@ -1,5 +1,6 @@
 import { Box } from "@mui/system";
 import React from "react";
+import { IMessage } from "./types";
 
 export default function MessagesList(props: any) {
   return (
@@ -11,7 +12,7 @@ export default function MessagesList(props: any) {
       }}
     >
       <Box>
-        {props.messagesList.map((messageData: any) => {
+        {props.messagesList.map((messageData: IMessage) => {
           if (props.author === messageData.author)
             return (
               <Box
