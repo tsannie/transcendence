@@ -8,22 +8,43 @@ import MessagesList from "./MessagesList";
 import PromptMessage from "./PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
+import { api, IUser } from "../../userlist/UserListItem";
+import { COOKIE_NAME } from "../../const";
+import { ContactSupportOutlined } from "@material-ui/icons";
 
 export const socket = io("http://localhost:4000");
 
 export default function Chat() {
-  const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [windowChat, setWindowChat] = useState(false);
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
   const [author, setAuthor] = useState("");
+  const [username, setUsername] = useState("");
+  const [id, setId] = useState(0);
 
   function createRoom() {
+    console.log(username);
+    console.log(room);
     if (username !== "" && room !== "") {
       socket.emit("createRoom", room);
       console.log(`User join room ${room}`);
       setWindowChat(true);
+    }
+  }
+
+  async function getUser() {
+    if (document.cookie.includes(COOKIE_NAME)) {
+      await api
+        .get("auth/profile")
+        .then((res) => {
+          setId(res.data.id);
+          setUsername(res.data.username);
+        })
+        .catch((res) => {
+          console.log("invalid jwt");
+          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
+        });
     }
   }
 
@@ -35,6 +56,7 @@ export default function Chat() {
     inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: IMessage = {
+        id: uuidv4(),
         room: room,
         author: username,
         content: currentMessage,
@@ -50,6 +72,10 @@ export default function Chat() {
     }
   }
 
+  useEffect(() => {
+    getUser();
+  });
+
   // listen message from backend
   useEffect(() => {
     socket.on("addMessage", (data) => {
@@ -62,7 +88,6 @@ export default function Chat() {
     return (
       <div>
         <ChatJoin
-          setUsername={setUsername}
           setRoom={setRoom}
           createRoom={createRoom}
         />
