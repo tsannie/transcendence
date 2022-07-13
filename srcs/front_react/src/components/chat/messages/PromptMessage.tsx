@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import Paperplane from "../../assets/paperplane.png";
+import Paperplane from "../../../assets/paperplane.png";
 
 export default function PromptMessage(props: any) {
   return (

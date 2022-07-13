@@ -4,13 +4,14 @@ import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { IMessage } from "./types";
 import ChatJoin from "./ChatJoin";
-import MessagesList from "./MessagesList";
-import PromptMessage from "./PromptMessage";
+import MessagesList from "./messages/MessagesList";
+import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
 import { api, IUser } from "../../userlist/UserListItem";
 import { COOKIE_NAME } from "../../const";
 import { ContactSupportOutlined } from "@material-ui/icons";
+import HistoryMessages from "./messages/HistoryMessages";
 
 export const socket = io("http://localhost:4000");
 
@@ -111,6 +112,9 @@ export default function Chat() {
         >
           Live chat
         </Typography>
+      </Box>
+      <Box>
+        <HistoryMessages />
       </Box>
       <Box>
         <MessagesList messagesList={messagesList} author={author} />
