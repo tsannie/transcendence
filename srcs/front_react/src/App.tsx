@@ -17,15 +17,13 @@ import Sidebar from "./components/sidebar/Sidebar";
 import UserList from "./userlist/UserListItem";
 import LogoIcon from "./assets/logo-project.png";
 
-export const LoginContext = createContext({});
-
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
-    const a = JSON.parse(window.localStorage.getItem("isLogin") || "");
-    setIsLogin(a);
+    const strIsLogin = JSON.parse(window.localStorage.getItem("isLogin") || "null");
+    setIsLogin(strIsLogin);
   }, []);
 
   useEffect(() => {
