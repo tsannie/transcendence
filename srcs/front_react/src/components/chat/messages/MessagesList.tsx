@@ -1,6 +1,6 @@
 import { Box } from "@mui/system";
 import React from "react";
-import { IMessage } from "./types";
+import { IMessage } from "../types";
 
 export default function MessagesList(props: any) {
   return (
