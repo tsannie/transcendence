@@ -22,6 +22,7 @@ export default function Chat() {
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
   const [author, setAuthor] = useState("");
   const [username, setUsername] = useState("");
+  const [isNewMessage, setIsNewMessage] = useState(false);
   const [id, setId] = useState(0);
 
   function createRoom() {
@@ -88,10 +89,7 @@ export default function Chat() {
   if (!windowChat) {
     return (
       <div>
-        <ChatJoin
-          setRoom={setRoom}
-          createRoom={createRoom}
-        />
+        <ChatJoin setRoom={setRoom} createRoom={createRoom} />
       </div>
     );
   }
@@ -99,8 +97,6 @@ export default function Chat() {
     <Box sx={{}}>
       <Box
         sx={{
-          width: 640,
-          height: 80,
           textAlign: "center",
         }}
       >
@@ -114,7 +110,7 @@ export default function Chat() {
         </Typography>
       </Box>
       <Box>
-        <HistoryMessages />
+        <HistoryMessages isNewMessage={isNewMessage} />
       </Box>
       <Box>
         <MessagesList messagesList={messagesList} author={author} />
@@ -127,7 +123,7 @@ export default function Chat() {
         />
       </Box>
       <Box>
-        <ChatUserlist />
+        <ChatUserlist setIsNewMessage={setIsNewMessage} />
       </Box>
       <Box
         sx={{

@@ -34,8 +34,11 @@ export default function FormChannel(props: any) {
           label="Status"
           onChange={(event) => {
             setStatus(event.target.value);
-            if (event.target.value === "Protected") setEnablePassword(true);
-            else setEnablePassword(false);
+            if (event.target.value === "Protected") {
+              setEnablePassword(true);
+            } else {
+              setEnablePassword(false);
+            }
           }}
         >
           <MenuItem value={"Public"}>Public</MenuItem>
