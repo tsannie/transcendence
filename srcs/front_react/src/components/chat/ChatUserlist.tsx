@@ -31,6 +31,7 @@ export default function ChatUserlist(props: any) {
   function handleNewMessage() {
     console.log('handle new message');
     setAnchorEl(null);
+    props.setIsNewMessage(true);
   }
 
   return (
