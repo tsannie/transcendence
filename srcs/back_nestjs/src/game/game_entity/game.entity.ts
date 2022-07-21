@@ -1,15 +1,43 @@
+import { Expose } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+
+@Entity()
+export class RoomEntity {  
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column({ nullable: true })
+    room_name : string;
+
+    @Column({ nullable: true })
+    nbr_co : number;
+
+    @Column({ nullable: true })
+    player_one?: string;
+
+    @Column({ nullable: true })
+    player_two?: string;
+
+}
 
 @Entity()
 export class GameEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  username: string;
+  @Column({ nullable: true })
+  room_name : string;
 
-  @Column()
-  room: string;
+  @Column({ nullable: true })
+  nbr_co : number;
 
-  //@Column()
+  @Column({ nullable: true })
+  player_one?: string;
+
+  @Column({ nullable: true })
+  player_two?: string;
+
+  /* @Column('jsonb', { nullable: true })
+  rooms_tab: RoomEntity[];} */
 }
