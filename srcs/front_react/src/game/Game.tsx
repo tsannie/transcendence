@@ -62,21 +62,21 @@ export default function Game() {
 
 */
   useEffect(() => {
-    socket.on("joinedRoom", (data, is_my_id, is_op_id) => {
-      setnbrconnect(data);
+    socket.on("joinedRoom", (theroom) => {
+      setnbrconnect(theroom.nbr_co);
       setisinroom(true);
-      if (is_my_id != "")
-        setmy_id(is_my_id);
-      if (is_op_id != "")
-        setop_id(is_op_id);
-      console.log("recu le msg from back de : " + data + " == " + nbrconnect);
+      
+      setmy_id(theroom.player_one);
+      setop_id(theroom.player_two);
+
+      console.log("recu le msg from back de : " + theroom.nbr_co + " == " + nbrconnect);
     });
   }, [socket]);
 
   useEffect(() => {
-    socket.on("leftRoom", (data) => {
-      setnbrconnect(data);
-      console.log("new leave from back " + data + " is os " + nbrconnect);
+    socket.on("leftRoom", (theroom) => {
+      setnbrconnect(theroom.nbr_co);
+      //console.log("new leave from back " + theroom.nbr_co + " is os " + nbrconnect);
     });
   }, [socket]);
   /*     return () => {
@@ -104,6 +104,9 @@ export default function Game() {
         <p> waiting for opponent in room {room} </p>
         <button onClick={deleteGameRoom}>leave room {room}</button>
         <h2>  you are : {my_id} </h2>
+
+        <h2>  waiting for : {op_id} </h2>
+
       </div>
     );
   } else {
