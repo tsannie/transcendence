@@ -8,24 +8,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'http';
-import { from } from 'rxjs';
+import { from, throwError } from 'rxjs';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 import { GameEntity, RoomEntity } from './game_entity/game.entity';
 
 //import { GameService } from './game_service/game_service.service';
-
-
-type my_object = {
-  nbr_co?: number;
-  p1?: string;
-  p2?: string;
-}
-type objw = {
-  nbr : number;
-  p1? : string;
-  p2? : string;
-}
 
 
 @WebSocketGateway({
@@ -34,8 +22,6 @@ type objw = {
     origin: '*',
   },
 })
-
-
 
 export class GameGateway implements OnGatewayInit
 {
@@ -47,17 +33,15 @@ export class GameGateway implements OnGatewayInit
     @WebSocketServer() wws: Server;
     private logger: Logger = new Logger('GameGateway');
     ////
+    fast_room = 1;
     ent_rooms = new Map<string, GameEntity>();
 
     rooms = new Map<string, number>();
-    rooms_id = new Map<string, Array<string>>();
     
-    AnObject: my_object;
     //roomm = Record<string,  my_object>
     //nbr_co = 0;
   //mymap:Map<string, my_object>
   
-  mymap = new Map<string, my_object>()
   //mymap.set(room, {2: " ": " "});
   initGame() {
     //this.all_game
@@ -71,6 +55,39 @@ export class GameGateway implements OnGatewayInit
   ////
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
+    console.log("room size+ " + this.rooms.size);
+    //this.fast_room = 0;
+    //if (this.fast_room == 0)
+    //  this.fast_room = 0;
+    console.log("this.fast_room =  " + this.fast_room);
+
+    if (room == "")
+    {
+      if (this.ent_rooms[this.fast_room]) {
+        var theroom = this.ent_rooms[this.fast_room]
+        console.log("if + " )
+        theroom.nbr_co = 2;
+        this.fast_room = theroom.id;
+      }
+      else {
+        console.log("else + " )
+
+        var theroom = new GameEntity();
+        this.all_game.save(theroom);
+
+        theroom.nbr_co = 1;
+        console.log("id = " +  theroom.id);
+        this.fast_room = theroom.index;
+      }
+      console.log("this.fast_room =  " + this.fast_room);
+      this.fast_room = this.fast_room;
+      //if (this.fast_room != 0)
+      //  room = this.fast_room.toString();
+ //     theroom = this.ent_rooms[this.fast_room]
+   
+}
+      //  room = toString(this.rooms.size);
+
     client.join(room);
     console.log(client.id);
 
@@ -84,49 +101,32 @@ export class GameGateway implements OnGatewayInit
       else
         var theroom = this.ent_rooms[room]
 
-       theroom.room_name = room;
+      theroom.room_name = room;
       theroom.nbr_co = 1;//
       theroom.player_one = client.id;//
       
-      
-      var obj = {
-        "nbr" : this.rooms[room],
-        "p1" : client.id,
-        "p2" : "1"
-      }
-      this.rooms_id[room] = obj;
-      console.log("xxx" + this.rooms_id[room] + "xxx")
-      var bb = this.rooms_id[room];
-      console.log("--" + bb.nbr + "-- " + bb.p1 + "--" + bb.p2)
+
       
       
       console.log(`--back--User create room [${room}] |${this.rooms[room]}|`);
-      client.emit('joinedRoom', this.rooms_id[room], theroom);
+      client.emit('joinedRoom',theroom);
       this.ent_rooms[room] = theroom;
       return this.all_game.save(theroom);//
     } else if (this.rooms[room] == 1) {
       this.rooms[room] += 1;
       console.log(`@2222222222222222222222@`);
-      var bb = this.rooms_id[room];
 
       const theroom = this.ent_rooms[room]
 
       theroom.nbr_co = 2;
       theroom.room_name = room;
-      //theroom.player_one = this.all_game.findByName(room);
       theroom.player_two = client.id;
-    
+      //theroom.player_one = this.all_game.findByName(room);
+/*       if (!theroom.player_two)
+else if (!theroom.player_one)
+        theroom.player_one = client.id; */
 
-      obj = {
-        "nbr" : this.rooms[room],
-        "p1" : client.id,
-        "p2" : "2"
-      }
-      
-      this.rooms_id[room] = obj;
-      console.log("xxx" + this.rooms_id[room] + "xxx")
-      var bb = this.rooms_id[room];
-      console.log("--" + bb.nbr + "-- " + bb.p1 + "--" + bb.p2)
+
       
       
       console.log(`--back--User join room [${room}] |${this.rooms[room]}|`);
@@ -140,7 +140,8 @@ export class GameGateway implements OnGatewayInit
       this.logger.log(`--back--client join room ${room} |${this.rooms[room]}|`);
       return this.all_game.save(theroom);//
     } else if (this.rooms[room] == 2) {
-      //client.emit('roimIsFull', this.rooms[room]);
+      console.log("-- BACK ROOM FULL EMIT --")
+      client.emit('roomFull', theroom);
       return;
     }
   }
@@ -150,25 +151,25 @@ export class GameGateway implements OnGatewayInit
   LeaveRoom(client: Socket, room: string) {
     this.rooms[room] -= 1;
     client.leave(room);
-/*     var obj = {
-      "nbr" : this.rooms[room],
-      "p1" : "bb.p1",
-      "p2" : client.id
-    } */
-    //this.rooms_id[room] = obj;
+
     const theroom = this.ent_rooms[room]
 
     theroom.nbr_co -= 1;
     theroom.room_name = room;
     //theroom.player_one = this.all_game.findByName(room);
-    if (theroom.player_one == client.id)
-      theroom.player_one = null;
+    theroom.player_two_ready = false;
+    theroom.player_one_ready = false;
+    if (theroom.player_one == client.id) {
+      //theroom.player_one = null;
+      theroom.player_one = theroom.player_two;
+      theroom.player_two = null;
+    }
     else if (theroom.player_two == client.id)
       theroom.player_two = null;
     //theroom.player_one = client.id;
 
     client.to(room).emit('leftRoom', theroom);
-    //client.emit('leftRoom', this.rooms[room]);
+    client.emit('leftRoom', theroom);
 
 
     this.logger.log(`--back--client leaved room ${room} `);
@@ -179,6 +180,47 @@ export class GameGateway implements OnGatewayInit
       this.all_game.save(theroom);
       return (this.all_game.delete(theroom));
     }
+    return (this.all_game.save(theroom));
+  }
+
+
+  @SubscribeMessage('readyGameRoom')
+  StartGame(client: Socket, room: string) {
+    //this.rooms[room] -= 1;
+    //client.leave(room);
+
+    const theroom = this.ent_rooms[room]
+    if (theroom.player_one == client.id)
+      theroom.player_one_ready = true;
+    else if (theroom.player_two == client.id)
+      theroom.player_two_ready = true;
+    //theroom.nbr_co -= 1;
+    //theroom.room_name = room;
+    //theroom.player_one = this.all_game.findByName(room);
+    //if (theroom.player_one == client.id) {
+      //theroom.player_one = null;
+     // theroom.player_one = theroom.player_two;
+      //theroom.player_two = null;
+    //}
+   // else if (theroom.player_two == client.id)
+    //  theroom.player_two = null;
+    //theroom.player_one = client.id;
+    console.log("two : " + theroom.player_two_ready +
+    " one : " + theroom.player_one_ready);
+
+    client.to(room).emit('startGame', theroom);
+    if (theroom.player_two_ready == true && theroom.player_one_ready == true)
+      client.emit('startGame', theroom);
+
+
+    //this.logger.log(`--back--client leaved room ${room} `);
+    //console.log('--back--he leaved in back room:' + room);
+    //if (theroom.nbr_co == 0)
+    //{
+     // console.log("nbr de co : " + theroom.nbr_co);
+     // this.all_game.save(theroom);
+     // return (this.all_game.delete(theroom));
+    //}
     return (this.all_game.save(theroom));
   }
   //
