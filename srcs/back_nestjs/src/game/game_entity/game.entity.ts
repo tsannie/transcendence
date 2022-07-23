@@ -23,7 +23,7 @@ export class RoomEntity {
 
 @Entity()
 export class GameEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column({ nullable: true })
@@ -37,6 +37,13 @@ export class GameEntity {
 
   @Column({ nullable: true })
   player_two?: string;
+
+  @Column('boolean', {default: false})
+  player_one_ready?: boolean;
+
+  @Column('boolean', {default: false})
+  player_two_ready?: boolean;
+
 
   /* @Column('jsonb', { nullable: true })
   rooms_tab: RoomEntity[];} */
