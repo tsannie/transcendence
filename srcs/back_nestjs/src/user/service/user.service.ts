@@ -8,18 +8,19 @@ import { IUser } from '../models/user.interface';
 
 @Injectable()
 export class UserService {
-  constructor (
+  constructor(
     @InjectRepository(UserEntity)
-      private allUser: Repository<UserEntity>
+    private allUser: Repository<UserEntity>,
   ) {}
 
   async add(user: UserDto): Promise<UserDto> {
     return await this.allUser.save(user);
   }
 
-  async findByName(username: string): Promise<UserDto> { // TODO check observable or promise ??
+  async findByName(username: string): Promise<UserDto> {
+    // TODO check observable or promise ??
     return await this.allUser.findOne({
-      username: username
+      username: username,
     });
   }
 
