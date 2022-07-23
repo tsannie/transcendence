@@ -1,20 +1,21 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 //import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class UserEntity {
-
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   username: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   email: string;
-
-  @Column()
-  password: string;
 
   @Column()
   @CreateDateColumn()
@@ -24,12 +25,6 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  // TODO HASH PASSWORD
-  async hashPassword() {
-    //this.password = await bcrypt.hash();
-  }
-
-  async goodPassword(tryPassword: string): Promise<boolean> {
-    return (tryPassword === this.password)
-  }
+  //@ManyToOne(() => RoomEntity, room => room.users)
+  //room: RoomEntity
 }

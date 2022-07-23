@@ -10,19 +10,26 @@ import { PassportModule } from '@nestjs/passport';
 import * as dotenv from 'dotenv'; // TODO delte that ?? and module
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { FortyTwoStrategy } from './strategy/fortytwo.strategy';
 
-dotenv.config()
+dotenv.config();
 
 @Module({
   imports: [
-    JwtModule.register({secret: 'secret'}), // Why dont work ??
+    JwtModule.register({ secret: 'secret' }), // Why dont work ??
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
-    PassportModule
+    PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtService, UserService, LocalStrategy, JwtStrategy],
-  exports: [AuthService]
+  providers: [
+    AuthService,
+    JwtService,
+    UserService,
+    LocalStrategy,
+    JwtStrategy,
+    FortyTwoStrategy,
+  ],
+  exports: [AuthService],
 })
-
 export class AuthModule {}
