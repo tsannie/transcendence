@@ -1,11 +1,21 @@
 import { Expose } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+function makeid(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+    result += characters.charAt(Math.floor(Math.random() * 
+charactersLength));
+ }
+ return result;
+}
 
 @Entity()
 export class RoomEntity {  
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id!: number;
 
     @Column({ nullable: true })
     room_name : string;
@@ -21,12 +31,13 @@ export class RoomEntity {
 
 }
 
+
 @Entity()
 export class GameEntity {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+  @PrimaryGeneratedColumn()
+  id:number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true }) //{ default: makeid(5) }
   room_name : string;
 
   @Column({ nullable: true })
