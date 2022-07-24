@@ -9,19 +9,33 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { socket } from "../Chat";
+import { IChannel } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 export default function FormChannel(props: any) {
+  const [name, setName] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
 
   function createChannels() {
     console.log("createChannel");
-    //socket.emit("createChannels");
+    const channelData: IChannel = {
+      id: name,
+      status: status,
+      time:
+        new Date(Date.now()).getHours() +
+        ":" +
+        String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
+    };
+    socket.emit("createChannel", channelData);
   }
 
   return (
     <Box sx={{}}>
-      <TextField sx={{}} variant="outlined" placeholder="name" />
+      <TextField sx={{}} variant="outlined" placeholder="name"
+      onChange={(event) => {
+          setName(event.target.value);
+        }}/>
       <FormControl>
         <InputLabel id="channel-status">Status</InputLabel>
         <Select
