@@ -16,12 +16,24 @@ import { GameEntity, RoomEntity } from './game_entity/game.entity';
 //import { GameService } from './game_service/game_service.service';
 
 
+function makeid(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+    result += characters.charAt(Math.floor(Math.random() * 
+charactersLength));
+ }
+ return result;
+}
+
 @WebSocketGateway({
   namespace: '/game',
   cors: {
     origin: '*',
   },
 })
+
 
 export class GameGateway implements OnGatewayInit
 {
@@ -53,6 +65,8 @@ export class GameGateway implements OnGatewayInit
     this.logger.log('Initialized');
   }
   ////
+  
+  
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
     //console.log("room size+ " + this.rooms.size);
@@ -60,49 +74,40 @@ export class GameGateway implements OnGatewayInit
     //if (this.fast_room == 0)
     //  this.fast_room = 0;
     //console.log("this.fast_room =  " + this.fast_room);
+/* 
+    if (room == "")
+    {
+      console.log("-----")
+      for (const [key, value] of Object.entries(this.ent_rooms)) {
+        console.log(value.room_name + " = " + value.player_one)
+
+        if (value.room_name == value.player_one && value.nbr_co != 2)
+          room = value.room_name;
+      }
+      console.log("-----")
+      if (!this.ent_rooms[room]) {
+        room = client.id;
+        //const theroom = this.ent_rooms[room]
+      }
+  
+    } */
 
     if (room == "")
     {
-        console.log("=============");
-        for (const [key, value] of Object.entries(this.ent_rooms)) { 
-           // console.log("key = " + key + "\n value = " + value.room_name);
-           // console.log("id = " + value.player_one + "\n nbr_co = " + value.nbr_co);
-            if (value.room_name == value.player_one)
-                room = value.room_name;
-        }
-
-       /*  this.ent_rooms.forEach((value: GameEntity, key: string) => {
-            console.log(key, value);
-        }); */
-        //console.log("=============");
-
-/*       if (!this.ent_rooms[room]) {
-        var theroom = this.ent_rooms[room]
-        console.log("\n\nif + " )
-        theroom.nbr_co = 2;
-       // this.fast_room = theroom.id;
-      } */
-      if (!this.ent_rooms[room]) {
-        console.log("\n\nelse + " )//
-       // var theroom = new GameEntity();
-        //this.all_game.save(theroom);
-        //theroom.nbr_co = 1;
-        room = client.id;
-        //theroom.player_one = client.id;
-/*         console.log("id = " +  theroom.id);
-        console.log("id = ", room);
-        client.emit('joinedRoom',theroom);
-        this.ent_rooms[room] = theroom;
-        return this.all_game.save(theroom);// */
+      console.log("=============");
+      for (const [key, value] of Object.entries(this.ent_rooms)) { 
+        if (value.fast_play == true)
+          room = value.room_name;
       }
-      console.log("this.fast_room =  " + this.fast_room);
-      //this.fast_room = this.fast_room;
-      //if (this.fast_room != 0)
- //     theroom = this.ent_rooms[this.fast_room]
-   
-    }
-      //  room = toString(this.rooms.size);
+      console.log("=============");
 
+      if (!this.ent_rooms[room]) {
+        var theroom = new GameEntity();
+        theroom.fast_play = true;
+        room = makeid(4);
+        this.ent_rooms[room] = theroom;
+      }
+    }
     client.join(room);
     console.log(client.id);
 
@@ -115,7 +120,7 @@ export class GameGateway implements OnGatewayInit
         var theroom = new GameEntity();//
       else
         var theroom = this.ent_rooms[room]
-
+     
       theroom.room_name = room;
       theroom.nbr_co = 1;//
       theroom.player_one = client.id;//
@@ -171,6 +176,8 @@ else if (!theroom.player_one)
     //theroom.player_one = this.all_game.findByName(room);
     theroom.player_two_ready = false;
     theroom.player_one_ready = false;
+    theroom.fast_play = false
+
     if (theroom.player_one == client.id) {
       //theroom.player_one = null;
       theroom.player_one = theroom.player_two;
@@ -180,27 +187,30 @@ else if (!theroom.player_one)
       theroom.player_two = null;
     //theroom.player_one = client.id;
 
+    console.log("should be true = " + theroom.fast_play)
+ 
     client.to(room).emit('leftRoom', theroom);
     client.emit('leftRoom', theroom);
 
-
+    this.ent_rooms[room] = theroom;
     this.logger.log(`--back--client leaved room ${room} `);
     console.log('--back--he leaved in back room:' + room);
     if (theroom.nbr_co == 0)
     {
       console.log("nbr de co : " + theroom.nbr_co);
-      this.all_game.save(theroom);
-      return (this.all_game.delete(theroom));
+      //this.all_game.save(theroom);
+      this.ent_rooms.delete(room);
+      this.all_game.delete(theroom);
     }
     return (this.all_game.save(theroom));
-  }
+  }//
 
 
   @SubscribeMessage('readyGameRoom')
   StartGame(client: Socket, room: string) {
     //this.rooms[room] -= 1;
     //client.leave(room);
-
+    console.log("!!!!!!!!!!!!!!!!!!room = " + room)
     const theroom = this.ent_rooms[room]
     if (theroom.player_one == client.id)
       theroom.player_one_ready = true;
