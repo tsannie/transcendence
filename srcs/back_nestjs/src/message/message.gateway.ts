@@ -24,6 +24,8 @@ import { MessageService } from './service/message.service';
 import { uuid } from 'uuidv4';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/service/user.service';
+import { IChannel } from 'src/channel/models/channel.interface';
+import { ChannelService } from 'src/channel/service/channel.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -36,6 +38,7 @@ export class MessageGateway
 {
   constructor(
     private messageService: MessageService,
+    private channelService: ChannelService
   ) {}
 
 
@@ -99,5 +102,24 @@ export class MessageGateway
       console.log(connectedClient.id);
     }); */
     this.logger.log(`client ${client.id} join room ${data} `);
+  }
+
+  @SubscribeMessage('createChannel')
+  createChannel(@MessageBody() data: IChannel, @ConnectedSocket() client: Socket) {
+    client.join(data.id);
+    console.log(data);
+    this.logger.log(`client ${client.id} create channel ${data} `);
+    if (data.status === 'Public') {
+      this.channelService.handlePublicChannels();
+    }
+    else if (data.status === 'Private') {
+      this.channelService.handlePrivateChannels();
+    }
+    else if (data.status === 'Protected') {
+      this.channelService.handleProtectedChannels();
+    }
+    else {
+      console.log("error");
+    }
   }
 }

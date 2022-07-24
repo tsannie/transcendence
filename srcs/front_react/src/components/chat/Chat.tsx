@@ -26,12 +26,12 @@ export default function Chat() {
   const [id, setId] = useState(0);
 
   function createRoom() {
-    console.log(username);
     console.log(room);
     if (username !== "" && room !== "") {
       socket.emit("createRoom", room);
       console.log(`User join room ${room}`);
       setWindowChat(true);
+      console.log(windowChat);
     }
   }
 
