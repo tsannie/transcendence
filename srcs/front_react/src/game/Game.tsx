@@ -91,18 +91,19 @@ export default function Game() {
     socket.on("joinedRoom", (theroom) => {
       setnbrconnect(theroom.nbr_co);
       setisinroom(true);
-
+      setRoom(theroom.room_name)
       if (theroom.player_two == socket.id) setop_id(theroom.player_one);
       else if (theroom.player_one == socket.id) setop_id(theroom.player_two);
       console.log(
         "recu le msg from back de : " + theroom.nbr_co + " == " + nbrconnect
       );
     });
-  }, [socket]);
+  }, [socket]);//
 
   useEffect(() => {
     socket.on("leftRoom", (theroom) => {
       setnbrconnect(theroom.nbr_co);
+      setRoom(theroom.room_name)
       setopready(false);
       setimready(false);
       setop_id("");
@@ -124,6 +125,7 @@ export default function Game() {
   console.log("me : " + imready + " op : " + opready);
   console.log("op id == " + op_id);
 
+  
   if (nbrconnect == 2 && isinroom && opready == true && imready == true) {
     return (
       <div className="startGame">
