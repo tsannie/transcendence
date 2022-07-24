@@ -40,6 +40,12 @@ export class GameEntity {
   @Column({ nullable: true }) //{ default: makeid(5) }
   room_name : string;
 
+  @Column('boolean', {default: true})
+  is_connected : boolean;
+
+  @Column('boolean', {default: false})
+  fast_play : boolean;
+
   @Column({ nullable: true })
   nbr_co : number;
 
