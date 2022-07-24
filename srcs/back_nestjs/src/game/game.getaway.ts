@@ -55,37 +55,52 @@ export class GameGateway implements OnGatewayInit
   ////
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
-    console.log("room size+ " + this.rooms.size);
+    //console.log("room size+ " + this.rooms.size);
     //this.fast_room = 0;
     //if (this.fast_room == 0)
     //  this.fast_room = 0;
-    console.log("this.fast_room =  " + this.fast_room);
+    //console.log("this.fast_room =  " + this.fast_room);
 
     if (room == "")
     {
-      if (this.ent_rooms[this.fast_room]) {
-        var theroom = this.ent_rooms[this.fast_room]
-        console.log("if + " )
+        console.log("=============");
+        for (const [key, value] of Object.entries(this.ent_rooms)) { 
+           // console.log("key = " + key + "\n value = " + value.room_name);
+           // console.log("id = " + value.player_one + "\n nbr_co = " + value.nbr_co);
+            if (value.room_name == value.player_one)
+                room = value.room_name;
+        }
+
+       /*  this.ent_rooms.forEach((value: GameEntity, key: string) => {
+            console.log(key, value);
+        }); */
+        //console.log("=============");
+
+/*       if (!this.ent_rooms[room]) {
+        var theroom = this.ent_rooms[room]
+        console.log("\n\nif + " )
         theroom.nbr_co = 2;
-        this.fast_room = theroom.id;
-      }
-      else {
-        console.log("else + " )
-
-        var theroom = new GameEntity();
-        this.all_game.save(theroom);
-
-        theroom.nbr_co = 1;
-        console.log("id = " +  theroom.id);
-        this.fast_room = theroom.index;
+       // this.fast_room = theroom.id;
+      } */
+      if (!this.ent_rooms[room]) {
+        console.log("\n\nelse + " )//
+       // var theroom = new GameEntity();
+        //this.all_game.save(theroom);
+        //theroom.nbr_co = 1;
+        room = client.id;
+        //theroom.player_one = client.id;
+/*         console.log("id = " +  theroom.id);
+        console.log("id = ", room);
+        client.emit('joinedRoom',theroom);
+        this.ent_rooms[room] = theroom;
+        return this.all_game.save(theroom);// */
       }
       console.log("this.fast_room =  " + this.fast_room);
-      this.fast_room = this.fast_room;
+      //this.fast_room = this.fast_room;
       //if (this.fast_room != 0)
-      //  room = this.fast_room.toString();
  //     theroom = this.ent_rooms[this.fast_room]
    
-}
+    }
       //  room = toString(this.rooms.size);
 
     client.join(room);
@@ -104,9 +119,6 @@ export class GameGateway implements OnGatewayInit
       theroom.room_name = room;
       theroom.nbr_co = 1;//
       theroom.player_one = client.id;//
-      
-
-      
       
       console.log(`--back--User create room [${room}] |${this.rooms[room]}|`);
       client.emit('joinedRoom',theroom);
