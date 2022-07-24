@@ -184,10 +184,6 @@ export default function Game() {
 
 
         <p style={{ color: "red" }}> {isfull} </p>
-
-        <p> nbr connect = {nbrconnect}</p>
-        <p> conect {conect} </p>
-        <p> conect {conect} </p>
       </div>
     );
   }
