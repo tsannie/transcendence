@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Box,
   Button,
@@ -9,6 +10,15 @@ import {
 } from "@mui/material";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+=======
+import React, { useEffect, useState } from 'react';
+import FtClock from './game/Clock';
+import Game from './game/Game';
+
+export default function App() {
+  const [inputGame, setInputGame] = useState("JOUER");
+  const [date, setDate] = useState(new Date());
+>>>>>>> [+] Canvas game start
 
 import ButtonLogin from "./Auth/ButtonLogin";
 import ButtonLogout from "./Auth/ButtonLogout";

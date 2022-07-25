@@ -13,21 +13,21 @@ charactersLength));
 }
 
 @Entity()
-export class RoomEntity {  
+export class PlayerOneEntity {  
     @PrimaryGeneratedColumn('uuid')
     id!: number;
 
     @Column({ nullable: true })
-    room_name : string;
+    player_name: string;
 
     @Column({ nullable: true })
-    nbr_co : number;
+    player_lives?: string;
 
     @Column({ nullable: true })
-    player_one?: string;
+    player_score?: string;
 
     @Column({ nullable: true })
-    player_two?: string;
+    player_padle_position?: string;
 
 }
 
@@ -61,7 +61,14 @@ export class GameEntity {
   @Column('boolean', {default: false})
   player_two_ready?: boolean;
 
+  @Column('boolean', {default: false})
+  game_started?: boolean;
 
+  @Column('time', { nullable: true})
+  thedate?: Date;
+
+  @Column('time', { nullable: true})
+  timer?: Date;
   /* @Column('jsonb', { nullable: true })
   rooms_tab: RoomEntity[];} */
-}
+}//
