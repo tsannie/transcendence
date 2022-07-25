@@ -37,7 +37,7 @@ import { ChannelModule } from './channel/channel.module';
     UserModule,
     AuthModule,
     PassportModule,
-    ChannelModule,
+    //ChannelModule,
   ],
   controllers: [AppController],
   providers: [
@@ -46,7 +46,6 @@ import { ChannelModule } from './channel/channel.module';
     AuthService,
     UserService,
     LocalStrategy,
-    ChannelService,
   ], // AuthResolver
 })
 export class AppModule {}
