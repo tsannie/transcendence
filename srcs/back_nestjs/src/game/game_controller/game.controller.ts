@@ -25,10 +25,14 @@ export class GameController {
 
 
       //this.tchatService.discuss("m1", "m2");
-     for (let x = -10; x < 180; x++)
-       this.gameService.deleteUser(x)
       
       return (this.gameService.findAll());
+    }
+    @Get("/del")
+    detail()  {
+    for (let x = -10; x < 180; x++)
+      this.gameService.deleteUser(x)
   }
+
 }
 ////

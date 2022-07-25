@@ -37,6 +37,14 @@ export default function Game() {
     }
   }
 
+  function createFastGameRoom() {
+    setRoom("");
+    if (isinroom == false) {
+      socket.emit("createGameRoom", room);
+      console.log(`--front--User create FAST room [${room}]`);
+    }
+  }
+
   function deleteGameRoom() {
     if (isinroom == true) {
       setisinroom(false);
@@ -103,9 +111,13 @@ export default function Game() {
   useEffect(() => {
     socket.on("leftRoom", (theroom) => {
       setnbrconnect(theroom.nbr_co);
-      setRoom(theroom.room_name)
       setopready(false);
       setimready(false);
+
+/*       if (theroom.nbr_co == 0)
+        setRoom("");
+      else
+        setRoom(theroom.room_name); */
       setop_id("");
 
       //console.log("new leave from back " + theroom.nbr_co + " is os " + nbrconnect);
@@ -160,8 +172,8 @@ export default function Game() {
       <div className="queues">
         <h2> you are : {my_id} </h2>
 
-        <p> waiting for opponent in room  I{room}I </p>
-        <button onClick={deleteGameRoom}>leave room I{room}I</button>
+        <p> waiting for opponent in room  {room} </p>
+        <button onClick={deleteGameRoom}>leave room {room}</button>
       </div>
     );
   } else {
@@ -182,7 +194,7 @@ export default function Game() {
         <br />
         <h4> Rentrer dans une partie RAPIDE</h4>
 
-        <button onClick={createGameRoom}>PARTIE RAPIDE</button>
+        <button onClick={createFastGameRoom}>PARTIE RAPIDE</button>
 
 
         <p style={{ color: "red" }}> {isfull} </p>
