@@ -43,7 +43,7 @@ export default function Game() {
       socket.emit("createGameRoom", room);
       console.log(`--front--User create FAST room [${room}]`);
     }
-  }
+  }//
 
   function deleteGameRoom() {
     if (isinroom == true) {
