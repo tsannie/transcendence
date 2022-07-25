@@ -5,7 +5,6 @@ import Darkmode from "./App";
 import App from './App';
 import Register from './Auth/Register';
 import Game from './game/Game';
-import inGame from './game/inGame';
 
 import UserList from './userlist/UserListItem';
 import App from "./App";
