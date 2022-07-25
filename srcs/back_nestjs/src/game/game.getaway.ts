@@ -91,13 +91,15 @@ export class GameGateway implements OnGatewayInit
       }
   
     } */
-
+    console.log("ROOM NAME = [" + room + "]");
     if (room == "")
     {
+
       console.log("=============");
       for (const [key, value] of Object.entries(this.ent_rooms)) { 
-        if (value.fast_play == true)
+        if (value.fast_play == true && value.nbr_co != 2)
           room = value.room_name;
+        console.log("room found = [" + room + "]");
       }
       console.log("=============");
 
@@ -166,18 +168,23 @@ else if (!theroom.player_one)
 
   @SubscribeMessage('leaveGameRoom')
   LeaveRoom(client: Socket, room: string) {
+
+    
+    console.log('ROOM LEAVED = ' + room);
+
+
     this.rooms[room] -= 1;
     client.leave(room);
 
     const theroom = this.ent_rooms[room]
 
+    console.log('nbr co was = ' + theroom.nbr_co);
     theroom.nbr_co -= 1;
     theroom.room_name = room;
     //theroom.player_one = this.all_game.findByName(room);
     theroom.player_two_ready = false;
     theroom.player_one_ready = false;
-    theroom.fast_play = false
-
+    
     if (theroom.player_one == client.id) {
       //theroom.player_one = null;
       theroom.player_one = theroom.player_two;
@@ -186,21 +193,22 @@ else if (!theroom.player_one)
     else if (theroom.player_two == client.id)
       theroom.player_two = null;
     //theroom.player_one = client.id;
-
-    console.log("should be true = " + theroom.fast_play)
- 
+    
+    //console.log("should be true = " + theroom.fast_play)
+    
     client.to(room).emit('leftRoom', theroom);
     client.emit('leftRoom', theroom);
-
-    this.ent_rooms[room] = theroom;
-    this.logger.log(`--back--client leaved room ${room} `);
+////
     console.log('--back--he leaved in back room:' + room);
+    this.ent_rooms[room] = theroom;
     if (theroom.nbr_co == 0)
     {
-      console.log("nbr de co : " + theroom.nbr_co);
+      //theroom.fast_play = false;
+      //this.ent_rooms[room] = theroom;
+      //console.log("nbr de co : " + theroom.nbr_co);
       //this.all_game.save(theroom);
-      this.ent_rooms.delete(room);
-      this.all_game.delete(theroom);
+      //this.ent_rooms.delete(room);
+      //this.all_game.delete(theroom);
     }
     return (this.all_game.save(theroom));
   }//
