@@ -1,0 +1,65 @@
+@SubscribeMessage('startGameRoom')
+StartGame(client: Socket, room: string) {
+  
+  console.log("ROOOOMMMMM = [" + room );//"] [" + x +"]");
+  
+  if (!this.roo[room].set)
+    this.roo[room].set = new SetEntity();
+  if (!this.roo[room].set.ball)
+    this.roo[room].set.ball = new BallEntity();
+
+   // this.roo[room].set.ball.x = x;
+   // console.log("XXX = " + this.roo[room].set.ball.x)
+    
+    if (this.roo[room].set.ball.x >= 800)
+      this.roo[room].set.ball.right = false;  
+    if (this.roo[room].set.ball.x <= 0)
+      this.roo[room].set.ball.right = true;
+
+    client.to(room).emit('startGame', this.roo[room]);
+    client.emit('startGame', this.roo[room]);
+    return this.all_game.save(this.roo[room]);
+  }
+
+
+
+
+
+
+
+
+               if (theroom.set.ball.right == false)
+              theroom.set.ball.x -= theroom.set.ball.speed;  
+            else
+              theroom.set.ball.x += theroom.set.ball.speed;
+            if (theroom.set.ball.x >= 800)
+            {
+              console.log("emit " + theroom.set.ball.x)
+              StartGame(theroom.room_name, theroom.set.ball.x)
+            }
+            else if (theroom.set.ball.x <= 0){
+              StartGame(theroom.room_name, theroom.set.ball.x)
+            }
+
+
+
+
+              const [xx, setxx] = useState(0);
+  const [color, setcolor] = useState("green");
+  const [speed, setspeed] = useState(0);
+  const [right, setright] = useState(false);
+
+
+
+
+  useEffect(() => {
+    socket.on("startGame", (theroom) => {
+        setxx(theroom.set.ball.x);
+        setcolor(theroom.set.ball.color);
+        setspeed(theroom.set.ball.speed);
+        setright(theroom.set.ball.right);
+      });
+
+        console.log("ON["+xx + "][" +color + "]["+ speed+ "]["+ right+"][")
+
+    }, [socket]);
