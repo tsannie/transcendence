@@ -4,6 +4,7 @@ import io from "socket.io-client";
 import { start } from "repl";
 import { render } from "@testing-library/react";
 import FtClock from "./Clock";
+import InGame from "./inGame";
 
 const socket = io("http://localhost:4000/game");
 
@@ -32,19 +33,22 @@ function Theclock(){
   );
 }
 
-export default function Game(QQDATE : any) {
+export default function Game() {
   const [nbrconnect, setnbrconnect] = useState(0);
   const [room, setRoom] = useState("");
+
   const [color_ready, setColor_ready] = useState("");
   const [my_id, setmy_id] = useState(socket.id);
   const [op_id, setop_id] = useState("2");
   const [isfull, setisFull] = useState("");
   const [isinroom, setisinroom] = useState(false);
-  const [we, setwe] = useState(0);
 
   const [imready, setimready] = useState(false);
   const [opready, setopready] = useState(false);
   const [PP_empty, setPP_empty] = useState("");
+
+  const [mytimer, setmytimer] = useState(new Date());
+
 
   /*   socket.on("connect", function () {
     console.log("CONNECT IO")
@@ -84,6 +88,11 @@ export default function Game(QQDATE : any) {
     //console.log(`--player ready`);
   }
 
+  function StartGame(rom : string) {
+    socket.emit("startGameRoom", rom);
+  } 
+
+
   useEffect(() => {
     socket.on("readyGame", (theroom) => {
       setColor_ready("green");
@@ -100,10 +109,15 @@ export default function Game(QQDATE : any) {
       if (theroom.player_one_ready == true && theroom.player_two_ready == true)
       {
         setmytimer(theroom.thedate);
-        console.log("DATE : " + mytimer + " DATE : " + theroom.thedate);
-
+        //console.log("DATE : " + mytimer + " DATE : " + theroom.thedate);
+        //setball_speed(theroom.set.ball.speed);
+        //setball_color(theroom.set.ball.color);
+        //console.log("rom : " + theroom.room_name);
+        setRoom(theroom.room_name);
+       // console.log("rom : " + room);
+        StartGame(theroom.room_name);
       }
-        console.log("me : " + imready + " op : " + opready);
+        //console.log("me : " + imready + " op : " + opready);
     });
 
     socket.on("joinedRoom", (theroom) => {
@@ -132,65 +146,112 @@ export default function Game(QQDATE : any) {
     });
   }, [socket]);
 
-  console.log("nbr co == " + nbrconnect);
-  console.log("me : " + imready + " op : " + opready);
-  console.log("op id == " + op_id);
+  //console.log("nbr co == " + nbrconnect);
+  //console.log("me : " + imready + " op : " + opready);
+  //console.log("op id == " + op_id);
 
 
 
   ///////////////////////////////INGAME
+/*   const [timecount, setimecount] = useState(new Date());
 
-
-
-
-
-
-
-
-
-  const [mytimer, setmytimer] = useState("");
-
-  function start_timer() {
+   function start_timer() {
     socket.emit("startTimerRoom", room);
+  } 
 
+    function refreshClock() {
+      var tt = new Date();
+      var bb = tt.getTime() - mytimer.getTime();
+      setimecount(new Date(bb));
+    }
+  useEffect(() => {
+    const timerId = setInterval(refreshClock, 100);
+    return function cleanup() {
+      clearInterval(timerId);
+    };
+  }, []); */
 
+  const [ball_speed, setball_speed] = useState(0);
+  const [ball_color, setball_color] = useState("blue");
+let is_emited = 0;
+  useEffect(() => {
+    socket.on("startGame", (theroom) => {
+      const render = () => {
+          const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+          var ctx = null;
+          if (canvas)
+            ctx = canvas.getContext('2d');
+          if (ctx && theroom.set.ball.x < 700) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = theroom.set.ball.color;
+            ctx.beginPath();
+            ctx.arc(theroom.set.ball.x, 75, 13, 0, 2 * Math.PI);
+            ctx.stroke();
+            setball_speed(theroom.set.ball.speed + 10);
+            if (theroom.set.ball.right == false)
+              theroom.set.ball.x -= theroom.set.ball.speed;  
+            else
+              theroom.set.ball.x += theroom.set.ball.speed;
+            //if (ball_speed >= 200)
+            //  setball_speed(0);
+            //console.log(ball_speed)
+           //console.log(x)
+          ctx.closePath();
+          ctx.fill();
+    
+            requestAnimationFrame(render);
+          console.log("END-->")
+            if (theroom.set.ball.x >= 700 && is_emited == 0)
+            {
+            //  console.log("emit " + theroom.set.ball.x)
+              is_emited = 1;
+              StartGame(theroom.room_name)
+              //theroom.set.ball.x = 0;
+            }
+/*             else if (theroom.set.ball.x < 0){
+              StartGame(theroom.room_name)
+            } */
 
-    return (
-      <p>time played = {mytimer}</p>
-    )
-  }
+          }
+          console.log("11111")
+        };
+        console.log("22222")
+        render();
+      
+        console.log("33333")
 
+      });
+      console.log("44444")
+
+    }, [socket]);
+    console.log("----")
 
   ///////////////////////////////INGAME
 
-    //setwe( we + 1);
-
-  //if (Math.random() > 0.5) {
-   // await delay(1000)
-   // setmytimer(time_played(mytimer))
-  //}
-  
+  /////////////////////////////////////
   if (nbrconnect == 2 && isinroom && opready == true && imready == true) {
     return (
       <div className="readyGame">
         <h1 style={{ color: "blue" }}> you are : {my_id} </h1>
+         <h2 style={{ color: "red" }}> opponent is : {op_id} </h2>
+        <button onClick={deleteGameRoom}>leave room {room}</button>
 {/* //////////////// */}
         {/* {start_timer()} */}
          <p>time played =</p>
         <p>zzzz = </p>
-        <p>{QQDATE}</p> 
+       {/*  <p>{mytimer.toString()}</p> 
+        <p>{timecount.toString()}</p> */} 
         <canvas
         id="canvas"
         height="500px"
         width="800px"
-        style={{ backgroundColor: 'grey' }}
+        style={{ backgroundColor: '#4E4E4E' }}
         >
 
         </canvas>
 {/* //////////////// */}
-        <h2 style={{ color: "red" }}> opponent is : {op_id} </h2>
 
-        <button onClick={deleteGameRoom}>leave room {room}</button>
       </div>
     );
   } else if (nbrconnect == 2 && isinroom) {
@@ -227,10 +288,10 @@ export default function Game(QQDATE : any) {
       <div className="Game">
         <h2> you are : {my_id} </h2>
 
-        <h4> Cree une partie PERSONALISE</h4>
+        <h4> Invite un ami a jouer</h4>
         <input
           type="text"
-          placeholder="room"
+          placeholder="username"
           id="room"
           onChange={(event) => {
             setRoom(event.target.value);
@@ -239,11 +300,24 @@ export default function Game(QQDATE : any) {
         <button onClick={createGameRoom}>PARTIE PERSONALISE</button>
         <p>{PP_empty}</p>
         <br />
-        <h4> Rentrer dans une partie RAPIDE</h4>
+        <h4> partie classee</h4>
 
         <button onClick={createFastGameRoom}>PARTIE RAPIDE</button>
 
         <p style={{ color: "red" }}> {isfull} </p>
+
+        {/* {InGame()} */}
+
+
+{/*         <canvas
+        id="canvas"
+        height="500px"
+        width="800px"
+        style={{ backgroundColor: '#4E4E4E' }}
+        >
+
+        </canvas> */}
+
       </div>
     );
   }
