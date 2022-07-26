@@ -13,7 +13,98 @@ charactersLength));
 }
 
 @Entity()
+export class BallEntity {  
+    @PrimaryGeneratedColumn('uuid')
+    id!: number;
+
+    @Column({ default: 0})
+    x: number = 0;
+
+    @Column({ default: 3})  
+    y: number = 10;
+
+    @Column({ default: 5}) 
+    dx: number = 5;
+
+    @Column({ default: 5})  
+    dy: number = 5;
+
+    @Column({ default: 10})  
+    rad: number = 10;
+
+    @Column({ default: 3})
+    speed: number = 3;
+
+    @Column({ default: "black"})
+    color: string = "black";
+
+    @Column({ default: true})
+    right: boolean = true;
+
+}
+
+@Entity()
+export class PadleEntity {  
+    @PrimaryGeneratedColumn('uuid')
+    id!: number;
+
+    @Column({ default: 20})
+    x: number;
+
+    @Column({ default: 3})  
+    y: number;
+
+    @Column({ default: 80})  
+    width: number;
+
+    @Column({ default: 20})
+    height: number;
+
+    @Column({ default: "black"})
+    color: string;
+
+}
+
+@Entity()
+export class SetEntity {  
+    @PrimaryGeneratedColumn('uuid')
+    id!: number;
+
+    @Column({ nullable: true })
+    room_name: string;
+
+    @Column('jsonb', { nullable: true })
+    ball: BallEntity;
+
+    @Column('jsonb', { nullable: true })
+    player_one_padle_obj?: PadleEntity;
+
+    @Column('jsonb', { nullable: true })
+    player_two_padle_obj?: PadleEntity;
+}
+
+
+@Entity()
 export class PlayerOneEntity {  
+    @PrimaryGeneratedColumn('uuid')
+    id!: number;
+
+    @Column({ nullable: true })
+    player_name: string;
+
+    @Column({ nullable: true })
+    player_lives?: string;
+
+    @Column({ nullable: true })
+    player_score?: string;
+
+    @Column({ nullable: true })
+    player_padle_position?: string;
+
+}
+
+@Entity()
+export class PlayerTwoEntity {  
     @PrimaryGeneratedColumn('uuid')
     id!: number;
 
@@ -69,6 +160,16 @@ export class GameEntity {
 
   @Column('time', { nullable: true})
   timer?: Date;
+
+  @Column('jsonb', { nullable: true })
+  set: SetEntity;
+
+  @Column('jsonb', { nullable: true })
+  set_player_one: SetEntity;
+
+  @Column('jsonb', { nullable: true })
+  set_player_two: SetEntity;
+
   /* @Column('jsonb', { nullable: true })
   rooms_tab: RoomEntity[];} */
 }//
