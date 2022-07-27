@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Game.css";
 import io from "socket.io-client";
 import { start } from "repl";
 import { render } from "@testing-library/react";
 import FtClock from "./Clock";
 import InGame from "./inGame";
-
+import { BallMouv, BallCol_right, BallCol_left, PaddleMouv_left, PaddleMouv_right, draw_line, draw_score } from "./BallMouv";
+import data from './BallMouv';
 const socket = io("http://localhost:4000/game");
 
 socket.on("connect_error", (err) => {
@@ -48,6 +49,7 @@ export default function Game() {
   const [PP_empty, setPP_empty] = useState("");
 
   const [mytimer, setmytimer] = useState(new Date());
+  let {ballObj,player_left, player_right, paddleProps_left, paddleProps_right} = data;
 
 
   /*   socket.on("connect", function () {
@@ -91,7 +93,6 @@ export default function Game() {
   function StartGame(rom : string) {
     socket.emit("startGameRoom", rom);
   } 
-
 
   useEffect(() => {
     socket.on("readyGame", (theroom) => {
@@ -171,61 +172,87 @@ export default function Game() {
     };
   }, []); */
 
+
+
   const [ball_speed, setball_speed] = useState(0);
   const [ball_color, setball_color] = useState("blue");
-let is_emited = 0;
+
+  let x = 0;
+  let speed = 10;
+  let color = "blue"
+  let right = true;
+  let is_emited = 0;
+/*   const canvasRef = useRef(null) */
+
   useEffect(() => {
-    socket.on("startGame", (theroom) => {
       const render = () => {
           const canvas = document.getElementById('canvas') as HTMLCanvasElement;
           var ctx = null;
           if (canvas)
             ctx = canvas.getContext('2d');
-          if (ctx && theroom.set.ball.x < 700) {
+          if (ctx) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = theroom.set.ball.color;
+            draw_line(ctx, ballObj, canvas.height, canvas.width)
+            draw_score(ctx, player_left, player_right,canvas.height, canvas.width)
+
+            BallMouv(ctx, ballObj, canvas.height, canvas.width)
+
+            BallCol_left(ctx, player_right,ballObj, paddleProps_left, canvas.height, canvas.width)
+            BallCol_right(ctx, player_left,ballObj, paddleProps_right, canvas.height, canvas.width)
+
+            PaddleMouv_left(ctx, canvas, paddleProps_left);
+            PaddleMouv_right(ctx, canvas, paddleProps_right);
+
+ /*             ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.arc(theroom.set.ball.x, 75, 13, 0, 2 * Math.PI);
+            ctx.arc(x, 75, 13, 0, 2 * Math.PI);
             ctx.stroke();
-            setball_speed(theroom.set.ball.speed + 10);
-            if (theroom.set.ball.right == false)
-              theroom.set.ball.x -= theroom.set.ball.speed;  
+
+            //setball_speed(speed + 10);
+            if (right == false)
+              x -= speed;  
             else
-              theroom.set.ball.x += theroom.set.ball.speed;
-            //if (ball_speed >= 200)
-            //  setball_speed(0);
-            //console.log(ball_speed)
-           //console.log(x)
-          ctx.closePath();
-          ctx.fill();
+              x += speed;
+            if (x >= 800)
+              right = false;  
+            if (x <= 0)
+              right = true;
+            ctx.closePath();
+            ctx.fill(); */
     
             requestAnimationFrame(render);
-          console.log("END-->")
-            if (theroom.set.ball.x >= 700 && is_emited == 0)
-            {
-            //  console.log("emit " + theroom.set.ball.x)
-              is_emited = 1;
-              StartGame(theroom.room_name)
-              //theroom.set.ball.x = 0;
-            }
-/*             else if (theroom.set.ball.x < 0){
+          //console.log("END-->")
+/*             else if (x < 0){
               StartGame(theroom.room_name)
             } */
 
           }
-          console.log("11111")
+          //console.log("11111")
         };
         console.log("22222")
         render();
-      
         console.log("33333")
-
-      });
       console.log("44444")
 
-    }, [socket]);
+    }, []);
     console.log("----")
+    
+
+/* 
+    function keyDown(e: any) {
+
+     // console.log( e.keyCode )
+      console.log( e.keyCode )
+      if (e.keyCode == 38)
+        paddleProps.y -= 10;
+      if (e.keyCode == 40)
+        paddleProps.y += 10;
+      
+      }
+
+  window.addEventListener('keydown', keyDown);
+  //window.addEventListener('keyup', keyUp); */
 
   ///////////////////////////////INGAME
 
@@ -242,14 +269,15 @@ let is_emited = 0;
         <p>zzzz = </p>
        {/*  <p>{mytimer.toString()}</p> 
         <p>{timecount.toString()}</p> */} 
-        <canvas
+{/*         <canvas
         id="canvas"
-        height="500px"
+        height="900px"
         width="800px"
+        onMouseMove={(e) => (paddleProps.y = e.clienty  - (paddleProps.height / 2) }
         style={{ backgroundColor: '#4E4E4E' }}
         >
 
-        </canvas>
+        </canvas> */}
 {/* //////////////// */}
 
       </div>
@@ -286,6 +314,18 @@ let is_emited = 0;
   } else {
     return (
       <div className="Game">
+        <canvas
+        id="canvas"
+/*         ref={canvasRef} */
+        height="900px"
+        width={1000}
+        onMouseMove={(e) => (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 )+
+                            (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 ) }
+
+        style={{ backgroundColor: 'black' }}
+        >
+
+        </canvas> 
         <h2> you are : {my_id} </h2>
 
         <h4> Invite un ami a jouer</h4>
@@ -309,14 +349,6 @@ let is_emited = 0;
         {/* {InGame()} */}
 
 
-{/*         <canvas
-        id="canvas"
-        height="500px"
-        width="800px"
-        style={{ backgroundColor: '#4E4E4E' }}
-        >
-
-        </canvas> */}
 
       </div>
     );

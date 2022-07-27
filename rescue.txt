@@ -63,3 +63,61 @@ StartGame(client: Socket, room: string) {
         console.log("ON["+xx + "][" +color + "]["+ speed+ "]["+ right+"][")
 
     }, [socket]);
+
+
+
+      const [ball_speed, setball_speed] = useState(0);
+  const [ball_color, setball_color] = useState("blue");
+let is_emited = 0;
+  useEffect(() => {
+    socket.on("startGame", (theroom) => {
+      const render = () => {
+          const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+          var ctx = null;
+          if (canvas)
+            ctx = canvas.getContext('2d');
+          if (ctx && theroom.set.ball.x < 700) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = theroom.set.ball.color;
+            ctx.beginPath();
+            ctx.arc(theroom.set.ball.x, 75, 13, 0, 2 * Math.PI);
+            ctx.stroke();
+            setball_speed(theroom.set.ball.speed + 10);
+            if (theroom.set.ball.right == false)
+              theroom.set.ball.x -= theroom.set.ball.speed;  
+            else
+              theroom.set.ball.x += theroom.set.ball.speed;
+            //if (ball_speed >= 200)
+            //  setball_speed(0);
+            //console.log(ball_speed)
+           //console.log(x)
+          ctx.closePath();
+          ctx.fill();
+    
+            requestAnimationFrame(render);
+          console.log("END-->")
+            if (theroom.set.ball.x >= 700 && is_emited == 0)
+            {
+            //  console.log("emit " + theroom.set.ball.x)
+              is_emited = 1;
+              StartGame(theroom.room_name)
+              //theroom.set.ball.x = 0;
+            }
+/*             else if (theroom.set.ball.x < 0){
+              StartGame(theroom.room_name)
+            } */
+
+          }
+          console.log("11111")
+        };
+        console.log("22222")
+        render();
+      
+        console.log("33333")
+
+      });
+      console.log("44444")
+
+    }, [socket]);
+    console.log("----")

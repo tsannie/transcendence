@@ -190,7 +190,7 @@ StartGame(client: Socket, room: string) {
   }
 /////////
   /////////////////////////////////INGAME
-///////
+///////.//
   game_time = new Date;
   game_start = false;
 //
