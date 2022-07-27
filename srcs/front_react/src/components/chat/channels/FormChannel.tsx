@@ -11,14 +11,34 @@ import React, { useState } from "react";
 import { socket } from "../Chat";
 import { IChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
+import { api } from "../../../userlist/UserListItem";
 
 export default function FormChannel(props: any) {
   const [name, setName] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
+  const [channelCreated, setChannelCreated] = useState(false);
 
   function createChannels() {
+    let allExistingChannelsId : Array<any>;
     console.log("createChannel");
+    api
+    .get("channel/all")
+    .then((res) => {
+      console.log(res.data);
+      allExistingChannelsId = res.data;
+      const a = allExistingChannelsId.filter(channel => {
+        return channel.id === name
+        });
+      console.log(a);
+      if (a.length !== 0)
+        alert("id deja pris");
+    })
+    .catch((res) => {
+      console.log("error");
+      console.log(res);
+    });
+
     const channelData: IChannel = {
       id: name,
       status: status,
@@ -28,6 +48,7 @@ export default function FormChannel(props: any) {
         String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
     };
     socket.emit("createChannel", channelData);
+    setChannelCreated(true);
   }
 
   return (
