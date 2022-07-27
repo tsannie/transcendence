@@ -42,7 +42,7 @@ export class BallEntity {
     right: boolean = true;
 
 }
-
+////////
 @Entity()
 export class PadleEntity {  
     @PrimaryGeneratedColumn('uuid')
