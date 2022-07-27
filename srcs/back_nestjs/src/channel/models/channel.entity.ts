@@ -1,8 +1,8 @@
-//import { RoomEntity } from "src/room/models/room.entity";
 import {
   Column,
   Entity,
   ManyToOne,
+  OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -17,4 +17,6 @@ export class ChannelEntity {
 
   @Column()
   time: string;
+
+  //@ManyToOne() user channel
 }
