@@ -25,6 +25,6 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  //@ManyToOne(() => RoomEntity, room => room.users)
+  //@OnetoMany(() => RoomEntity, room => room.users)
   //room: RoomEntity
 }

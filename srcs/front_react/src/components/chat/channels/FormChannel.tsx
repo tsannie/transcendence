@@ -20,18 +20,15 @@ export default function FormChannel(props: any) {
   const [channelCreated, setChannelCreated] = useState(false);
 
   function createChannels() {
-    let allExistingChannelsId : Array<any>;
-    console.log("createChannel");
+    let allExistingChannels : Array<IChannel>;
     api
     .get("channel/all")
     .then((res) => {
-      console.log(res.data);
-      allExistingChannelsId = res.data;
-      const a = allExistingChannelsId.filter(channel => {
+      allExistingChannels = res.data;
+      const ChannelById = allExistingChannels.filter(channel => {
         return channel.id === name
-        });
-      console.log(a);
-      if (a.length !== 0)
+      });
+      if (ChannelById.length !== 0)
         alert("id deja pris");
     })
     .catch((res) => {
