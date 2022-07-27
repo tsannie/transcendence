@@ -67,7 +67,7 @@ export default function Chat() {
           ":" +
           String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
       };
-      await socket.emit("addMessage", messageData);
+      await socket.emit("message", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
       setAuthor(messageData.author);
@@ -80,7 +80,7 @@ export default function Chat() {
 
   // listen message from backend
   useEffect(() => {
-    socket.on("addMessage", (data) => {
+    socket.on("message", (data) => {
       console.log(data);
       setMessagesList((list) => [...list, data]);
     });
