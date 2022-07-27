@@ -11,9 +11,30 @@ export class ChannelService {
     @InjectRepository(ChannelEntity)
     private allChannels: Repository<ChannelEntity>,
   ) {}
-  getAllChannels(): Observable<IChannel[]> {
+  getAllChannels() : Observable<IChannel[]> {
     return from(this.allChannels.find());
   }
+
+  add(channel: IChannel): Observable<IChannel> {
+    return from(this.allChannels.save(channel));
+  }
+
+  handleChannels(data: IChannel) : void {
+    this.add(data);
+    if (data.status === 'Public') {
+      this.handlePublicChannels();
+    }
+    else if (data.status === 'Private') {
+      this.handlePrivateChannels();
+    }
+    else if (data.status === 'Protected') {
+      this.handleProtectedChannels();
+    }
+    else {
+      console.log("error");
+    }
+  }
+
   handlePublicChannels() : void {
     console.log("public channels")
   }

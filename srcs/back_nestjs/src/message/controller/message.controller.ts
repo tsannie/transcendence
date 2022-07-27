@@ -10,7 +10,7 @@ import { MessageEntity } from '../models/message.entity';
 import { IMessage } from '../models/message.interface';
 import { MessageService } from '../service/message.service';
 
-@Controller('addMessage')
+@Controller('message')
 export class MessageController {
   constructor(private messageService: MessageService,
     ) {}

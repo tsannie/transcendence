@@ -48,7 +48,7 @@ export class MessageGateway
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('addMessage')
+  @SubscribeMessage('message')
   addMessage(
     @MessageBody() data: IMessage,
     @ConnectedSocket() client: Socket,
@@ -69,7 +69,7 @@ export class MessageGateway
     this.messageService.add(newMessage);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
     // join room
-    client.to(newMessage.room).emit('addMessage', newMessage);
+    client.to(newMessage.room).emit('message', newMessage);
   }
 
   afterInit() {
@@ -109,17 +109,6 @@ export class MessageGateway
     client.join(data.id);
     console.log(data);
     this.logger.log(`client ${client.id} create channel ${data} `);
-    if (data.status === 'Public') {
-      this.channelService.handlePublicChannels();
-    }
-    else if (data.status === 'Private') {
-      this.channelService.handlePrivateChannels();
-    }
-    else if (data.status === 'Protected') {
-      this.channelService.handleProtectedChannels();
-    }
-    else {
-      console.log("error");
-    }
+    this.channelService.handleChannels(data);
   }
 }
