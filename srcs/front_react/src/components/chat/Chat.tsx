@@ -27,7 +27,7 @@ export default function Chat() {
 
   function createRoom() {
     console.log(room);
-    if (username !== "" && room !== "") {
+    if (room !== "") {
       socket.emit("createRoom", room);
       console.log(`User join room ${room}`);
       setWindowChat(true);
@@ -50,7 +50,7 @@ export default function Chat() {
     }
   }
 
-  async function sendMessage() {
+  function sendMessage() {
     const inputMessage = document.getElementById(
       "input-message"
     ) as HTMLInputElement;
@@ -67,7 +67,7 @@ export default function Chat() {
           ":" +
           String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
       };
-      await socket.emit("message", messageData);
+      socket.emit("message", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
       setAuthor(messageData.author);
