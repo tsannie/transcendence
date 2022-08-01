@@ -93,16 +93,16 @@ export class SetEntity {
     ball: BallEntity;
 
     @Column('jsonb', { nullable: true })
-    player_one_padle_obj?: PadleEntity;
+    p1_padle_obj?: PadleEntity;
 
     @Column('jsonb', { nullable: true })
-    player_two_padle_obj?: PadleEntity;
+    p2_padle_obj?: PadleEntity;
 
     @Column('jsonb', { nullable: true })
-    set_player_one: PlayerEntity;
+    set_p1: PlayerEntity;
   
     @Column('jsonb', { nullable: true })
-    set_player_two: PlayerEntity;
+    set_p2: PlayerEntity;
 
 }
 
@@ -125,16 +125,16 @@ export class GameEntity {
   nbr_co : number;
 
   @Column({ nullable: true })
-  player_one?: string;
+  p1?: string;
 
   @Column({ nullable: true })
-  player_two?: string;
+  p2?: string;
 
   @Column('boolean', {default: false})
-  player_one_ready?: boolean;
+  p1_ready?: boolean;
 
   @Column('boolean', {default: false})
-  player_two_ready?: boolean;
+  p2_ready?: boolean;
 
   @Column('boolean', {default: false})
   game_started?: boolean;

@@ -11,7 +11,7 @@ import { Server } from 'http';
 import { from, throwError } from 'rxjs';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { BallEntity, GameEntity, PlayerEntity, SetEntity } from './game_entity/game.entity';
+import { BallEntity, GameEntity, PadleEntity, PlayerEntity, SetEntity } from './game_entity/game.entity';
 
 //import { GameService } from './game_service/game_service.service';
 
@@ -78,7 +78,7 @@ export class GameGateway implements OnGatewayInit {
 
       theroom.room_name = room;
       theroom.nbr_co = 1;
-      theroom.player_one = client.id;
+      theroom.p1 = client.id;
 
       //console.log(`--back--User create room [${room}] |${this.rooms[room]}|`);////
       client.emit('joinedRoom', theroom);
@@ -90,7 +90,7 @@ export class GameGateway implements OnGatewayInit {
       const theroom = this.roo[room];
       theroom.nbr_co = 2;
       theroom.room_name = room;
-      theroom.player_two = client.id;
+      theroom.p2 = client.id;
 
 
       client.to(room).emit('joinedRoom', theroom);
@@ -109,17 +109,17 @@ export class GameGateway implements OnGatewayInit {
     const theroom = this.roo[room];
     theroom.nbr_co -= 1;
     theroom.room_name = room;
-    theroom.player_two_ready = false;
-    theroom.player_one_ready = false;
+    theroom.p2_ready = false;
+    theroom.p1_ready = false;
     //theroom.read = false;
     this.roo[room].thedate = null;
     //theroom.game_started = false;
 
 
-    if (theroom.player_one == client.id) {
-      theroom.player_one = theroom.player_two;
-      theroom.player_two = null;
-    } else if (theroom.player_two == client.id) theroom.player_two = null;
+    if (theroom.p1 == client.id) {
+      theroom.p1 = theroom.p2;
+      theroom.p2 = null;
+    } else if (theroom.p2 == client.id) theroom.p2 = null;
 
     client.to(room).emit('leftRoom', theroom);
     client.emit('leftRoom', theroom);
@@ -139,11 +139,11 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('readyGameRoom')
   ReadyGame(client: Socket, room: string) {
     const theroom = this.roo[room];
-    if (theroom.player_one == client.id)
-      theroom.player_one_ready = true;
-    else if (theroom.player_two == client.id)
-      theroom.player_two_ready = true;
-    if (theroom.player_two_ready == true && theroom.player_one_ready == true)
+    if (theroom.p1 == client.id)
+      theroom.p1_ready = true;
+    else if (theroom.p2 == client.id)
+      theroom.p2_ready = true;
+    if (theroom.p2_ready == true && theroom.p1_ready == true)
     {
       this.roo[room].game_started = true;
       this.roo[room].thedate = new Date();
@@ -177,13 +177,58 @@ StartGame(client: Socket, room: string) {
   if (!this.roo[room].set.ball)
     this.roo[room].set.ball = new BallEntity();
 
-  if (!this.roo[room].set.set_player_one)
-    this.roo[room].set.set_player_one = new PlayerEntity()
-  if (!this.roo[room].set.set_player_two)
-    this.roo[room].set.set_player_two = new PlayerEntity()
+  if (!this.roo[room].set.set_p1)
+    this.roo[room].set.set_p1 = new PlayerEntity()
+  if (!this.roo[room].set.set_p2)
+    this.roo[room].set.set_p2 = new PlayerEntity()
 
-  this.roo[room].set.set_player_one.name = this.roo[room].player_one;
-  this.roo[room].set.set_player_two.name = this.roo[room].player_two;
+  this.roo[room].set.set_p1.name = this.roo[room].p1;
+  this.roo[room].set.set_p2.name = this.roo[room].p2;
+
+
+   // this.roo[room].set.ball.x = x;
+   // console.log("XXX = " + this.roo[room].set.ball.x)
+    
+/*     if (this.roo[room].set.ball.x >= 800)
+      this.roo[room].set.ball.right = false;  
+    if (this.roo[room].set.ball.x <= 0)
+      this.roo[room].set.ball.right = true; */
+    //this.all_game.save(this.roo[room]);
+
+    client.to(room).emit('startGame', this.roo[room]);
+    client.emit('startGame', this.roo[room]);
+    return this.all_game.save(this.roo[room]);
+  }
+
+//
+ @SubscribeMessage('paddleMouv')
+Paddle_mouv(client: Socket, data: any) {
+
+
+
+  console.log("PADDLE MOUVED [" + data.rom + "]=======================================================" );//"] [" + x +"]");
+  var room = data.rom;
+/*   if (!this.roo[room].set)
+    this.roo[room].set = new SetEntity();
+  if (!this.roo[room].set.p1_padle_obj) {
+    this.roo[room].set.p1_padle_obj = new PadleEntity()
+  }
+  if (!this.roo[room].set.p2_padle_obj) {
+    this.roo[room].set.p2_padle_obj = new PadleEntity()
+  }
+  this.roo[room].set.p2_padle_obj.height = p1paddle.height;
+  this.roo[room].set.p2_padle_obj.width = p1paddle.width;
+  this.roo[room].set.p2_padle_obj.color = p1paddle.color;
+  this.roo[room].set.p2_padle_obj.x = p1paddle.x;
+  this.roo[room].set.p2_padle_obj.y = p1paddle.y;
+
+  this.roo[room].set.p2_padle_obj.height = p1paddle.height;
+  this.roo[room].set.p2_padle_obj.width = p1paddle.width;
+  this.roo[room].set.p2_padle_obj.color = p1paddle.color;
+  this.roo[room].set.p2_padle_obj.x = p1paddle.x;
+  this.roo[room].set.p2_padle_obj.y = p1paddle.y; */
+
+
 
 
    // this.roo[room].set.ball.x = x;
