@@ -93,7 +93,19 @@ export default function Game() {
     //console.log(`--player ready`);
   }
 
+  function SendPaddleMouv(p1paddle: object, p2paddle: object) {
+    var data={  
+      rom : room,
+      pd2 : p2paddle,  
+      pd3 : p1paddle  
+      };
+
+    //console.log(p1paddle, p2paddle);
+    socket.emit("paddleMouv", data);
+  }
+
   function StartGame(rom : string) {
+    
     socket.emit("startGameRoom", rom);
   }
 
@@ -101,16 +113,16 @@ export default function Game() {
     socket.on("readyGame", (theroom) => {
       setColor_ready("green");
       if (
-        (theroom.player_two == socket.id && theroom.player_two_ready == true) ||
-        (theroom.player_one == socket.id && theroom.player_one_ready == true)
+        (theroom.p2 == socket.id && theroom.p2_ready == true) ||
+        (theroom.p1 == socket.id && theroom.p1_ready == true)
       )
         setimready(true);
       if (
-        (theroom.player_one != socket.id && theroom.player_one_ready == true) ||
-        (theroom.player_two != socket.id && theroom.player_two_ready == true)
+        (theroom.p1 != socket.id && theroom.p1_ready == true) ||
+        (theroom.p2 != socket.id && theroom.p2_ready == true)
       )
         setopready(true);
-      if (theroom.player_one_ready == true && theroom.player_two_ready == true)
+      if (theroom.p1_ready == true && theroom.p2_ready == true)
       {
         setmytimer(theroom.thedate);
         //console.log("DATE : " + mytimer + " DATE : " + theroom.thedate);
@@ -127,15 +139,15 @@ export default function Game() {
     socket.on("joinedRoom", (theroom) => {
       setnbrconnect(theroom.nbr_co);
       setisinroom(true);
-     // if (theroom.player_two == my_id)
+     // if (theroom.p2 == my_id)
         setRoom(theroom.room_name);
-      if (theroom.player_two == socket.id)
+      if (theroom.p2 == socket.id)
       {
-          setop_id(theroom.player_one);
+          setop_id(theroom.p1);
           setim_right(true);
       }
-      else if (theroom.player_one == socket.id)
-        setop_id(theroom.player_two);
+      else if (theroom.p1 == socket.id)
+        setop_id(theroom.p2);
       console.log(
         "recu le msg from back de : " + theroom.nbr_co + " == " + nbrconnect
       );
@@ -194,12 +206,12 @@ export default function Game() {
   useEffect(() => {
       socket.on("startGame", (theroom) => {
         
-        console.log("im right ? = " + im_right);
+        //console.log("im right ? = " + im_right);
 
-        player_left.name = theroom.set.set_player_one.name;
-        player_right.name = theroom.set.set_player_two.name;
+        player_left.name = theroom.set.set_p1.name;
+        player_right.name = theroom.set.set_p2.name;
 
-        console.log("ici 1 ");
+        //console.log("ici 1 ");
         const render = () => {
        // console.log("ici 2 ");
 
@@ -223,6 +235,8 @@ export default function Game() {
 
               PaddleMouv_left(ctx, canvas, paddleProps_left);
               PaddleMouv_right(ctx, canvas, paddleProps_right);
+
+              SendPaddleMouv(paddleProps_left, paddleProps_right);
             }
             else
             {
