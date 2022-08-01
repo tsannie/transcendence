@@ -11,7 +11,7 @@ import { Server } from 'http';
 import { from, throwError } from 'rxjs';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { BallEntity, GameEntity, SetEntity } from './game_entity/game.entity';
+import { BallEntity, GameEntity, PlayerEntity, SetEntity } from './game_entity/game.entity';
 
 //import { GameService } from './game_service/game_service.service';
 
@@ -80,7 +80,7 @@ export class GameGateway implements OnGatewayInit {
       theroom.nbr_co = 1;
       theroom.player_one = client.id;
 
-      //console.log(`--back--User create room [${room}] |${this.rooms[room]}|`);
+      //console.log(`--back--User create room [${room}] |${this.rooms[room]}|`);////
       client.emit('joinedRoom', theroom);
       this.roo[room] = theroom;
       return this.all_game.save(theroom); //
@@ -91,6 +91,7 @@ export class GameGateway implements OnGatewayInit {
       theroom.nbr_co = 2;
       theroom.room_name = room;
       theroom.player_two = client.id;
+
 
       client.to(room).emit('joinedRoom', theroom);
       client.emit('joinedRoom', theroom);
@@ -110,7 +111,7 @@ export class GameGateway implements OnGatewayInit {
     theroom.room_name = room;
     theroom.player_two_ready = false;
     theroom.player_one_ready = false;
-    theroom.read = false;
+    //theroom.read = false;
     this.roo[room].thedate = null;
     //theroom.game_started = false;
 
@@ -169,27 +170,37 @@ export class GameGateway implements OnGatewayInit {
 @SubscribeMessage('startGameRoom')
 StartGame(client: Socket, room: string) {
   
-  console.log("ROOOOMMMMM = [" + room );//"] [" + x +"]");
+  console.log("START GAME ROOM = [" + room );//"] [" + x +"]");
   
   if (!this.roo[room].set)
     this.roo[room].set = new SetEntity();
   if (!this.roo[room].set.ball)
     this.roo[room].set.ball = new BallEntity();
 
+  if (!this.roo[room].set.set_player_one)
+    this.roo[room].set.set_player_one = new PlayerEntity()
+  if (!this.roo[room].set.set_player_two)
+    this.roo[room].set.set_player_two = new PlayerEntity()
+
+  this.roo[room].set.set_player_one.name = this.roo[room].player_one;
+  this.roo[room].set.set_player_two.name = this.roo[room].player_two;
+
+
    // this.roo[room].set.ball.x = x;
    // console.log("XXX = " + this.roo[room].set.ball.x)
     
-    if (this.roo[room].set.ball.x >= 800)
+/*     if (this.roo[room].set.ball.x >= 800)
       this.roo[room].set.ball.right = false;  
     if (this.roo[room].set.ball.x <= 0)
-      this.roo[room].set.ball.right = true;
+      this.roo[room].set.ball.right = true; */
+    //this.all_game.save(this.roo[room]);
 
     client.to(room).emit('startGame', this.roo[room]);
     client.emit('startGame', this.roo[room]);
     return this.all_game.save(this.roo[room]);
   }
 /////////
-  /////////////////////////////////INGAME
+  /////////////////////////////////INGAME//
 ///////.//
   game_time = new Date;
   game_start = false;
