@@ -41,6 +41,9 @@ export default function Game() {
   const [color_ready, setColor_ready] = useState("");
   const [my_id, setmy_id] = useState(socket.id);
   const [op_id, setop_id] = useState("2");
+  const [im_right, setim_right] = useState(false);
+
+
   const [isfull, setisFull] = useState("");
   const [isinroom, setisinroom] = useState(false);
 
@@ -49,7 +52,7 @@ export default function Game() {
   const [PP_empty, setPP_empty] = useState("");
 
   const [mytimer, setmytimer] = useState(new Date());
-  let {ballObj,player_left, player_right, paddleProps_left, paddleProps_right} = data;
+  let {ballObj, player_left, player_right, paddleProps_left, paddleProps_right} = data;
 
 
   /*   socket.on("connect", function () {
@@ -92,7 +95,7 @@ export default function Game() {
 
   function StartGame(rom : string) {
     socket.emit("startGameRoom", rom);
-  } 
+  }
 
   useEffect(() => {
     socket.on("readyGame", (theroom) => {
@@ -124,9 +127,15 @@ export default function Game() {
     socket.on("joinedRoom", (theroom) => {
       setnbrconnect(theroom.nbr_co);
       setisinroom(true);
-      setRoom(theroom.room_name);
-      if (theroom.player_two == socket.id) setop_id(theroom.player_one);
-      else if (theroom.player_one == socket.id) setop_id(theroom.player_two);
+     // if (theroom.player_two == my_id)
+        setRoom(theroom.room_name);
+      if (theroom.player_two == socket.id)
+      {
+          setop_id(theroom.player_one);
+          setim_right(true);
+      }
+      else if (theroom.player_one == socket.id)
+        setop_id(theroom.player_two);
       console.log(
         "recu le msg from back de : " + theroom.nbr_co + " == " + nbrconnect
       );
@@ -171,38 +180,55 @@ export default function Game() {
       clearInterval(timerId);
     };
   }, []); */
-
-
-
-  const [ball_speed, setball_speed] = useState(0);
+    
+    const [ball_speed, setball_speed] = useState(0);
   const [ball_color, setball_color] = useState("blue");
 
   let x = 0;
   let speed = 10;
   let color = "blue"
-  let right = true;
   let is_emited = 0;
-/*   const canvasRef = useRef(null) */
+  console.log("ici ");
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-      const render = () => {
-          const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      socket.on("startGame", (theroom) => {
+        
+        console.log("im right ? = " + im_right);
+
+        player_left.name = theroom.set.set_player_one.name;
+        player_right.name = theroom.set.set_player_two.name;
+
+        console.log("ici 1 ");
+        const render = () => {
+       // console.log("ici 2 ");
+
+          const canvas: any = canvasRef.current;
+          //const canvas = document.getElementById('canvas') as HTMLCanvasElement;
           var ctx = null;
           if (canvas)
-            ctx = canvas.getContext('2d');
+          ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            draw_line(ctx, ballObj, canvas.height, canvas.width)
-            draw_score(ctx, player_left, player_right,canvas.height, canvas.width)
+            if (player_left.won == 0 && player_right.won == 0)
+            {
+              draw_line(ctx, ballObj, canvas.height, canvas.width)
+              draw_score(ctx, player_left, player_right,canvas.height, canvas.width)
 
-            BallMouv(ctx, ballObj, canvas.height, canvas.width)
+              BallMouv(ctx, ballObj, canvas.height, canvas.width)
+              
+              BallCol_left(ctx, player_right,ballObj, paddleProps_left, canvas.height, canvas.width)
+              BallCol_right(ctx, player_left,ballObj, paddleProps_right, canvas.height, canvas.width)
 
-            BallCol_left(ctx, player_right,ballObj, paddleProps_left, canvas.height, canvas.width)
-            BallCol_right(ctx, player_left,ballObj, paddleProps_right, canvas.height, canvas.width)
+              PaddleMouv_left(ctx, canvas, paddleProps_left);
+              PaddleMouv_right(ctx, canvas, paddleProps_right);
+            }
+            else
+            {
+              draw_score(ctx, player_left, player_right,canvas.height, canvas.width)
+            }
 
-            PaddleMouv_left(ctx, canvas, paddleProps_left);
-            PaddleMouv_right(ctx, canvas, paddleProps_right);
 
  /*             ctx.fillStyle = color;
             ctx.beginPath();
@@ -211,7 +237,7 @@ export default function Game() {
 
             //setball_speed(speed + 10);
             if (right == false)
-              x -= speed;  
+            x -= speed;  
             else
               x += speed;
             if (x >= 800)
@@ -227,16 +253,16 @@ export default function Game() {
               StartGame(theroom.room_name)
             } */
 
-          }
+          }//
           //console.log("11111")
         };
-        console.log("22222")
+       // console.log("22222")
         render();
-        console.log("33333")
-      console.log("44444")
-
-    }, []);
-    console.log("----")
+       // console.log("33333")
+      //  console.log("44444")
+    });
+  }, [socket]);
+   // console.log("----")
     
 
 /* 
@@ -257,9 +283,19 @@ export default function Game() {
   ///////////////////////////////INGAME
 
   /////////////////////////////////////
-  if (nbrconnect == 2 && isinroom && opready == true && imready == true) {
+  if (nbrconnect == 2 && isinroom && opready == true && imready == true && im_right == true) {
     return (
       <div className="readyGame">
+
+         <canvas
+        id="canvas"
+        ref={canvasRef}
+        height="500px"
+        width={1000}
+        onMouseMove={(e) => (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 ) }
+        style={{ backgroundColor: 'black' }}>
+        </canvas>
+
         <h1 style={{ color: "blue" }}> you are : {my_id} </h1>
          <h2 style={{ color: "red" }}> opponent is : {op_id} </h2>
         <button onClick={deleteGameRoom}>leave room {room}</button>
@@ -267,24 +303,47 @@ export default function Game() {
         {/* {start_timer()} */}
          <p>time played =</p>
         <p>zzzz = </p>
-       {/*  <p>{mytimer.toString()}</p> 
-        <p>{timecount.toString()}</p> */} 
-{/*         <canvas
-        id="canvas"
-        height="900px"
-        width="800px"
-        onMouseMove={(e) => (paddleProps.y = e.clienty  - (paddleProps.height / 2) }
-        style={{ backgroundColor: '#4E4E4E' }}
-        >
 
-        </canvas> */}
+
+      </div>
+    );
+  } else if (nbrconnect == 2 && isinroom && opready == true && imready == true && im_right == false) {
+    
+    return (
+      <div className="readyGame">
+
+         <canvas
+        id="canvas"
+        ref={canvasRef}
+        height="500px"
+        width={1000}
+        onMouseMove={(e) => (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 ) }
+        style={{ backgroundColor: 'black' }}>
+        </canvas>
+
+        <h1 style={{ color: "blue" }}> you are : {my_id} </h1>
+         <h2 style={{ color: "red" }}> opponent is : {op_id} </h2>
+        <button onClick={deleteGameRoom}>leave room {room}</button>
 {/* //////////////// */}
+        {/* {start_timer()} */}
+         <p>time played =</p>
+        <p>zzzz = </p>
+
 
       </div>
     );
   } else if (nbrconnect == 2 && isinroom) {
     return (
       <div className="readytoplay">
+{/*                 <canvas
+        id="canvas"
+        ref={canvasRef}
+        height="500px"
+        width={1000}
+        onMouseMove={(e) => (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 )+
+                            (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 ) }
+        style={{ backgroundColor: 'black' }}>
+        </canvas> */}
         <h2> you are : {my_id} </h2>
         <p> THE ROOM "{room}" IS READY TO PLAY </p>
         <button onClick={deleteGameRoom}>leave room {room}</button>
@@ -305,6 +364,7 @@ export default function Game() {
   } else if (isinroom == true) {
     return (
       <div className="queues">
+        
         <h2> you are : {my_id} </h2>
 
         <p> waiting for opponent in room {room} </p>
@@ -313,19 +373,18 @@ export default function Game() {
     );
   } else {
     return (
-      <div className="Game">
-        <canvas
+      <div className="Game"> 
+
+{/*     <canvas
         id="canvas"
-/*         ref={canvasRef} */
-        height="900px"
+        ref={canvasRef}
+        height="500px"
         width={1000}
         onMouseMove={(e) => (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 )+
                             (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 ) }
+        style={{ backgroundColor: 'black' }}>
+        </canvas> */}
 
-        style={{ backgroundColor: 'black' }}
-        >
-
-        </canvas> 
         <h2> you are : {my_id} </h2>
 
         <h4> Invite un ami a jouer</h4>

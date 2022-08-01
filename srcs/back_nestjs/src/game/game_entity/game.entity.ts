@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-function makeid(length) {
+/* function makeid(length) {
   var result           = '';
   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   var charactersLength = characters.length;
@@ -10,7 +10,7 @@ function makeid(length) {
 charactersLength));
  }
  return result;
-}
+} *///////
 
 @Entity()
 export class BallEntity {  
@@ -35,14 +35,14 @@ export class BallEntity {
     @Column({ default: 3})
     speed: number = 3;
 
-    @Column({ default: "black"})
-    color: string = "black";
+    @Column({ default: "white"})
+    color: string = "white";
 
     @Column({ default: true})
     right: boolean = true;
 
 }
-////////
+//////////
 @Entity()
 export class PadleEntity {  
     @PrimaryGeneratedColumn('uuid')
@@ -60,10 +60,26 @@ export class PadleEntity {
     @Column({ default: 20})
     height: number;
 
-    @Column({ default: "black"})
-    color: string;
+    @Column({ default: "white"})
+    color: string = "white";
 
 }
+
+@Entity()
+export class PlayerEntity {  
+    @PrimaryGeneratedColumn('uuid')
+    id!: number;
+
+    @Column({ nullable: true })
+    name: string;
+
+    @Column({ nullable: true })
+    score: number;
+
+    @Column('boolean', {default: false})
+    won : boolean;
+}
+
 
 @Entity()
 export class SetEntity {  
@@ -81,44 +97,12 @@ export class SetEntity {
 
     @Column('jsonb', { nullable: true })
     player_two_padle_obj?: PadleEntity;
-}
 
-
-@Entity()
-export class PlayerOneEntity {  
-    @PrimaryGeneratedColumn('uuid')
-    id!: number;
-
-    @Column({ nullable: true })
-    player_name: string;
-
-    @Column({ nullable: true })
-    player_lives?: string;
-
-    @Column({ nullable: true })
-    player_score?: string;
-
-    @Column({ nullable: true })
-    player_padle_position?: string;
-
-}
-
-@Entity()
-export class PlayerTwoEntity {  
-    @PrimaryGeneratedColumn('uuid')
-    id!: number;
-
-    @Column({ nullable: true })
-    player_name: string;
-
-    @Column({ nullable: true })
-    player_lives?: string;
-
-    @Column({ nullable: true })
-    player_score?: string;
-
-    @Column({ nullable: true })
-    player_padle_position?: string;
+    @Column('jsonb', { nullable: true })
+    set_player_one: PlayerEntity;
+  
+    @Column('jsonb', { nullable: true })
+    set_player_two: PlayerEntity;
 
 }
 
@@ -155,6 +139,7 @@ export class GameEntity {
   @Column('boolean', {default: false})
   game_started?: boolean;
 
+
   @Column('time', { nullable: true})
   thedate?: Date;
 
@@ -164,12 +149,7 @@ export class GameEntity {
   @Column('jsonb', { nullable: true })
   set: SetEntity;
 
-  @Column('jsonb', { nullable: true })
-  set_player_one: SetEntity;
-
-  @Column('jsonb', { nullable: true })
-  set_player_two: SetEntity;
 
   /* @Column('jsonb', { nullable: true })
   rooms_tab: RoomEntity[];} */
-}//
+}////////
