@@ -28,7 +28,10 @@ export default function Channels(props: any) {
         Channels
       </Typography>
       <img src={Add} onClick={setChannel}></img>
-      {newChannel === true && <FormChannel />}
+      {newChannel === true &&
+      <FormChannel
+        setNewChannel={setNewChannel}
+      />}
     </Box>
   );
 }

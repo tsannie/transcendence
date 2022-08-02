@@ -20,9 +20,10 @@ export default function FormChannel(props: any) {
   const [channelCreated, setChannelCreated] = useState(false);
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
 
-  function createChannels() {
+  async function createChannels() {
+    let endingFct = false;
     let allExistingChannels: Array<IChannel>;
-    api
+    await api
       .get("channel/all")
       .then((res) => {
         allExistingChannels = res.data;
@@ -31,7 +32,7 @@ export default function FormChannel(props: any) {
         });
         if (ChannelById.length !== 0 && name !== "") {
           alert("id deja pris");
-          return;
+          endingFct = true;
         }
       })
       .catch((res) => {
@@ -39,6 +40,8 @@ export default function FormChannel(props: any) {
         console.log(res);
       });
 
+    if (endingFct)
+      return ;
     if (name !== "") {
       const channelData: IChannel = {
         id: name,
@@ -51,6 +54,7 @@ export default function FormChannel(props: any) {
       socket.emit("createChannel", channelData);
       setChannelsList((list) => [...list, channelData]);
       setChannelCreated(true);
+      props.setNewChannel(false);
     }
   }
 
