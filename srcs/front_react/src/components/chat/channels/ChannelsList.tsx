@@ -2,6 +2,8 @@ import { Box, Grid } from "@mui/material";
 import React, { useState } from "react";
 import { IChannel } from "../types";
 
+// to do: channel list
+
 export default function ChannelsList(props: any) {
   if (props.channelCreated === true)
     return (

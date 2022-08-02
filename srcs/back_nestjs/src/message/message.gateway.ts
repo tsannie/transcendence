@@ -110,5 +110,6 @@ export class MessageGateway
     console.log(data);
     this.logger.log(`client ${client.id} create channel ${data} `);
     this.channelService.handleChannels(data);
+    client.emit("channel", data);
   }
 }
