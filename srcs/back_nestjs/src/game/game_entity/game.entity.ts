@@ -112,7 +112,7 @@ export class GameEntity {
   @PrimaryGeneratedColumn()
   id:number;
 
-  @Column({ nullable: true }) //{ default: makeid(5) }
+  @Column({ nullable: true }) //{ default: makeid(5) }//
   room_name : string;
 
   @Column('boolean', {default: true})
