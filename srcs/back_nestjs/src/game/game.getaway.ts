@@ -205,10 +205,30 @@ StartGame(client: Socket, room: string) {
 Paddle_mouv(client: Socket, data: any) {
 
 
+/*   paddleProps_left: {
+    height: 150,
+    width: 20,
+    color: "white",
+    x: (20 * 2),
+    y: 5,//////
+  }, */
 
-  console.log("PADDLE MOUVED [" + data.rom + "]=======================================================" );//"] [" + x +"]");
-  var room = data.rom;
-/*   if (!this.roo[room].set)
+  console.log("------------------------------------------" );//"] [" + x +"]");
+
+  console.log("PADDLE room [" + data.room + "]========" );//"] [" + x +"]");
+  console.log("PADDLE x [" + data.pd2.x + "]========" );//"] [" + x +"]");
+  console.log("PADDLE y [" + data.pd2.y + "]========" );//"] [" + x +"]");
+
+  console.log("PADDLE width [" + data.pd2.width + "]========" );//"] [" + x +"]");
+  console.log("PADDLE height [" + data.pd2.height + "]========" );//"] [" + x +"]");
+  console.log("PADDLE color [" + data.pd2.color + "]========" );//"] [" + x +"]");
+//
+  if (!this.roo[data.room]){
+    console.log (" !!!!! NO ROOM !!!! [" + data.room + "]");
+    return ;
+  }
+  var room = data.room;
+/*   if (!this.roo[room].set)//
     this.roo[room].set = new SetEntity();
   if (!this.roo[room].set.p1_padle_obj) {
     this.roo[room].set.p1_padle_obj = new PadleEntity()
@@ -238,15 +258,16 @@ Paddle_mouv(client: Socket, data: any) {
       this.roo[room].set.ball.right = false;  
     if (this.roo[room].set.ball.x <= 0)
       this.roo[room].set.ball.right = true; */
-    //this.all_game.save(this.roo[room]);
+    
+      this.all_game.save(this.roo[room]);
 
-    client.to(room).emit('startGame', this.roo[room]);
-    client.emit('startGame', this.roo[room]);
-    return this.all_game.save(this.roo[room]);
+    //client.to(room).emit('startGame', this.roo[room]);
+   // client.emit('startGame', this.roo[room]);
+    //return this.all_game.save(this.roo[room]);
   }
 /////////
   /////////////////////////////////INGAME//
-///////.//
+///////.////
   game_time = new Date;
   game_start = false;
 //

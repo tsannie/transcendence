@@ -7,6 +7,9 @@ import FtClock from "./Clock";
 import InGame from "./inGame";
 import { BallMouv, BallCol_right, BallCol_left, PaddleMouv_left, PaddleMouv_right, draw_line, draw_score } from "./BallMouv";
 import data from './BallMouv';
+import { syncBuiltinESMExports } from "module";
+import { hasSelectionSupport } from "@testing-library/user-event/dist/utils";
+import { resolve } from "path";
 const socket = io("http://localhost:4000/game");
 
 socket.on("connect_error", (err) => {
@@ -93,15 +96,26 @@ export default function Game() {
     //console.log(`--player ready`);
   }
 
-  function SendPaddleMouv(p1paddle: object, p2paddle: object) {
+  var i = 0;
+
+  async function SendPaddleMouv(p1paddle: object, p2paddle: object, room_name: string) {
+    
+    
+    //await delay(1000)
     var data={  
-      rom : room,
+      room : room_name,
       pd2 : p2paddle,  
       pd3 : p1paddle  
-      };
-
+    };
+    
     //console.log(p1paddle, p2paddle);
-    socket.emit("paddleMouv", data);
+    while (i <= 1000) {                    //  increment the counter
+      if (i == 1000) {           //  if the counter < 10, call the loop function
+        console.log (" !!!!! NAMEROOOOOM === !!!! [" +room_name + "]");
+        await socket.emit("paddleMouv", data);
+      }
+      i++;           
+    }
   }
 
   function StartGame(rom : string) {
@@ -236,7 +250,7 @@ export default function Game() {
               PaddleMouv_left(ctx, canvas, paddleProps_left);
               PaddleMouv_right(ctx, canvas, paddleProps_right);
 
-              SendPaddleMouv(paddleProps_left, paddleProps_right);
+              SendPaddleMouv(paddleProps_left, paddleProps_right, theroom.room_name);
             }
             else
             {
