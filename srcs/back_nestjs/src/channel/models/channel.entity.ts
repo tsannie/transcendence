@@ -1,3 +1,4 @@
+import { IUser } from 'src/user/models/user.interface';
 import {
   Column,
   Entity,
@@ -18,5 +19,7 @@ export class ChannelEntity {
   @Column()
   time: string;
 
+  @Column({nullable: true} )
+  ownerid: string;
   //@ManyToOne() user channel
 }
