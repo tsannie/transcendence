@@ -106,6 +106,7 @@ export class MessageGateway
 
   @SubscribeMessage('createChannel')
   createChannel(@MessageBody() data: IChannel, @ConnectedSocket() client: Socket) {
+    data.ownerid = client.id;
     client.join(data.id);
     console.log(data);
     this.logger.log(`client ${client.id} create channel ${data} `);
