@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { IChannel } from "../types";
 
 // to do: channel list
+// faire un call api to channel/all pour afficher les channels
 
 export default function ChannelsList(props: any) {
   if (props.channelCreated === true)
