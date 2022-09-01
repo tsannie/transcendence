@@ -8,7 +8,7 @@ import InGame from "./inGame";
 import { BallMouv, BallCol_right, BallCol_left, PaddleMouv_left, PaddleMouv_right, draw_line, draw_score } from "./BallMouv";
 import data from './BallMouv';
 import { syncBuiltinESMExports } from "module";
-import { hasSelectionSupport } from "@testing-library/user-event/dist/utils";
+import { hasSelectionSupport, wait } from "@testing-library/user-event/dist/utils";
 import { resolve } from "path";
 const socket = io("http://localhost:4000/game");
 
@@ -53,6 +53,7 @@ export default function Game() {
   const [imready, setimready] = useState(false);
   const [opready, setopready] = useState(false);
   const [PP_empty, setPP_empty] = useState("");
+  const [gameover, setgameover] = useState(false);
 
   const [mytimer, setmytimer] = useState(new Date());
   let {ballObj, player_left, player_right, paddleProps_left, paddleProps_right} = data;
@@ -84,6 +85,7 @@ export default function Game() {
   function deleteGameRoom() {
     if (isinroom == true) {
       setisinroom(false);
+      setgameover(true);
       socket.emit("leaveGameRoom", room);
       //console.log(`--front--User leave room [${room}]`);
       setRoom("");
@@ -96,27 +98,7 @@ export default function Game() {
     //console.log(`--player ready`);
   }
 
-  var i = 0;
 
-  async function SendPaddleMouv(p1paddle: object, p2paddle: object, room_name: string) {
-    
-    
-    //await delay(1000)
-    var data={  
-      room : room_name,
-      pd2 : p2paddle,  
-      pd3 : p1paddle  
-    };
-    
-    //console.log(p1paddle, p2paddle);
-    while (i <= 1000) {                    //  increment the counter
-      if (i == 1000) {           //  if the counter < 10, call the loop function
-        console.log (" !!!!! NAMEROOOOOM === !!!! [" +room_name + "]");
-        await socket.emit("paddleMouv", data);
-      }
-      i++;           
-    }
-  }
 
   function StartGame(rom : string) {
     
@@ -174,6 +156,13 @@ export default function Game() {
       setop_id("");
     });
 
+    socket.on("leftRoomEmpty", () => {
+      setnbrconnect(0);
+      setopready(false);
+      setimready(false);
+      setop_id("");
+    });
+
     setisFull("");
     setmy_id(socket.id);
     socket.on("roomFull", (theroom) => {
@@ -206,7 +195,133 @@ export default function Game() {
       clearInterval(timerId);
     };
   }, []); */
+
+  useEffect(() => {
+    socket.on("sincTheBall", (theroom) => {
+      ballObj.x = theroom.set.ball.x;
+      ballObj.y = theroom.set.ball.y;
+      ballObj.dx = theroom.set.ball.dx;
+      ballObj.dy = theroom.set.ball.dy;
+
+
+  /*     console.log(ballObj.x);
+      console.log(ballObj.y);
+      console.log(ballObj.dx);
+      console.log(ballObj.dy); */
+
+
+    }); 
+    socket.on("mouvPaddleLeft", (theroom) => {
+        paddleProps_left.x = theroom.set.p1_padle_obj.x;
+        paddleProps_left.y = theroom.set.p1_padle_obj.y;
+    }); 
+    socket.on("mouvPaddleRight", (theroom) => {
+        paddleProps_right.x = theroom.set.p2_padle_obj.x;
+        paddleProps_right.y = theroom.set.p2_padle_obj.y;
+    }); 
+    socket.on("setPlayerLeft", (theroom) => {
+      player_left.score = theroom.set.set_p1.score;
+      player_left.won = theroom.set.set_p1.won;
+      player_left.name = theroom.set.set_p1.name;
+    }); 
+    socket.on("setPlayerRight", (theroom) => {
+      player_right.score = theroom.set.set_p2.score;
+      player_right.won = theroom.set.set_p2.won;
+      player_right.name = theroom.set.set_p2.name;
+  }); 
+
+      
+  }, [socket]);
+
+
+
+
+
+  function sinc_ball(room_name : string, objball: any){
+   /*  console.log (" !!!!! BEFORE sinc ball  ===!!!!");
+    console.log (nbrconnect)
+    console.log (isinroom)
+    console.log (opready)
+    console.log (imready)
+    console.log (player_left.won)
+    console.log (player_right.won)
+    console.log (" !!!!! BEFORE sinc ball  ===!!!!");
+ */
+    //console.log("BEFORE SINC ROOM NAME = " + room_name)
+    if (/* nbrconnect == 2 && isinroom && opready == true && imready == true
+      && */ player_left.won == 0 && player_right.won == 0 ) {
+      var data={  
+        room : room_name,
+        ball : objball,
+      };
+      
+      console.log (" !!!!! sinc ball  ===!!!!");
+      socket.emit("sincBall", data);
+     // sendPaddleMouvLeft(paddleProps_left, room);
+    }
+  }
+
+  function mouv_paddle_left(e: any){
+    if (nbrconnect == 2 && isinroom && opready == true && imready == true && im_right == false &&
+      player_left.won == 0 && player_right.won == 0) {
+      (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 );
+      var data={  
+        room : room,
+        pd : paddleProps_left,
+      };
     
+      //console.log (" !!!!! EMIT IN LEFT ===!!!![" + room_name +"]");
+      socket.emit("paddleMouvLeft", data);
+     // sendPaddleMouvLeft(paddleProps_left, room);
+    }
+  }
+
+  function mouv_paddle_right(e: any){
+    if (nbrconnect == 2 && isinroom && opready == true && imready == true && im_right == true &&
+      player_left.won == 0 && player_right.won == 0) {
+      (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 );
+      var data={  
+        room : room,
+        pd : paddleProps_right,
+      };
+    
+      //console.log (" !!!!! EMIT IN LEFT ===!!!![" + room_name +"]");
+      socket.emit("paddleMouvRight", data);
+      //sendPaddleMouvRight(paddleProps_right, room);
+    }
+  }
+  
+/*   function     sendPaddleMouvLeft(paddle: object, room_name: string) {
+    
+  }
+  function sendPaddleMouvRight(paddle: object, room_name: string) {
+    
+  }
+
+
+
+  function sendPlayerInfoLeft(player: object, room_name: string) {
+    var data={  
+      room : room_name,
+      p : player,  
+    };
+
+    console.log (" sendPlayerInfoLeft [" + room_name +"]");
+    socket.emit("playerActyLeft", data);
+    
+  }
+
+  function     sendPlayerInfoRight(player: object, room_name: string) {
+    
+    var data={  
+      room : room_name,
+      p : player,  
+    };
+
+    console.log ("sendPlayerInfoRight=!!!![" + room_name +"]");
+    socket.emit("playerActyRight", data);
+  } */
+  
     const [ball_speed, setball_speed] = useState(0);
   const [ball_color, setball_color] = useState("blue");
 
@@ -216,7 +331,7 @@ export default function Game() {
   let is_emited = 0;
   console.log("ici ");
   const canvasRef = useRef(null);
-
+  let u = 0;
   useEffect(() => {
       socket.on("startGame", (theroom) => {
         
@@ -225,7 +340,9 @@ export default function Game() {
         player_left.name = theroom.set.set_p1.name;
         player_right.name = theroom.set.set_p2.name;
 
+
         //console.log("ici 1 ");
+  
         const render = () => {
        // console.log("ici 2 ");
 
@@ -236,21 +353,36 @@ export default function Game() {
           ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             if (player_left.won == 0 && player_right.won == 0)
             {
               draw_line(ctx, ballObj, canvas.height, canvas.width)
               draw_score(ctx, player_left, player_right,canvas.height, canvas.width)
 
               BallMouv(ctx, ballObj, canvas.height, canvas.width)
-              
-              BallCol_left(ctx, player_right,ballObj, paddleProps_left, canvas.height, canvas.width)
-              BallCol_right(ctx, player_left,ballObj, paddleProps_right, canvas.height, canvas.width)
 
+              BallCol_left(ctx, player_right,ballObj, paddleProps_left, canvas.height, canvas.width)
+              if (ballObj.is_col == true)
+                u = 1;
+              BallCol_right(ctx, player_left,ballObj, paddleProps_right, canvas.height, canvas.width)
+              if (ballObj.is_col == true)
+                u = 1;              
+              if (u > 0)
+              {
+                u++;
+                console.log("u = " + u);
+              }
+              if (u >= 4) {
+                sinc_ball(theroom.room_name, ballObj)
+                u = 0;
+              }
+
+
+    
               PaddleMouv_left(ctx, canvas, paddleProps_left);
               PaddleMouv_right(ctx, canvas, paddleProps_right);
 
-              SendPaddleMouv(paddleProps_left, paddleProps_right, theroom.room_name);
+              //SendPaddleMouv(paddleProps_left, paddleProps_right, theroom.room_name);
             }
             else
             {
@@ -309,7 +441,6 @@ export default function Game() {
   //window.addEventListener('keyup', keyUp); */
 
   ///////////////////////////////INGAME
-
   /////////////////////////////////////
   if (nbrconnect == 2 && isinroom && opready == true && imready == true && im_right == true) {
     return (
@@ -320,7 +451,7 @@ export default function Game() {
         ref={canvasRef}
         height="500px"
         width={1000}
-        onMouseMove={(e) => (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 ) }
+        onMouseMove={(e) => mouv_paddle_right(e)}
         style={{ backgroundColor: 'black' }}>
         </canvas>
 
@@ -345,7 +476,7 @@ export default function Game() {
         ref={canvasRef}
         height="500px"
         width={1000}
-        onMouseMove={(e) => (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 ) }
+        onMouseMove={(e) => mouv_paddle_left(e)}
         style={{ backgroundColor: 'black' }}>
         </canvas>
 
@@ -363,15 +494,6 @@ export default function Game() {
   } else if (nbrconnect == 2 && isinroom) {
     return (
       <div className="readytoplay">
-{/*                 <canvas
-        id="canvas"
-        ref={canvasRef}
-        height="500px"
-        width={1000}
-        onMouseMove={(e) => (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 )+
-                            (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 ) }
-        style={{ backgroundColor: 'black' }}>
-        </canvas> */}
         <h2> you are : {my_id} </h2>
         <p> THE ROOM "{room}" IS READY TO PLAY </p>
         <button onClick={deleteGameRoom}>leave room {room}</button>
@@ -403,16 +525,6 @@ export default function Game() {
     return (
       <div className="Game"> 
 
-{/*     <canvas
-        id="canvas"
-        ref={canvasRef}
-        height="500px"
-        width={1000}
-        onMouseMove={(e) => (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 )+
-                            (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 ) }
-        style={{ backgroundColor: 'black' }}>
-        </canvas> */}
-
         <h2> you are : {my_id} </h2>
 
         <h4> Invite un ami a jouer</h4>
@@ -432,8 +544,6 @@ export default function Game() {
         <button onClick={createFastGameRoom}>PARTIE RAPIDE</button>
 
         <p style={{ color: "red" }}> {isfull} </p>
-
-        {/* {InGame()} */}
 
 
 

@@ -11,6 +11,7 @@ export default {
     speed: 10,
     right: true,
     down: true,
+    is_col: false,
   },
 
   paddleProps_left: {
@@ -118,8 +119,20 @@ export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleP
     var res = (paddleProps.y + paddleProps.height) - ballObj.y;
     res = (res/10) - (paddleProps.height / 20); 
     ballObj.dy = -res;
-  }
 
+   // console.log("paddle left x = " + paddleProps.x);
+   // console.log("paddle left y = " + paddleProps.y);
+    //sinc_ball();
+    ballObj.is_col = true;
+  }
+  else
+    ballObj.is_col = false;
+
+/*   if (ballObj.x + ballObj.dx - ballObj.rad - paddleProps.width - paddleProps.x <= 0 && 
+    ballObj.y + ballObj.dy >= paddleProps.y &&
+    ballObj.y + ballObj.dy <= paddleProps.y + paddleProps.height) {
+    ballObj.is_col = true;
+  } */
 
   if (ballObj.x - ballObj.rad <= 0)
   {
@@ -138,9 +151,8 @@ export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleP
     //ctx.fillText(player_right.name + " WON !!!",canvas_width/2, canvas_height / 2);
     player_right.won += 1;
     ballObj.dx = 0;
-    ballObj.dy = 0;
+    ballObj.dy = 0; 
   }
-
 }
 
 export function BallCol_right(ctx : any, player_left: any, ballObj : any, paddleProps: any, canvas_height: number, canvas_width: number) {
@@ -150,40 +162,30 @@ export function BallCol_right(ctx : any, player_left: any, ballObj : any, paddle
       ballObj.dx *= -1;
       ballObj.first_dx *= -1;
       ballObj.first_col = true;
-
-      //console.log("DY + " + ((paddleProps.y - paddleProps.height - ballObj.y) / 10));
-
-       //console.log("ball =" + ballObj.y);
-
-      //console.log("y1 = " + paddleProps.y);
-      //console.log("height = " + paddleProps.height);
-
-      //console.log("y2 = " + (paddleProps.y + paddleProps.height));
-      console.log("---------------------");
-
-
-      //console.log(paddleProps.height / 2);
       var res = (paddleProps.y + paddleProps.height) - ballObj.y;
-/*       console.log("res = "  + res); 
-      console.log("res/10 = "  + res/10); 
-      console.log("hei = "  + paddleProps.height); 
-      console.log("hei/20 = "  + paddleProps.height / 20);  */
-
       res = (res/10) - (paddleProps.height / 20);
-      
-      
       ballObj.dy = -res;
-
-
+      
+     // console.log("paddle right x = " + paddleProps.x);
+     // console.log("paddle right y = " + paddleProps.y);
+      ballObj.is_col = true;
     }
+    else
+      ballObj.is_col = false;
+/*     if (ballObj.x + ballObj.dx + ballObj.rad + paddleProps.width + (canvas_width - paddleProps.x - paddleProps.width) >= canvas_width && 
+    ballObj.y + ballObj.dy >= paddleProps.y &&
+    ballObj.y + ballObj.dy <= paddleProps.y + paddleProps.height)
+    {
+      ballObj.is_col = true;
+    } */
 
-    if (ballObj.x + ballObj.rad >= canvas_width)
+
+     if (ballObj.x + ballObj.rad >= canvas_width)
     {
       ballObj.x = 200;
       ballObj.y = 200;
       ballObj.first_col = false;
-/*       ballObj.dx = -4;
-      ballObj.dy = -6; */
+
       player_left.score += 1;
       console.log("PERDU right");
     }
@@ -192,11 +194,12 @@ export function BallCol_right(ctx : any, player_left: any, ballObj : any, paddle
       ctx.font = "30px Comic Sans MS";
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
-      //ctx.fillText(player_left.name + " WON !!!",canvas_width/2, canvas_height / 2);
       player_left.won += 1;
       ballObj.dx = 0;
       ballObj.dy = 0;
     }
+
+
 }
 
 class Ball {
@@ -226,8 +229,8 @@ export function PaddleMouv_left(ctx : any, canvas : any, paddleProps: any) {
     x : number;
     y : number;
     height : number;
-    width: number;
-    colors: string[];
+    width : number;
+    colors : string[];
   
     constructor(y : number) {
       this.x = paddleProps.x;
