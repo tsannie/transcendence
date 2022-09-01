@@ -104,6 +104,11 @@ export class SetEntity {
     @Column('jsonb', { nullable: true })
     set_p2: PlayerEntity;
 
+    @Column({ nullable: true })
+    score_p1: number;
+
+    @Column({ nullable: true })
+    score_p2: number;
 }
 
 
@@ -152,4 +157,4 @@ export class GameEntity {
 
   /* @Column('jsonb', { nullable: true })
   rooms_tab: RoomEntity[];} */
-}////////
+}////////////////
