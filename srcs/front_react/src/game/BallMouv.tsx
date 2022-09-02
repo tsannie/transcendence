@@ -1,9 +1,10 @@
 export default {
   ballObj : {
-    x: 200,
-    y: 200,
+    x: 500,
+    y: 250,
     dx: 2,
     dy: 2,
+    init_ball_pos: false,
     first_dx: 1,
     first_dy: 2,
     first_col: false,
@@ -12,6 +13,10 @@ export default {
     right: true,
     down: true,
     is_col: false,
+    init_x: 500,
+    init_y: 250,
+    init_dx: 1,
+    init_dy: 2,
   },
 
   paddleProps_left: {
@@ -89,9 +94,22 @@ export function BallMouv(ctx : any, ballObj : any, canvas_height: number, canvas
   let data = new Ball(ballObj.x, ballObj.y, ballObj.rad)
   data.draw(ctx);
 
+  if (ballObj.init_ball_pos == false) {
+    ballObj.dx = ballObj.init_dx;
+    ballObj.dy = ballObj.init_dy;
+
+    ballObj.x = ballObj.init_x;
+    ballObj.y = ballObj.init_y;
+
+    ballObj.init_ball_pos = true;
+    console.log ("init_ball sure ")
+  } 
+
   if (ballObj.first_col == false) {
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
+
+    
   }
   else {
     ballObj.x += ballObj.dx;
@@ -101,10 +119,10 @@ export function BallMouv(ctx : any, ballObj : any, canvas_height: number, canvas
   if (ballObj.y - ballObj.rad <= 0 ||
     ballObj.y + ballObj.rad >= canvas_height) {
       ballObj.dy *= -1;
-      ballObj.first_dy *= -1;
-    }
-
-
+      ballObj.first_dy *= -1; // change le sens de la balle
+    // ballObj.is_col = true;
+    // console.log("colision mur");
+  }
 }
 
 export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleProps: any, canvas_height: number, canvas_width: number) {
@@ -136,9 +154,14 @@ export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleP
 
   if (ballObj.x - ballObj.rad <= 0)
   {
-    ballObj.x = 200;
-    ballObj.y = 200;
+/*     ballObj.x = ballObj.init_x;
+    ballObj.y = ballObj.init_y;
+
+    ballObj.dx = ballObj.first_dx;
+    ballObj.dy = ballObj.first_dy; */
+
     ballObj.first_col = false;
+    ballObj.init_ball_pos = false;
 
     player_right.score += 1;
     console.log("PERDU left");
@@ -172,25 +195,22 @@ export function BallCol_right(ctx : any, player_left: any, ballObj : any, paddle
     }
     else
       ballObj.is_col = false;
-/*     if (ballObj.x + ballObj.dx + ballObj.rad + paddleProps.width + (canvas_width - paddleProps.x - paddleProps.width) >= canvas_width && 
-    ballObj.y + ballObj.dy >= paddleProps.y &&
-    ballObj.y + ballObj.dy <= paddleProps.y + paddleProps.height)
-    {
-      ballObj.is_col = true;
-    } */
 
 
-     if (ballObj.x + ballObj.rad >= canvas_width)
-    {
-      ballObj.x = 200;
-      ballObj.y = 200;
+    if (ballObj.x + ballObj.rad >= canvas_width) {
+/*       ballObj.x = ballObj.init_x;
+      ballObj.y = ballObj.init_y;
+
+      ballObj.dx = ballObj.first_dx;
+      ballObj.dy = ballObj.first_dy; */
+
       ballObj.first_col = false;
+      ballObj.init_ball_pos = false;
 
       player_left.score += 1;
       console.log("PERDU right");
     }
-    if (player_left.score >= 3)
-    {
+    if (player_left.score >= 3) {
       ctx.font = "30px Comic Sans MS";
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
