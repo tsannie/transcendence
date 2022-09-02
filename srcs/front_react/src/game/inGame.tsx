@@ -37,7 +37,7 @@ export default function InGame() {
           if (ctx) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            if (player_left.won == 0 && player_right.won == 0)
+            if (player_left.won == false && player_right.won == false)
             {
               draw_line(ctx, ballObj, canvas.height, canvas.width)
               draw_score(ctx, player_left, player_right,canvas.height, canvas.width)

@@ -2,21 +2,33 @@ export default {
   ballObj : {
     x: 500,
     y: 250,
-    dx: 2,
-    dy: 2,
+
     init_ball_pos: false,
-    first_dx: 1,
-    first_dy: 2,
+
     first_col: false,
     rad: 10,
     speed: 10,
     right: true,
     down: true,
     is_col: false,
+
     init_x: 500,
     init_y: 250,
-    init_dx: 1,
-    init_dy: 2,
+
+    init_dx: 4,
+    init_dy: 6,
+
+    init_first_dx: 1,
+    init_first_dy: 2,
+
+    first_dx: 1,
+    first_dy: 2,
+
+    ingame_dx: 4,
+    ingame_dy: 6,
+
+
+
   },
 
   paddleProps_left: {
@@ -40,14 +52,14 @@ export default {
     lives: 5,
     score: 0,
     toutch: 0,
-    won: 0,
+    won: false,
   },
   player_right: {
     name: "ddjian",
     lives: 5,
     score: 0,
     toutch: 0,
-    won: 0,
+    won: false,
   }, 
 };
 
@@ -94,71 +106,50 @@ export function BallMouv(ctx : any, ballObj : any, canvas_height: number, canvas
   let data = new Ball(ballObj.x, ballObj.y, ballObj.rad)
   data.draw(ctx);
 
-  if (ballObj.init_ball_pos == false) {
-    ballObj.dx = ballObj.init_dx;
-    ballObj.dy = ballObj.init_dy;
 
+  if (ballObj.init_ball_pos == false) { //INIT BALL POSTITION SENS
+  
+    ballObj.ingame_dx = ballObj.init_dx;
+    ballObj.ingame_dy = ballObj.init_dy;
+    
     ballObj.x = ballObj.init_x;
     ballObj.y = ballObj.init_y;
 
+    ballObj.first_dx = ballObj.init_first_dx;
+    ballObj.first_dy = ballObj.init_first_dy;
+
     ballObj.init_ball_pos = true;
-    console.log ("init_ball sure ")
+    //console.log ("init_ball sure ")
   } 
 
-  if (ballObj.first_col == false) {
+  if (ballObj.first_col == false) { // SNES PREMIER COUP/
+    //console.log("first tap");
+    
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
 
     
   }
-  else {
-    ballObj.x += ballObj.dx;
-    ballObj.y += ballObj.dy;
+  else {    // SENS INGAME//
+    ballObj.x += ballObj.ingame_dx;
+    ballObj.y += ballObj.ingame_dy;
   }
-  // colision mur haut
+
+  // colision mur haut/bas
   if (ballObj.y - ballObj.rad <= 0 ||
     ballObj.y + ballObj.rad >= canvas_height) {
-      ballObj.dy *= -1;
-      ballObj.first_dy *= -1; // change le sens de la balle
-    // ballObj.is_col = true;
-    // console.log("colision mur");
+      //ballObj.dy *= -1;
+      ballObj.first_dy *= -1; // change le sens de la balle du premier tire
+      ballObj.ingame_dy *= -1;
+    // ballObj.is_col = true;//
   }
 }
 
 export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleProps: any, canvas_height: number, canvas_width: number) {
  
-  if (ballObj.x - ballObj.rad - paddleProps.width - paddleProps.x <= 0 && 
-      ballObj.y >= paddleProps.y &&
-      ballObj.y <= paddleProps.y + paddleProps.height) {
-    ballObj.dx *= -1;
-    ballObj.first_dx *= -1;
-    ballObj.first_col = true;
-
-    var res = (paddleProps.y + paddleProps.height) - ballObj.y;
-    res = (res/10) - (paddleProps.height / 20); 
-    ballObj.dy = -res;
-
-   // console.log("paddle left x = " + paddleProps.x);
-   // console.log("paddle left y = " + paddleProps.y);
-    //sinc_ball();
-    ballObj.is_col = true;
-  }
-  else
-    ballObj.is_col = false;
-
-/*   if (ballObj.x + ballObj.dx - ballObj.rad - paddleProps.width - paddleProps.x <= 0 && 
-    ballObj.y + ballObj.dy >= paddleProps.y &&
-    ballObj.y + ballObj.dy <= paddleProps.y + paddleProps.height) {
-    ballObj.is_col = true;
-  } */
-
-  if (ballObj.x - ballObj.rad <= 0)
+  if (ballObj.x - ballObj.rad <= paddleProps.width)
   {
-/*     ballObj.x = ballObj.init_x;
-    ballObj.y = ballObj.init_y;
 
-    ballObj.dx = ballObj.first_dx;
-    ballObj.dy = ballObj.first_dy; */
 
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
@@ -166,58 +157,74 @@ export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleP
     player_right.score += 1;
     console.log("PERDU left");
   }
-  if (player_right.score >= 3)
+  else if (player_right.score >= 100)
   {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
     //ctx.fillText(player_right.name + " WON !!!",canvas_width/2, canvas_height / 2);
     player_right.won += 1;
-    ballObj.dx = 0;
-    ballObj.dy = 0; 
+    //ballObj.dx = 0;
+    //ballObj.dy = 0; 
   }
+  else if (ballObj.x - ballObj.rad - paddleProps.width - paddleProps.x <= 0 && 
+      ballObj.y >= paddleProps.y &&
+      ballObj.y <= paddleProps.y + paddleProps.height) {
+    //ballObj.dx *= -1;
+    ballObj.first_col = true;
+    
+    var res = (paddleProps.y + paddleProps.height) - ballObj.y;
+    res = (res/10) - (paddleProps.height / 20);
+
+    ballObj.ingame_dy = -res;
+    ballObj.ingame_dx *= -1;
+
+    ballObj.is_col = true;
+  }
+  else
+    ballObj.is_col = false;
+
+
 }
 
 export function BallCol_right(ctx : any, player_left: any, ballObj : any, paddleProps: any, canvas_height: number, canvas_width: number) {
-    if (ballObj.x + ballObj.rad + paddleProps.width + (canvas_width - paddleProps.x - paddleProps.width) >= canvas_width && 
+    if (ballObj.x + ballObj.rad >= canvas_width - paddleProps.width) {
+    
+      ballObj.first_col = false;
+      ballObj.init_ball_pos = false;
+    
+      player_left.score += 1;
+      console.log("PERDU right");
+    }
+    else if (player_left.score >= 100) {
+      ctx.font = "30px Comic Sans MS";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      player_left.won += 1;
+      //ballObj.dx = 0;
+      //ballObj.dy = 0;
+    }
+    else if (ballObj.x + ballObj.rad + paddleProps.width + (canvas_width - paddleProps.x - paddleProps.width) >= canvas_width && 
         ballObj.y >= paddleProps.y &&
         ballObj.y <= paddleProps.y + paddleProps.height) {
-      ballObj.dx *= -1;
-      ballObj.first_dx *= -1;
+      //ballObj.dx *= -1;
+      ballObj.ingame_dx *= -1;
       ballObj.first_col = true;
       var res = (paddleProps.y + paddleProps.height) - ballObj.y;
-      res = (res/10) - (paddleProps.height / 20);
-      ballObj.dy = -res;
+      res = (res/10) - (paddleProps.height / 20); 
+      ballObj.ingame_dy = -res;
       
      // console.log("paddle right x = " + paddleProps.x);
      // console.log("paddle right y = " + paddleProps.y);
+     console.log(ballObj.x + ballObj.rad );
+     console.log(">=");
+     console.log(canvas_width);
       ballObj.is_col = true;
     }
     else
       ballObj.is_col = false;
 
-
-    if (ballObj.x + ballObj.rad >= canvas_width) {
-/*       ballObj.x = ballObj.init_x;
-      ballObj.y = ballObj.init_y;
-
-      ballObj.dx = ballObj.first_dx;
-      ballObj.dy = ballObj.first_dy; */
-
-      ballObj.first_col = false;
-      ballObj.init_ball_pos = false;
-
-      player_left.score += 1;
-      console.log("PERDU right");
-    }
-    if (player_left.score >= 3) {
-      ctx.font = "30px Comic Sans MS";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      player_left.won += 1;
-      ballObj.dx = 0;
-      ballObj.dy = 0;
-    }
+    
 
 
 }
