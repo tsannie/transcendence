@@ -95,7 +95,7 @@ export class GameGateway implements OnGatewayInit {
         this.roo[room] = theroom;
       }
     }
-    client.join(room);
+    client.join(room);//
     //console.log(client.id);
 
     if (!this.rooms[room] || this.rooms[room] == 0) {
@@ -309,19 +309,13 @@ Paddle_mouv_left(client: Socket, data: any) {
     this.roo[room].set.ball.dx = data.ball.dx;
     this.roo[room].set.ball.dy = data.ball.dy;
 
-
+//
     console.log("BALL ARE SINC FOR SURE\n");
-    //this.all_game.save(this.roo[room]);
 
-      //console.log (this.roo[room].set.ball.x);
-     // console.log (this.roo[room].set.ball.y);
-     // console.log (this.roo[room].set.ball.dx);
-     // console.log (this.roo[room].set.ball.dy);
-
-    client.emit('sincTheBall', this.roo[room]);
+    client.emit('sincTheBall', this.roo[room]);//
     client.to(room).emit('sincTheBall', this.roo[room]);
   } 
-//
+////
   @SubscribeMessage('playerActyLeft')
   Player_actu_left(client: Socket, data: any) {
   
