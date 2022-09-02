@@ -202,14 +202,6 @@ export default function Game() {
       ballObj.y = theroom.set.ball.y;
       ballObj.dx = theroom.set.ball.dx;
       ballObj.dy = theroom.set.ball.dy;
-
-
-  /*     console.log(ballObj.x);
-      console.log(ballObj.y);
-      console.log(ballObj.dx);
-      console.log(ballObj.dy); */
-
-
     }); 
     socket.on("mouvPaddleLeft", (theroom) => {
         paddleProps_left.x = theroom.set.p1_padle_obj.x;
@@ -255,7 +247,7 @@ export default function Game() {
         ball : objball,
       };
       
-      console.log (" !!!!! sinc ball  ===!!!!");
+      console.log (" !!!!! sinc ball  EMIT in  sincBall===!!!!");
       socket.emit("sincBall", data);
      // sendPaddleMouvLeft(paddleProps_left, room);
     }
@@ -368,16 +360,11 @@ export default function Game() {
               if (ballObj.is_col == true)
                 u = 1;              
               if (u > 0)
-              {
                 u++;
-                console.log("u = " + u);
-              }
-              if (u >= 4) {
+              if (u == 4) {
                 sinc_ball(theroom.room_name, ballObj)
                 u = 0;
               }
-
-
     
               PaddleMouv_left(ctx, canvas, paddleProps_left);
               PaddleMouv_right(ctx, canvas, paddleProps_right);
