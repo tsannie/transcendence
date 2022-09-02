@@ -18,7 +18,7 @@ socket.on("connect_error", (err) => {
 });
 
 
-function Theclock(){
+/* function Theclock(){
   const [date, setDate] = useState(new Date());
   
   function refreshClock() {
@@ -35,7 +35,7 @@ function Theclock(){
       {date.toLocaleTimeString()}
     </p>
   );
-}
+} */
 
 export default function Game() {
   const [nbrconnect, setnbrconnect] = useState(0);
@@ -54,6 +54,9 @@ export default function Game() {
   const [opready, setopready] = useState(false);
   const [PP_empty, setPP_empty] = useState("");
   const [gameover, setgameover] = useState(false);
+
+  const [gamestart, setgamestart] = useState(false);
+
 
   const [mytimer, setmytimer] = useState(new Date());
   let {ballObj, player_left, player_right, paddleProps_left, paddleProps_right} = data;
@@ -82,10 +85,38 @@ export default function Game() {
     }
   }
 
+  function reinit_game() {
+    player_left.name = "null";
+    player_left.score = 0;
+    player_left.won = false;
+
+    player_right.name = "null";
+    player_right.score = 0;
+    player_right.won = false;
+
+/*     ballObj.ingame_dx = ballObj.init_dx;
+    ballObj.ingame_dy = ballObj.init_dy;
+    
+    ballObj.x = ballObj.init_x;
+    ballObj.y = ballObj.init_y;
+
+    ballObj.first_dx = ballObj.init_first_dx;
+    ballObj.first_dy = ballObj.init_first_dy;  */
+  
+    ballObj.init_ball_pos = false;
+    ballObj.first_col = false;
+
+  }
+
   function deleteGameRoom() {
     if (isinroom == true) {
       setisinroom(false);
       setgameover(true);
+      setgamestart(false);
+      
+      reinit_game();
+
+      setColor_ready("black");
       socket.emit("leaveGameRoom", room);
       //console.log(`--front--User leave room [${room}]`);
       setRoom("");
@@ -136,17 +167,24 @@ export default function Game() {
       setnbrconnect(theroom.nbr_co);
       setisinroom(true);
      // if (theroom.p2 == my_id)
-        setRoom(theroom.room_name);
+      setRoom(theroom.room_name);
+
+      //console.log("p1 = " + theroom.p1);
+      //console.log("p2 = " + theroom.p2);
+      //console.log("socker id = " + theroom.p2);
+
       if (theroom.p2 == socket.id)
       {
-          setop_id(theroom.p1);
-          setim_right(true);
+        setop_id(theroom.p1);
+        setim_right(true);
       }
       else if (theroom.p1 == socket.id)
+      {
         setop_id(theroom.p2);
-      console.log(
-        "recu le msg from back de : " + theroom.nbr_co + " == " + nbrconnect
-      );
+        setim_right(false);
+      }
+       // console.log(
+       // "recu le msg from back de : " + theroom.nbr_co + " == " + nbrconnect);
     });
 
     socket.on("leftRoom", (theroom) => {
@@ -200,16 +238,16 @@ export default function Game() {
     socket.on("sincTheBall", (theroom) => {
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
-      ballObj.dx = theroom.set.ball.dx;
-      ballObj.dy = theroom.set.ball.dy;
+      ballObj.ingame_dx = theroom.set.ball.dx;
+      ballObj.ingame_dy = theroom.set.ball.dy;
     }); 
     socket.on("mouvPaddleLeft", (theroom) => {
-        paddleProps_left.x = theroom.set.p1_padle_obj.x;
-        paddleProps_left.y = theroom.set.p1_padle_obj.y;
+      paddleProps_left.x = theroom.set.p1_padle_obj.x;
+      paddleProps_left.y = theroom.set.p1_padle_obj.y;
     }); 
     socket.on("mouvPaddleRight", (theroom) => {
-        paddleProps_right.x = theroom.set.p2_padle_obj.x;
-        paddleProps_right.y = theroom.set.p2_padle_obj.y;
+      paddleProps_right.x = theroom.set.p2_padle_obj.x;
+      paddleProps_right.y = theroom.set.p2_padle_obj.y;
     }); 
     socket.on("setPlayerLeft", (theroom) => {
       player_left.score = theroom.set.set_p1.score;
@@ -241,13 +279,13 @@ export default function Game() {
  */
     //console.log("BEFORE SINC ROOM NAME = " + room_name)
     if (/* nbrconnect == 2 && isinroom && opready == true && imready == true
-      && */ player_left.won == 0 && player_right.won == 0 ) {
+      && */ player_left.won == false && player_right.won == false ) {
       var data={  
         room : room_name,
         ball : objball,
       };
       
-      console.log (" !!!!! sinc ball  EMIT in  sincBall===!!!!");
+      //console.log (" !!!!! sinc ball  EMIT in  sincBall===!!!!");
       socket.emit("sincBall", data);
      // sendPaddleMouvLeft(paddleProps_left, room);
     }
@@ -255,7 +293,7 @@ export default function Game() {
 
   function mouv_paddle_left(e: any){
     if (nbrconnect == 2 && isinroom && opready == true && imready == true && im_right == false &&
-      player_left.won == 0 && player_right.won == 0) {
+      player_left.won == false && player_right.won == false) {
       (paddleProps_left.y = e.clientY  - (paddleProps_left.width / 2) - 15 );
       var data={  
         room : room,
@@ -270,7 +308,7 @@ export default function Game() {
 
   function mouv_paddle_right(e: any){
     if (nbrconnect == 2 && isinroom && opready == true && imready == true && im_right == true &&
-      player_left.won == 0 && player_right.won == 0) {
+      player_left.won == false && player_right.won == false) {
       (paddleProps_right.y = e.clientY  - (paddleProps_right.width / 2) - 15 );
       var data={  
         room : room,
@@ -346,7 +384,7 @@ export default function Game() {
           if (ctx) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (player_left.won == 0 && player_right.won == 0)
+            if (player_left.won == false && player_right.won == false)
             {
               draw_line(ctx, ballObj, canvas.height, canvas.width)
               draw_score(ctx, player_left, player_right,canvas.height, canvas.width)
@@ -361,7 +399,7 @@ export default function Game() {
                 u = 1;              
               if (u > 0)
                 u++;
-              if (u == 4) {
+              if (u == 8) {
                 sinc_ball(theroom.room_name, ballObj)
                 u = 0;
               }
