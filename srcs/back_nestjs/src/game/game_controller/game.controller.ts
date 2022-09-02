@@ -13,9 +13,9 @@ export class GameController {
   @Get()
   index() : Promise<GameEntity[]> {
 
-/*           for (let x = 0; x < 400; x++)
+/*       for (let x = 0; x < 1000; x++)
       {
-          this.tchatService.deleteUser(x);
+          this.gameService.deleteUser(x);
       }
       console.log('after delte');  */
 /*

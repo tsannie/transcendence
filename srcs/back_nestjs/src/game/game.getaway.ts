@@ -58,9 +58,9 @@ export class GameGateway implements OnGatewayInit {
       if (value.nbr_co == 0)
       {
         //this.roo.delete(key)// = null;
-        delete this.roo[key];
+        delete this.roo[key];//
       }//
-    } *///
+    } */////
     
     console.log("----------------------------]");
 
@@ -78,7 +78,7 @@ export class GameGateway implements OnGatewayInit {
     }//
     this.all_game.save(theroom); */
 
-    //console.log("ROOM NAME = [" + room + "]");
+    //console.log("ROOM NAME = [" + room + "]");/
     if (room == '') {
       //console.log("=============");
       for (const [key, value] of Object.entries(this.roo)) {
@@ -110,7 +110,7 @@ export class GameGateway implements OnGatewayInit {
       //console.log(`--back--User create room [${room}] |${this.rooms[room]}|`);////
       client.emit('joinedRoom', theroom);
       this.roo[room] = theroom;
-      return this.all_game.save(theroom); //
+      return this.all_game.save(theroom); ///
     } else if (this.rooms[room] == 1) {
       this.rooms[room] += 1;
 
@@ -138,7 +138,7 @@ export class GameGateway implements OnGatewayInit {
     this.rooms[room] -= 1;
     client.leave(room);
     
-    //console.log("LEAVE THE ROOM " + room);//
+    //console.log("LEAVE THE ROOM " + room);///
     this.roo[room].nbr_co -= 1;
     this.roo[room].room_name = room;
     this.roo[room].p2_ready = false;
@@ -146,7 +146,15 @@ export class GameGateway implements OnGatewayInit {
     //theroom.read = false;
     this.roo[room].thedate = null;
 
-    //this.roo[room].set = null;
+/*     this.roo[room].set.p1_padle_obj = null;
+    this.roo[room].set.p2_padle_obj = null;
+    this.roo[room].set.set_p1 = null;
+    this.roo[room].set.set_p2 = null;
+    this.roo[room].set = null;
+    delete this.roo[room].set; *///
+
+
+    //this.roo[room].set = null;////
 //
     if (this.roo[room].p1 == client.id) {
       this.roo[room].p1 = this.roo[room].p2;
@@ -217,7 +225,11 @@ StartGame(client: Socket, room: string) {
   this.roo[room].set.set_p1.name = this.roo[room].p1;
   this.roo[room].set.set_p2.name = this.roo[room].p2;
 
+  this.roo[room].set.set_p1.score = 0;
+  this.roo[room].set.set_p2.score = 0;
 
+  this.roo[room].set.set_p1.score = false;
+  this.roo[room].set.set_p2.score = false;
 
   
    // this.roo[room].set.ball.x = x;
@@ -227,7 +239,7 @@ StartGame(client: Socket, room: string) {
       this.roo[room].set.ball.right = false;  
     if (this.roo[room].set.ball.x <= 0)
       this.roo[room].set.ball.right = true; */
-    //this.all_game.save(this.roo[room]);//////////
+    //this.all_game.save(this.roo[room]);//////////////
 
     client.to(room).emit('startGame', this.roo[room]);
     client.emit('startGame', this.roo[room]);
@@ -256,7 +268,7 @@ Paddle_mouv_left(client: Socket, data: any) {
     this.roo[room].set.p1_padle_obj.y = data.pd.y;
 
     //console.log ("x = " +  this.roo[room].set.p1_padle_obj.x);
-    //console.log("y= " + this.roo[room].set.p1_padle_obj.y);
+    //console.log("y= " + this.roo[room].set.p1_padle_obj.y);/////
     
     this.all_game.save(this.roo[room]);
     client.emit('mouvPaddleLeft', this.roo[room]);
@@ -306,8 +318,8 @@ Paddle_mouv_left(client: Socket, data: any) {
     }
     this.roo[room].set.ball.x = data.ball.x;
     this.roo[room].set.ball.y = data.ball.y;
-    this.roo[room].set.ball.dx = data.ball.dx;
-    this.roo[room].set.ball.dy = data.ball.dy;
+    this.roo[room].set.ball.dx = data.ball.ingame_dx;
+    this.roo[room].set.ball.dy = data.ball.ingame_dy;
 
 //
     console.log("BALL ARE SINC FOR SURE\n");
@@ -315,7 +327,7 @@ Paddle_mouv_left(client: Socket, data: any) {
     client.emit('sincTheBall', this.roo[room]);//
     client.to(room).emit('sincTheBall', this.roo[room]);
   } 
-////
+//////
   @SubscribeMessage('playerActyLeft')
   Player_actu_left(client: Socket, data: any) {
   
@@ -323,7 +335,7 @@ Paddle_mouv_left(client: Socket, data: any) {
     if (!this.roo[room]){
       console.log (" !!!!! NO ROOM !!!! [" + room + "]");
       return ;
-    }
+    }//
     
     if (!this.roo[room].set.set_p1)
       this.roo[room].set.set_p1 = new PlayerEntity()
@@ -333,13 +345,13 @@ Paddle_mouv_left(client: Socket, data: any) {
     this.roo[room].set.set_p1.won = data.p.won;
   
      // console.log ("x = " +  this.roo[room].set.p2_padle_obj.x);
-     // console.log("y= " + this.roo[room].set.p2_padle_obj.y);
+     // console.log("y= " + this.roo[room].set.p2_padle_obj.y);//////
       
       this.all_game.save(this.roo[room]);
       client.to(room).emit('setPlayerLeft', this.roo[room]);
       client.emit('setPlayerLeft', this.roo[room]);
       return ;
-    }
+    }////
 
     @SubscribeMessage('playerActyRight')
     Player_actu_right(client: Socket, data: any) {
