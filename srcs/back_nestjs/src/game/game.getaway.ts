@@ -36,7 +36,7 @@ export class GameGateway implements OnGatewayInit {
   constructor(
     @InjectRepository(GameEntity)
     private all_game: Repository<GameEntity>, //private roomService: RoomService
-    //public roo: Map<string, GameEntity>,
+    //public roo: Map<string, GameEntity>,/
   ) {}
 
   @WebSocketServer() wws: Server;
@@ -50,15 +50,37 @@ export class GameGateway implements OnGatewayInit {
     this.logger.log('Initialized');
   }
 
+
+  @SubscribeMessage('lookAllGameRoom')
+  LookRoom(client: Socket, room: string) {
+    client.join(room);//
+
+/*     for (const [key, value] of Object.entries(this.roo)) {///////
+      console.log("room found = [" + key + "][" + value.room_name + "]");
+  
+    } 
+     */
+    console.log("------------wannawatch----------------]");
+
+    for (const [key, value] of Object.entries(this.roo)) {
+      console.log("rooma are : [" + key + "][" + value.nbr_co + "]");
+    } 
+
+    console.log("now to wannawatch client");
+    
+    client.to(room).emit('getAllGameRoom', this.roo);
+    client.emit('getAllGameRoom', this.roo);
+  }
+
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
 
-/*     for (const [key, value] of Object.entries(this.roo)) {
+/*   /  for (const [key, value] of Object.entries(this.roo)) {
       console.log("room found = [" + key + "][" + value.nbr_co + "]");
       if (value.nbr_co == 0)
       {
-        //this.roo.delete(key)// = null;
-        delete this.roo[key];//
+        //this.roo.delete(key)// = null;/
+        delete this.roo[key];///////
       }//
     } */////
     
@@ -67,6 +89,7 @@ export class GameGateway implements OnGatewayInit {
     for (const [key, value] of Object.entries(this.roo)) {
       console.log("then room found = [" + key + "][" + value.nbr_co + "]");
     }
+
  
 
 /*     //DELL EMPTY ROOMS
@@ -95,7 +118,7 @@ export class GameGateway implements OnGatewayInit {
         this.roo[room] = theroom;
       }
     }
-    client.join(room);//
+    client.join(room);///
     //console.log(client.id);
 
     if (!this.rooms[room] || this.rooms[room] == 0) {
@@ -110,7 +133,7 @@ export class GameGateway implements OnGatewayInit {
       //console.log(`--back--User create room [${room}] |${this.rooms[room]}|`);////
       client.emit('joinedRoom', theroom);
       this.roo[room] = theroom;
-      return this.all_game.save(theroom); ///
+      return this.all_game.save(theroom); /////////
     } else if (this.rooms[room] == 1) {
       this.rooms[room] += 1;
 
@@ -119,7 +142,7 @@ export class GameGateway implements OnGatewayInit {
       theroom.room_name = room;
       theroom.p2 = client.id;
 
-
+      //client.emit('wannawatch', theroom);
       client.to(room).emit('joinedRoom', theroom);
       client.emit('joinedRoom', theroom);
       return this.all_game.save(theroom);
@@ -138,7 +161,7 @@ export class GameGateway implements OnGatewayInit {
     this.rooms[room] -= 1;
     client.leave(room);
     
-    //console.log("LEAVE THE ROOM " + room);///
+    //console.log("LEAVE THE ROOM " + room);////
     this.roo[room].nbr_co -= 1;
     this.roo[room].room_name = room;
     this.roo[room].p2_ready = false;
@@ -146,15 +169,29 @@ export class GameGateway implements OnGatewayInit {
     //theroom.read = false;
     this.roo[room].thedate = null;
 
+
+    if (this.roo[room].set && this.roo[room].set.set_p1
+    && this.roo[room].set.set_p2) {
+    this.roo[room].set.set_p1.score = 0;
+    this.roo[room].set.set_p1.won = false;
+    this.roo[room].set.set_p1.name = "null";
+
+    this.roo[room].set.set_p2.score = 0;
+    this.roo[room].set.set_p2.won = false;
+    this.roo[room].set.set_p2.name = "null";///
+    }
+
+
+
 /*     this.roo[room].set.p1_padle_obj = null;
     this.roo[room].set.p2_padle_obj = null;
     this.roo[room].set.set_p1 = null;
     this.roo[room].set.set_p2 = null;
     this.roo[room].set = null;
-    delete this.roo[room].set; *///
+    delete this.roo[room].set; *////
 
 
-    //this.roo[room].set = null;////
+    //this.roo[room].set = null;/////
 //
     if (this.roo[room].p1 == client.id) {
       this.roo[room].p1 = this.roo[room].p2;
@@ -312,14 +349,38 @@ Paddle_mouv_left(client: Socket, data: any) {
       
 
     var room = data.room;
-   // console.log("SINC ROOM NAME = " + room)
+   // console.log("SINC ROOM NAME = " + room)/
     if (!this.roo[room].set.ball) {
       this.roo[room].set.ball = new BallEntity()
     }
     this.roo[room].set.ball.x = data.ball.x;
     this.roo[room].set.ball.y = data.ball.y;
-    this.roo[room].set.ball.dx = data.ball.ingame_dx;
-    this.roo[room].set.ball.dy = data.ball.ingame_dy;
+    this.roo[room].set.ball.ingame_dx = data.ball.ingame_dx;
+    this.roo[room].set.ball.ingame_dy = data.ball.ingame_dy;
+
+    this.roo[room].set.ball.init_dx = data.ball.init_dx;
+    this.roo[room].set.ball.init_dy = data.ball.init_dy;
+
+    this.roo[room].set.ball.init_first_dx = data.ball.init_first_dx;
+    this.roo[room].set.ball.init_first_dy = data.ball.init_first_dy;
+
+    this.roo[room].set.ball.first_dx = data.ball.first_dx;
+    this.roo[room].set.ball.first_dy = data.ball.first_dy;
+
+    this.roo[room].set.ball.init_ball_pos = data.ball.init_ball_pos;
+    this.roo[room].set.ball.first_col = data.ball.first_col;
+
+    //init_ball_pos: false,
+    //first_col: false,
+
+/*     ballObj.init_dx = theroom.set.ball.init_dx;
+    ballObj.init_dy = theroom.set.ball.init_dy;
+
+    ballObj.init_first_dx = theroom.set.ball.init_first_dx;
+    ballObj.init_first_dy = theroom.set.ball.init_first_dy;
+
+    ballObj.first_dx = theroom.set.ball.first_dx;
+    ballObj.first_dy = theroom.set.ball.first_dy; */
 
 //
     console.log("BALL ARE SINC FOR SURE\n");
