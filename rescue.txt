@@ -1,3 +1,43 @@
+
+
+
+
+  
+      ballObj.init_dx = theroom.set.ball.init_dx;
+      ballObj.init_dy = theroom.set.ball.init_dy;
+  
+      ballObj.init_first_dx = theroom.set.ball.init_first_dx;
+      ballObj.init_first_dy = theroom.set.ball.init_first_dy;
+  
+      ballObj.first_dx = theroom.set.ball.first_dx;
+      ballObj.first_dy = theroom.set.ball.first_dy;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @SubscribeMessage('startGameRoom')
 StartGame(client: Socket, room: string) {
   

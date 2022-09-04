@@ -1,4 +1,5 @@
 export default {
+
   ballObj : {
     x: 500,
     y: 250,
@@ -27,22 +28,20 @@ export default {
     ingame_dx: 4,
     ingame_dy: 6,
 
-
-
   },
 
   paddleProps_left: {
-    height: 150,
+    height: 100,
     width: 20,
     color: "white",
-    x: (20 * 2),
+    x: 100,
     y: 5,
   },
   paddleProps_right: {
-    height: 150,
+    height: 100,
     width: 20,
     color: "white",
-    x: 1000 - (20 * 3),
+    x: 1000 - 20 - 100,
     y: 5,
   },
 
@@ -109,15 +108,20 @@ export function BallMouv(ctx : any, ballObj : any, canvas_height: number, canvas
 
   if (ballObj.init_ball_pos == false) { //INIT BALL POSTITION SENS
   
+    ballObj.init_dx *= -1;  // change sens chaque points
+    ballObj.init_first_dx *= -1;
+
+
     ballObj.ingame_dx = ballObj.init_dx;
     ballObj.ingame_dy = ballObj.init_dy;
     
     ballObj.x = ballObj.init_x;
     ballObj.y = ballObj.init_y;
-
+    
+    
     ballObj.first_dx = ballObj.init_first_dx;
     ballObj.first_dy = ballObj.init_first_dy;
-
+    
     ballObj.init_ball_pos = true;
     //console.log ("init_ball sure ")
   } 
@@ -136,8 +140,8 @@ export function BallMouv(ctx : any, ballObj : any, canvas_height: number, canvas
   }
 
   // colision mur haut/bas
-  if (ballObj.y - ballObj.rad <= 0 ||
-    ballObj.y + ballObj.rad >= canvas_height) {
+  if (ballObj.y - ballObj.rad <= 2 ||
+    ballObj.y + ballObj.rad >= canvas_height - 2) {
       //ballObj.dy *= -1;
       ballObj.first_dy *= -1; // change le sens de la balle du premier tire
       ballObj.ingame_dy *= -1;
@@ -147,29 +151,26 @@ export function BallMouv(ctx : any, ballObj : any, canvas_height: number, canvas
 
 export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleProps: any, canvas_height: number, canvas_width: number) {
  
-  if (ballObj.x - ballObj.rad <= paddleProps.width)
+  if (ballObj.x - ballObj.rad <= -50)
   {
-
-
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
+    //ballObj.init_first_dx *= -1;
 
     player_right.score += 1;
-    console.log("PERDU left");
+    //console.log("PERDU left");
   }
-  else if (player_right.score >= 100)
+  else if (player_right.score >= 10)
   {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    //ctx.fillText(player_right.name + " WON !!!",canvas_width/2, canvas_height / 2);
     player_right.won += 1;
-    //ballObj.dx = 0;
-    //ballObj.dy = 0; 
   }
   else if (ballObj.x - ballObj.rad - paddleProps.width - paddleProps.x <= 0 && 
       ballObj.y >= paddleProps.y &&
-      ballObj.y <= paddleProps.y + paddleProps.height) {
+      ballObj.y <= paddleProps.y + paddleProps.height && 
+      ballObj.x >= paddleProps.x) {
     //ballObj.dx *= -1;
     ballObj.first_col = true;
     
@@ -188,37 +189,39 @@ export function BallCol_left(ctx : any, player_right: any,ballObj : any, paddleP
 }
 
 export function BallCol_right(ctx : any, player_left: any, ballObj : any, paddleProps: any, canvas_height: number, canvas_width: number) {
-    if (ballObj.x + ballObj.rad >= canvas_width - paddleProps.width) {
+    if (ballObj.x + ballObj.rad >= canvas_width + 50) {
     
       ballObj.first_col = false;
       ballObj.init_ball_pos = false;
-    
+      //ballObj.init_first_dx *= -1;
+
       player_left.score += 1;
-      console.log("PERDU right");
+      //console.log("PERDU right");
     }
     else if (player_left.score >= 100) {
       ctx.font = "30px Comic Sans MS";
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
       player_left.won += 1;
-      //ballObj.dx = 0;
-      //ballObj.dy = 0;
+
     }
-    else if (ballObj.x + ballObj.rad + paddleProps.width + (canvas_width - paddleProps.x - paddleProps.width) >= canvas_width && 
+    else if (ballObj.x + ballObj.rad + paddleProps.width +
+      (canvas_width - paddleProps.x - paddleProps.width) >= canvas_width && 
         ballObj.y >= paddleProps.y &&
-        ballObj.y <= paddleProps.y + paddleProps.height) {
+        ballObj.y <= paddleProps.y + paddleProps.height && 
+        ballObj.x <= paddleProps.x + paddleProps.width) {
       //ballObj.dx *= -1;
-      ballObj.ingame_dx *= -1;
       ballObj.first_col = true;
       var res = (paddleProps.y + paddleProps.height) - ballObj.y;
       res = (res/10) - (paddleProps.height / 20); 
-      ballObj.ingame_dy = -res;
       
+      ballObj.ingame_dy = -res;
+      ballObj.ingame_dx *= -1;
      // console.log("paddle right x = " + paddleProps.x);
      // console.log("paddle right y = " + paddleProps.y);
-     console.log(ballObj.x + ballObj.rad );
-     console.log(">=");
-     console.log(canvas_width);
+     //console.log(ballObj.x + ballObj.rad );
+     //console.log(">=");
+     //console.log(canvas_width);
       ballObj.is_col = true;
     }
     else
