@@ -12,7 +12,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 import ButtonLogin from "./Auth/ButtonLogin";
 import ButtonLogout from "./Auth/ButtonLogout";
-import Login from "./Auth/Login";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
 import UserList from "./userlist/UserListItem";
@@ -21,6 +20,8 @@ import LogoIcon from "./assets/logo-project.png";
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+
+  console.log(isLogin);
 
   useEffect(() => {
     const strIsLogin = JSON.parse(window.localStorage.getItem("isLogin") || "null");
@@ -50,6 +51,7 @@ export default function App() {
         </Box>
         <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
       </Box>
+    //<ButtonLogout isLogin={isLogin} setIsLogin={setIsLogin} />
     );
   return (
     <Box
@@ -64,7 +66,6 @@ export default function App() {
         setIsLogin={setIsLogin}
       />
       {inputChat && <Chat />}
-      {!isLogin && <ButtonLogout />}
     </Box>
   );
 }
