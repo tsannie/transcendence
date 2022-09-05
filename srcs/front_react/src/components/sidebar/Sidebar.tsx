@@ -24,6 +24,19 @@ export default function Sidebar(props: any) {
     props.setIsLogin(false);
     window.location.reload();
   };
+  function reinit(str: any) {
+
+      if (str != "game")
+        props.setInputGame(false)
+      else
+        props.setInputGame(true)
+
+      if (str != "chat")
+        props.setInputChat(false)
+      else
+        props.setInputChat(true)
+
+  }
 
   return (
     <Grid
