@@ -5,12 +5,16 @@ import { COOKIE_NAME, REDIRECT_LINK_AUTH } from "../const";
 import { api } from "../userlist/UserListItem";
 
 export default function ButtonLogout(props: any) {
-  function linkLog(event: any) {
+    console.log("aaaaa")
+    //event.preventDefault();
     props.setIsLogin(false);
-    console.log("dans logout");
-    event.preventDefault();
-    window.location.href = REDIRECT_LINK_AUTH;
-  }
 
-  return <button onClick={linkLog}>Logout</button>;
+    console.log("dans logout");
+    document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+    window.location.reload();
+
+/*     return (
+      <div></div>
+    ) */
+  //return <button onClick={linkLog}>Logout</button>;
 }

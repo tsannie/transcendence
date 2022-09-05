@@ -11,11 +11,19 @@ import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
 import ButtonLogout from "../../Auth/ButtonLogout";
+import { COOKIE_NAME } from "../../const";
 
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
   //const [displaySettings, setDisplaySettings] = useState(false);
   // chat icon color: #610D7E
+
+  function logout(event: any) {
+    event.preventDefault();
+    document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+    props.setIsLogin(false);
+    window.location.reload();
+  };
 
   return (
     <Grid
@@ -47,7 +55,7 @@ export default function Sidebar(props: any) {
         <img src={SettingsIcon}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ExitIcon} onClick={() => props.setIsLogin(false)}></img>
+        <img src={ExitIcon} onClick={logout}></img>
       </Grid>
     </Grid>
   );
