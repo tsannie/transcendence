@@ -20,9 +20,7 @@ async function bootstrap() {
   });
 
   app.useGlobalPipes(new ValidationPipe()); // enable ValidationPipe
-  app.enableCors({
-    origin: '*',
-  });
+
   await app.listen(4000);
   logger.log(`Server running on port 4000`);
 }
