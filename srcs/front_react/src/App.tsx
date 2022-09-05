@@ -20,6 +20,7 @@ import LogoIcon from "./assets/logo-project.png";
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [inputGame, setInputGame] = useState(false);
 
   console.log(isLogin);
 
