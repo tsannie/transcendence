@@ -30,7 +30,6 @@ export default function Sidebar(props: any) {
         props.setInputGame(false)
       else
         props.setInputGame(true)
-
       if (str != "chat")
         props.setInputChat(false)
       else
