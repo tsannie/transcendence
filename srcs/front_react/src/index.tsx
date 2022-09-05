@@ -8,7 +8,6 @@ import App from "./App";
 import Chat from "./components/chat/Chat";
 import PostList from "./userlist/UserListItem";
 import Login from "./Auth/Login";
-import Register from "./Auth/Register";
 
 const root = createRoot(document.getElementById("root")!);
 
