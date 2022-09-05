@@ -6,33 +6,29 @@ import { GameService } from '../game_service/game.service';
 export class GameController {
   constructor(private gameService: GameService) {}
 
-/*   @Get()
+  /*   @Get()
   getHello(): string {
     return this.gameService.getHello();
   } */
   @Get()
-  index() : Promise<GameEntity[]> {
-
-/*       for (let x = 0; x < 1000; x++)
+  index(): Promise<GameEntity[]> {
+    /*       for (let x = 0; x < 1000; x++)
       {
           this.gameService.deleteUser(x);
       }
       console.log('after delte');  */
-/*
-      this.tchatService.createTchat('phbarrad', 'Ca va ?', new Date("2020-12-12"), new Date("2020-12-12")) */ 
-     //  this.tchatService.createTchat('jjj', 'Ca roule ?')
-      //this.tchatService.createTchat('q23', 'Ca boue ?') 
+    /*
+      this.tchatService.createTchat('phbarrad', 'Ca va ?', new Date("2020-12-12"), new Date("2020-12-12")) */
+    //  this.tchatService.createTchat('jjj', 'Ca roule ?')
+    //this.tchatService.createTchat('q23', 'Ca boue ?')
 
+    //this.tchatService.discuss("m1", "m2");
 
-      //this.tchatService.discuss("m1", "m2");
-      
-      return (this.gameService.findAll());
-    }
-    @Get("/del")
-    detail()  {
-    for (let x = -10; x < 180; x++)
-      this.gameService.deleteUser(x)
+    return this.gameService.findAll();
   }
-
+  @Get('/del')
+  detail() {
+    for (let x = -10; x < 180; x++) this.gameService.deleteUser(x);
+  }
 }
 ////
