@@ -1,9 +1,22 @@
-import React from 'react';
+import { Box } from "@mui/material";
+import React, { useState } from "react";
+import Login from "./Auth/Login";
+import Register from "./Auth/Register";
+import Chat from "./components/chat/Chat";
+import Sidebar from "./components/sidebar/Sidebar";
+import UserList from "./userlist/UserListItem";
 
-function App() {
+export default function App() {
+  const [inputChat, setInputChat] = useState(false);
+
   return (
-    <h1>Hello react !</h1>
+    <Box
+      sx={{
+        display: "flex",
+      }}
+    >
+      <Sidebar inputChat={inputChat} setInputChat={setInputChat} />
+      {inputChat && <Chat />}
+    </Box>
   );
 }
-
-export default App;
