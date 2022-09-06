@@ -14,10 +14,13 @@ async function bootstrap() {
     next();
   });
   app.useGlobalPipes(new ValidationPipe()); // enable ValidationPipe
+
+  // enable CORS
   app.enableCors({
     origin: true,
     credentials: true,
   });
+
   await app.listen(4000);
   logger.log(`Server running on port 4000`);
 }
