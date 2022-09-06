@@ -60,7 +60,7 @@ export class GameGateway implements OnGatewayInit {
   LookRoom(client: Socket, room: string) {
     client.join(room); //
 
-    /*     for (const [key, value] of Object.entries(this.roo)) {///////
+    /*     for (const [key, value] of Object.entries(this.roo)) {////////
       console.log("room found = [" + key + "][" + value.room_name + "]");
   
     } 
@@ -125,13 +125,12 @@ export class GameGateway implements OnGatewayInit {
   LeaveRoom(client: Socket, room: string) {
     this.rooms[room] -= 1;
     client.leave(room);
-
     this.roo[room].nbr_co -= 1;
     this.roo[room].room_name = room;
     this.roo[room].p2_ready = false;
     this.roo[room].p1_ready = false;
     this.roo[room].thedate = null;
-
+    
     if (
       this.roo[room].set &&
       this.roo[room].set.set_p1 &&
@@ -153,7 +152,7 @@ export class GameGateway implements OnGatewayInit {
     if (this.roo[room].nbr_co == 0) {
       this.all_game.remove(this.roo[room]);
       delete this.roo[room];
-
+      
       client.to(room).emit('leftRoomEmpty');
       client.emit('leftRoomEmpty');
       return;
