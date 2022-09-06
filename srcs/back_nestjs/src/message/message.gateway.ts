@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Get, Injectable, Logger, Request, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConnectedSocket,
@@ -18,24 +18,29 @@ import { Repository } from 'typeorm';
 import { MessageEntity } from './models/message.entity';
 import { IMessage } from './models/message.interface';
 import { Adapter } from 'socket.io-adapter';
-import { IRoom } from 'src/room/models/room.interface';
-import { RoomService } from 'src/room/service/room.service';
-import { RoomEntity } from 'src/room/models/room.entity';
+import { MessageChannel } from 'worker_threads';
+import { MessageController } from './controller/message.controller';
+import { MessageService } from './service/message.service';
+import { uuid } from 'uuidv4';
+import { AuthGuard } from '@nestjs/passport';
+import { UserService } from 'src/user/service/user.service';
+import { IChannel } from 'src/channel/models/channel.interface';
+import { ChannelService } from 'src/channel/service/channel.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
-  namespace: 'chat',
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
   },
 })
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   constructor(
-    @InjectRepository(MessageEntity)
-    private allMessages: Repository<MessageEntity>, //private roomService: RoomService
+    private messageService: MessageService,
+    private channelService: ChannelService
   ) {}
+
 
   connectedClients = [];
   private readonly logger: Logger = new Logger('messageGateway');
@@ -43,7 +48,7 @@ export class MessageGateway
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('addMessage')
+  @SubscribeMessage('message')
   addMessage(
     @MessageBody() data: IMessage,
     @ConnectedSocket() client: Socket,
@@ -54,17 +59,17 @@ export class MessageGateway
     //const newRoom : RoomEntity = this.roomService.getRoomById();
     const newMessage: IMessage = {
       // message de base + uuid
-      id: data.id,
+      id: uuidv4(),
       room: data.room,
       author: data.author,
       content: data.content,
       time: data.time,
       //room: newRoom
     };
-    this.add(newMessage);
+    this.messageService.add(newMessage);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
     // join room
-    client.to(newMessage.room).emit('addMessage', newMessage);
+    client.to(newMessage.room).emit('message', newMessage);
   }
 
   afterInit() {
@@ -72,27 +77,18 @@ export class MessageGateway
   }
 
   handleConnection(client: Socket) {
-    const socket = this.server.sockets;
-
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.push(client);
-    this.server.emit('hello', `from ${client.id}`);
+    this.connectedClients.forEach(client => {
+      console.log(client.id);
+    });
   }
 
   handleDisconnect(client: Socket) {
-    const socket = this.server.sockets;
-
     this.logger.log(`Client disconnected: ${client.id}`);
     this.connectedClients = this.connectedClients.filter((connectedClient) => {
       return connectedClient !== client.id;
     });
-  }
-
-  add(message: IMessage): Observable<IMessage> {
-    return from(this.allMessages.save(message));
-  }
-  getAllMessages(): Observable<IMessage[]> {
-    return from(this.allMessages.find());
   }
 
   // Quand tu doubles cliques sur un utilisateur, cela va cree une room pour pouvoir le dm
@@ -106,5 +102,15 @@ export class MessageGateway
       console.log(connectedClient.id);
     }); */
     this.logger.log(`client ${client.id} join room ${data} `);
+  }
+
+  @SubscribeMessage('createChannel')
+  createChannel(@MessageBody() data: IChannel, @ConnectedSocket() client: Socket) {
+    data.ownerid = client.id;
+    client.join(data.id);
+    console.log(data);
+    this.logger.log(`client ${client.id} create channel ${data} `);
+    this.channelService.handleChannels(data);
+    client.emit("channel", data);
   }
 }

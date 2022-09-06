@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
-import { COOKIE_NAME } from '../const';
+import React, { useEffect } from "react";
+import axios from "axios";
+import { COOKIE_NAME } from "../const";
 
-export const api = axios.create({   // TODO moove to a constant file
+export const api = axios.create({
+  // TODO moove to a constant file
   withCredentials: true,
-  baseURL: 'http://localhost:4000/'
-})
+  baseURL: "http://localhost:4000/",
+});
 
 export interface IUser {
   id?: number,
