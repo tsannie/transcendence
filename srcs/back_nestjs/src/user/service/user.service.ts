@@ -33,6 +33,7 @@ export class UserService {
     return from(this.allUser.clear());
   }
 
+  // turn enabled2FA to true for user
   async enable2FA(userId: number) {
     return await this.allUser.update(userId, {enabled2FA: true})
   }
@@ -40,4 +41,23 @@ export class UserService {
   async setSecret2FA(userId: number, secret: string) {
     return await this.allUser.update(userId, {secret2FA: secret})
   }
+
+
+  // update updatedAt of all users
+  async updateAllUser() {
+    return await this.allUser.update({}, {updatedAt: new Date()})
+  }
+
+  // edit email of all users
+  async editAllUserEmail(email: string) {
+    this.updateAllUser()
+    return await this.allUser.update({}, {email: email})
+  }
+
+  // edit username of all users
+  async editAllUserUsername(username: string) {
+    this.updateAllUser()
+    return await this.allUser.update({}, {username: username})
+  }
+
 }
