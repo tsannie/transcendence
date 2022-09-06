@@ -1,4 +1,6 @@
-import { Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Request, Res, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 import { TwoFactorService } from '../service/two-factor.service';
 
 @Controller('2fa')
@@ -7,12 +9,14 @@ export class TwoFactorController {
     private readonly twoFactorService: TwoFactorService
   ) {}
 
-  @Post('generate')
-  //@UseGuards(JwtAuthenticationGuard)
-  async register() {
-    //const { otpauthUrl } = await this.twoFactorService.generateTwoFactorAuthenticationSecret(request.user);
+  @UseGuards(AuthGuard('jwt'))
+  @Get('generate')
+  async register(@Res() response: Response, @Request() req) {
+    const { otpauthUrl } = await this.twoFactorService.generateTwoFactorSecret(req.user)
 
-    //return this.twoFactorService.pipeQrCodeStream(response, otpauthUrl);
+    console.log(otpauthUrl)
+
+    return this.twoFactorService.generateQrCode(response, otpauthUrl)
   }
 
 }
