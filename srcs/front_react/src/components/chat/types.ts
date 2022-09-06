@@ -5,3 +5,9 @@ export interface IMessage {
   content: string;
   time: string;
 }
+
+export interface IChannel {
+  id: string;
+  status: string;
+  time: string;
+}

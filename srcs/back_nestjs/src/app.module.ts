@@ -15,10 +15,10 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/strategy/local.strategy';
-import { RoomController } from './room/controller/room.controller';
-import { RoomModule } from './room/room.module';
-import { RoomService } from './room/service/room.service';
 import { MessageEntity } from './message/models/message.entity';
+import { ChannelController } from './channel/controller/channel.controller';
+import { ChannelService } from './channel/service/channel.service';
+import { ChannelModule } from './channel/channel.module';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { MessageEntity } from './message/models/message.entity';
     UserModule,
     AuthModule,
     PassportModule,
-    RoomModule,
+    //ChannelModule,
   ],
   controllers: [AppController],
   providers: [
@@ -46,7 +46,6 @@ import { MessageEntity } from './message/models/message.entity';
     AuthService,
     UserService,
     LocalStrategy,
-    RoomService,
   ], // AuthResolver
 })
 export class AppModule {}
