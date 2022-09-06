@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -12,24 +13,22 @@ import { socket } from "../Chat";
 import { IChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "../../../userlist/UserListItem";
+import ChannelsList from "./ChannelsList";
 
 export default function FormChannel(props: any) {
   const [name, setName] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
-  const [channelCreated, setChannelCreated] = useState(false);
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
 
   async function createChannels() {
     let endingFct = false;
-    let allExistingChannels: Array<IChannel>;
 
     await api
       .get("channel/all")
       .then((res) => {
         console.log(res.data);
-        allExistingChannels = res.data;
-        const ChannelById = allExistingChannels.filter((channel) => {
+        const ChannelById = res.data.filter((channel: IChannel) => {
           return channel.id === name;
         });
         if (ChannelById.length !== 0 && name !== "") {
@@ -54,18 +53,21 @@ export default function FormChannel(props: any) {
           String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
       };
       socket.emit("createChannel", channelData);
-      setChannelsList((list) => [...list, channelData]);
-      setChannelCreated(true);
+      props.setChannelCreated(true);
       props.setNewChannel(false);
     }
   }
 
+  // useEffect to set ChannelCreated to true
   useEffect(() => {
+    props.setChannelCreated(true);
+  }, []);
+
+  /* useEffect(() => {
     socket.on("channel", (data) => {
       console.log(data);
-      setChannelsList((list) => [...list, data]);
     });
-  }, [socket]);
+  }, [socket]); */
 
   return (
     <Box sx={{}}>
