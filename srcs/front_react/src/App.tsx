@@ -1,27 +1,31 @@
 import {
-  Box,
-  Button,
-  createTheme,
-  Icon,
-  IconButton,
-  ThemeProvider,
-  Typography,
+  Box
 } from "@mui/material";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 import ButtonLogin from "./Auth/ButtonLogin";
-import ButtonLogout from "./Auth/ButtonLogout";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
-import UserList from "./userlist/UserListItem";
+import UserList, { api } from "./userlist/UserListItem";
 import LogoIcon from "./assets/logo-project.png";
+import { COOKIE_NAME } from "./const";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
   console.log(isLogin);
+  if (document.cookie.includes(COOKIE_NAME))
+  {
+    api.get('auth/profile').then(res => {
+      setIsLogin(true);
+    }).catch(res => {
+      console.log('invalid jwt');
+      console.log(res)
+      document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+    });
+  }
 
   useEffect(() => {
     const strIsLogin = JSON.parse(window.localStorage.getItem("isLogin") || "null");
@@ -51,7 +55,6 @@ export default function App() {
         </Box>
         <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
       </Box>
-    //<ButtonLogout isLogin={isLogin} setIsLogin={setIsLogin} />
     );
   return (
     <Box
