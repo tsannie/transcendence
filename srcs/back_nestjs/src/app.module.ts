@@ -19,6 +19,8 @@ import { MessageEntity } from './message/models/message.entity';
 import { ChannelController } from './channel/controller/channel.controller';
 import { ChannelService } from './channel/service/channel.service';
 import { ChannelModule } from './channel/channel.module';
+import { TwoFactorService } from './two-factor/service/two-factor.service';
+import { TwoFactorController } from './two-factor/two-factor.controller';
 
 @Module({
   imports: [
@@ -39,13 +41,14 @@ import { ChannelModule } from './channel/channel.module';
     PassportModule,
     //ChannelModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, TwoFactorController],
   providers: [
     AppService,
     JwtService,
     AuthService,
     UserService,
     LocalStrategy,
+    TwoFactorService,
   ], // AuthResolver
 })
 export class AppModule {}
