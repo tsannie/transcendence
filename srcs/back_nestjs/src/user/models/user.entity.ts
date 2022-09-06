@@ -25,6 +25,9 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
+  @Column({ nullable: true })
+  secret2FA?: string
+
   //@OnetoMany(() => RoomEntity, room => room.users)
   //room: RoomEntity
 }

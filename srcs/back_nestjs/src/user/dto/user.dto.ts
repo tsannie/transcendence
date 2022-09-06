@@ -13,4 +13,6 @@ export class UserDto {
 
   createdAt?: Date;
   updatedAt?: Date;
+
+  secret2FA?: string
 }
