@@ -18,10 +18,12 @@ export class AuthService {
 
   async validateUser(profile42: any): Promise<any> {
     const user = await this.userService.findByName(profile42.username);
-    if (user) return user;
+    if (user)
+      return user;
     return this.register({
       username: profile42.username,
       email: profile42.emails[0].value,
+      enabled2FA: true               // TODO default replacce to false
     });
   }
 
