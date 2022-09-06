@@ -23,7 +23,7 @@ export class TwoFactorController {
   @Post('check-token')
   async verifyToken(@Body() token: string, @Request() req) {
     const valid =  await this.twoFactorService.codeIsValid(token, req.user);
-    if (valid)
+    //if (valid)
   }
 
 
