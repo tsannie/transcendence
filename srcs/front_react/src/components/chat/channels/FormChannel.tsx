@@ -23,9 +23,11 @@ export default function FormChannel(props: any) {
   async function createChannels() {
     let endingFct = false;
     let allExistingChannels: Array<IChannel>;
+
     await api
       .get("channel/all")
       .then((res) => {
+        console.log(res.data);
         allExistingChannels = res.data;
         const ChannelById = allExistingChannels.filter((channel) => {
           return channel.id === name;
