@@ -3,7 +3,6 @@ import "./Game.css";
 import io from "socket.io-client";
 import { start } from "repl";
 import { render } from "@testing-library/react";
-import InGame from "./inGame";
 import {
   BallMouv,
   BallCol_right,
@@ -20,6 +19,11 @@ import {
   wait,
 } from "@testing-library/user-event/dist/utils";
 import { resolve } from "path";
+import GameJoined_left, { GameJoined_right } from "./GameJoined";
+import GameCreation from "./GameCreation";
+import GameWaitReady from "./GameCreation";
+import GameSpectator from "./GameSpectator";
+import GameInit from "./GameInit";
 
 const socket = io("http://localhost:4000/game");
 
@@ -102,6 +106,7 @@ export default function Game() {
       setgameover(true);
       setgamestart(false);
 
+
       ballObj.init_ball_pos = false;
       ballObj.first_col = false;
       setColor_ready("black");
@@ -145,6 +150,7 @@ export default function Game() {
       if (theroom.p1_ready == true && theroom.p2_ready == true) {
         setRoom(theroom.room_name);
         StartGame(theroom.room_name);
+        setgamestart(true);
       }
     });
 
@@ -178,6 +184,8 @@ export default function Game() {
       setnbrconnect(theroom.nbr_co);
       setopready(false);
       setimready(false);
+      setgamestart(false);
+      //console.log("LEFT ROON")
       setop_id("");
 
       if (theroom.set.set_p1 && theroom.set.set_p2) {
@@ -363,145 +371,49 @@ export default function Game() {
     });
   }, [socket]);
 
-  if (
-    nbrconnect == 2 &&
-    isinroom &&
-    opready == true &&
-    imready == true &&
-    im_right == true
-  ) {
+  if (gamestart == true && im_right == true) {
     return (
-      <div className="readyGame">
-        <canvas
-          id="canvas"
-          ref={canvasRef}
-          height="500px"
-          width={1000}
-          onMouseMove={(e) => mouv_paddle_right(e)}
-          style={{ backgroundColor: "black" }}
-        ></canvas>
-
-        <h1 style={{ color: "blue" }}> you are : {my_id} </h1>
-        <h2 style={{ color: "red" }}> opponent is : {op_id} </h2>
-        <button onClick={deleteGameRoom}>leave room {room}</button>
+      <div>
+        <GameJoined_left setRoom={setRoom} canvasRef={canvasRef} 
+        mouv_paddle_right={mouv_paddle_right} deleteGameRoom={deleteGameRoom} 
+        my_id={my_id} op_id={op_id} room={room}/>
       </div>
     );
-  } else if (
-    nbrconnect == 2 &&
-    isinroom &&
-    opready == true &&
-    imready == true &&
-    im_right == false
-  ) {
+  } else if (gamestart == true && im_right == false) {
     return (
-      <div className="readyGame">
-        <canvas
-          id="canvas"
-          ref={canvasRef}
-          height="500px"
-          width={1000}
-          onMouseMove={(e) => mouv_paddle_left(e)}
-          style={{ backgroundColor: "black" }}
-        ></canvas>
-
-        <h1 style={{ color: "blue" }}> you are : {my_id} </h1>
-        <h2 style={{ color: "red" }}> opponent is : {op_id} </h2>
-        <button onClick={deleteGameRoom}>leave room {room}</button>
+      <div>
+        <GameJoined_right setRoom={setRoom} canvasRef={canvasRef} 
+        mouv_paddle_left={mouv_paddle_left} deleteGameRoom={deleteGameRoom} 
+        my_id={my_id} op_id={op_id} room={room}/>
       </div>
     );
   } else if (nbrconnect == 2 && isinroom) {
     return (
-      <div className="readytoplay">
-        <h2> you are : {my_id} </h2>
-        <p> THE ROOM "{room}" IS READY TO PLAY </p>
-        <button onClick={deleteGameRoom}>leave room {room}</button>
-        <button style={{ color: color_ready }} onClick={ReadyGame}>
-          {" "}
-          READY ? {room}
-        </button>
-
-        <b>
-          {opready ? (
-            <h2 style={{ color: color_ready }}> opponent {op_id} is ready </h2>
-          ) : (
-            <h2> waiting for : {op_id} </h2>
-          )}
-        </b>
+      <div>
+        <GameWaitReady my_id={my_id} room={room}
+        deleteGameRoom={deleteGameRoom} color_ready={color_ready}
+        ReadyGame={ReadyGame} opready={opready} op_id={op_id} />
       </div>
     );
   } else if (isinroom == true) {
     return (
-      <div className="queues">
-        <h2> you are : {my_id} </h2>
-
-        <p> waiting for opponent in room {room} </p>
-        <button onClick={deleteGameRoom}>leave room {room}</button>
+      <div>
+        <GameCreation my_id={my_id} room={room} deleteGameRoom={deleteGameRoom}/>
       </div>
     );
   } else if (islookingroom == true) {
     return (
-      <div className="look">
-        <h4> REGARDER une partie : </h4>
-        <p> wich game do you want to look at ?</p>
-        {listGame.map((element, index) => {
-          setLookingRoom(element);
-          return (
-            <div key={index}>
-              <p>
-                partie : "{element}"{" "}
-                <button onClick={lookthegame}>regarder la partie</button>
-              </p>
-            </div>
-          );
-        })}
-        <button onClick={leavelookingroom}>leave</button>
+      <div>
+        <GameSpectator listGame={listGame} lookthegame={lookthegame}
+        leavelookingroom={leavelookingroom} setLookingRoom={setLookingRoom}/>
       </div>
     );
   } else {
     return (
-      <div className="Game">
-        <h2> you are : {my_id} </h2>
-
-        <h4> Invite un ami a jouer</h4>
-        <input
-          type="text"
-          placeholder="username"
-          id="room"
-          onChange={(event) => {
-            setRoom(event.target.value);
-          }}
-        ></input>
-        <button onClick={createGameRoom}>PARTIE PERSONALISE</button>
-        <p>{PP_empty}</p>
-        <br />
-        <h4> partie classee</h4>
-
-        <button onClick={createFastGameRoom}>PARTIE RAPIDE</button>
-
-        <p style={{ color: "red" }}> {isfull} </p>
-
-        <h4>
-          {" "}
-          REGARDER une partie :
-          <button onClick={lookAtAllGameRoom}>regarder la partie</button>{" "}
-        </h4>
-
-        {
-          // WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!! ----------
-          /*       <p> La partie dans la room :  "{listGame}"" + "{listGame[0]}" + "{listGame[1]}" + "{listGame[2]}"
-        <button onClick={createFastGameRoom}>regarder la partie</button>
-        </p>
-        
-        {listGame.map((element, index) => {
-        return (
-          <div key={index}>
-            <p>partie : "{element}" <button onClick={createFastGameRoom}>regarder la partie</button>
-            </p>
-          </div>
-        );
-        })} */
-          // WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!! ----------
-        }
+      <div>
+        <GameInit my_id={my_id} setRoom={setRoom} createGameRoom={createGameRoom}
+        PP_empty={PP_empty} createFastGameRoom={createFastGameRoom}
+        isfull={isfull} lookAtAllGameRoom={lookAtAllGameRoom}/>
       </div>
     );
   }
