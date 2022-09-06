@@ -25,7 +25,7 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column({ default: false })
   enabled2FA: boolean
 
   @Column({ nullable: true })
