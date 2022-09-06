@@ -11,7 +11,7 @@ export class TwoFactorService {
     private readonly userService: UserService,
   ) {}
 
-  public async generateTwoFactorSecret(user: UserDto) {
+  async generateTwoFactorSecret(user: UserDto) {
     const secret = authenticator.generateSecret()
 
     const otpauthUrl = authenticator.keyuri(
@@ -28,8 +28,15 @@ export class TwoFactorService {
     }
   }
 
-  public async generateQrCode(stream: Response, otpauthUrl: string) {
+  async generateQrCode(stream: Response, otpauthUrl: string) {
     return await toFileStream(stream, otpauthUrl);
+  }
+
+  async codeIsValid(token: string, user: UserDto): Promise<boolean> {
+    return await authenticator.verify({
+      token: token,
+      secret: user.secret2FA
+    })
   }
 }
 

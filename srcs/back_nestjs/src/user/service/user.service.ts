@@ -19,18 +19,22 @@ export class UserService {
   }
 
   async findByName(username: string): Promise<UserDto> {
-    // TODO check observable or promise ??
     return await this.allUser.findOne({
       username: username,
     });
   }
 
+  // TODO replae all by promise
   getAllUser(): Observable<UserDto[]> {
     return from(this.allUser.find());
   }
 
   cleanAllUser(): Observable<void> {
     return from(this.allUser.clear());
+  }
+
+  async enable2FA(userId: number) {
+    return await this.allUser.update(userId, {enabled2FA: true})
   }
 
   async setSecret2FA(userId: number, secret: string) {
