@@ -3,8 +3,12 @@ import { Box } from "@mui/system";
 import { REDIRECT_LINK_AUTH } from "../const";
 
 export default function ButtonLogin(props: any) {
-  function linkLog() {
+  function linkLog(event: any) {
+    event.preventDefault();
+    props.setIsLogin(true);
+    console.log("dans login");
     window.location.href = REDIRECT_LINK_AUTH;
+
   }
 
   return (

@@ -28,12 +28,9 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  // @OneToMany( () => ChannelEntity, (channels) => channels.owner )
-  // admin_of: ChannelEntity[]
+  @Column({ nullable: true })
+  secret2FA?: string
 
-  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
-  // channels: ChannelEntity[]
-
-  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
-  // mp_channels: ChannelEntity[]
+  //@OnetoMany(() => RoomEntity, room => room.users)
+  //room: RoomEntity
 }

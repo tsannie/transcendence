@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { userInfo } from 'os';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
 import { UserDto } from '../dto/user.dto';
@@ -30,5 +31,9 @@ export class UserService {
 
   cleanAllUser(): Observable<void> {
     return from(this.allUser.clear());
+  }
+
+  async setSecret2FA(userId: number, secret: string) {
+    return await this.allUser.update(userId, {secret2FA: secret})
   }
 }
