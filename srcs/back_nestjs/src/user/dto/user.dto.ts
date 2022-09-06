@@ -14,5 +14,9 @@ export class UserDto {
   createdAt?: Date;
   updatedAt?: Date;
 
+  enabled2FA?: boolean
   secret2FA?: string
 }
+
+// TODO ALL dto is useless ???
+// replace by basic interface and delete dto ?

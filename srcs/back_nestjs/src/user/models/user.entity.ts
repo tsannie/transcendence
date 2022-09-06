@@ -28,8 +28,11 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
+  @Column()
+  enabled2FA: boolean
+
   @Column({ nullable: true })
-  secret2FA?: string
+  secret2FA: string
 
   //@OnetoMany(() => RoomEntity, room => room.users)
   //room: RoomEntity
