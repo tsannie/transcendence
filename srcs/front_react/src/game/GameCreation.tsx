@@ -1,7 +1,11 @@
 import { Box, Button, TextField } from "@mui/material";
 import React, { useEffect } from "react";
 
-export default function GameWaitReady(props: any) {
+export function Creation_game() {
+  
+}
+
+export function GameWaitReady(props: any) {
   return (
     <div className="readytoplay">
       <h2> you are : {props.my_id} </h2>
