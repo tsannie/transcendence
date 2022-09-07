@@ -20,10 +20,16 @@ export class ChannelService {
     console.log(channel);
     let newChannel = new ChannelEntity();
 
+<<<<<<< HEAD
     newChannel.name = channel.name;
     newChannel.status = channel.status;
 
     //newChannel.ownerid = channel.ownerid;
+=======
+    //newChannel.name = channel.name;
+    newChannel.status = channel.status;
+    newChannel.ownerid = channel.ownerid;
+>>>>>>> [+] change createChannel from socket to req api
 
     return from(this.allChannels.save(newChannel));
   }
