@@ -38,10 +38,7 @@ export default function Channels(props: any) {
           setChannelCreated={setChannelCreated}
         />
       )}
-      <ChannelsList
-        setChannelCreated={setChannelCreated}
-        channelCreated={channelCreated}
-      />
+      <ChannelsList />
     </Box>
   );
 }
