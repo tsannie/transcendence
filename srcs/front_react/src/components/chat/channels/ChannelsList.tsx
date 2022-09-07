@@ -46,9 +46,9 @@ export default function ChannelsList() {
             sx={{
               color: "red",
             }}
-            key={channelData.id}
+            key={channelData.name}
           >
-            {channelData.id}
+            {channelData.name}
           </Box>
         );
       })}
