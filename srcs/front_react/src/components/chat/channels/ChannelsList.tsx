@@ -7,18 +7,14 @@ import { IChannel } from "../types";
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
-export default function ChannelsList(props: any) {
+export default function ChannelsList() {
 
-  let i = 0;
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
-
-  console.log("danschannellist")
 
   function getChannels() {
     api
       .get("channel/all")
       .then((res) => {
-        console.log(res.data);
         setChannelsList(res.data);
       })
       .catch((res) => {
@@ -26,8 +22,6 @@ export default function ChannelsList(props: any) {
         console.log(res);
       });
   }
-
-  console.log(props.channelCreated);
 
   useEffect(() => {
     const strChannelsList = JSON.parse(window.localStorage.getItem("channelsList") || "null");
@@ -37,6 +31,8 @@ export default function ChannelsList(props: any) {
   useEffect(() => {
     window.localStorage.setItem("channelsList", JSON.stringify(channelsList));
   }, [channelsList]);
+
+  // a changer (rq api en boucle)
 
   useEffect(() => {
     getChannels();
