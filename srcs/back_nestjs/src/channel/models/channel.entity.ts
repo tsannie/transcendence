@@ -10,22 +10,19 @@ import {
 
 @Entity()
 export class ChannelEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
 
-  @CreateDateColumn()
-  time: string;
-
-  @Column( {unique: true} )
+  @Column()
   name: string;
 
   @Column()
   status: string;
 
-  // @ManyToOne(() => UserEntity, (user) => user.channels )
-  // owner: UserEntity[];
+  @Column({nullable: true} )
+  ownerid: string;
 
-  // @ManyToOne(() => UserEntity, (user) => user.channels )
-  // users: UserEntity[];
+  @PrimaryGeneratedColumn()
+  id: number;
 
+  @CreateDateColumn()
+  time: string;
 }
