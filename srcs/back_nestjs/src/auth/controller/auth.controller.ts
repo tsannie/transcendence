@@ -44,7 +44,7 @@ export class AuthController {
   @Get('/profile')
   getProfile(@Request() req) {
     console.log('hello');
-    console.log(req.user);
+    //console.log(req.user);
     console.log('================================');
     return req.user;
   }

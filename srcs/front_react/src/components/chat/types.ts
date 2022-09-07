@@ -7,7 +7,8 @@ export interface IMessage {
 }
 
 export interface IChannel {
-  id: string;
+  name: string;
   status: string;
-  time: string;
+  //time: string;
+  ownerid: string;
 }
