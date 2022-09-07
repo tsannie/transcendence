@@ -273,7 +273,7 @@ export class GameGateway implements OnGatewayInit {
     this.roo[room].set.ball.init_ball_pos = data.ball.init_ball_pos;
     this.roo[room].set.ball.first_col = data.ball.first_col;
 
-    client.emit('sincTheBall', this.roo[room]); ///
+    client.emit('sincTheBall', this.roo[room]); /////
     client.to(room).emit('sincTheBall', this.roo[room]);
   }
 

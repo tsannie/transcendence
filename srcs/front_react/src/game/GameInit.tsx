@@ -1,8 +1,37 @@
-
+import { socket } from "./Game";
 
 
 
 export default function GameInit(props: any) {
+
+
+  function lookAtAllGameRoom() {
+    //UserContext.Provider;
+  
+    props.setisLookingRoom(true);
+  
+    console.log("LOOKNIGRROM LOG");
+    //console.log(listGame)
+  
+    socket.emit("lookAllGameRoom", "lookroom");
+  }
+
+  function createGameRoom() {
+    if (props.room == "")
+    props.setPP_empty("INVALID ROOM NAME");
+    else if (props.isinroom == false) {
+      socket.emit("createGameRoom", props.room);
+    }
+  }
+
+  function createFastGameRoom() {
+    props.setRoom("");
+    if (props.isinroom == false) {
+      socket.emit("createGameRoom", props.room);
+    }
+  }
+
+
   return (
     <div className="Game">
       <h2> you are : {props.my_id} </h2>
@@ -16,19 +45,19 @@ export default function GameInit(props: any) {
           props.setRoom(event.target.value);
         }}
       ></input>
-      <button onClick={props.createGameRoom}>PARTIE PERSONALISE</button>
+      <button onClick={createGameRoom}>PARTIE PERSONALISE</button>
       <p>{props.PP_empty}</p>
       <br />
       <h4> partie classee</h4>
 
-      <button onClick={props.createFastGameRoom}>PARTIE RAPIDE</button>
+      <button onClick={createFastGameRoom}>PARTIE RAPIDE</button>
 
       <p style={{ color: "red" }}> {props.isfull} </p>
 
       <h4>
         {" "}
         REGARDER une partie :
-        <button onClick={props.lookAtAllGameRoom}>regarder la partie</button>{" "}
+        <button onClick={lookAtAllGameRoom}>regarder la partie</button>{" "}
       </h4>
 
       {

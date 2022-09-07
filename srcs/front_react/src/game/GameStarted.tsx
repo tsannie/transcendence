@@ -137,22 +137,6 @@ export function The_whole_game(canvasRef: any)
   }, [socket]);
 }
 
-function mouv_paddle_left(e: any, gamestart: any, im_right: any, room: any) {
-  if (
-    gamestart == true &&
-    im_right == false &&
-    player_left.won == false &&
-    player_right.won == false
-  ) {
-    paddleProps_left.y = e.clientY - paddleProps_left.width / 2 - 15;
-    var data = {
-      room: room,
-      pd: paddleProps_left,
-    };
-    socket.emit("paddleMouvLeft", data);
-  }
-}
-
 function mouv_paddle_right(e: any, gamestart: any, im_right: any, room: any) {
   if (
     gamestart == true &&
@@ -169,7 +153,25 @@ function mouv_paddle_right(e: any, gamestart: any, im_right: any, room: any) {
   }
 }
 
-export function GameStarted_left(props: any) {
+function mouv_paddle_left(e: any, gamestart: any, im_right: any, room: any) {
+  if (
+    gamestart == true &&
+    im_right == false &&
+    player_left.won == false &&
+    player_right.won == false
+  ) {
+    paddleProps_left.y = e.clientY - paddleProps_left.width / 2 - 15;
+    var data = {
+      room: room,
+      pd: paddleProps_left,
+    };
+    socket.emit("paddleMouvLeft", data);
+  }
+}
+
+export function GameStarted_right(props: any) {
+
+
   return (
     <div className="readyGame">
       <canvas
@@ -188,7 +190,9 @@ export function GameStarted_left(props: any) {
   );
 };
 
-export function GameStarted_right(props: any) {
+export function GameStarted_left(props: any) {
+
+
   return (
     <div className="readyGame">
       <canvas
