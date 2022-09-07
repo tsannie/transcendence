@@ -17,6 +17,11 @@ export class ChannelController {
   @Post('createChannel')
   createChannel(@Body() channel: ChannelDto): Observable<ChannelEntity> {
     console.log("\n\n", channel);
+<<<<<<< HEAD
     return  this.channelService.createChannel(channel);
+=======
+    return ;
+    //return this.channelService.createChannel(channel);
+>>>>>>> [+] change createChannel from socket to req api
   }
 }
