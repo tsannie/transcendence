@@ -19,7 +19,6 @@ export default function FormChannel(props: any) {
   const [name, setName] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
-  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
 
   async function createChannels() {
     let endingFct = false;
@@ -27,7 +26,6 @@ export default function FormChannel(props: any) {
     await api
       .get("channel/all")
       .then((res) => {
-        console.log(res.data);
         const ChannelById = res.data.filter((channel: IChannel) => {
           return channel.id === name;
         });
@@ -57,17 +55,6 @@ export default function FormChannel(props: any) {
       props.setNewChannel(false);
     }
   }
-
-  // useEffect to set ChannelCreated to true
-  useEffect(() => {
-    props.setChannelCreated(true);
-  }, []);
-
-  /* useEffect(() => {
-    socket.on("channel", (data) => {
-      console.log(data);
-    });
-  }, [socket]); */
 
   return (
     <Box sx={{}}>
