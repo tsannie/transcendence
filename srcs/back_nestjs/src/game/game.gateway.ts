@@ -7,6 +7,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { randomUUID } from 'crypto';
 import { Server } from 'http';
 import { from, throwError } from 'rxjs';
 import { Socket } from 'socket.io';
@@ -19,16 +20,6 @@ import {
   SetEntity,
 } from './game_entity/game.entity';
 
-function makeid(length) {
-  var result = '';
-  var characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
 
 @WebSocketGateway({
   namespace: '/game',
@@ -46,7 +37,6 @@ export class GameGateway implements OnGatewayInit {
   private logger: Logger = new Logger('GameGateway');
 
   fast_room = 1;
-
   roo = new Map<string, GameEntity>();
   rooms = new Map<string, number>();
 
@@ -54,13 +44,18 @@ export class GameGateway implements OnGatewayInit {
     this.logger.log('Initialized');
   }
 
+  ///////////////////////////////////////////////
+  //////////////// SPECTATOR ROOM ///////////////
+  ///////////////////////////////////////////////
+
+
   //WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!!//
 
   @SubscribeMessage('lookAllGameRoom')
   LookRoom(client: Socket, room: string) {
     client.join(room); //
 
-    /*     for (const [key, value] of Object.entries(this.roo)) {////////
+    /*     for (const [key, value] of Object.entries(this.roo)) {/////////
       console.log("room found = [" + key + "][" + value.room_name + "]");
   
     } 
@@ -77,6 +72,11 @@ export class GameGateway implements OnGatewayInit {
     client.emit('getAllGameRoom', this.roo);
   }
 
+  ///////////////////////////////////////////////
+  //////////////// CREATE ROOM //////////////////
+  ///////////////////////////////////////////////
+
+
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
     if (room == '') {
@@ -87,7 +87,8 @@ export class GameGateway implements OnGatewayInit {
       if (!this.roo[room]) {
         var theroom = new GameEntity();
         theroom.fast_play = true;
-        room = makeid(4);
+        room = randomUUID();
+        
         this.roo[room] = theroom;
       }
     }
@@ -120,6 +121,10 @@ export class GameGateway implements OnGatewayInit {
       client.emit('roomFull', theroom);
     }
   }
+
+  ///////////////////////////////////////////////
+  //////////////// LEAVE ROOM //////////////////
+  ///////////////////////////////////////////////
 
   @SubscribeMessage('leaveGameRoom')
   LeaveRoom(client: Socket, room: string) {
@@ -162,6 +167,11 @@ export class GameGateway implements OnGatewayInit {
     client.emit('leftRoom', this.roo[room]);
   }
 
+  ///////////////////////////////////////////////
+  //////////////// READY AND START GAME /////////
+  ///////////////////////////////////////////////
+
+
   @SubscribeMessage('readyGameRoom')
   ReadyGame(client: Socket, room: string) {
     const theroom = this.roo[room];
@@ -202,6 +212,16 @@ export class GameGateway implements OnGatewayInit {
     client.emit('startGame', this.roo[room]);
     return this.all_game.save(this.roo[room]);
   }
+
+
+  ///////////////////////////////////////////////
+  //////////////// INGAME ROOM //////////////////
+  ///////////////////////////////////////////////
+
+
+  ///////////////////////////////////////////////
+  //////////////// PADDLE //////////////////
+  ///////////////////////////////////////////////
 
   @SubscribeMessage('paddleMouvLeft')
   Paddle_mouv_left(client: Socket, data: any) {
@@ -249,6 +269,10 @@ export class GameGateway implements OnGatewayInit {
     return;
   }
 
+  ///////////////////////////////////////////////
+  ////////////////  BALL //////////////////
+  ///////////////////////////////////////////////
+
   @SubscribeMessage('sincBall')
   sinc_ball(client: Socket, data: any) {
     var room = data.room;
@@ -276,6 +300,10 @@ export class GameGateway implements OnGatewayInit {
     client.emit('sincTheBall', this.roo[room]); /////
     client.to(room).emit('sincTheBall', this.roo[room]);
   }
+
+  ///////////////////////////////////////////////
+  //////////////// Player DATA //////////////////
+  ///////////////////////////////////////////////
 
   @SubscribeMessage('playerActyLeft')
   Player_actu_left(client: Socket, data: any) {
@@ -319,4 +347,7 @@ export class GameGateway implements OnGatewayInit {
     client.emit('setPlayerRight', this.roo[room]);
     return;
   }
+
+  ///////////////////////////////////////////////
+  ///////////////////////////////////////////////
 }
