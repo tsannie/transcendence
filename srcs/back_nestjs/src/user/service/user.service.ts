@@ -34,7 +34,7 @@ export class UserService {
   }
 
   // turn enabled2FA to true for user
-  async enable2FA(userId: number) {
+  async enable2FA(userId: number) { // TODO update user ?
     return await this.allUser.update(userId, {enabled2FA: true})
   }
 
