@@ -26,7 +26,7 @@ export class AuthController {
   @Post('/login')
   async login(@Request() req): Promise<IToken> {
     console.log('new login');
-    console.log('user');
+    //console.log('user');
     return await this.authService.login(req.user);
   }
 
@@ -38,7 +38,7 @@ export class AuthController {
 
   @Post('/')
   async oauth42(@Query('code') code: string) {
-    console.log(code);
+    //console.log(code);
     return await this.authService.oauth42(code);
   }
 
@@ -48,6 +48,7 @@ export class AuthController {
     //console.log('hello');
     //console.log(req.user);
     //console.log('================================');
+    const user = req.user;
     return req.user;
   }
 
@@ -64,7 +65,7 @@ export class AuthController {
     const user = req.user;
     const accessToken = await this.authService.login(user);
     res.cookie('AuthToken', accessToken);
-    console.log(accessToken);
+    //console.log(accessToken);
     return 'bye';
   }
 }
