@@ -23,65 +23,70 @@ export default function FormChannel(props: any) {
   const [ownerid, setOwnerid] = useState("");
 
   async function getUser() {
-    if (document.cookie.includes(COOKIE_NAME))
-    {
-      await api.get('auth/profile').then(res => {
-        console.log(res.data.username)
-        setOwnerid(res.data.username);
-      }).catch(res => {
-        console.log('invalid jwt');
-        console.log(res);
-        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
-      });
+    if (document.cookie.includes(COOKIE_NAME)) {
+      await api
+        .get("auth/profile")
+        .then((res) => {
+          console.log(res.data.username);
+          setOwnerid(res.data.username);
+        })
+        .catch((res) => {
+          console.log("invalid jwt");
+          console.log(res);
+          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
+        });
     }
   }
 
-  function checkifchannelexist(): boolean {
-    api
+  // check if channel name is already taken in db
+  async function checkChannelName(name: string) {
+    let isTaken = false;
+    await api
       .get("channel/all")
       .then((res) => {
-        const ChannelById = res.data.filter((channel: IChannel) => {
-          return channel.name === username;
+        res.data.forEach((channel: IChannel) => {
+          if (channel.name === name) {
+            isTaken = true;
+          }
         });
-        if (ChannelById.length !== 0 && username !== "") {
-          alert("id deja pris");
-          return (true);
-        }
       })
       .catch((res) => {
-        console.log("error");
+        console.log("invalid channels");
         console.log(res);
       });
-      return (false);
+    return isTaken;
   }
 
   async function createChannels() {
-    if (checkifchannelexist() === true)
-      return ;
-    console.log(ownerid);
-    if (username !== "") {
-      const channelData: IChannel = {
-        name: username,
-        status: status,
-        /* time:
+    await checkChannelName(username).then((isTaken) => {
+      if (isTaken) {
+        alert("Channel name already taken");
+      } else {
+        if (username !== "") {
+          const channelData: IChannel = {
+            name: username,
+            status: status,
+            /* time:
           new Date(Date.now()).getHours() +
           ":" +
           String(new Date(Date.now()).getMinutes()).padStart(2, "0"), */
-        ownerid: ownerid,
-      };
-      await api
-      .post("channel/createChannel", channelData)
-      .then((res) => {
-        console.log("channel created with success");
-        console.log(channelData);
-      })
-      .catch((res) => {
-        console.log("error");
-        console.log(res);
-      });
-      props.setChannelCreated(true);
-      props.setNewChannel(false);
-    }
+            ownerid: ownerid,
+          };
+          api
+            .post("channel/createChannel", channelData)
+            .then((res) => {
+              console.log("channel created with success");
+              console.log(channelData);
+            })
+            .catch((res) => {
+              console.log("error");
+              console.log(res);
+            });
+        }
+      }
+    });
+    props.setChannelCreated(true);
+    props.setNewChannel(false);
   }
 
   useEffect(() => {
