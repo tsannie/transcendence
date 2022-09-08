@@ -25,7 +25,7 @@ export class MessageEntity {
 
   @OneToOne( () => UserEntity )
   @JoinColumn()
-  author: UserEntity; 
+  author: UserEntity;
 
   // @ManyToOne( () => ChannelEntity, (channel) => channel.messages )
   // channel: ChannelEntity;

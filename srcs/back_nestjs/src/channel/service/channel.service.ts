@@ -17,33 +17,19 @@ export class ChannelService {
   ) {}
 
   getAllChannels() : Observable<ChannelEntity[]> {
-    return from(this.allChannels.find());
-  }
-
-  async find_me(username : string) : Promise<UserEntity>
-  {
-    let object = await this.userRepository.findOne(
+    return from(this.allChannels.find(
       {
-        where: {
-            username: username
-        }
-      }
-    );
-    return object;
+        relations: ["owner"],
+      },
+      ));
   }
 
-   async createChannel(channel: ChannelDto) : Promise<Observable<ChannelEntity>> {
+  createChannel(channel: ChannelDto, user : UserEntity) : Observable<ChannelEntity> {
     let newChannel = new ChannelEntity();
 
     newChannel.name = channel.name;
     newChannel.status = channel.status;
-    //newChannel.name = channel.name;
-
-    newChannel.name = channel.name;
-    newChannel.status = channel.status;
-    newChannel.ownerid = channel.ownerid;
-
-    newChannel.owner = await this.find_me(channel.ownerid);
+    newChannel.owner =  user;
     
     return from(this.allChannels.save(newChannel));
   }
