@@ -6,6 +6,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 //import * as bcrypt from 'bcrypt';
 
@@ -20,12 +21,10 @@ export class UserEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
   @CreateDateColumn()
   createdAt?: Date;
 
-  @Column()
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt?: Date;
 
   @Column({ default: false })
@@ -34,12 +33,12 @@ export class UserEntity {
   @Column({ nullable: true })
   secret2FA?: string
 
-  // @OneToMany( () => ChannelEntity, (channels) => channels.owner )
-  // admin_of: ChannelEntity[]
+  @OneToMany( () => ChannelEntity, (channels) => channels.owner )
+  admin_of: ChannelEntity[];
 
   // @OneToMany( () => ChannelEntity, (channels) => channels.users )
   // channels: ChannelEntity[]
 
   // @OneToMany( () => ChannelEntity, (channels) => channels.users )
   // mp_channels: ChannelEntity[]
-}
+} 

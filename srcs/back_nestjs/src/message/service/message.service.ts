@@ -14,11 +14,11 @@ export class MessageService {
     private userService: UserService,
   ) {}
 
-  getAllMessages(): Observable<IMessage[]> {
-    return from(this.allMessages.find());
-  }
+  // getAllMessages(): Observable<IMessage[]> {
+  //   return from(this.allMessages.find());
+  // }
 
-  add(message: IMessage): Observable<IMessage> {
-    return from(this.allMessages.save(message));
-  }
+  // add(message: IMessage): Observable<IMessage> {
+  //   return from(this.allMessages.save(message));
+  // }
 }

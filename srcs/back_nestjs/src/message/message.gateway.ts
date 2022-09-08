@@ -65,7 +65,7 @@ export class MessageGateway
       time: data.time,
       //room: newRoom
     };
-    this.messageService.add(newMessage);
+    // this.messageService.add(newMessage);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
     // join room
     client.to(newMessage.room).emit('message', newMessage);
