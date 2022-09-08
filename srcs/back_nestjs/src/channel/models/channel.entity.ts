@@ -25,7 +25,7 @@ export class ChannelEntity {
   status: string;
 
   @ManyToOne( () => UserEntity, (user) => user.admin_of )
-  owner: UserEntity[];
+  owner: UserEntity;
 
   // @ManyToMany( () => UserEntity, (user) => user.channels )
   // users: UserEntity[];
