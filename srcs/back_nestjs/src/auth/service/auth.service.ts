@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserDto } from 'src/user/dto/user.dto';
+import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { apiOAuth42, data_req, IToken, URL_API42 } from '../auth.const';
 
@@ -26,7 +26,7 @@ export class AuthService {
     });
   }
 
-  async register(user: UserDto): Promise<UserDto> {
+  async register(user: UserEntity): Promise<UserEntity> {
     return await this.userService.add(user);
   }
 
