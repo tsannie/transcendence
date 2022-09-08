@@ -34,6 +34,12 @@ export class UserEntity {
   @Column({ nullable: true })
   secret2FA?: string
 
-  //@OnetoMany(() => RoomEntity, room => room.users)
-  //room: RoomEntity
+  // @OneToMany( () => ChannelEntity, (channels) => channels.owner )
+  // admin_of: ChannelEntity[]
+
+  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
+  // channels: ChannelEntity[]
+
+  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
+  // mp_channels: ChannelEntity[]
 }

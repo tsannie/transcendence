@@ -21,12 +21,16 @@ export class ChannelService {
     let newChannel = new ChannelEntity();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     newChannel.name = channel.name;
     newChannel.status = channel.status;
 
     //newChannel.ownerid = channel.ownerid;
 =======
     //newChannel.name = channel.name;
+=======
+    newChannel.name = channel.name;
+>>>>>>> backend route for channel creation working. starting to create foreign keys
     newChannel.status = channel.status;
     newChannel.ownerid = channel.ownerid;
 >>>>>>> [+] change createChannel from socket to req api
