@@ -1,4 +1,3 @@
-import { IUser } from 'src/user/models/user.interface';
 import {
   Column,
   Entity,
