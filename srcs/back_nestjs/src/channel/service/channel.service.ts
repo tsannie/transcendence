@@ -22,7 +22,8 @@ export class ChannelService {
 
     newChannel.name = channel.name;
     newChannel.status = channel.status;
-    newChannel.ownerid = channel.ownerid;
+
+    //newChannel.ownerid = channel.ownerid;
 
     return from(this.allChannels.save(newChannel));
   }

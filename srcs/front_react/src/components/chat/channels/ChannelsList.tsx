@@ -11,6 +11,7 @@ export default function ChannelsList() {
 
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
 
+  // get all channels
   function getChannels() {
     api
       .get("channel/all")
@@ -23,17 +24,7 @@ export default function ChannelsList() {
       });
   }
 
-  useEffect(() => {
-    const strChannelsList = JSON.parse(window.localStorage.getItem("channelsList") || "null");
-    setChannelsList(strChannelsList);
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem("channelsList", JSON.stringify(channelsList));
-  }, [channelsList]);
-
-  // a changer (rq api en boucle)
-
+  // call getChannels() when channelList change
   useEffect(() => {
     getChannels();
   }, [channelsList]);
