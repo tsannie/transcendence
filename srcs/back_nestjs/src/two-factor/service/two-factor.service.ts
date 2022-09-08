@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { authenticator } from 'otplib';
-import { UserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/service/user.service';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
+import { UserEntity } from 'src/user/models/user.entity';
 
 @Injectable()
 export class TwoFactorService {
@@ -11,7 +11,7 @@ export class TwoFactorService {
     private readonly userService: UserService,
   ) {}
 
-  async generateTwoFactorSecret(user: UserDto) {
+  async generateTwoFactorSecret(user: UserEntity) {
     const secret = authenticator.generateSecret()
 
     const otpauthUrl = authenticator.keyuri(
@@ -32,7 +32,7 @@ export class TwoFactorService {
     return await toFileStream(stream, otpauthUrl);
   }
 
-  async codeIsValid(token: string, user: UserDto): Promise<boolean> {
+  async codeIsValid(token: string, user: UserEntity): Promise<boolean> {
     return await authenticator.verify({
       token: token,
       secret: user.secret2FA

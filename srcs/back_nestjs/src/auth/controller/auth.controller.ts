@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserDto } from 'src/user/dto/user.dto';
+import { UserEntity } from 'src/user/models/user.entity';
 import { IToken } from '../auth.const';
 import { AuthService } from '../service/auth.service';
 
@@ -31,7 +31,7 @@ export class AuthController {
   }
 
   @Post('/register')
-  async register(@Body() user: UserDto): Promise<UserDto> {
+  async register(@Body() user: UserEntity): Promise<UserEntity> {
     console.log('new register');
     return await this.authService.register(user);
   }
