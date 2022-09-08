@@ -79,7 +79,7 @@ export class MessageGateway
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.push(client);
     this.connectedClients.forEach(client => {
-      console.log(client.id);
+    //console.log(client.id);
     });
   }
 
