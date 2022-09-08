@@ -9,7 +9,7 @@ import {
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column({ unique: true })
   username: string;
@@ -19,17 +19,17 @@ export class UserEntity {
 
   @Column()
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
 
   @Column()
   @CreateDateColumn()
-  updatedAt: Date;
+  updatedAt?: Date;
 
   @Column({ default: false })
-  enabled2FA: boolean
+  enabled2FA?: boolean
 
   @Column({ nullable: true })
-  secret2FA: string
+  secret2FA?: string
 
   //@OnetoMany(() => RoomEntity, room => room.users)
   //room: RoomEntity
