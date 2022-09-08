@@ -20,7 +20,7 @@ export class ChannelService {
     console.log(channel);
     let newChannel = new ChannelEntity();
 
-    //newChannel.name = channel.name;
+    newChannel.name = channel.name;
     newChannel.status = channel.status;
     newChannel.ownerid = channel.ownerid;
 

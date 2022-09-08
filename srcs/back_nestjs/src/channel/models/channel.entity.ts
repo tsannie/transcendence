@@ -1,4 +1,4 @@
-import { IUser } from 'src/user/models/user.interface';
+import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,19 +11,22 @@ import {
 
 @Entity()
 export class ChannelEntity {
-
-  @Column()
-  name: string;
-
-  @Column()
-  status: string;
-
-  @Column({nullable: true} )
-  ownerid: string;
-
   @PrimaryGeneratedColumn()
   id: number;
 
   @CreateDateColumn()
   time: string;
+
+  @Column( {unique: true} )
+  name: string;
+
+  @Column()
+  status: string;
+
+  // @ManyToOne(() => UserEntity, (user) => user.channels )
+  // owner: UserEntity[];
+
+  // @ManyToOne(() => UserEntity, (user) => user.channels )
+  // users: UserEntity[];
+
 }

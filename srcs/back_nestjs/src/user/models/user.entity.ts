@@ -1,7 +1,10 @@
+import { Channel } from 'diagnostics_channel';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 //import * as bcrypt from 'bcrypt';
@@ -25,6 +28,12 @@ export class UserEntity {
   @CreateDateColumn()
   updatedAt: Date;
 
-  //@OnetoMany(() => RoomEntity, room => room.users)
-  //room: RoomEntity
+  // @OneToMany( () => ChannelEntity, (channels) => channels.owner )
+  // admin_of: ChannelEntity[]
+
+  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
+  // channels: ChannelEntity[]
+
+  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
+  // mp_channels: ChannelEntity[]
 }
