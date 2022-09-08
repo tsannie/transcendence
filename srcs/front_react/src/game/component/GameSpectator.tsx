@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { socket } from "./Game";
+import { socket } from "../Game";
 
+////////////////////////////////////////////////////
+// WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
+////////////////////////////////////////////////////
 
-
-export  function The_whole_spectator(store: any) {
-
+export function GameSpectator(props: any) {
   useEffect(() => {
-
     socket.on("getAllGameRoom", (theroom: Map<any, any>) => {
       console.log("getAllGameRoom watch client side");
 
@@ -18,16 +18,11 @@ export  function The_whole_spectator(store: any) {
 
       console.log("2 socket");
     });
-
   }, [socket]);
-
-}
-
-export function GameSpectator(props: any) {
 
   function lookthegame() {
     //setisLookingRoom(false);
-    
+
     console.log(
       "lookthegamelookthegamelookthegamelookthegamelookthegame lookthegame"
     );
@@ -44,7 +39,6 @@ export function GameSpectator(props: any) {
     props.store.setListGame([]);
     console.log("list when living then '" + props.store.listGame);
   }
-
 
   return (
     <div className="look">
@@ -65,3 +59,7 @@ export function GameSpectator(props: any) {
     </div>
   );
 }
+
+////////////////////////////////////////////////////
+// WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
+////////////////////////////////////////////////////
