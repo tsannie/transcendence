@@ -15,13 +15,13 @@ export class MessageController {
   constructor(private messageService: MessageService,
     ) {}
 
-  @Get('all')
-  getAllMessages(): Observable<IMessage[]> {
-    return this.messageService.getAllMessages();
-  }
+  // @Get('all')
+  // getAllMessages(): Observable<IMessage[]> {
+  //   return this.messageService.getAllMessages();
+  // }
 
-  @Post('add')
-  add(message: IMessage): Observable<IMessage> {
-    return this.messageService.add(message);
-  }
+  // @Post('add')
+  // add(message: IMessage): Observable<IMessage> {
+  //   return this.messageService.add(message);
+  // }
 }

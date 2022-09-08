@@ -15,10 +15,7 @@ export class ChannelController {
   }
 
   @Post('createChannel')
-  createChannel(@Body() channel: ChannelDto): Observable<ChannelEntity> {
-    console.log("\n\n", channel);
-
-    return  this.channelService.createChannel(channel);
-
+  async createChannel(@Body() channel: ChannelDto): Promise<Observable<ChannelEntity>> {
+    return await this.channelService.createChannel(channel);
   }
 }

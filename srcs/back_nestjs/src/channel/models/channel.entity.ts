@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryColumn,
@@ -23,10 +24,10 @@ export class ChannelEntity {
   @Column()
   status: string;
 
-  // @ManyToOne(() => UserEntity, (user) => user.channels )
-  // owner: UserEntity[];
+  @ManyToOne( () => UserEntity, (user) => user.admin_of )
+  owner: UserEntity[];
 
-  // @ManyToOne(() => UserEntity, (user) => user.channels )
+  // @ManyToMany( () => UserEntity, (user) => user.channels )
   // users: UserEntity[];
 
 }

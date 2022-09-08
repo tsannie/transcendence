@@ -1,29 +1,32 @@
 //import { RoomEntity } from "src/room/models/room.entity";
+import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
 export class MessageEntity {
-  @PrimaryColumn({ unique: true })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column()
-  room: string;
-
-  @Column()
-  author: string;
+  @CreateDateColumn()
+  time: string;
 
   @Column()
   content: string;
 
-  @Column()
-  time: string;
+  @OneToOne( () => UserEntity )
+  @JoinColumn()
+  author: UserEntity; 
 
-  //@ManyToOne(() => RoomEntity, (room) => room.messages)
-  //room: RoomEntity
+  // @ManyToOne( () => ChannelEntity, (channel) => channel.messages )
+  // channel: ChannelEntity;
 }
