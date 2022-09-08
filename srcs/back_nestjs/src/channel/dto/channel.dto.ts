@@ -10,8 +10,4 @@ export class ChannelDto {
   @IsDefined()
   @IsNotEmpty()
   status: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  ownerid: string;
 }

@@ -34,7 +34,7 @@ export class UserEntity {
   secret2FA?: string
 
   @OneToMany( () => ChannelEntity, (channels) => channels.owner )
-  admin_of: ChannelEntity[];
+  admin_of?: ChannelEntity[];
 
   // @OneToMany( () => ChannelEntity, (channels) => channels.users )
   // channels: ChannelEntity[]

@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
@@ -14,8 +15,9 @@ export class ChannelController {
     return this.channelService.getAllChannels();
   }
 
+  @UseGuards( AuthGuard('jwt') )
   @Post('createChannel')
-  async createChannel(@Body() channel: ChannelDto): Promise<Observable<ChannelEntity>> {
-    return await this.channelService.createChannel(channel);
+  createChannel(@Body() channel: ChannelDto, @Request() req): Observable<ChannelEntity> {
+    return this.channelService.createChannel(channel, req.user);
   }
 }

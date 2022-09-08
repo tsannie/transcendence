@@ -38,6 +38,9 @@ export class UserService {
   }
 
 
+  async editUser(){
+    await this.allUser.update(1, {username: "newuser"});
+  }
 
   // turn enabled2FA to true for user
   async enable2FA(userId: number) { // TODO update user ?

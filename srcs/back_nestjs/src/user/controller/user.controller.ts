@@ -16,4 +16,10 @@ export class UserController {
   async cleanAllUser(): Promise<void> {
     return await this.userService.cleanAllUser();
   }
+
+  @Get('edit')
+  async editUsername() {
+    return await this.userService.editUser();
+  }
+
 }
