@@ -1,4 +1,3 @@
-import { Box, Button, TextField } from "@mui/material";
 import React, { useEffect } from "react";
 import {
   ballObj,
@@ -6,8 +5,8 @@ import {
   paddleProps_right,
   player_left,
   player_right,
-  socket
-} from "./Game";
+  socket,
+} from "../Game";
 import {
   BallMouv,
   BallCol_right,
@@ -18,8 +17,7 @@ import {
   draw_score,
 } from "./BallMouv";
 
-export function The_whole_game(canvasRef: any)
-{
+export function The_whole_game(canvasRef: any) {
   let u = 0;
   useEffect(() => {
     socket.on("sincTheBall", (theroom) => {
@@ -79,8 +77,8 @@ export function The_whole_game(canvasRef: any)
       const render = () => {
         const canvas: any = canvasRef.current;
         var ctx = null;
-        if (canvas) ctx = canvas.getContext("2d");
-
+        if (canvas)
+          ctx = canvas.getContext("2d");
         if (ctx) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -113,7 +111,8 @@ export function The_whole_game(canvasRef: any)
             );
             if (ballObj.is_col == true || ballObj.init_ball_pos == false)
               u = 1;
-            if (u > 0) u++;
+            if (u > 0)
+              u++;
             if (u == 6) {
               sinc_ball(theroom.room_name, ballObj);
               u = 0;
@@ -136,78 +135,3 @@ export function The_whole_game(canvasRef: any)
     });
   }, [socket]);
 }
-
-function mouv_paddle_right(e: any, gamestart: any, im_right: any, room: any) {
-  if (
-    gamestart == true &&
-    im_right == true &&
-    player_left.won == false &&
-    player_right.won == false
-  ) {
-    paddleProps_right.y = e.clientY - paddleProps_right.width / 2 - 15;
-    var data = {
-      room: room,
-      pd: paddleProps_right,
-    };
-    socket.emit("paddleMouvRight", data);
-  }
-}
-
-function mouv_paddle_left(e: any, gamestart: any, im_right: any, room: any) {
-  if (
-    gamestart == true &&
-    im_right == false &&
-    player_left.won == false &&
-    player_right.won == false
-  ) {
-    paddleProps_left.y = e.clientY - paddleProps_left.width / 2 - 15;
-    var data = {
-      room: room,
-      pd: paddleProps_left,
-    };
-    socket.emit("paddleMouvLeft", data);
-  }
-}
-
-export function GameStarted_right(props: any) {
-
-
-  return (
-    <div className="readyGame">
-      <canvas
-        id="canvas"
-        ref={props.canvasRef}
-        height="500px"
-        width={1000}
-        onMouseMove={(e) => mouv_paddle_right(e, props.gamestart, props.im_right, props.room)}
-        style={{ backgroundColor: "black" }}
-      ></canvas>
-
-      <h1 style={{ color: "blue" }}> you are : {props.my_id} </h1>
-      <h2 style={{ color: "red" }}> opponent is : {props.op_id} </h2>
-      <button onClick={props.deleteGameRoom}>leave room {props.room}</button>
-    </div>
-  );
-};
-
-export function GameStarted_left(props: any) {
-
-
-  return (
-    <div className="readyGame">
-      <canvas
-        id="canvas"
-        ref={props.canvasRef}
-        height="500px"
-        width={1000}
-        onMouseMove={(e) => mouv_paddle_left(e, props.gamestart, props.im_right, props.room)}
-        style={{ backgroundColor: "black" }}
-      ></canvas>
-
-      <h1 style={{ color: "blue" }}> you are : {props.my_id} </h1>
-      <h2 style={{ color: "red" }}> opponent is : {props.op_id} </h2>
-      <button onClick={props.deleteGameRoom}>leave room {props.room}</button>
-    </div>
-  );
-}
- 
