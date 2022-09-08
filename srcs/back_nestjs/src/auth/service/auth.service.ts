@@ -23,7 +23,6 @@ export class AuthService {
     return this.register({
       username: profile42.username,
       email: profile42.emails[0].value,
-      enabled2FA: true               // TODO default replacce to false
     });
   }
 
