@@ -1,6 +1,7 @@
 import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
+import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
@@ -10,31 +11,40 @@ export class ChannelService {
   constructor(
     @InjectRepository(ChannelEntity)
     private allChannels: Repository<ChannelEntity>,
+
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>
   ) {}
+
   getAllChannels() : Observable<ChannelEntity[]> {
     return from(this.allChannels.find());
   }
 
-  createChannel(channel: ChannelDto): Observable<ChannelEntity> {
-    console.log("allo");
-    console.log(channel);
+  async find_me(username : string) : Promise<UserEntity>
+  {
+    let object = await this.userRepository.findOne(
+      {
+        where: {
+            username: username
+        }
+      }
+    );
+    return object;
+  }
+
+   async createChannel(channel: ChannelDto) : Promise<Observable<ChannelEntity>> {
     let newChannel = new ChannelEntity();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     newChannel.name = channel.name;
     newChannel.status = channel.status;
-
-    //newChannel.ownerid = channel.ownerid;
-=======
     //newChannel.name = channel.name;
-=======
+
     newChannel.name = channel.name;
->>>>>>> backend route for channel creation working. starting to create foreign keys
     newChannel.status = channel.status;
     newChannel.ownerid = channel.ownerid;
->>>>>>> [+] change createChannel from socket to req api
 
+    newChannel.owner = await this.find_me(channel.ownerid);
+    
     return from(this.allChannels.save(newChannel));
   }
 
