@@ -20,7 +20,6 @@ export default function UserList() {
   const [id, setId] = React.useState(0);
   const [email, setEmail] = React.useState('');
 
-
   async function getUser() {
     if (document.cookie.includes(COOKIE_NAME))
     {
