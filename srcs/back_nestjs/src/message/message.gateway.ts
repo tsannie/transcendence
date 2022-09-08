@@ -24,7 +24,6 @@ import { MessageService } from './service/message.service';
 import { uuid } from 'uuidv4';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/service/user.service';
-import { IChannel } from 'src/channel/models/channel.interface';
 import { ChannelService } from 'src/channel/service/channel.service';
 
 // cree une websocket sur le port par defaut
@@ -104,7 +103,7 @@ export class MessageGateway
     this.logger.log(`client ${client.id} join room ${data} `);
   }
 
-  @SubscribeMessage('createChannel')
+  /* @SubscribeMessage('createChannel')
   createChannel(@MessageBody() data: IChannel, @ConnectedSocket() client: Socket) {
     data.ownerid = client.id;
     client.join(data.id);
@@ -112,5 +111,5 @@ export class MessageGateway
     this.logger.log(`client ${client.id} create channel ${data} `);
     this.channelService.handleChannels(data);
     client.emit("channel", data);
-  }
+  }*/
 }

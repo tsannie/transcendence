@@ -1,16 +1,9 @@
 import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { REDIRECT_LINK_AUTH } from "../const";
-import { api } from "../userlist/UserListItem";
 
 export default function ButtonLogin(props: any) {
-  function linkLog(event: any) {
-    event.preventDefault();
-    props.setIsLogin(true);
-    console.log("dans login");
+  function linkLog() {
     window.location.href = REDIRECT_LINK_AUTH;
 
   }

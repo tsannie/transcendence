@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -12,58 +13,80 @@ import { socket } from "../Chat";
 import { IChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "../../../userlist/UserListItem";
+import ChannelsList from "./ChannelsList";
+import { COOKIE_NAME } from "../../../const";
 
 export default function FormChannel(props: any) {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
-  const [channelCreated, setChannelCreated] = useState(false);
-  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+  const [ownerid, setOwnerid] = useState("");
 
-  async function createChannels() {
-    let endingFct = false;
-    let allExistingChannels: Array<IChannel>;
-    await api
+  async function getUser() {
+    if (document.cookie.includes(COOKIE_NAME))
+    {
+      await api.get('auth/profile').then(res => {
+        console.log(res.data.username)
+        setOwnerid(res.data.username);
+      }).catch(res => {
+        console.log('invalid jwt');
+        console.log(res);
+        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+      });
+    }
+  }
+
+  function checkifchannelexist(): boolean {
+    api
       .get("channel/all")
       .then((res) => {
-        allExistingChannels = res.data;
-        const ChannelById = allExistingChannels.filter((channel) => {
-          return channel.id === name;
+        const ChannelById = res.data.filter((channel: IChannel) => {
+          return channel.name === username;
         });
-        if (ChannelById.length !== 0 && name !== "") {
+        if (ChannelById.length !== 0 && username !== "") {
           alert("id deja pris");
-          endingFct = true;
+          return (true);
         }
       })
       .catch((res) => {
         console.log("error");
         console.log(res);
       });
+      return (false);
+  }
 
-    if (endingFct)
+  async function createChannels() {
+    if (checkifchannelexist() === true)
       return ;
-    if (name !== "") {
+    console.log(ownerid);
+    if (username !== "") {
       const channelData: IChannel = {
-        id: name,
+        name: username,
         status: status,
-        time:
+        /* time:
           new Date(Date.now()).getHours() +
           ":" +
-          String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
+          String(new Date(Date.now()).getMinutes()).padStart(2, "0"), */
+        ownerid: ownerid,
       };
-      socket.emit("createChannel", channelData);
-      setChannelsList((list) => [...list, channelData]);
-      setChannelCreated(true);
+      await api
+      .post("channel/createChannel", channelData)
+      .then((res) => {
+        console.log("channel created with success");
+        console.log(channelData);
+      })
+      .catch((res) => {
+        console.log("error");
+        console.log(res);
+      });
+      props.setChannelCreated(true);
       props.setNewChannel(false);
     }
   }
 
   useEffect(() => {
-    socket.on("channel", (data) => {
-      console.log(data);
-      setChannelsList((list) => [...list, data]);
-    });
-  }, [socket]);
+    getUser();
+  }, []);
 
   return (
     <Box sx={{}}>
@@ -72,7 +95,7 @@ export default function FormChannel(props: any) {
         variant="outlined"
         placeholder="name"
         onChange={(event) => {
-          setName(event.target.value);
+          setUsername(event.target.value);
         }}
       />
       <FormControl>
