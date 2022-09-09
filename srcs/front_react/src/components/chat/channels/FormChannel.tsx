@@ -20,23 +20,6 @@ export default function FormChannel(props: any) {
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
-  const [ownerid, setOwnerid] = useState("");
-
-  async function getUser() {
-    if (document.cookie.includes(COOKIE_NAME)) {
-      await api
-        .get("auth/profile")
-        .then((res) => {
-          console.log(res.data.username);
-          setOwnerid(res.data.username);
-        })
-        .catch((res) => {
-          console.log("invalid jwt");
-          console.log(res);
-          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-        });
-    }
-  }
 
   // check if channel name is already taken in db
   async function checkChannelName(name: string) {
@@ -57,6 +40,7 @@ export default function FormChannel(props: any) {
     return isTaken;
   }
 
+  // create channel in db
   async function createChannels() {
     await checkChannelName(username).then((isTaken) => {
       if (isTaken) {
@@ -66,11 +50,6 @@ export default function FormChannel(props: any) {
           const channelData: IChannel = {
             name: username,
             status: status,
-            /* time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          String(new Date(Date.now()).getMinutes()).padStart(2, "0"), */
-            ownerid: ownerid,
           };
           api
             .post("channel/createChannel", channelData)
@@ -88,10 +67,6 @@ export default function FormChannel(props: any) {
     props.setChannelCreated(true);
     props.setNewChannel(false);
   }
-
-  useEffect(() => {
-    getUser();
-  }, []);
 
   return (
     <Box sx={{}}>
