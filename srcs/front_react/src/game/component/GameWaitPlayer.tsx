@@ -1,6 +1,6 @@
 import { socket } from "../Game";
 
-export function GameWaitReady(props: any) {
+export function GameWaitPlayerReady(props: any) {
   function ReadyGame() {
     props.setColor_ready("green");
     socket.emit("readyGameRoom", props.room);
