@@ -45,7 +45,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  //////////////// SPECTATOR ROOM 
+  //////////////// SPECTATOR ROOM //
   ///////////////////////////////////////////////
 
 
@@ -68,7 +68,7 @@ export class GameGateway implements OnGatewayInit {
 
     console.log('now to wannawatch client'); */
 
-    client.to(room).emit('getAllGameRoom', this.roo);
+    //client.to(room).emit('getAllGameRoom', this.roo);
     client.emit('getAllGameRoom', this.roo);
   }
 
@@ -168,7 +168,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  ////////READY AND START GAME 
+  ////////READY AND START GAME /
   ///////////////////////////////////////////////
 
 
@@ -345,6 +345,6 @@ export class GameGateway implements OnGatewayInit {
     this.all_game.save(this.roo[room]);
     client.to(room).emit('setPlayerRight', this.roo[room]);
     client.emit('setPlayerRight', this.roo[room]);
-    return;
+    return;//
   }
 }

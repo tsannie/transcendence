@@ -45,8 +45,8 @@ export default function GameMenu(props: any) {
   }, [socket]);
 
   function lookAtAllGameRoom() {
-    props.store.setisLookingRoom(true);
     socket.emit("lookAllGameRoom", "lookroom");
+    props.store.setisLookingRoom(true);
   }
 
   function createGameRoom() {
@@ -91,22 +91,7 @@ export default function GameMenu(props: any) {
         <button onClick={lookAtAllGameRoom}>regarder la partie</button>{" "}
       </h4>
 
-      {
-        // WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!! ----------
-        /*       <p> La partie dans la room :  "{listGame}"" + "{listGame[0]}" + "{listGame[1]}" + "{listGame[2]}"
-      <button onClick={createFastGameRoom}>regarder la partie</button>
-      </p>
-      
-      {listGame.map((element, index) => {
-      return (
-        <div key={index}>
-          <p>partie : "{element}" <button onClick={createFastGameRoom}>regarder la partie</button>
-          </p>
-        </div>
-      );
-      })} */
-        // WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!! ----------
-      }
+  
     </div>
   );
 }
