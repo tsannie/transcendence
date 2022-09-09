@@ -16,6 +16,7 @@ import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
 import UserList from "./userlist/UserListItem";
 import LogoIcon from "./assets/logo-project.png";
+import Game from "./game/Game";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
@@ -54,19 +55,21 @@ export default function App() {
       </Box>
     //<ButtonLogout isLogin={isLogin} setIsLogin={setIsLogin} />
     );
-  return (
-    <Box
-      sx={{
-        display: "flex",
-      }}
-    >
-      <Sidebar
-        inputChat={inputChat}
-        setInputChat={setInputChat}
-        isLogin={isLogin}
-        setIsLogin={setIsLogin}
-      />
-      {inputChat && <Chat />}
-    </Box>
-  );
-}
+    return (
+      <div>
+        <Box
+          sx={{
+            display: "flex",
+          }}
+        >
+          <Sidebar inputChat={inputChat} inputGame={inputGame} setInputChat={setInputChat} setInputGame={setInputGame}/>
+          {inputChat && <Chat />}
+          {inputGame && <Game />}
+  
+  
+  
+        </Box>
+      </div>
+    );
+  }
+  

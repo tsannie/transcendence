@@ -8,7 +8,7 @@ export default function GameInit(props: any) {
   }
 
   useEffect(() => {
-    socket.on("readyGame", (theroom) => {
+    socket.on("readyGame", (theroom: any) => {
       props.store.setColor_ready("green");
       if (
         (theroom.p2 == socket.id && theroom.p2_ready == true) ||
@@ -27,7 +27,7 @@ export default function GameInit(props: any) {
       }
     });
 
-    socket.on("joinedRoom", (theroom) => {
+    socket.on("joinedRoom", (theroom: any) => {
       props.store.setnbrconnect(theroom.nbr_co);
       props.store.setisinroom(true);
       props.store.setRoom(theroom.room_name);
