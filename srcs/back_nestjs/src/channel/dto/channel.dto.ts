@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty } from "class-validator";
+import { Contains, IsDefined, IsNotEmpty } from "class-validator";
 import { CreateDateColumn } from "typeorm";
 
 export class ChannelDto {
