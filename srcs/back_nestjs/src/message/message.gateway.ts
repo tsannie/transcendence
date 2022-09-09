@@ -78,9 +78,9 @@ export class MessageGateway
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.push(client);
-    this.connectedClients.forEach(client => {
+    /* this.connectedClients.forEach(client => {
       console.log(client.id);
-    });
+    }); */
   }
 
   handleDisconnect(client: Socket) {
@@ -102,14 +102,4 @@ export class MessageGateway
     }); */
     this.logger.log(`client ${client.id} join room ${data} `);
   }
-
-  /* @SubscribeMessage('createChannel')
-  createChannel(@MessageBody() data: IChannel, @ConnectedSocket() client: Socket) {
-    data.ownerid = client.id;
-    client.join(data.id);
-    console.log(data);
-    this.logger.log(`client ${client.id} create channel ${data} `);
-    this.channelService.handleChannels(data);
-    client.emit("channel", data);
-  }*/
 }
