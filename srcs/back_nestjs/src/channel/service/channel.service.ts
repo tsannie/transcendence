@@ -5,6 +5,7 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChannelService {
@@ -30,7 +31,14 @@ export class ChannelService {
     newChannel.name = channel.name;
     newChannel.status = channel.status;
     newChannel.owner =  user;
-    
+
+    if (channel.password){
+      let salt = bcrypt.genSalt();
+
+      newChannel.password = bcrypt.hash(channel.password, salt);
+      newChannel.salt = salt;
+    }
+
     return from(this.allChannels.save(newChannel));
   }
 
