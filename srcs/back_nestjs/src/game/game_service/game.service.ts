@@ -22,4 +22,3 @@ export class GameService {
     await this.all_game.delete(id);
   }
 }
-//

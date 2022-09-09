@@ -12,7 +12,6 @@ export default {
     is_col: false,
     is_lock: false,
 
-
     init_x: 500,
     init_y: 250,
 
