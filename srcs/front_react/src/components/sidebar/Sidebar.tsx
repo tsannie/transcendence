@@ -24,6 +24,23 @@ export default function Sidebar(props: any) {
     window.location.reload();
   };
 
+  function resetInput() {
+    props.setInputChat(false);
+    props.setInputSettings(false);
+  }
+
+  function selectInput(propsName: string) {
+    resetInput();
+    switch (propsName) {
+      case "Chat":
+        props.setInputChat(true);
+        break;
+      case "Settings":
+        props.setInputSettings(true);
+        break;
+    }
+  }
+
   return (
     <Grid
       spacing={10}
@@ -48,10 +65,10 @@ export default function Sidebar(props: any) {
         <img src={GameIcon}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ChatIcon} onClick={() => props.setInputChat(true)}></img>
+        <img src={ChatIcon} onClick={() => selectInput('Chat')}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={SettingsIcon}></img>
+        <img src={SettingsIcon} onClick={() => selectInput('Settings')}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ExitIcon} onClick={logout}></img>

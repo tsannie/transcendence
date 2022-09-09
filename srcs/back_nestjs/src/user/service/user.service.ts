@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Catch, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userInfo } from 'os';
 import { from, Observable } from 'rxjs';
-import { Repository } from 'typeorm';
+import { Repository, TypeORMError } from 'typeorm';
 import { UserEntity } from '../models/user.entity';
 
 @Injectable()
