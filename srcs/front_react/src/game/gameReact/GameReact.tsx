@@ -60,7 +60,7 @@ export function The_whole_game(canvasRef: any) {
   }, [socket]);
 
   function sinc_ball(room_name: string, objball: any) {
-    if (player_left.won == false && player_right.won == false) {
+    if (player_left.won === false && player_right.won === false) {
       var data = {
         room: room_name,
         ball: objball,
@@ -82,7 +82,7 @@ export function The_whole_game(canvasRef: any) {
         if (ctx) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          if (player_left.won == false && player_right.won == false) {
+          if (player_left.won === false && player_right.won === false) {
             draw_line(ctx, ballObj, canvas.height, canvas.width);
             draw_score(
               ctx,
@@ -100,7 +100,7 @@ export function The_whole_game(canvasRef: any) {
               canvas.height,
               canvas.width
             );
-            if (ballObj.is_col == true) u = 1;
+            if (ballObj.is_col === true) u = 1;
             BallCol_right(
               ctx,
               player_left,
@@ -109,11 +109,11 @@ export function The_whole_game(canvasRef: any) {
               canvas.height,
               canvas.width
             );
-            if (ballObj.is_col == true || ballObj.init_ball_pos == false)
+            if (ballObj.is_col === true || ballObj.init_ball_pos === false)
               u = 1;
             if (u > 0)
               u++;
-            if (u == 6) {
+            if (u === 6) {
               sinc_ball(theroom.room_name, ballObj);
               u = 0;
             }

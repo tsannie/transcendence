@@ -3,10 +3,10 @@ import { paddleProps_left, player_left, player_right, socket } from "../Game";
 export function GamePlayer_left(props: any) {
   function mouv_paddle_left(e: any) {
     if (
-      props.gamestart == true &&
-      props.im_right == false &&
-      player_left.won == false &&
-      player_right.won == false
+      props.gamestart === true &&
+      props.im_right === false &&
+      player_left.won === false &&
+      player_right.won === false
     ) {
       paddleProps_left.y = e.clientY - paddleProps_left.width / 2 - 15;
       var data = {

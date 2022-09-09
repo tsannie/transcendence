@@ -124,7 +124,7 @@ export default function Game() {
   }, [socket]);
 
   function deleteGameRoom() {
-    if (isinroom == true) {
+    if (isinroom === true) {
       setisinroom(false);
       setgameover(true);
       setgamestart(false);
@@ -147,7 +147,7 @@ export default function Game() {
   ////////////////////////////////////////////////////
 
 
-  if (gamestart == true && im_right == true) {
+  if (gamestart === true && im_right === true) {
     return (
       <GamePlayer_right
         setRoom={setRoom}
@@ -160,7 +160,7 @@ export default function Game() {
         room={room}
       />
     );
-  } else if (gamestart == true && im_right == false) {
+  } else if (gamestart === true && im_right === false) {
     return (
       <GamePlayer_left
         setRoom={setRoom}
@@ -173,7 +173,7 @@ export default function Game() {
         room={room}
       />
     );
-  } else if (nbrconnect == 2 && isinroom) {
+  } else if (nbrconnect === 2 && isinroom) {
     return (
       <GameWaitPlayerReady
         my_id={my_id}
@@ -185,11 +185,11 @@ export default function Game() {
         op_id={op_id}
       />
     );
-  } else if (isinroom == true) {
+  } else if (isinroom === true) {
     return (
       <GameCreationSettings my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
     );
-  } else if (islookingroom == true) {
+  } else if (islookingroom === true) {
     return <GameSpectator store={store} />;
   } else {
     return <GameMenu store={store} />;
