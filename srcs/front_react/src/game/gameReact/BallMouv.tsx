@@ -41,13 +41,13 @@ export function draw_score(
     canvas_height / 4
   );
 
-  if (player_left.won == 1)
+  if (player_left.won === 1)
     ctx.fillText(
       player_left.name + " WON !!!",
       canvas_width / 2,
       canvas_height / 2
     );
-  else if (player_right.won == 1)
+  else if (player_right.won === 1)
     ctx.fillText(
       player_right.name + " WON !!!",
       canvas_width / 2,
@@ -65,7 +65,7 @@ export function BallMouv(
   let data = new Ball(ballObj.x, ballObj.y, ballObj.rad);
   data.draw(ctx);
 
-  if (ballObj.init_ball_pos == false) {
+  if (ballObj.init_ball_pos === false) {
     ballObj.init_dx *= -1;
     ballObj.init_first_dx *= -1;
 
@@ -81,7 +81,7 @@ export function BallMouv(
     ballObj.init_ball_pos = true;
   }
 
-  if (ballObj.first_col == false) {
+  if (ballObj.first_col === false) {
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
   } else {
