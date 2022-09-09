@@ -14,9 +14,6 @@ import ButtonLogout from "../../Auth/ButtonLogout";
 import { COOKIE_NAME } from "../../const";
 
 export default function Sidebar(props: any) {
-  //const [displayGame, setDisplayGame] = useState(false);
-  //const [displaySettings, setDisplaySettings] = useState(false);
-  // chat icon color: #610D7E
 
   function logout(event: any) {
     event.preventDefault();
@@ -58,10 +55,10 @@ export default function Sidebar(props: any) {
         <img src={ProfileIcon}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={GameIcon}></img>
+        <img src={GameIcon} onClick={() => reinit("game")}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ChatIcon} onClick={() => props.setInputChat(true)}></img>
+        <img src={ChatIcon} onClick={() => reinit("chat")}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={SettingsIcon}></img>
