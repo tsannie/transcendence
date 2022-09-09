@@ -128,7 +128,10 @@ export default function Game() {
       setisinroom(false);
       setgameover(true);
       setgamestart(false);
-
+      setimready(false);
+      setopready(false);
+      setim_right(false);
+      
       ballObj.init_ball_pos = false;
       ballObj.first_col = false;
       setColor_ready("black");
@@ -145,7 +148,6 @@ export default function Game() {
   The_whole_game(canvasRef);
 
   ////////////////////////////////////////////////////
-
 
   if (gamestart === true && im_right === true) {
     return (
