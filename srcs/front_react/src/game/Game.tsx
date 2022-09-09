@@ -87,7 +87,7 @@ export default function Game() {
   ////////////////////////////////////////////////////
 
   useEffect(() => {
-    socket.on("leftRoom", (theroom) => {
+    socket.on("leftRoom", (theroom: any) => {
       setnbrconnect(theroom.nbr_co);
       setopready(false);
       setimready(false);
@@ -117,7 +117,7 @@ export default function Game() {
 
     setisFull("");
     setmy_id(socket.id);
-    socket.on("roomFull", (theroom) => {
+    socket.on("roomFull", (theroom: any) => {
       setisFull("This ROOM IS FULL MATE");
       console.log("THIS ROOM IS FULL");
     });

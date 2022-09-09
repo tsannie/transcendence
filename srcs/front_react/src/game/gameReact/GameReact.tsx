@@ -20,7 +20,7 @@ import {
 export function The_whole_game(canvasRef: any) {
   let u = 0;
   useEffect(() => {
-    socket.on("sincTheBall", (theroom) => {
+    socket.on("sincTheBall", (theroom: any) => {
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
 
@@ -39,20 +39,20 @@ export function The_whole_game(canvasRef: any) {
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
     });
-    socket.on("mouvPaddleLeft", (theroom) => {
+    socket.on("mouvPaddleLeft", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_padle_obj.x;
       paddleProps_left.y = theroom.set.p1_padle_obj.y;
     });
-    socket.on("mouvPaddleRight", (theroom) => {
+    socket.on("mouvPaddleRight", (theroom: any) => {
       paddleProps_right.x = theroom.set.p2_padle_obj.x;
       paddleProps_right.y = theroom.set.p2_padle_obj.y;
     });
-    socket.on("setPlayerLeft", (theroom) => {
+    socket.on("setPlayerLeft", (theroom: any) => {
       player_left.score = theroom.set.set_p1.score;
       player_left.won = theroom.set.set_p1.won;
       player_left.name = theroom.set.set_p1.name;
     });
-    socket.on("setPlayerRight", (theroom) => {
+    socket.on("setPlayerRight", (theroom: any) => {
       player_right.score = theroom.set.set_p2.score;
       player_right.won = theroom.set.set_p2.won;
       player_right.name = theroom.set.set_p2.name;
@@ -70,7 +70,7 @@ export function The_whole_game(canvasRef: any) {
   }
 
   useEffect(() => {
-    socket.on("startGame", (theroom) => {
+    socket.on("startGame", (theroom: any) => {
       player_left.name = theroom.set.set_p1.name;
       player_right.name = theroom.set.set_p2.name;
       sinc_ball(theroom.room_name, ballObj);
