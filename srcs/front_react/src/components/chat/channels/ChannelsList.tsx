@@ -1,8 +1,9 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Button, Grid, SvgIcon } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
 import { socket } from "../Chat";
 import { IChannel } from "../types";
+import LockSvg from "../../../assets/lock.svg";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
@@ -23,7 +24,18 @@ export default function ChannelsList() {
       });
   }
 
-  function leaveChannel(channel: IChannel) {}
+  async function leaveChannel(channel: IChannel) {
+    await api
+      .post("channel/leaveChannel", channel)
+      .then((res) => {
+        console.log("channel left with success");
+        console.log(channel);
+      })
+      .catch((res) => {
+        console.log("invalid channels");
+        console.log(res);
+      });
+  }
 
   // get all channels
   function getChannels() {
@@ -47,6 +59,7 @@ export default function ChannelsList() {
     <Box>
       {channelsList.map((channelData: IChannel) => {
         return (
+        <Box>
           <Box
             sx={{
               width: "100%",
@@ -58,13 +71,15 @@ export default function ChannelsList() {
               mb: "1vh",
             }}
             key={channelData.name}
-            onClick={() => joinChannel(channelData)}
           >
             {channelData.name}
-            <Box>
-              {channelData.status === "Protected" ? <div> Protected channel</div> : <Box></Box>}
-            </Box>
           </Box>
+          <Button onClick={() => joinChannel(channelData)}>Join</Button>
+          <Button sx={{
+            color: "red",
+          }}
+          onClick={() => leaveChannel(channelData)}>Leave</Button>
+        </Box>
         );
       })}
     </Box>
