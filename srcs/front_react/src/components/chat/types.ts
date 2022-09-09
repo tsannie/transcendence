@@ -8,5 +8,6 @@ export interface IMessage {
 
 export interface IChannel {
   name: string;
+  password?: string;
   status: string;
 }

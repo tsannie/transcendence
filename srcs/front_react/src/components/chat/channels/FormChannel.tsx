@@ -103,7 +103,13 @@ export default function FormChannel(props: any) {
         </Select>
       </FormControl>
       {enablePassword === true && (
-        <TextField variant="outlined" placeholder="password" />
+        <TextField
+          variant="outlined"
+          placeholder="password"
+          onChange={(event) => {
+            props.setPassword(event.target.value);
+          }}
+        />
       )}
       <Button sx={{}} variant="contained" onClick={createChannels}>
         Create channel
