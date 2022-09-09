@@ -1,5 +1,5 @@
 
-export default function GameCreation(props: any) {
+export default function GameCreationSettings(props: any) {
   return (
     <div className="queues">
       <h2> you are : {props.my_id} </h2>

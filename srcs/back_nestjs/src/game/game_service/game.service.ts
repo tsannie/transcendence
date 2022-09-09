@@ -10,10 +10,6 @@ export class GameService {
     private all_game: Repository<GameEntity>,
   ) {}
 
-  /*     getHello(): string {
-        return 'Hello GAN!';
-    } */
-
   findAll(): Promise<GameEntity[]> {
     return this.all_game.find();
   }

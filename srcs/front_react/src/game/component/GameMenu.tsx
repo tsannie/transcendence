@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { socket } from "../Game";
 
-export default function GameInit(props: any) {
+export default function GameMenu(props: any) {
 
   function StartGame(rom: string) {
     socket.emit("startGameRoom", rom);
