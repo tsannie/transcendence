@@ -1,22 +1,33 @@
 import { Box, Grid } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
+import { socket } from "../Chat";
 import { IChannel } from "../types";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
-async function DisplayChannels() {
-    await api.get('channel/all').then(res => {
-      console.log(res.data);
-      //setId(res.data.id);
-      //setUsername(res.data.username);
-      //setEmail(res.data.email);
-    }).catch(res => {
-      console.log('invalid channels');
-      console.log(res)
-    });
-}
+export default function ChannelsList() {
+
+  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+
+  // get all channels
+  function getChannels() {
+    api
+      .get("channel/all")
+      .then((res) => {
+        setChannelsList(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid channels");
+        console.log(res);
+      });
+  }
+
+  // call getChannels() when channelList change
+  useEffect(() => {
+    getChannels();
+  }, [channelsList]);
 
   return (
     <Box>
