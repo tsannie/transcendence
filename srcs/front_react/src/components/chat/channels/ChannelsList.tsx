@@ -3,13 +3,19 @@ import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
 import { socket } from "../Chat";
 import { IChannel } from "../types";
-import LockSvg from "../../../assets/lock.svg";
+import { display } from "@mui/system";
+import { LockIcon } from "./LockIcon";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
+// create state to hide/show password input
+
+
 export default function ChannelsList() {
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   async function joinChannel(channel: IChannel) {
     await api
@@ -59,27 +65,53 @@ export default function ChannelsList() {
     <Box>
       {channelsList.map((channelData: IChannel) => {
         return (
-        <Box>
           <Box
             sx={{
-              width: "100%",
-              height: "100%",
+              width: "fit-content",
+              height: "fit-content",
               color: "black",
               textAlign: "center",
-              border: "1px solid black",
               borderRadius: "3px",
               mb: "1vh",
-            }}
-            key={channelData.name}
+              border: "1px solid black",
+              display: "flex",
+              alignItems: "center",
+              }}
           >
-            {channelData.name}
+            <Box
+              sx={{
+                height: "100%",
+                ml: "1vh",
+                color: "black",
+                textAlign: "center",
+              }}
+              key={channelData.name}
+            >
+              {channelData.name}
+            </Box>
+            <Box>
+              {channelData.status === "Protected" ? (
+                <LockIcon /> ) : <div></div>
+              }
+            </Box>
+            <Button
+              sx={{
+                ml: "1vh",
+              }}
+              onClick={() => joinChannel(channelData)}
+            >
+              Join
+            </Button>
+            <Button
+              sx={{
+                color: "red",
+                ml: "1vh",
+              }}
+              onClick={() => leaveChannel(channelData)}
+            >
+              Leave
+            </Button>
           </Box>
-          <Button onClick={() => joinChannel(channelData)}>Join</Button>
-          <Button sx={{
-            color: "red",
-          }}
-          onClick={() => leaveChannel(channelData)}>Leave</Button>
-        </Box>
         );
       })}
     </Box>
