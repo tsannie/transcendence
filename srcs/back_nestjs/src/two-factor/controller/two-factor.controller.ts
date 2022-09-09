@@ -19,7 +19,7 @@ export class TwoFactorController {
   async generate(@Res() response: Response, @Request() req) {
     const { otpauthUrl } = await this.twoFactorService.generateTwoFactorSecret(req.user)
 
-    console.log(otpauthUrl)
+    console.log('new qrcode generate')
 
     return this.twoFactorService.generateQrCode(response, otpauthUrl)
   }

@@ -10,10 +10,13 @@ import Sidebar from "./components/sidebar/Sidebar";
 import UserList, { api } from "./userlist/UserListItem";
 import LogoIcon from "./assets/logo-project.png";
 import { COOKIE_NAME } from "./const";
+import Settings from "./components/settings/Settings";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
+  const [inputSettings, setInputSettings] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [isLoginj, setIsLoginj] = useState("");
 
   console.log(isLogin);
   if (document.cookie.includes(COOKIE_NAME))
@@ -63,12 +66,13 @@ export default function App() {
       }}
     >
       <Sidebar
-        inputChat={inputChat}
         setInputChat={setInputChat}
+        setInputSettings={setInputSettings}
         isLogin={isLogin}
         setIsLogin={setIsLogin}
       />
       {inputChat && <Chat />}
+      {inputSettings && <Settings />}
     </Box>
   );
 }
