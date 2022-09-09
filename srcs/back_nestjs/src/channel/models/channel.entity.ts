@@ -27,10 +27,10 @@ export class ChannelEntity {
   @ManyToOne( () => UserEntity, (user) => user.admin_of )
   owner: UserEntity;
 
-  @Column()
+  @Column( { nullable: true })
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   salt: string;
     
   // @ManyToMany( () => UserEntity, (user) => user.channels )
