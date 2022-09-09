@@ -13,7 +13,7 @@ import { socket } from "../Chat";
 import { IChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "../../../userlist/UserListItem";
-import ChannelsList from "./ChannelsList";
+//import ChannelsList from "./ChannelsList";
 import { COOKIE_NAME } from "../../../const";
 
 export default function FormChannel(props: any) {
@@ -22,8 +22,6 @@ export default function FormChannel(props: any) {
   const [enablePassword, setEnablePassword] = useState(false);
   const [ownerid, setOwnerid] = useState("");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   async function getUser() {
     if (document.cookie.includes(COOKIE_NAME)) {
       await api
@@ -50,52 +48,12 @@ export default function FormChannel(props: any) {
           if (channel.name === name) {
             isTaken = true;
           }
-=======
-  async function createChannels() {
-    let endingFct = false;
-    let allExistingChannels: Array<IChannel>;
-=======
-  async function getUser() {
-    if (document.cookie.includes(COOKIE_NAME))
-    {
-      await api.get('auth/profile').then(res => {
-        console.log(res.data.username)
-        setOwnerid(res.data.username);
-      }).catch(res => {
-        console.log('invalid jwt');
-        console.log(res);
-        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
-      });
-    }
-  }
->>>>>>> [+] change createChannel from socket to req api
-
-  function checkifchannelexist(): boolean {
-    api
-      .get("channel/all")
-      .then((res) => {
-<<<<<<< HEAD
-        console.log(res.data);
-        allExistingChannels = res.data;
-        const ChannelById = allExistingChannels.filter((channel) => {
-          return channel.id === name;
->>>>>>> [fix] fix cookies and state for login/logout
         });
-=======
-        const ChannelById = res.data.filter((channel: IChannel) => {
-          return channel.name === username;
-        });
-        if (ChannelById.length !== 0 && username !== "") {
-          alert("id deja pris");
-          return (true);
-        }
->>>>>>> [+] change createChannel from socket to req api
       })
       .catch((res) => {
         console.log("invalid channels");
         console.log(res);
       });
-<<<<<<< HEAD
     return isTaken;
   }
 
@@ -129,38 +87,6 @@ export default function FormChannel(props: any) {
     });
     props.setChannelCreated(true);
     props.setNewChannel(false);
-=======
-      return (false);
-  }
-
-  async function createChannels() {
-    if (checkifchannelexist() === true)
-      return ;
-    console.log(ownerid);
-    if (username !== "") {
-      const channelData: IChannel = {
-        name: username,
-        status: status,
-        /* time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          String(new Date(Date.now()).getMinutes()).padStart(2, "0"), */
-        ownerid: ownerid,
-      };
-      await api
-      .post("channel/createChannel", channelData)
-      .then((res) => {
-        console.log("channel created with success");
-        console.log(channelData);
-      })
-      .catch((res) => {
-        console.log("error");
-        console.log(res);
-      });
-      props.setChannelCreated(true);
-      props.setNewChannel(false);
-    }
->>>>>>> [+] change createChannel from socket to req api
   }
 
   useEffect(() => {
