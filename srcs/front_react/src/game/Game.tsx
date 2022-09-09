@@ -8,11 +8,11 @@ import io from "socket.io-client";
 import data from "./gameReact/data";
 import { The_whole_game } from "./gameReact/GameReact";
 import { GameSpectator } from "./component/GameSpectator";
-import GameInit from "./component/GameInit";
-import { GameWaitReady } from "./component/GameWait";
+import GameMenu from "./component/GameMenu";
+import { GameWaitPlayerReady } from "./component/GameWaitPlayer";
 import { GamePlayer_left } from "./gameReact/GamePlayerLeft";
 import { GamePlayer_right } from "./gameReact/GamePlayerRight";
-import GameCreation from "./component/GameCreation";
+import GameCreationSettings from "./component/GameCreationSettings";
 
 export const socket = io("http://localhost:4000/game");
 
@@ -175,7 +175,7 @@ export default function Game() {
     );
   } else if (nbrconnect == 2 && isinroom) {
     return (
-      <GameWaitReady
+      <GameWaitPlayerReady
         my_id={my_id}
         room={room}
         deleteGameRoom={deleteGameRoom}
@@ -187,11 +187,11 @@ export default function Game() {
     );
   } else if (isinroom == true) {
     return (
-      <GameCreation my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
+      <GameCreationSettings my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
     );
   } else if (islookingroom == true) {
     return <GameSpectator store={store} />;
   } else {
-    return <GameInit store={store} />;
+    return <GameMenu store={store} />;
   }
 }

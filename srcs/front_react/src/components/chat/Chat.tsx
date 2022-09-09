@@ -10,6 +10,7 @@ import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
 import { api, IUser } from "../../userlist/UserListItem";
 import { COOKIE_NAME } from "../../const";
+import { ContactSupportOutlined } from "@material-ui/icons";
 import HistoryMessages from "./messages/HistoryMessages";
 
 export const socket = io("http://localhost:4000");
