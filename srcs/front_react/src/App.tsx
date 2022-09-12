@@ -15,7 +15,7 @@ export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
-  console.log(isLogin);
+  //console.log(isLogin);
   if (document.cookie.includes(COOKIE_NAME))
   {
     api.get('auth/profile').then(res => {
