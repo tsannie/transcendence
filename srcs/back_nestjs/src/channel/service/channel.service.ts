@@ -40,6 +40,7 @@ export class ChannelService {
 		if (e.code === "23505")
 			throw new UnprocessableEntityException("Name of Server aleready exist. Choose another one.");
 		else
+			console.log(e)
 			throw new InternalServerErrorException("Saving of new Channel failed.");
 		});
   }
@@ -50,10 +51,10 @@ export class ChannelService {
     newChannel.name = channel.name;
     newChannel.status = channel.status;
     newChannel.owner =  user;
-    if (channel.password) {
-      let salt = bcrypt.genSalt();
+    if (channel.status === "Protected" && channel.password) {
+      let salt = await bcrypt.genSalt();
 
-      newChannel.password = bcrypt.hash(channel.password, parseInt(salt));
+      newChannel.password = await bcrypt.hash(channel.password, parseInt(salt));
       newChannel.salt = salt;
     }
 
