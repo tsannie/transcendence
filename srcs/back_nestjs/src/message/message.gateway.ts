@@ -68,7 +68,14 @@ export class MessageGateway
     // this.messageService.add(newMessage);
     //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
     // join room
-    client.to(newMessage.room).emit('message', newMessage);
+
+    //want to emit from client.id to client2.id
+    client.emit('message', {
+      authorid: client.id,
+      receiverid: client.id,
+      messageData: newMessage,
+    });
+    //client.emit('message', newMessage);
   }
 
   afterInit() {

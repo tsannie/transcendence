@@ -14,7 +14,6 @@ import { LockIcon } from "./LockIcon";
 
 export default function ChannelsList() {
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
-  const [showPassword, setShowPassword] = useState(false);
 
   async function joinChannel(channel: IChannel) {
     await api
@@ -43,8 +42,8 @@ export default function ChannelsList() {
   }
 
   // get all channels
-  function getChannels() {
-    api
+  async function getChannels() {
+    await api
       .get("channel/all")
       .then((res) => {
         setChannelsList(res.data);
