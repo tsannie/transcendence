@@ -14,7 +14,6 @@ import { LockIcon } from "./LockIcon";
 
 export default function ChannelsList() {
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   async function joinChannel(channel: IChannel) {
