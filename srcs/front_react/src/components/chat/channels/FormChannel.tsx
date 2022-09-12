@@ -18,6 +18,7 @@ import { COOKIE_NAME } from "../../../const";
 
 export default function FormChannel(props: any) {
   const [username, setUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
 
@@ -47,10 +48,14 @@ export default function FormChannel(props: any) {
         alert("Channel name already taken");
       } else {
         if (username !== "") {
+          console.log(newPassword);
           const channelData: IChannel = {
             name: username,
             status: status,
           };
+          if (status === "Protected") {
+            channelData.password = newPassword;
+          }
           api
             .post("channel/createChannel", channelData)
             .then((res) => {
@@ -107,7 +112,7 @@ export default function FormChannel(props: any) {
           variant="outlined"
           placeholder="password"
           onChange={(event) => {
-            props.setPassword(event.target.value);
+            setNewPassword(event.target.value);
           }}
         />
       )}
