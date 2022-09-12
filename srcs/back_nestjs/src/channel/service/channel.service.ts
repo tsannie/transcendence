@@ -2,7 +2,9 @@ import {
   Body,
   Catch,
   Injectable,
+  InternalServerErrorException,
   NotAcceptableException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
@@ -31,7 +33,18 @@ export class ChannelService {
       ));
   }
 
-  createChannel(channel: ChannelDto, user : UserEntity) : Observable<ChannelEntity> {
+  //this function is responsible of saving a new Channel and do manage error or redundancy if it happens
+  async saveChannel(newChannelEntity : ChannelEntity) : Promise<void | ChannelEntity>
+  {
+	return await this.allChannels.save(newChannelEntity).catch( (e) => {
+		if (e.code === "23505")
+			throw new UnprocessableEntityException("Name of Server aleready exist. Choose another one.");
+		else
+			throw new InternalServerErrorException("Saving of new Channel failed.");
+		});
+  }
+
+  async createChannel(channel: ChannelDto, user : UserEntity) : Promise<void | ChannelEntity> {
     let newChannel = new ChannelEntity();
 
     newChannel.name = channel.name;
@@ -44,8 +57,7 @@ export class ChannelService {
       newChannel.salt = salt;
     }
 
-    return from(this.allChannels.save(newChannel));
-    //return from(this.allChannels.save(newChannel).catch( (err: any) => {console.log(err);}))
+    return await this.saveChannel(newChannel);
   }
 
   handleChannels(data: ChannelDto): void {

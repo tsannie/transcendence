@@ -19,8 +19,8 @@ export class ChannelController {
   //CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)
   @UseGuards( AuthGuard('jwt') )
   @Post('createChannel')
-  createChannel(@Body() channel: ChannelDto, @Request() req): Observable<ChannelEntity> {
-    return this.channelService.createChannel(channel, req.user);
+  async createChannel(@Body() channel: ChannelDto, @Request() req): Promise<void | ChannelEntity> {
+    return await this.channelService.createChannel(channel, req.user);
   }
 
   //ENTER IN A PUBLIC ROOM, 
