@@ -31,7 +31,7 @@ export class ChannelEntity {
   password: string;
 
   @Column({ nullable: true })
-  salt: Number;
+  salt: string;
 
   // @ManyToMany( () => UserEntity, (user) => user.channels )
   // users: UserEntity[];
