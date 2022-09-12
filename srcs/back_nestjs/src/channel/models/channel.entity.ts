@@ -33,6 +33,9 @@ export class ChannelEntity {
   @Column({ nullable: true })
   salt: string;
 
+  @Column( { default: false })
+  private_message: boolean
+
   // @ManyToMany( () => UserEntity, (user) => user.channels )
   // users: UserEntity[];
 
