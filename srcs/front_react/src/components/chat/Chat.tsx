@@ -18,29 +18,25 @@ export const socket = io("http://localhost:4000");
 export default function Chat() {
   const [room, setRoom] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
-  const [windowChat, setWindowChat] = useState(false);
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
   const [author, setAuthor] = useState("");
   const [username, setUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
-  const [id, setId] = useState(0);
 
-  function createRoom() {
-    console.log(room);
+  // to do: creer un tableau de conversations
+
+  /* function createRoom() {
     if (room !== "") {
       socket.emit("createRoom", room);
       console.log(`User join room ${room}`);
-      setWindowChat(true);
-      console.log(windowChat);
     }
-  }
+  } */
 
   async function getUser() {
     if (document.cookie.includes(COOKIE_NAME)) {
       await api
         .get("auth/profile")
         .then((res) => {
-          setId(res.data.id);
           setUsername(res.data.username);
         })
         .catch((res) => {
@@ -86,13 +82,6 @@ export default function Chat() {
     });
   }, [socket]);
 
-  if (!windowChat) {
-    return (
-      <div>
-        <ChatJoin setRoom={setRoom} createRoom={createRoom} />
-      </div>
-    );
-  }
   return (
     <Box sx={{}}>
       <Box
@@ -123,7 +112,9 @@ export default function Chat() {
         />
       </Box>
       <Box>
-        <ChatUserlist setIsNewMessage={setIsNewMessage} />
+        <ChatUserlist
+          setIsNewMessage={setIsNewMessage}
+        />
       </Box>
       <Box
         sx={{

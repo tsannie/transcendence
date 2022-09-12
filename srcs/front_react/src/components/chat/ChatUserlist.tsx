@@ -28,10 +28,15 @@ export default function ChatUserlist(props: any) {
     setAnchorEl(null);
   }
 
+  function sendReceiverName(receiver: IUser) {
+    props.setReceiver(receiver);
+  }
+
   function handleNewMessage() {
     console.log('handle new message');
     setAnchorEl(null);
     props.setIsNewMessage(true);
+    sendReceiverName(props.user);
   }
 
   return (
@@ -52,8 +57,8 @@ export default function ChatUserlist(props: any) {
         Users
       </Typography>
       <Box>
-        <Box onContextMenu={handleClick}>
-          <UserList />
+        <Box>
+          <UserList handleClick={handleClick} />
         </Box>
         <Menu
           open={open}
