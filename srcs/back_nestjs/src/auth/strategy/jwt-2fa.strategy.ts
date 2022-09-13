@@ -6,7 +6,7 @@ import { UserService } from 'src/user/service/user.service';
 import { IPayload } from "../models/payload.interface";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
   constructor(private userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IPayload) {  // TODO IPayload
+  async validate(payload: IPayload) {
     const user = await this.userService.findById(payload.sub);
     if (!user.enabled2FA) {
       return user;
