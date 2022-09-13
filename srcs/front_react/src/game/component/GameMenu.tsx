@@ -8,6 +8,7 @@ export default function GameMenu(props: any) {
   }
 
   useEffect(() => {
+    
     socket.on("readyGame", (theroom: any) => {
       props.store.setColor_ready("green");
       if (
@@ -25,6 +26,9 @@ export default function GameMenu(props: any) {
         StartGame(theroom.room_name);
         props.store.setgamestart(true);
       }
+
+
+
     });
 
     socket.on("joinedRoom", (theroom: any) => {
@@ -45,8 +49,9 @@ export default function GameMenu(props: any) {
   }, [socket]);
 
   function lookAtAllGameRoom() {
+    console.log("LOOK AT ALL GAME ROOM !!!!");
     socket.emit("lookAllGameRoom", "lookroom");
-    props.store.setisLookingRoom(true);
+    
   }
 
   function createGameRoom() {
