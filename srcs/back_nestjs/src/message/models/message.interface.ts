@@ -1,8 +1,9 @@
+import { UserEntity } from "src/user/models/user.entity";
+
 export interface IMessage {
   id: string;
-  room: string;
-  author: string;
+  author?: string;
   content: string;
-  time: string;
+  createdAt: Date;
   //room: RoomEntity
 }
