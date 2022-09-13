@@ -31,7 +31,7 @@ export class UserService {
   // TODO DELETE
   async getAllUser(): Promise<UserEntity[]> {
     return await this.allUser.find({
-		relations : ["admin_of"]
+		relations : ["admin_of", "channels"]
 		}
 	)};
 

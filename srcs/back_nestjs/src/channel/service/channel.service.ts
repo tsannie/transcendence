@@ -29,7 +29,7 @@ export class ChannelService {
   getAllChannels() : Observable<ChannelEntity[]> {
     return from(this.channelRepository.find(
       {
-        relations: ["owner"],
+        relations: ["owner", "users"],
       },
       ));
   }
@@ -77,17 +77,35 @@ export class ChannelService {
     return await this.saveChannel(newChannel);
   }
 
+  async leaveChannel(requested_channel: CreateChannelDto, user: UserEntity) {
+    let channel_info = await this.channelRepository.findOne({
+      where: {
+        name : requested_channel.name,
+      },
+      relations: ["users"]//, "messages"],
+    });
+    console.log(channel_info);
+    channel_info.users = channel_info.users.filter( ( elem ) => { elem !== user })
+    this.channelRepository.save(channel_info);
+    console.log(channel_info);
+  }
+
   async joinChannel(requested_channel: CreateChannelDto, user: UserEntity) {
     let channel_info = await this.channelRepository.findOne({
       where: {
         name : requested_channel.name,
       },
-      //relations: ["messages"],
+      relations: ["users"]//, "messages"],
     });
     if (!channel_info)
     {
       console.log("channel doesn't exist");
       return ;
+    }
+    if (channel_info.users && channel_info.users.find( () => user ))
+    {
+      console.log("user already member of the room");
+      return;
     }
     if (channel_info.status === 'Public') {
       return (await this.joinPublicChannels(user, channel_info));
