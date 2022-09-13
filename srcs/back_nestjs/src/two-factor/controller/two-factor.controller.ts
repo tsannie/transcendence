@@ -23,8 +23,13 @@ export class TwoFactorController {
       throw new UnauthorizedException('Authentication failed - invalid token !');
     }
 
-    const accessToken = this.authService.login(req.user);
-    req.res.setHeader('Set-Cookie', `access_token=${accessToken}; HttpOnly; Path=/;`); // TODO replace by a .cookie method ?
+    const accessToken = await this.authService.login(req.user);
+    req.res.cookie('AuthToken', accessToken, {
+      httpOnly: false,
+      path: '/',
+    });
+    //req.res.setHeader('Set-Cookie', accessToken.access_token + '; HttpOnly; Path=/;'); // TODO const
+    console.log('access token', accessToken)
     return req.user
   }
 
@@ -51,5 +56,13 @@ export class TwoFactorController {
     } else {
       throw new UnauthorizedException('Invalid token')
     }
+  }
+
+  // disable 2FA for the user
+  @UseGuards(AuthGuard('jwt'))
+  @Get('disable')
+  async disable(@Request() req) {
+    await this.userService.disable2FA(req.user.id)
+    logger2FA.log(`2FA disabled for user ${req.user.username}`)
   }
 }
