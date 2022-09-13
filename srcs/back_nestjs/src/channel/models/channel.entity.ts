@@ -30,9 +30,6 @@ export class ChannelEntity {
   @Column( { nullable: true })
   password: string;
 
-  @Column({ nullable: true })
-  salt: string;
-
   @Column( { default: false })
   private_message: boolean
 
