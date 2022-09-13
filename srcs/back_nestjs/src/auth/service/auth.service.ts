@@ -42,7 +42,7 @@ export class AuthService {
     return res;
   }
 
-  async login(user: any): Promise<IToken> {
+  async login(user: any): Promise<IToken> { // TODO replace by the entity ??
     const payload = {
       username: user.username,
       sub: user.id, // sub for jwt norm
@@ -50,7 +50,7 @@ export class AuthService {
     const token = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
         secret:'secret',    // TODO const
         expiresIn: '1d'     // TODO const with time of cookie
-      })    // TODO patch this shiit to be in auth.module
+      })
     };
     return token;
   }

@@ -22,7 +22,7 @@ export class AuthController {
     private readonly authService: AuthService
   ) {}
 
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(AuthGuard('local'))    // TODO replace with const for all guard
   @Post('/login')
   async login(@Request() req): Promise<IToken> {
     console.log('new login');

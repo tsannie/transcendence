@@ -13,32 +13,33 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 export default function ActivationProcess(props: any) {
   const [token, setToken] = useState("");
-  const [open, setOpen] = useState(false);
-  const [success, setSuccess] = useState(true);
+  const [openError, setOpenError] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
 
   async function checkToken() {
     await api.post('2fa/check-token', {
       token: token,
     }).then(res => {
-      console.log(res.data)
-      setSuccess(true)
+      console.log('ACTTIVATE 2FA');
+      setOpenSuccess(true);
+      props.setTwoFactorA(true);
+      props.setEnable2FA(false);
     }).catch(err => {
       console.log(err)
-      setSuccess(false)
+      setOpenError(true);
     })
   }
   const handleClick = () => {
     checkToken();
-    setOpen(true);
   };
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    console.log(success)
-    if (success === false) {
+    if (reason === 'clickaway') {
       return;
     }
 
-    setOpen(false);
+    setOpenError(false);
+    setOpenSuccess(false);
   }
 
   return (
@@ -54,9 +55,15 @@ export default function ActivationProcess(props: any) {
       <Button variant="contained" onClick={handleClick}>
         Validate
       </Button>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+
+      <Snackbar open={openError} autoHideDuration={5000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          This is a success message!
+          Invalid activation code !
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openSuccess} autoHideDuration={5000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          2FA successfully activated !
         </Alert>
       </Snackbar>
     </div>

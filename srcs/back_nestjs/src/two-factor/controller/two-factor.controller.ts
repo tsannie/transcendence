@@ -2,6 +2,7 @@ import { Body, Controller, Get, Logger, Post, Req, Request, Res, UnauthorizedExc
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { UserService } from 'src/user/service/user.service';
+import { AuthService } from 'src/auth/service/auth.service';
 import { logger2FA } from '../const/const';
 import { TokenDto } from '../dto/token.dto';
 import { TwoFactorService } from '../service/two-factor.service';
@@ -10,8 +11,22 @@ import { TwoFactorService } from '../service/two-factor.service';
 export class TwoFactorController {
   constructor(
     private readonly twoFactorService: TwoFactorService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) {}
+
+  @Post('auth2fa')
+  @UseGuards(AuthGuard('jwt'))
+  async auth2fa(@Body() tokenBody: TokenDto, @Request() req) {
+    const validToken =  await this.twoFactorService.codeIsValid(tokenBody.token, req.user);
+    if (!validToken) {
+      throw new UnauthorizedException('Authentication failed - invalid token !');
+    }
+
+    const accessToken = this.authService.login(req.user);
+    req.res.setHeader('Set-Cookie', `access_token=${accessToken}; HttpOnly; Path=/;`); // TODO replace by a .cookie method ?
+    return req.user
+  }
 
   // generate a new qrcode for the user
   @UseGuards(AuthGuard('jwt'))
