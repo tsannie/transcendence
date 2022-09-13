@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserEntity } from 'src/user/models/user.entity';
-import { IToken } from '../auth.const';
+import { IToken } from '../models/token.inferface';
 import { AuthService } from '../service/auth.service';
 
 @Controller('auth')
@@ -30,24 +30,9 @@ export class AuthController {
     return await this.authService.login(req.user);
   }
 
-  @Post('/register')
-  async register(@Body() user: UserEntity): Promise<UserEntity> {
-    console.log('new register');
-    return await this.authService.register(user);
-  }
-
-  @Post('/')
-  async oauth42(@Query('code') code: string) {
-    //console.log(code);
-    return await this.authService.oauth42(code);
-  }
-
   @UseGuards(AuthGuard('jwt'))
   @Get('/profile')
   getProfile(@Request() req) {
-    //console.log('hello');
-    //console.log(req.user);
-    //console.log('================================');
     const user = req.user;
     return req.user;
   }
@@ -61,11 +46,15 @@ export class AuthController {
   @UseGuards(AuthGuard('42'))
   @Get('/redirect')
   @Redirect('http://localhost:3000/', 301) // TODO env
-  async redirect(@Req() req, @Res({ passthrough: true }) res) {
+  async redirect(@Req() req) {
     const user = req.user;
     const accessToken = await this.authService.login(user);
-    res.cookie('AuthToken', accessToken);
-    //console.log(accessToken);
+    //req.res.setHeader('Set-Cookie','AuthToken=' + accessToken.access_token + '; Path=/;'); // TODO AuthToken const env
+
+    req.res.cookie('AuthToken', accessToken, {
+      httpOnly: false,
+      path: '/',
+    });  // TODO 'AuthToken' const env
     return 'bye';
   }
 }

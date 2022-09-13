@@ -16,24 +16,25 @@ export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [inputSettings, setInputSettings] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-  const [isLoginj, setIsLoginj] = useState("");
 
-  console.log(isLogin);
-  if (document.cookie.includes(COOKIE_NAME))
-  {
+  //console.log('islogin = ' + isLogin);
+  if (document.cookie.includes(COOKIE_NAME)) {
+    //console.log('cookie exist');
     api.get('auth/profile').then(res => {
       setIsLogin(true);
     }).catch(res => {
       console.log('invalid jwt');
-      console.log(res)
+      //console.log(res)
       document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
     });
   }
 
-  useEffect(() => {
+  // TODO ask dov what is that ??????
+  /*useEffect(() => {
     const strIsLogin = JSON.parse(window.localStorage.getItem("isLogin") || "null");
+    //console.log("strislogin = " + strIsLogin)
     setIsLogin(strIsLogin);
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     window.localStorage.setItem("isLogin", JSON.stringify(isLogin));
