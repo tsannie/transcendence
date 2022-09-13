@@ -25,10 +25,11 @@ export class ChannelController {
     return await this.channelService.joinChannel(query_channel, req.user);
   }
 
-
-
-
-
+  @UseGuards( AuthGuard('jwt') )
+  @Get( 'leaveChannel' )
+  async leaveChannel( @Query() query_channel : CreateChannelDto, @Request() req) {
+    return await this.channelService.leaveChannel(query_channel, req.user);
+  }
 
 
 
