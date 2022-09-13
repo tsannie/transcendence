@@ -33,7 +33,10 @@ export class ChannelService {
       ));
   }
 
-  //this function is responsible of saving a new Channel and do manage error or redundancy if it happens
+ /*
+ 	this function is responsible of saving a new Channel and do manage error or 
+  	redundancy if it happens
+ */ 
   async saveChannel(newChannelEntity : ChannelEntity) : Promise<void | ChannelEntity>
   {
 	return await this.channelRepository.save(newChannelEntity).catch( (e) => {
@@ -45,7 +48,8 @@ export class ChannelService {
 		});
   }
 
-  async checkPassword(room_name : string, password : string)
+//THIS FUNCTION COMPARE INPUTED PASSWORD WITH THE ONE STORED IN DATABASE
+  async checkPassword(password : string, room_name : string)
   {
 	let channel = await this.channelRepository.findOne( {
 		where: {
@@ -53,12 +57,12 @@ export class ChannelService {
 		}
 	})
 	if (await bcrypt.compare(password, channel.password))
-		console.log("Password is OK");
+		return true;
 	else
-		console.log("Password is WRONG");
-	return;
+		return false;
   }
 
+  //THIS FUNTION CREATE A NEW CHANNEL USING A DTO THAT FRONT SEND US
   async createChannel(channel: ChannelDto, user : UserEntity) : Promise<void | ChannelEntity> {
     let newChannel = new ChannelEntity();
 
