@@ -30,6 +30,7 @@ export class ChannelController {
     // return this.channelService.enterPublicChannel(req);
   }
 
+  //TEST ROUTE, NEED TO DELETE IT
   @Post('password')
   async comparePassword( @Body() data ){
 	return await this.channelService.checkPassword(data.room_name, data.password);
