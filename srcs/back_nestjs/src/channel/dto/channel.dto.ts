@@ -1,5 +1,4 @@
 import { Contains, Equals, IsAlphanumeric, IsDefined, IsIn, IsNotEmpty, IsOptional, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
-import { CreateDateColumn } from "typeorm";
 
 const statuses = [ "Public", "Private", "Protected" ]
 

@@ -27,6 +27,9 @@ export class ChannelEntity {
   @ManyToOne( () => UserEntity, (user) => user.admin_of )
   owner: UserEntity;
 
+  @ManyToMany( () => UserEntity, (user) => user.channels )
+  users: UserEntity[];
+
   @Column( { nullable: true })
   password: string;
 
