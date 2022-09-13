@@ -22,14 +22,11 @@ export class TwoFactorController {
     if (!validToken) {
       throw new UnauthorizedException('Authentication failed - invalid token !');
     }
-
-    const accessToken = await this.authService.login(req.user);
+    const accessToken = await this.authService.getCookie(req.user, true);
     req.res.cookie('AuthToken', accessToken, {
       httpOnly: false,
-      path: '/',
+      path: '/',  // TODO test with path '/2fa/auth2fa'
     });
-    //req.res.setHeader('Set-Cookie', accessToken.access_token + '; HttpOnly; Path=/;'); // TODO const
-    console.log('access token', accessToken)
     return req.user
   }
 

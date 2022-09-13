@@ -27,7 +27,7 @@ export class AuthController {
   async login(@Request() req): Promise<IToken> {
     console.log('new login');
     //console.log('user');
-    return await this.authService.login(req.user);
+    return await this.authService.getCookie(req.user);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -48,7 +48,7 @@ export class AuthController {
   @Redirect('http://localhost:3000/', 301) // TODO env
   async redirect(@Req() req) {
     const user = req.user;
-    const accessToken = await this.authService.login(user);
+    const accessToken = await this.authService.getCookie(user);
     //req.res.setHeader('Set-Cookie','AuthToken=' + accessToken.access_token + '; Path=/;'); // TODO AuthToken const env
 
     req.res.cookie('AuthToken', accessToken, {
