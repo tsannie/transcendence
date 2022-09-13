@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios';    // TODO delete axios in the backend
 
 export interface IToken {
   access_token: string;

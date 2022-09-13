@@ -64,6 +64,8 @@ export default function Settings() {
         {enable2FA &&
           <ActivationProcess
             qrCode={qrCode}
+            setTwoFactorA={setTwoFactorA}
+            setEnable2FA={setEnable2FA}
           />
         }
     </div>
