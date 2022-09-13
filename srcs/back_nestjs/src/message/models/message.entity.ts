@@ -15,10 +15,10 @@ import {
 @Entity()
 export class MessageEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @CreateDateColumn()
-  time: string;
+  createdAt?: Date;
 
   @Column()
   content: string;

@@ -2,7 +2,7 @@ import {
   Box
 } from "@mui/material";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ButtonLogin from "./Auth/ButtonLogin";
 import Chat from "./components/chat/Chat";

@@ -37,9 +37,9 @@ export class MessageGateway
 {
   constructor(
     private messageService: MessageService,
-    private channelService: ChannelService
+    private channelService: ChannelService,
+    private userService: UserService,
   ) {}
-
 
   connectedClients = [];
   private readonly logger: Logger = new Logger('messageGateway');
@@ -50,32 +50,21 @@ export class MessageGateway
   @SubscribeMessage('message')
   addMessage(
     @MessageBody() data: IMessage,
-    @ConnectedSocket() client: Socket,
-  ): void {
+    @ConnectedSocket() client: Socket, ) {
+  //): Observable<IMessage> {
     this.logger.log(client.id);
-    //this.logger.log(this.server.socketsJoin(data.room))
+    console.log(data);
 
-    //const newRoom : RoomEntity = this.roomService.getRoomById();
-    const newMessage: IMessage = {
-      // message de base + uuid
+    // create message
+    const message = {
       id: uuidv4(),
-      room: data.room,
-      author: data.author,
+      createdAt: new Date(),
       content: data.content,
-      time: data.time,
-      //room: newRoom
+      author: data.author,
     };
-    // this.messageService.add(newMessage);
-    //if (Object.keys(this.allMessages).length === 0) // join room if conversation started
-    // join room
+    //this.server.to(uuidv4()).emit('message', message);
+    return message;
 
-    //want to emit from client.id to client2.id
-    client.emit('message', {
-      authorid: client.id,
-      receiverid: client.id,
-      messageData: newMessage,
-    });
-    //client.emit('message', newMessage);
   }
 
   afterInit() {
@@ -84,6 +73,11 @@ export class MessageGateway
 
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
+
+    // recuperer user id
+    //const user = this.userService.findByName(client.handshake.auth.query.username);
+    //console.log(user);
+
     this.connectedClients.push(client);
     /* this.connectedClients.forEach(client => {
       console.log(client.id);
@@ -92,9 +86,9 @@ export class MessageGateway
 
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
-    this.connectedClients = this.connectedClients.filter((connectedClient) => {
+    /* this.connectedClients = this.connectedClients.filter((connectedClient) => {
       return connectedClient !== client.id;
-    });
+    }); */
   }
 
   // Quand tu doubles cliques sur un utilisateur, cela va cree une room pour pouvoir le dm

@@ -1,27 +1,31 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { IMessage } from "./types";
-import ChatJoin from "./ChatJoin";
 import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
 import { api, IUser } from "../../userlist/UserListItem";
 import { COOKIE_NAME } from "../../const";
-import { ContactSupportOutlined } from "@material-ui/icons";
 import HistoryMessages from "./messages/HistoryMessages";
-
-export const socket = io("http://localhost:4000");
 
 export default function Chat() {
   const [room, setRoom] = useState("");
+  const [author, setAuthor] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
-  const [author, setAuthor] = useState("");
-  const [username, setUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
+  const [userId, setUserId] = useState(0);
+
+  const socket = io("http://localhost:4000", {
+    /* auth: {
+      query: {
+        username: author,
+      },
+    }, */
+  });
 
   // to do: creer un tableau de conversations
 
@@ -37,7 +41,9 @@ export default function Chat() {
       await api
         .get("auth/profile")
         .then((res) => {
-          setUsername(res.data.username);
+          setAuthor(res.data.username);
+          setUserId(res.data.id);
+          console.log(res.data.id);
         })
         .catch((res) => {
           console.log("invalid jwt");
@@ -54,9 +60,7 @@ export default function Chat() {
     inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: IMessage = {
-        id: uuidv4(),
-        room: room,
-        author: username,
+        author: author,
         content: currentMessage,
         time:
           new Date(Date.now()).getHours() +
@@ -66,7 +70,6 @@ export default function Chat() {
       socket.emit("message", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
-      setAuthor(messageData.author);
     }
   }
 
