@@ -37,7 +37,10 @@ export class UserService {
     return await this.allUser.clear();
   }
 
-
+  // turn enabled2FA to false for user
+  async disable2FA(userId: number) {
+    return await this.allUser.update(userId, { enabled2FA: false });
+  }
 
   // turn enabled2FA to true for user
   async enable2FA(userId: number) { // TODO update user ?
