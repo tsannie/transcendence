@@ -49,13 +49,21 @@ export class GameGateway implements OnGatewayInit {
   ///////////////////////////////////////////////
 
 
-  //WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!!//
+  //WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!!///
+
+  
+  @SubscribeMessage('LeaveAllGameRoom')
+  LeaveLookRoom(client: Socket, room: string) {
+    client.leave(room);
+    client.emit('LeaveAllGameRoom', this.roo);
+  }
+
 
   @SubscribeMessage('lookAllGameRoom')
   LookRoom(client: Socket, room: string) {
     client.join(room); //
 
-    /*     for (const [key, value] of Object.entries(this.roo)) {/////////
+    /*     for (const [key, value] of Object.entries(this.roo)) {//////////
       console.log("room found = [" + key + "][" + value.room_name + "]");
   
     } 
@@ -65,15 +73,41 @@ export class GameGateway implements OnGatewayInit {
     /*  for (const [key, value] of Object.entries(this.roo)) {
       console.log('rooma are : [' + key + '][' + value.nbr_co + ']');
     }
-
-    console.log('now to wannawatch client'); */
-
+    */
+    console.log('now to wannawatch client'); 
+    console.log('room = [' + room + ']');
     //client.to(room).emit('getAllGameRoom', this.roo);
     client.emit('getAllGameRoom', this.roo);
   }
 
   ///////////////////////////////////////////////
-  //////////////// CREATE ROOM 
+  //////////////////////////////////////////////
+
+  @SubscribeMessage('Specthegame')
+  Specthegame(client: Socket, room: string) {
+    client.leave("lookroom");
+    client.join(room); //
+    console.log("room SPEC = [" + room + "]");
+    
+    /*     for (const [key, value] of Object.entries(this.roo)) {//////////
+      console.log("room found = [" + key + "][" + value.room_name + "]");
+  
+    } 
+     */
+    //console.log('------------wannawatch----------------]');
+
+    /*  for (const [key, value] of Object.entries(this.roo)) {
+      console.log('rooma are : [' + key + '][' + value.nbr_co + ']');
+    }
+    */
+    //console.log('now to wannawatch client'); 
+    //console.log('room = [' + room + ']');
+    //client.to(room).emit('getAllGameRoom', this.roo);
+    //client.emit('getAllGameRoom', this.roo);
+  }
+
+  ///////////////////////////////////////////////
+  //////////////// CREATE ROOM ///
   ///////////////////////////////////////////////
 
 
@@ -270,7 +304,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  ////////////////  BALL 
+  ////////////////  BALL /
   ///////////////////////////////////////////////
 
   @SubscribeMessage('sincBall')
