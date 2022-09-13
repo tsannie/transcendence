@@ -13,6 +13,7 @@ import { MetadataAlreadyExistsError, Repository } from 'typeorm';
 import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import * as bcrypt from 'bcrypt';
+import { CreateChannelDto } from '../dto/createchannel.dto';
 
 @Injectable()
 @Catch()
@@ -68,7 +69,7 @@ export class ChannelService {
 
     newChannel.name = channel.name;
     newChannel.status = channel.status;
-    newChannel.owner =  user;
+    newChannel.owner = user;
     if (channel.status === "Protected" && channel.password) {
       newChannel.password = await bcrypt.hash(channel.password, await bcrypt.genSalt());
     }
@@ -76,26 +77,39 @@ export class ChannelService {
     return await this.saveChannel(newChannel);
   }
 
-  handleChannels(data: ChannelDto): void {
-    //this.createChannel(data);
-    if (data.status === 'Public') {
-      this.handlePublicChannels();
-    } else if (data.status === 'Private') {
-      this.handlePrivateChannels();
-    } else if (data.status === 'Protected') {
-      this.handleProtectedChannels();
+  async joinChannel(requested_channel: CreateChannelDto, user: UserEntity) {
+    let channel_info = await this.channelRepository.findOne({
+      where: {
+        name : requested_channel.name,
+      },
+      //relations: ["messages"],
+    });
+    if (!channel_info)
+    {
+      console.log("channel doesn't exist");
+      return ;
+    }
+    if (channel_info.status === 'Public') {
+      return (await this.joinPublicChannels(user, channel_info));
+    } else if (channel_info.status === 'Private') {
+      this.joinPrivateChannels();
+    } else if (channel_info.status === 'Protected') {
+      this.joinProtectedChannels();
     } else {
       console.log('error');
     }
   }
 
-  handlePublicChannels(): void {
+  async joinPublicChannels(user : UserEntity, channel : ChannelEntity): Promise<ChannelEntity> {
     console.log('public channels');
+    channel.users = [user];
+    return await this.channelRepository.save(channel);
   }
-  handlePrivateChannels(): void {
+
+  joinPrivateChannels(): void {
     console.log('private channels');
   }
-  handleProtectedChannels(): void {
+  joinProtectedChannels(): void {
     console.log('protected channels');
   }
 }
