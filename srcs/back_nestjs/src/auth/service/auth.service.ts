@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
+import { IPayload } from '../models/payload.interface';
 import { IToken } from '../models/token.inferface';
 
 @Injectable()
@@ -30,12 +31,13 @@ export class AuthService {
     return await this.userService.add(user);
   }
 
-  async login(user: any): Promise<IToken> { // TODO replace by the entity ??
-    const payload = {
+  async getCookie(user: any, isSecondFactor = false): Promise<IToken> { // TODO replace by the entity ??
+    const payload: IPayload = {
       username: user.username,
       sub: user.id, // sub for jwt norm
+      isSecondFactor: isSecondFactor,
     };
-    const token = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
+    const token: IToken = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
         secret:'secret',    // TODO const
         expiresIn: '1d'     // TODO const with time of cookie
       })
