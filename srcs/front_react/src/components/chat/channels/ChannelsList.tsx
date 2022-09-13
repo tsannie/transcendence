@@ -1,7 +1,7 @@
 import { Box, Button, Grid, SvgIcon } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
-import { socket } from "../Chat";
+//import { socket } from "../Chat";
 import { IChannel } from "../types";
 import { display } from "@mui/system";
 import { LockIcon } from "./LockIcon";
