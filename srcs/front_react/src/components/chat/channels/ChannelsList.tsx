@@ -1,4 +1,4 @@
-import { Box, Button, Grid, SvgIcon } from "@mui/material";
+import { Box, Button, Grid, SvgIcon, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
 //import { socket } from "../Chat";
@@ -9,14 +9,16 @@ import { LockIcon } from "./LockIcon";
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
-// create state to hide/show password input
-
-
 export default function ChannelsList() {
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+  const [channelPassword, setChannelPassword] = useState("");
 
   async function joinChannel(channel: IChannel) {
-    await api
+    if (channel.status === "Protected") {
+      channel.password = channelPassword;
+    }
+    console.log(channel);
+      await api
       .post("channel/joinChannel", channel)
       .then((res) => {
         console.log("channel joined with success");
@@ -26,6 +28,8 @@ export default function ChannelsList() {
         console.log("invalid channels");
         console.log(res);
       });
+    setChannelPassword("")
+    // to do: refresh password after send (look send message)
   }
 
   async function leaveChannel(channel: IChannel) {
@@ -74,7 +78,7 @@ export default function ChannelsList() {
               border: "1px solid black",
               display: "flex",
               alignItems: "center",
-              }}
+            }}
           >
             <Box
               sx={{
@@ -88,15 +92,28 @@ export default function ChannelsList() {
               {channelData.name}
             </Box>
             <Box>
-              {channelData.status === "Protected" ? (
-                <LockIcon /> ) : <div></div>
-              }
+              {channelData.status === "Protected" ? <LockIcon /> : <div></div>}
             </Box>
+            <TextField
+                sx={{
+                  minWidth: "15vw",
+                  display: channelData.status === "Protected" ? "block" : "none",
+                }}
+                placeholder="password"
+                type="password"
+                onChange={(event) => {
+                  setChannelPassword(event.target.value);
+                }}
+              >
+            </TextField>
             <Button
               sx={{
                 ml: "1vh",
               }}
-              onClick={() => joinChannel(channelData)}
+              // on click join channel if not already in
+              onClick={() => {
+                joinChannel(channelData);
+              }}
             >
               Join
             </Button>
