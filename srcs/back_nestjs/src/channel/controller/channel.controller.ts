@@ -64,7 +64,7 @@ export class ChannelController {
 		return await this.channelService.revokeAdmin(channel, req.user);
 	}
 
-	//ENTER IN A PUBLIC ROOM, 
+	//ENTER IN A PUBLIC ROOM,
 	@UseGuards( AuthGuard('jwt') )
 	@Post( 'joinChannel' )
 	async joinChannel( @Body() query_channel : ChannelDto, @Request() req) {
@@ -104,7 +104,7 @@ export class ChannelController {
 
 
 /*PLEASE DELETE THESE ROUTE LATER, TEST ROUTES*/
-  
+
   	/*to use that route, send an object as such:
 	{
 		ChannelDTO{
