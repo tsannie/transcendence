@@ -1,8 +1,9 @@
 import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import UserList from "../../userlist/UserListItem";
+import UserList, { api } from "../../userlist/UserListItem";
 import UserInfos, { IUser } from "../../userlist/UserListItem";
+import { IChannel } from "./types";
 
 export default function ChatUserlist(props: any) {
 
@@ -18,6 +19,10 @@ export default function ChatUserlist(props: any) {
     setAnchorEl(null);
   }
 
+  function sendReceiverName(receiver: IUser) {
+    props.setReceiver(receiver);
+  }
+
   function handleProfile() {
     console.log('handle profile');
     setAnchorEl(null);
@@ -28,15 +33,26 @@ export default function ChatUserlist(props: any) {
     setAnchorEl(null);
   }
 
-  function sendReceiverName(receiver: IUser) {
-    props.setReceiver(receiver);
+  async function joinMP(channel: IChannel) {
+    await api
+      .post("channel/joinMP", channel)
+      .then((res) => {
+        console.log("channel joined with success");
+        console.log(channel);
+      })
+      .catch((res) => {
+        console.log("invalid channels");
+        console.log(res);
+      });
   }
 
   function handleNewMessage() {
+    joinMP(props.channel);
+    props.setOpenConv(true);
     console.log('handle new message');
     setAnchorEl(null);
     props.setIsNewMessage(true);
-    sendReceiverName(props.user);
+    //sendReceiverName(props.user);
   }
 
   return (

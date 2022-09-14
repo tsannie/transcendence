@@ -51,7 +51,7 @@ export default function UserList(props: any) {
               borderRadius: "3px",
             }}
             key={user.id}
-            onContextMenu={props.handleClick}
+            onClick={props.handleClick}
           >
             {user.username}
           </ListItem>
