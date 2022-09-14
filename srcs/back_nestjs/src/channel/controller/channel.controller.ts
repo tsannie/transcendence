@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
-import { ChannelDto } from '../dto/channel.dto';
 import { CreateChannelDto } from '../dto/createchannel.dto';
+import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import { ChannelService } from '../service/channel.service';
 
@@ -14,23 +14,28 @@ export class ChannelController {
   //CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)
   @UseGuards( AuthGuard('jwt') )
   @Post('createChannel')
-  async createChannel(@Body() channel: ChannelDto, @Request() req): Promise<void | ChannelEntity> {
+  async createChannel(@Body() channel: CreateChannelDto, @Request() req): Promise<void | ChannelEntity> {
     return await this.channelService.createChannel(channel, req.user);
   }
 
   //ENTER IN A PUBLIC ROOM, 
   @UseGuards( AuthGuard('jwt') )
   @Get( 'joinChannel' )
-  async joinChannel( @Query() query_channel : CreateChannelDto, @Request() req) {
+  async joinChannel( @Query() query_channel : ChannelDto, @Request() req) {
     return await this.channelService.joinChannel(query_channel, req.user);
   }
 
   @UseGuards( AuthGuard('jwt') )
   @Get( 'leaveChannel' )
-  async leaveChannel( @Query() query_channel : CreateChannelDto, @Request() req) {
+  async leaveChannel( @Query() query_channel : ChannelDto, @Request() req) {
     return await this.channelService.leaveChannel(query_channel, req.user);
   }
-
+  
+  @UseGuards( AuthGuard('jwt') )
+  @Get( 'deleteChannel' )
+  async deleteChannel(@Query() query_channel : ChannelDto, @Request() req) {
+	return await this.channelService.deleteChannel(query_channel, req.user);
+  }
 
 
 
