@@ -18,11 +18,12 @@ export class ChannelController {
     return await this.channelService.createChannel(channel, req.user);
   }
 
-  //ENTER IN A PUBLIC ROOM, 
+  //ENTER IN A PUBLIC ROOM,
   @UseGuards( AuthGuard('jwt') )
-  @Get( 'joinChannel' )
-  async joinChannel( @Query() query_channel : ChannelDto, @Request() req) {
-    return await this.channelService.joinChannel(query_channel, req.user);
+  @Post( 'joinChannel' )
+  async joinChannel( @Body() channel : ChannelDto, @Request() req) {
+    console.log(req.user);
+    return await this.channelService.joinChannel(channel, req.user);
   }
 
   @UseGuards( AuthGuard('jwt') )
@@ -30,7 +31,7 @@ export class ChannelController {
   async leaveChannel( @Query() query_channel : ChannelDto, @Request() req) {
     return await this.channelService.leaveChannel(query_channel, req.user);
   }
-  
+
   @UseGuards( AuthGuard('jwt') )
   @Get( 'deleteChannel' )
   async deleteChannel(@Query() query_channel : ChannelDto, @Request() req) {

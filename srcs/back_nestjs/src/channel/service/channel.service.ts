@@ -34,11 +34,11 @@ export class ChannelService {
 			));
 	}
 
-  
+
  /*
- 	this function is responsible of saving a new Channel and do manage error or 
+ 	this function is responsible of saving a new Channel and do manage error or
   	redundancy if it happens
- */ 
+ */
 	async saveChannel(newChannelEntity : ChannelEntity) : Promise<void | ChannelEntity>{
 		return await this.channelRepository.save(newChannelEntity).catch( (e) => {
 			if (e.code === "23505")
@@ -113,24 +113,25 @@ export class ChannelService {
 
 	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<void | ChannelEntity> {
 		let channel = await this.getChannel(requested_channel.name, ["owner"]);
-		if (channel.owner.username === user.username) 
+		if (channel.owner.username === user.username)
 			return await this.channelRepository.remove(channel);
 	}
 
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) {
+		console.log("requested_channel = ", requested_channel);
 		let channel = await this.getChannel(requested_channel.name);
 		if (user.channels && user.channels.find( ( elem ) => elem === channel ))
 			throw new UnprocessableEntityException("User is already a member of the channel.")
 
 			if (channel.status === 'Public') {
 			return (await this.joinPublicChannels(user, channel));
-		} 
+		}
 		else if (channel.status === 'Private') {
 			this.joinPrivateChannels();
-		} 
+		}
 		else if (channel.status === 'Protected') {
 			this.joinProtectedChannels();
-		} 
+		}
 		else {
 			console.log('error');
 		}
