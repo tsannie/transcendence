@@ -18,6 +18,7 @@ export default function Chat() {
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [userId, setUserId] = useState(0);
+  const [openConv, setOpenConv] = useState(false);
 
   const socket = io("http://localhost:4000", {
     /* auth: {
@@ -102,20 +103,28 @@ export default function Chat() {
         </Typography>
       </Box>
       <Box>
-        <HistoryMessages isNewMessage={isNewMessage} />
-      </Box>
-      <Box>
-        <MessagesList messagesList={messagesList} author={author} />
-      </Box>
-      <Box>
-        <PromptMessage
-          setCurrentMessage={setCurrentMessage}
-          currentMessage={currentMessage}
-          sendMessage={sendMessage}
+        <HistoryMessages
+          isNewMessage={isNewMessage}
+          setOpenConv={setOpenConv}
         />
       </Box>
       <Box>
+        {openConv && (
+          <MessagesList messagesList={messagesList} author={author} />
+        )}
+      </Box>
+      <Box>
+        {openConv && (
+          <PromptMessage
+            setCurrentMessage={setCurrentMessage}
+            currentMessage={currentMessage}
+            sendMessage={sendMessage}
+          />
+        )}
+      </Box>
+      <Box>
         <ChatUserlist
+          setOpenConv={setOpenConv}
           setIsNewMessage={setIsNewMessage}
         />
       </Box>

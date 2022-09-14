@@ -9,6 +9,7 @@ export default function MessagesList(props: any) {
         width: 640,
         height: "fit-content",
         minHeight: 724,
+        border: "1px solid black",
       }}
     >
       <Box>
