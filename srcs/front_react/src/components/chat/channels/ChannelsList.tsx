@@ -18,8 +18,15 @@ export default function ChannelsList() {
       channel.password = channelPassword;
     }
     console.log(channel);
-      await api
-      .post("channel/joinChannel", channel)
+
+    const newChannel = {
+      name: channel.name,
+      password: channel.password,
+    }
+    console.log(newChannel);
+
+     await api
+      .post("channel/joinChannel", newChannel)
       .then((res) => {
         console.log("channel joined with success");
         console.log(channel);
