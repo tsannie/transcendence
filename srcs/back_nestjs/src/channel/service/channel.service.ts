@@ -76,14 +76,14 @@ export class ChannelService {
 	}
 
 	//THIS FUNCTION COMPARE INPUTED PASSWORD WITH THE ONE STORED IN DATABASE
-	async checkPassword(password : string, room_name : string)
+	async checkPassword(inputed_password : string, room_name : string)
 	{
 		let channel = await this.channelRepository.findOne( {
 			where: {
 				name : room_name
 			}
 		})
-		if (await bcrypt.compare(password, channel.password))
+		if (await bcrypt.compare(inputed_password, channel.password))
 			return true;
 		else
 			return false;
@@ -96,6 +96,7 @@ export class ChannelService {
 		newChannel.name = channel.name;
 		newChannel.status = channel.status;
 		newChannel.owner = user;
+		newChannel.isMp = false;
 		if (channel.status === "Protected" && channel.password) {
 			newChannel.password = await bcrypt.hash(channel.password, await bcrypt.genSalt());
 		}
@@ -104,7 +105,6 @@ export class ChannelService {
 
   async leaveChannel(requested_channel: ChannelDto, user: UserEntity) {
 		let channel = await this.getChannel(requested_channel.name, ["users"]);
-		console.log("channel = ", channel, "\nchannel.users = ", channel.users);
 		if (channel.users){
 			channel.users = channel.users.filter( (channel_users) => { channel_users.username !== user.username } );
 			await this.channelRepository.save(channel);
