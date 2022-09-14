@@ -36,11 +36,11 @@ export class UserEntity {
   secret2FA?: string
 
   @OneToMany( () => ChannelEntity, (channels) => channels.owner )
-  admin_of?: ChannelEntity[];
+  owner_of?: ChannelEntity[];
 
   @ManyToMany( () => ChannelEntity, (channels) => channels.users )
   @JoinTable()
-  channels?: ChannelEntity[]
+  channels?: ChannelEntity[];
 
   // @OneToMany( () => ChannelEntity, (channels) => channels.users )
   // mp_channels: ChannelEntity[]
