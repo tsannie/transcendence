@@ -1,5 +1,6 @@
+import { MessageEntity } from "src/message/models/message.entity";
 import { UserEntity } from "src/user/models/user.entity";
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, Column } from "typeorm";
 
 @Entity()
 export abstract class PrivateMessageEntity {
@@ -12,5 +13,9 @@ export abstract class PrivateMessageEntity {
 	@ManyToMany( () => UserEntity, (user) => user.channels )
 	users: UserEntity[];
 	
-	//MESSAGES ARE HERE:
+	@Column( { default: true } )
+	isMp: boolean;
+
+	@ManyToMany( () => MessageEntity, (message) => message.channel )
+	messages: MessageEntity[];
 }

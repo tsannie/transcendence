@@ -1,11 +1,13 @@
 //import { RoomEntity } from "src/room/models/room.entity";
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { PrivateMessageEntity } from 'src/channel/models/private_message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryColumn,
@@ -14,19 +16,23 @@ import {
 
 @Entity()
 export class MessageEntity {
-  @PrimaryGeneratedColumn()
-  id: string;
+	@PrimaryGeneratedColumn()
+	id: string;
 
-  @CreateDateColumn()
-  createdAt?: Date;
+	@CreateDateColumn()
+	createdAt?: Date;
 
-  @Column()
-  content: string;
+	@Column()
+	content: string;
 
-  @OneToOne( () => UserEntity )
-  @JoinColumn()
-  author: UserEntity;
+	@OneToOne( () => UserEntity )
+	@JoinColumn()
+	author: UserEntity;
 
-  // @ManyToOne( () => ChannelEntity, (channel) => channel.messages )
-  // channel: ChannelEntity;
+	@ManyToMany( () => PrivateMessageEntity, (channel) => channel.messages, 
+		{
+			onDelete: "CASCADE",
+		})
+	@JoinColumn()
+	channel: ChannelEntity;
 }
