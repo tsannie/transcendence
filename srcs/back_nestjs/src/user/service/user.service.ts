@@ -30,8 +30,10 @@ export class UserService {
 
   // TODO DELETE
   async getAllUser(): Promise<UserEntity[]> {
-    return await this.allUser.find();
-  }
+    return await this.allUser.find({
+		relations : ["owner_of", "channels"]
+		}
+	)};
 
   async cleanAllUser(): Promise<void> {
     return await this.allUser.clear();

@@ -39,7 +39,7 @@ import { TwoFactorController } from './two-factor/controller/two-factor.controll
     UserModule,
     AuthModule,
     PassportModule,
-    //ChannelModule,
+    ChannelModule,
   ],
   controllers: [AppController, TwoFactorController],
   providers: [
