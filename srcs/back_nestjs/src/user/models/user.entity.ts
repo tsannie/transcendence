@@ -4,6 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -34,10 +36,11 @@ export class UserEntity {
   secret2FA?: string
 
   @OneToMany( () => ChannelEntity, (channels) => channels.owner )
-  admin_of?: ChannelEntity[];
+  owner_of?: ChannelEntity[];
 
-  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
-  // channels: ChannelEntity[]
+  @ManyToMany( () => ChannelEntity, (channels) => channels.users )
+  @JoinTable()
+  channels?: ChannelEntity[];
 
   // @OneToMany( () => ChannelEntity, (channels) => channels.users )
   // mp_channels: ChannelEntity[]

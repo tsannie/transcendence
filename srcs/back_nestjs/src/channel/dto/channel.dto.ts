@@ -1,5 +1,4 @@
-import { Contains, Equals, IsAlphanumeric, IsDefined, IsIn, IsNotEmpty, IsOptional, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
-import { CreateDateColumn } from "typeorm";
+import { IsAlphanumeric, IsDefined, IsIn, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 const statuses = [ "Public", "Private", "Protected" ]
 
@@ -9,12 +8,6 @@ export class ChannelDto {
   @IsNotEmpty()
   @IsString()
   name: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @IsString()
-  @IsIn(statuses)
-  status: string;
 
   @IsOptional()
   @IsNotEmpty()
