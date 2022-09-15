@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -26,10 +26,9 @@ export class MessageEntity {
 	@JoinColumn()
 	author: UserEntity;
 
-	@ManyToMany( () => PrivateMessageEntity, (channel) => channel.messages, 
+	@OneToMany( () => PrivateMessageEntity, (channel) => channel.messages, 
 		{
 			onDelete: "CASCADE",
 		})
-	@JoinColumn()
 	channel: ChannelEntity;
 }
