@@ -24,6 +24,7 @@ import { TwoFactorController } from './two-factor/controller/two-factor.controll
 import { DmController } from './dm/controller/dm.controller';
 import { DmService } from './dm/service/dm.service';
 import { DmModule } from './dm/dm.module';
+import { DmEntity } from './dm/models/dm.entity';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { DmModule } from './dm/dm.module';
       autoLoadEntities: true, // TODO check that
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, DmEntity]),
     UserModule,
     AuthModule,
     PassportModule,

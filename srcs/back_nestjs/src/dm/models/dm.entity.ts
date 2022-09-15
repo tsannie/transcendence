@@ -1,6 +1,6 @@
 import { MessageEntity } from "src/message/models/message.entity";
 import { UserEntity } from "src/user/models/user.entity";
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, Column, OneToMany } from "typeorm";
 
 @Entity()
 export abstract class DmEntity {
@@ -16,6 +16,6 @@ export abstract class DmEntity {
 	@Column( { default: true } )
 	isMp: boolean;
 
-	@ManyToOne( () => MessageEntity, (message) => message.channel )
+	@OneToMany( () => MessageEntity, (message) => message.channel )
 	messages: MessageEntity[];
 }

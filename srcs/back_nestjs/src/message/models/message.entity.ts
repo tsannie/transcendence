@@ -1,12 +1,13 @@
 import { ChannelEntity } from 'src/channel/models/channel.entity';
-import { PrivateMessageEntity } from 'src/channel/models/private_message.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
+  ManyToMany,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -26,9 +27,9 @@ export class MessageEntity {
 	@JoinColumn()
 	author: UserEntity;
 
-	@OneToMany( () => PrivateMessageEntity, (channel) => channel.messages, 
+	@ManyToOne( () => DmEntity, (channel) => channel.messages,
 		{
 			onDelete: "CASCADE",
 		})
-	channel: ChannelEntity;
+	channel: DmEntity;
 }

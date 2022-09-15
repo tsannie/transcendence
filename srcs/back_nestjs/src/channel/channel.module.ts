@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DmEntity } from 'src/dm/models/dm.entity';
 import { MessageEntity } from 'src/message/models/message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
@@ -9,7 +10,7 @@ import { ChannelService } from './service/channel.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ChannelEntity, UserEntity, MessageEntity]),
+    TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity]),
   ],
   controllers: [ChannelController],
   providers: [ChannelService, UserService],
