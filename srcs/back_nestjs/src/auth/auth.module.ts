@@ -8,9 +8,9 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import * as dotenv from 'dotenv'; // TODO delte that ?? and module
-import { LocalStrategy } from './strategy/local.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { FortyTwoStrategy } from './strategy/fortytwo.strategy';
+import { FortyTwoStrategy } from './strategy/fortyTwo.strategy';
+import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
 
 dotenv.config();
 
@@ -26,9 +26,9 @@ dotenv.config();
     AuthService,
     JwtService,
     UserService,
-    LocalStrategy,
     JwtStrategy,
     FortyTwoStrategy,
+    JwtTwoFactorStrategy
   ],
   exports: [AuthService],
 })

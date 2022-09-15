@@ -22,7 +22,6 @@ import { MessageChannel } from 'worker_threads';
 import { MessageController } from './controller/message.controller';
 import { MessageService } from './service/message.service';
 import { uuid } from 'uuidv4';
-import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 
