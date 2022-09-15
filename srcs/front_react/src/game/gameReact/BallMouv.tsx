@@ -62,6 +62,7 @@ export function BallMouv(
   data.draw(ctx);
 
   if (ballObj.init_ball_pos === false) {
+    console.log("init_ball_pos");
     ballObj.init_dx *= -1;
     ballObj.init_first_dx *= -1;
 
@@ -78,13 +79,16 @@ export function BallMouv(
   }
 
   if (ballObj.first_col === false) {
-    console.log("ballObj.x : " + ballObj.x);
-    console.log("ballObj.y : " + ballObj.y);
+    //console.log("ballObj.x : " + ballObj.first_dx);
+    //console.log("ballObj.y : " + ballObj.first_dy);
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
   } else {
+    //console.log("ingame col");
     ballObj.x += ballObj.ingame_dx;
     ballObj.y += ballObj.ingame_dy;
+    //console.log("ballObj.x : " + ballObj.ingame_dx);
+    //console.log("ballObj.y : " + ballObj.ingame_dy);
   }
 
   if (
