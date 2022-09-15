@@ -47,15 +47,13 @@ export function The_whole_game(canvasRef: any) {
       paddleProps_right.x = theroom.set.p2_padle_obj.x;
       paddleProps_right.y = theroom.set.p2_padle_obj.y;
     });
-    socket.on("setPlayerLeft", (theroom: any) => {
+    socket.on("setDataPlayerLeft", (theroom: any) => {
       player_left.score = theroom.set.set_p1.score;
       player_left.won = theroom.set.set_p1.won;
-      player_left.name = theroom.set.set_p1.name;
     });
-    socket.on("setPlayerRight", (theroom: any) => {
+    socket.on("setDataPlayerRight", (theroom: any) => {
       player_right.score = theroom.set.set_p2.score;
       player_right.won = theroom.set.set_p2.won;
-      player_right.name = theroom.set.set_p2.name;
     });
   }, [socket]);
 
@@ -69,8 +67,39 @@ export function The_whole_game(canvasRef: any) {
     }
   }
 
+  function sinc_player_left(room_name: string, player_left: any) {
+    if (player_left.won === false && player_right.won === false) {
+      var data = {
+        room: room_name,
+        name: player_left.name,
+        score: player_left.score,
+        won: player_left.won,
+      };
+      console.log("room_name ", room_name);
+      console.log("player left sinc ");
+    
+      socket.emit("playerActyLeft", data);
+    }
+  }
+  
+  function sinc_player_right(room_name: string, player_right: any) {
+    if (player_left.won === false && player_right.won === false) {
+      var data = {
+        room: room_name,
+        name: player_right.name,
+        score: player_right.score,
+        won: player_right.won,
+      };
+      console.log("room_name ", room_name);
+      console.log("player right sinc ");
+      socket.emit("playerActyRight", data);
+    }
+  }
+
   useEffect(() => {
     socket.on("startGame", (theroom: any) => {
+      sinc_player_left(theroom.room_name, player_left);
+      sinc_player_right(theroom.room_name, player_right);
       player_left.name = theroom.set.set_p1.name;
       player_right.name = theroom.set.set_p2.name;
       sinc_ball(theroom.room_name, ballObj);
@@ -100,7 +129,8 @@ export function The_whole_game(canvasRef: any) {
               canvas.height,
               canvas.width
             );
-            if (ballObj.is_col === true) u = 1;
+            if (ballObj.is_col === true)
+              u = 1;
             BallCol_right(
               ctx,
               player_left,
@@ -115,6 +145,8 @@ export function The_whole_game(canvasRef: any) {
               u++;
             if (u === 6) {
               sinc_ball(theroom.room_name, ballObj);
+              sinc_player_left(theroom.room_name, player_left);
+              sinc_player_right(theroom.room_name, player_right);
               u = 0;
             }
             PaddleMouv_left(ctx, canvas, paddleProps_left);
