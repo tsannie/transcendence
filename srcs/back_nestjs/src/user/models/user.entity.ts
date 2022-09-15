@@ -42,6 +42,4 @@ export class UserEntity {
   @JoinTable()
   channels?: ChannelEntity[];
 
-  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
-  // mp_channels: ChannelEntity[]
 } 

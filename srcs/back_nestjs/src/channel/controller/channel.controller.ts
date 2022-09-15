@@ -5,6 +5,7 @@ import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import { ChannelService } from '../service/channel.service';
+import { UserEntity } from 'src/user/models/user.entity';
 
 @Controller('channel')
 export class ChannelController {
@@ -40,16 +41,32 @@ export class ChannelController {
 
 
 
-/*PLEASE DELETE THESE ROUTE LATER*/
-  //TEST ROUTE, NEED TO DELETE IT
-  @Post('password')
-  async comparePassword( @Body() data ){
-	return await this.channelService.checkPassword(data.room_name, data.password);
-  }
+/*PLEASE DELETE THESE ROUTE LATER, TEST ROUTES*/
+  
+  	/*to use that route, send an object as such:
+	{
+		ChannelDTO{
+			name
+		},
+		username
+	}
+	*/
+  	@Post("falseUsergenerator")
+  	async addFalseUser( @Body() data ){
+		let new_user = await this.channelService.createFalseUser(data.username);
+		return await this.channelService.joinChannel(data.channel, new_user);
+	}
+
+	@Post("banUser")
+
+	@Post('password')
+	async comparePassword( @Body() data ){
+		return await this.channelService.checkPassword(data.room_name, data.password);
+	}
 
   //RETURN ALL ROOMS AVAILABLE (PUBLIC/PRIVATE/ETC...)
-  @Get('all')
-  getAllChannels(): Observable<ChannelEntity[]> {
-    return this.channelService.getAllChannels();
-  }
+	@Get('all')
+	getAllChannels(): Observable<ChannelEntity[]> {
+		return this.channelService.getAllChannels();
+	}
 }
