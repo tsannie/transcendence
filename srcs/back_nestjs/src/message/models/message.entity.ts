@@ -1,4 +1,3 @@
-//import { RoomEntity } from "src/room/models/room.entity";
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { PrivateMessageEntity } from 'src/channel/models/private_message.entity';
 import { UserEntity } from 'src/user/models/user.entity';

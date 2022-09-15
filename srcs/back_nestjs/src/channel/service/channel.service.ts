@@ -1,6 +1,7 @@
 import {
   Body,
   Catch,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
@@ -117,13 +118,20 @@ export class ChannelService {
 			return await this.channelRepository.remove(channel);
 	}
 
+	async banFromChannel(requested_channel: ChannelDto, user: UserEntity) {
+
+	}
+
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) {
 		console.log("requested_channel = ", requested_channel);
 		let channel = await this.getChannel(requested_channel.name);
-		if (user.channels && user.channels.find( ( elem ) => elem === channel ))
-			throw new UnprocessableEntityException("User is already a member of the channel.")
+		if ((user.channels && user.channels.find( ( elem ) => {elem.name === channel.name} )) 
+			|| (user.owner_of && user.owner_of.find( ( elem ) => {elem.name === channel.name})))
+			throw new UnprocessableEntityException("User is already member or owner of the channel.")
+		if (channel.baned && channel.baned.find( ( elem ) => {elem.username === user.username}))
+			throw new ForbiddenException("You've been banned from this channel");
 
-			if (channel.status === 'Public') {
+		if (channel.status === 'Public') {
 			return (await this.joinPublicChannels(user, channel));
 		}
 		else if (channel.status === 'Private') {
@@ -136,6 +144,18 @@ export class ChannelService {
 			console.log('error');
 		}
 	}
+
+	async banUser(requested_channel: ChannelDto, requester: UserEntity, toBan: string)
+	{
+		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users"]);
+		if (channel.owner.username !== requester.username && !channel.admins.find( (admin) => {admin.username === requester.username }))
+			throw new ForbiddenException("Only an admin or owner of the channel can ban other members.");
+		if (channel.admins.find( (admin) => {admin.username === requester.username }) && channel.admins.find( (admin) => admin.username === toBan))
+			throw new ForbiddenException("An admin cannot ban another admin.");
+		
+		//ELSE
+		//VIRER LINDIVIDU 
+	}		
 
 	async joinPublicChannels(user : UserEntity, channel : ChannelEntity): Promise<ChannelEntity> {
 		console.log('public channels');
