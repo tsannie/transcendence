@@ -21,6 +21,9 @@ import { ChannelService } from './channel/service/channel.service';
 import { ChannelModule } from './channel/channel.module';
 import { TwoFactorService } from './two-factor/service/two-factor.service';
 import { TwoFactorController } from './two-factor/controller/two-factor.controller';
+import { DmController } from './dm/controller/dm.controller';
+import { DmService } from './dm/service/dm.service';
+import { DmModule } from './dm/dm.module';
 
 @Module({
   imports: [
@@ -40,8 +43,9 @@ import { TwoFactorController } from './two-factor/controller/two-factor.controll
     PassportModule,
     ChannelModule,
     MessageModule,
+    DmModule,
   ],
-  controllers: [AppController, TwoFactorController],
+  controllers: [AppController, TwoFactorController, DmController],
   providers: [
     AppService,
     JwtService,
@@ -49,6 +53,7 @@ import { TwoFactorController } from './two-factor/controller/two-factor.controll
     UserService,
     LocalStrategy,
     TwoFactorService,
+    DmService,
   ], // AuthResolver
 })
 export class AppModule {}
