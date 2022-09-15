@@ -141,26 +141,41 @@ export class ChannelService {
 		}
 	}
 
-	async unbanUser(requested_channel: ChannelDto, requester: UserEntity, toBan: string){
-
+	verifyHierarychy(channel : ChannelEntity, requester : UserEntity, targeted_user: string){
+		if (channel.owner.username !== requester.username && !channel.admins.find( (admin) => {admin.username === requester.username }))
+			throw new ForbiddenException("Only an admin or owner of the channel can ban/unban other members.");
+		if (channel.owner.username !== requester.username && channel.admins.find( (admin) => { admin.username === targeted_user }))
+			throw new ForbiddenException("An admin cannot ban/unban another admin.");
 	}
 
-	async banUser(requested_channel: ChannelDto, requester: UserEntity, toBan: string){
+	async unBanUser(requested_channel: ChannelDto, requester: UserEntity, targeted_user: string) : Promise<ChannelEntity>{
 		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users", "baned"]);
+		this.verifyHierarychy(channel, requester, targeted_user);
+
+		channel.baned = channel.baned.filter( (user) => user.username !== targeted_user);
+		return await this.channelRepository.save(channel);
+	}
+
+	async banUser(requested_channel: ChannelDto, requester: UserEntity, targeted_user: string) : Promise<ChannelEntity>{
+		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users", "baned"]);
+		this.verifyHierarychy(channel, requester, targeted_user);
 		
-		if (channel.owner.username !== requester.username && !channel.admins.find( (admin) => {admin.username === requester.username }))
-			throw new ForbiddenException("Only an admin or owner of the channel can ban other members.");
-		if (channel.owner.username !== requester.username && channel.admins.find( (admin) => { admin.username === toBan }))
-			throw new ForbiddenException("An admin cannot ban another admin.");
-		
-		const userToBan = await this.userRepository.findOne( {where: {name: toBan}});
-		
+		const userToBan = await this.userRepository.findOne( {where: {name: targeted_user}});
 		if (!channel.baned)
 			channel.baned = [userToBan];
 		else
 			channel.baned.push(userToBan);
-		channel.admins = channel.admins.filter( (admin) => admin.username !== toBan );
-		await this.channelRepository.save(channel);
+		channel.admins = channel.admins.filter( (admin) => admin.username !== targeted_user );
+		channel.users = channel.users.filter( (user) => user.username !== targeted_user );
+		return await this.channelRepository.save(channel);
+	}
+
+	async unMuteUser(){
+		
+	}
+
+	async muteUser(){
+
 	}
 
 	async joinPublicChannels(user : UserEntity, channel : ChannelEntity): Promise<ChannelEntity> {
