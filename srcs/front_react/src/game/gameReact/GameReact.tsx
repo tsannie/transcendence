@@ -95,7 +95,7 @@ export function The_whole_game(canvasRef: any) {
       socket.emit("playerActyRight", data);
     }
   }
-
+  let x = 1;
   useEffect(() => {
     socket.on("startGame", (theroom: any) => {
       sinc_player_left(theroom.room_name, player_left);
@@ -110,7 +110,6 @@ export function The_whole_game(canvasRef: any) {
           ctx = canvas.getContext("2d");
         if (ctx) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-
           if (player_left.won === false && player_right.won === false) {
             draw_line(ctx, ballObj, canvas.height, canvas.width);
             draw_score(
