@@ -90,6 +90,10 @@ export default function Game() {
   // DELETE / LEAVE ROOM
   ////////////////////////////////////////////////////
 
+    // function who move the ball
+
+
+
   useEffect(() => {
 
     
@@ -179,6 +183,7 @@ export default function Game() {
       ballObj.first_col = false;
       
     });
+    
     socket.on("leftRoomEmpty", () => {
       setnbrconnect(0);
       setopready(false);
@@ -263,7 +268,7 @@ export default function Game() {
       <GameCreationSettings my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
     );
   } else if (islookingroom === true) {
-    return <GameSpectator store={store} listGame={listGame} />;
+    return <GameSpectator store={store} listGame={listGame} canvasRef={canvasRef} />;
   } else {
     return <GameMenu store={store} />;
   }

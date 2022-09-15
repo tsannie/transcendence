@@ -4,7 +4,11 @@ import { paddleProps_right, player_left, player_right, socket } from "../Game";
 
 export function GamePlayer_right(props: any) {
 
+  // Fonction qui envoie les mouvements de la raquette droite au serveur
+
     function mouv_paddle_right(e: any) {
+     // console.log("111111111PADDLE DIDNT EMIT MOUV");
+
       if (
         props.gamestart === true &&
         props.im_right === true &&
@@ -16,7 +20,9 @@ export function GamePlayer_right(props: any) {
           room: props.room,
           pd: paddleProps_right,
         };
-        socket.emit("paddleMouvright", data);
+       // console.log("222222PADDLE RIGHT EMIT MOUV");
+
+        socket.emit("paddleMouvRight", data);
       }
     }
   
@@ -40,9 +46,9 @@ export function GamePlayer_right(props: any) {
             borderRadius: 1,
           }}
         >
-          <h2 style={{ color: "blue", textAlign: "right" }}>{props.my_id}</h2>
-          <h1 style={{ color: "black", textAlign: "center" }}> VS </h1>
           <h2 style={{ color: "red", textAlign: "right" }}>{props.op_id}</h2>
+          <h1 style={{ color: "black", textAlign: "center" }}> VS </h1>
+          <h2 style={{ color: "blue", textAlign: "right" }}>{props.my_id}</h2>
         </Box>
   
           <canvas
