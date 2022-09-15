@@ -12,8 +12,10 @@ import { LockIcon } from "./LockIcon";
 export default function ChannelsList() {
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
   const [channelPassword, setChannelPassword] = useState("");
+  const [isOwner, setIsOwner] = useState(false);
 
-  async function joinChannel(channel: IChannel) {
+  function createNewChannelWithoutStatus(channel: IChannel) {
+
     if (channel.status === "Protected") {
       channel.password = channelPassword;
     }
@@ -25,7 +27,13 @@ export default function ChannelsList() {
     }
     console.log(newChannel);
 
-     await api
+    return (newChannel);
+  }
+
+  async function joinChannel(channel: IChannel) {
+    const newChannel = createNewChannelWithoutStatus(channel);
+
+    await api
       .post("channel/joinChannel", newChannel)
       .then((res) => {
         console.log("channel joined with success");
@@ -40,8 +48,25 @@ export default function ChannelsList() {
   }
 
   async function leaveChannel(channel: IChannel) {
+    const newChannel = createNewChannelWithoutStatus(channel);
+
     await api
-      .post("channel/leaveChannel", channel)
+      .post("channel/leaveChannel", newChannel)
+      .then((res) => {
+        console.log("channel left with success");
+        console.log(channel);
+      })
+      .catch((res) => {
+        console.log("invalid channels");
+        console.log(res);
+      });
+  }
+
+  async function deleteChannel(channel: IChannel) {
+    const newChannel = createNewChannelWithoutStatus(channel);
+
+    await api
+      .post("channel/deleteChannel", newChannel)
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
@@ -58,6 +83,16 @@ export default function ChannelsList() {
       .get("channel/all")
       .then((res) => {
         setChannelsList(res.data);
+
+        // check if user is owner of channel
+        res.data.forEach((channel: any) => {
+          // get all users
+          channel.users.forEach((user: any) => {
+            if (channel.owner.id === user.id) {
+              setIsOwner(true);
+            }
+          });
+        })
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -126,13 +161,22 @@ export default function ChannelsList() {
             </Button>
             <Button
               sx={{
-                color: "red",
+                color: "green",
                 ml: "1vh",
               }}
               onClick={() => leaveChannel(channelData)}
             >
               Leave
             </Button>
+            {isOwner && <Button
+              sx={{
+                color: "red",
+                ml: "1vh",
+              }}
+              onClick={() => deleteChannel(channelData)}
+            >
+              Delete
+            </Button> }
           </Box>
         );
       })}
