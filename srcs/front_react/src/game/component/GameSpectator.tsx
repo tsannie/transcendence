@@ -1,6 +1,6 @@
 import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { threadId } from "worker_threads";
 import {
   ballObj,
@@ -26,8 +26,6 @@ import {
 let x = 0;
 
 export function GameSpectator(props: any) {
-  const [Specthegame, setSpecthegame] = useState(false);
-  const [LookingRoom, setLookingRoom] = useState("null");
 
   const [p1id, setp1id] = useState("null");
   const [p2id, setp2id] = useState("null");
@@ -54,6 +52,7 @@ export function GameSpectator(props: any) {
 
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
+      console.log("sincTheBall_spec");
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_padle_obj.x;
@@ -73,6 +72,29 @@ export function GameSpectator(props: any) {
     });
   }, [socket]);
 
+  function sinc_all_data(theroom: any) {
+    ballObj.x = theroom.set.ball.x;
+    ballObj.y = theroom.set.ball.y;
+    ballObj.ingame_dx = theroom.set.ball.ingame_dx;
+    ballObj.ingame_dy = theroom.set.ball.ingame_dy;
+    ballObj.init_dx = theroom.set.ball.init_dx;
+    ballObj.init_dy = theroom.set.ball.init_dy;
+    ballObj.init_first_dx = theroom.set.ball.init_first_dx;
+    ballObj.init_first_dy = theroom.set.ball.init_first_dy;
+    ballObj.first_dx = theroom.set.ball.first_dx;
+    ballObj.first_dy = theroom.set.ball.first_dy;
+    ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
+    ballObj.first_col = theroom.set.ball.first_col;
+
+    player_left.score = theroom.set.set_p1.score;
+    player_left.won = theroom.set.set_p1.won;
+    player_left.name = theroom.set.set_p1.name;
+
+    player_right.name = theroom.set.set_p2.name;
+    player_right.score = theroom.set.set_p2.score;
+    player_right.won = theroom.set.set_p2.won;
+  }
+  const canvasRef = props.canvasRef;
 
   /*   UseEffect qui gere le canvas en mode spectateur afficher les info recupere dans 
     les socker.on precedents sans pouvoir modifier les variables et objets 
@@ -80,8 +102,8 @@ export function GameSpectator(props: any) {
 
   useEffect(() => {
     socket.on("startGameSpec", (theroom: any) => {
-      player_left.name = theroom.set.set_p1.name;
-      player_right.name = theroom.set.set_p2.name;
+      
+      sinc_all_data(theroom);
       setp1id(theroom.set.set_p1.name);
       setp2id(theroom.set.set_p2.name);
       const render = () => {
@@ -91,7 +113,6 @@ export function GameSpectator(props: any) {
           ctx = canvas.getContext("2d");
         if (ctx) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-
           if (player_left.won === false && player_right.won === false) {
             draw_line(ctx, ballObj, canvas.height, canvas.width);
             draw_score(
@@ -102,6 +123,7 @@ export function GameSpectator(props: any) {
               canvas.width
             );
             BallMouv(ctx, ballObj, canvas.height, canvas.width);
+            //BallMouv(ctx, ballObj, canvas.height, canvas.width);
             BallCol_left(
               ctx,
               player_right,
@@ -133,44 +155,18 @@ export function GameSpectator(props: any) {
         }
       };
       render();
-    });
+  });
   }, [socket]);
 
-    function Specthegamedisplayfunc(room : string) {
-      //setLookingRoom(b);
-      //console.log("Specthegame = " + Specthegame);
-      //console.log("LookingRoom = " + LookingRoom);
-      player_left.name = "ICI OK";
-      player_right.name = "ICI OK RIGHT";
-      socket.emit("Specthegame", room);
-      setSpecthegame(true);
-      player_left.name = "ICI PAS OK";
-      player_right.name = "ICI pas OK RIGHT";
-    }
-
-  // Fonction qui gere le bouton pour quitter le mode spectateur
-
-  const Specthegamedisplay = (event : any, param : any) => {
-    console.log(param);
-    Specthegamedisplayfunc(param);
-  };
-
-  function leavelookingroom() {
-    //props.store.setisLookingRoom(false);
-    //props.store.setLookingRoom("");
-    socket.emit("LeaveAllGameRoom", "lookroom");
-
-  }
 
   function deleteGameRoomSpec() {
-    setSpecthegame(false);
-    //props.store.setisLookingRoom(false);
+    props.store.setSpecthegame(false);
+    props.store.setisLookingRoom(true);
     //props.store.setLookingRoom("");
    // socket.emit("LeaveAllGameRoom", "lookroom");
   }
 
 
-  if (Specthegame === true) {
     return (
       <Grid
         container
@@ -180,7 +176,7 @@ export function GameSpectator(props: any) {
         justifyContent="center"
         style={{ minHeight: "50vmin" }}
       >
-        <h1>THE PONG</h1>
+        <h1>THE PONG SPECTATOR</h1>
 
         <Box
         sx={{
@@ -209,34 +205,11 @@ export function GameSpectator(props: any) {
         <Button variant="contained"
           onClick={deleteGameRoomSpec} 
         >
-          Leave The Game
+          Leave the spectator Game
         </Button>
       </Grid>
   );
   }
-  else {
-    return (
-      <div className="look">
-        <h4> REGARDER une partie : </h4>
-        <p> wich game do you want to look at ?</p>
-        
-        {props.listGame.map((element: any, index: any) => {
-          return (
-            <div key={index}>
-              <p>
-                partie : "{element}"{" "}
-                <button onClick={event => Specthegamedisplay(event, element)}>
-                regarder la partie
-                </button>
-              </p>
-            </div>
-          );
-        })}
-        <button onClick={leavelookingroom}>leave</button>
-      </div>
-    );
-  }
-}
 
 ////////////////////////////////////////////////////
 // WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!

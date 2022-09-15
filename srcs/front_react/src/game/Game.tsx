@@ -13,6 +13,7 @@ import { GameWaitPlayerReady } from "./component/GameWaitPlayer";
 import { GamePlayer_left } from "./gameReact/GamePlayerLeft";
 import { GamePlayer_right } from "./gameReact/GamePlayerRight";
 import GameCreationSettings from "./component/GameCreationSettings";
+import { GameMenuSpectator } from "./component/GameMenuSpectator";
 
 export const socket = io("http://localhost:4000/game");
 
@@ -46,6 +47,8 @@ export default function Game() {
   const [gameover, setgameover] = useState(false);
   const [gamestart, setgamestart] = useState(false);
   const [listGame, setListGame] = useState<string[]>([]);
+  const [Specthegame, setSpecthegame] = useState(false);
+
 
   const store = {
     nbrconnect: nbrconnect,
@@ -66,6 +69,9 @@ export default function Game() {
     gameover: gameover,
     gamestart: gamestart,
     listGame: listGame,
+    Specthegame: Specthegame,
+
+    setSpecthegame: setSpecthegame,
 
     setnbrconnect: setnbrconnect,
     setRoom: setRoom,
@@ -178,7 +184,6 @@ export default function Game() {
         player_right.score = theroom.set.set_p1.score;
         player_right.won = theroom.set.set_p1.won;
       }
-
       ballObj.init_ball_pos = false;
       ballObj.first_col = false;
       
@@ -267,9 +272,11 @@ export default function Game() {
     return (
       <GameCreationSettings my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
     );
-  } else if (islookingroom === true) {
-    return <GameSpectator store={store} listGame={listGame} canvasRef={canvasRef} />;
-  } else {
+  } else if (islookingroom === true)
+    return <GameMenuSpectator store={store} listGame={listGame} canvasRef={canvasRef} />;
+  else if (Specthegame === true)
+    return <GameSpectator store={store} listGame={listGame} canvasRef={canvasRef} />
+  else {
     return <GameMenu store={store} />;
   }
 }
