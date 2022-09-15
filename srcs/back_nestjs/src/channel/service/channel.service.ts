@@ -118,10 +118,6 @@ export class ChannelService {
 			return await this.channelRepository.remove(channel);
 	}
 
-	async banFromChannel(requested_channel: ChannelDto, user: UserEntity) {
-
-	}
-
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) {
 		console.log("requested_channel = ", requested_channel);
 		let channel = await this.getChannel(requested_channel.name);
@@ -145,17 +141,27 @@ export class ChannelService {
 		}
 	}
 
-	async banUser(requested_channel: ChannelDto, requester: UserEntity, toBan: string)
-	{
-		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users"]);
+	async unbanUser(requested_channel: ChannelDto, requester: UserEntity, toBan: string){
+
+	}
+
+	async banUser(requested_channel: ChannelDto, requester: UserEntity, toBan: string){
+		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users", "baned"]);
+		
 		if (channel.owner.username !== requester.username && !channel.admins.find( (admin) => {admin.username === requester.username }))
 			throw new ForbiddenException("Only an admin or owner of the channel can ban other members.");
-		if (channel.admins.find( (admin) => {admin.username === requester.username }) && channel.admins.find( (admin) => admin.username === toBan))
+		if (channel.owner.username !== requester.username && channel.admins.find( (admin) => { admin.username === toBan }))
 			throw new ForbiddenException("An admin cannot ban another admin.");
 		
-		//ELSE
-		//VIRER LINDIVIDU 
-	}		
+		const userToBan = await this.userRepository.findOne( {where: {name: toBan}});
+		
+		if (!channel.baned)
+			channel.baned = [userToBan];
+		else
+			channel.baned.push(userToBan);
+		channel.admins = channel.admins.filter( (admin) => admin.username !== toBan );
+		await this.channelRepository.save(channel);
+	}
 
 	async joinPublicChannels(user : UserEntity, channel : ChannelEntity): Promise<ChannelEntity> {
 		console.log('public channels');
