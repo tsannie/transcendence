@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Logger, Post, Req, Request, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { UserService } from 'src/user/service/user.service';
 import { AuthService } from 'src/auth/service/auth.service';
 import { logger2FA } from '../const/const';
 import { TokenDto } from '../dto/token.dto';
 import { TwoFactorService } from '../service/two-factor.service';
+import JwtGuard from 'src/auth/guard/jwt.guard';
 
 @Controller('2fa')
 export class TwoFactorController {
@@ -15,8 +15,8 @@ export class TwoFactorController {
     private readonly authService: AuthService,
   ) {}
 
+  @UseGuards(JwtGuard)
   @Post('auth2fa')
-  @UseGuards(AuthGuard('jwt'))
   async auth2fa(@Body() tokenBody: TokenDto, @Request() req) {
     const validToken =  await this.twoFactorService.codeIsValid(tokenBody.token, req.user);
     if (!validToken) {
@@ -31,7 +31,7 @@ export class TwoFactorController {
   }
 
   // generate a new qrcode for the user
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   @Get('generate')
   async generate(@Res() response: Response, @Request() req) {
     const { otpauthUrl } = await this.twoFactorService.generateTwoFactorSecret(req.user)
@@ -42,7 +42,7 @@ export class TwoFactorController {
   }
 
   // verify the token and enable 2FA for the user
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   @Post('check-token')
   async verifyToken(@Body() tokenBody: TokenDto, @Request() req) {
     const valid =  await this.twoFactorService.codeIsValid(tokenBody.token, req.user);
@@ -56,7 +56,7 @@ export class TwoFactorController {
   }
 
   // disable 2FA for the user
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   @Get('disable')
   async disable(@Request() req) {
     await this.userService.disable2FA(req.user.id)

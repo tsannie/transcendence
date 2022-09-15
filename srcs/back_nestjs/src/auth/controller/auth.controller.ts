@@ -1,19 +1,14 @@
 import {
-  Body,
   Controller,
   Get,
-  Header,
-  Post,
-  Query,
   Redirect,
   Req,
   Request,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserEntity } from 'src/user/models/user.entity';
-import { IToken } from '../models/token.inferface';
+import FortyTwoGuard from '../guard/fortyTwo.guard';
+import JwtTwoFactorGuard from '../guard/jwtTwoFactor.guard';
 import { AuthService } from '../service/auth.service';
 
 @Controller('auth')
@@ -22,28 +17,19 @@ export class AuthController {
     private readonly authService: AuthService
   ) {}
 
-  @UseGuards(AuthGuard('local'))    // TODO replace with const for all guard
-  @Post('/login')
-  async login(@Request() req): Promise<IToken> {
-    console.log('new login');
-    //console.log('user');
-    return await this.authService.getCookie(req.user);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt-2fa'))
   @Get('/profile')
   getProfile(@Request() req) {
-    const user = req.user;
     return req.user;
   }
 
-  @UseGuards(AuthGuard('42'))
+  @UseGuards(FortyTwoGuard)
   @Get('/')
   async nothing() {
     return 'hello';
   }
 
-  @UseGuards(AuthGuard('42'))
+  @UseGuards(FortyTwoGuard)
   @Get('/redirect')
   @Redirect('http://localhost:3000/', 301) // TODO env
   async redirect(@Req() req) {
