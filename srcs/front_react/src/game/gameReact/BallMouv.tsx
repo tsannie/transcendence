@@ -30,13 +30,9 @@ export function draw_score(
   ctx.textAlign = "center";
 
   ctx.fillText(
-    player_left.name +
-      " " +
-      player_left.score.toString() +
+    player_left.score.toString() +
       "     " +
-      player_right.name +
-      " " +
-      player_right.score.toString(),
+    player_right.score.toString(),
     canvas_width / 2,
     canvas_height / 4
   );
@@ -82,6 +78,8 @@ export function BallMouv(
   }
 
   if (ballObj.first_col === false) {
+    console.log("ballObj.x : " + ballObj.x);
+    console.log("ballObj.y : " + ballObj.y);
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
   } else {
