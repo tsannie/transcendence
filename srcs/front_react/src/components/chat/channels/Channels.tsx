@@ -21,6 +21,7 @@ export default function Channels(props: any) {
     <Box
       sx={{
         position: "absolute",
+        border: "1px solid green",
       }}
     >
       <Typography
