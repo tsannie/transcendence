@@ -61,6 +61,7 @@ export default function ChatUserlist(props: any) {
         position: "absolute",
         top: 0,
         right: 0,
+        border: "1px solid pink",
       }}
     >
       <Typography
