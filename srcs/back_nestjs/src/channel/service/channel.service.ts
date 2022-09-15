@@ -119,8 +119,8 @@ export class ChannelService {
 	}
 
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) {
-		console.log("requested_channel = ", requested_channel);
-		let channel = await this.getChannel(requested_channel.name);
+		let channel = await this.getChannel(requested_channel.name, ["users"]);
+		
 		if ((user.channels && user.channels.find( ( elem ) => {elem.name === channel.name} )) 
 			|| (user.owner_of && user.owner_of.find( ( elem ) => {elem.name === channel.name})))
 			throw new UnprocessableEntityException("User is already member or owner of the channel.")
@@ -193,4 +193,15 @@ export class ChannelService {
   joinProtectedChannels(): void {
     console.log('protected channels');
   }
+
+  //DELETEMEAFTERTESTING :
+  async createFalseUser(username : string) : Promise<UserEntity>{
+	const user = new UserEntity();
+	user.username = username;
+	user.email = username + "@student.42.fr";
+	await this.userRepository.save(user);
+	return await this.userRepository.findOne({where : {username: username}, 
+		relations: ["channels", "owner_of"]});
+  }
+
 }
