@@ -6,7 +6,7 @@ import { UserService } from 'src/user/service/user.service';
 import { IPayload } from "../models/payload.interface";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
+export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
   constructor(private userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
