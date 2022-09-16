@@ -30,7 +30,7 @@ export class ChannelEntity extends PrivateMessageEntity{
 
 	@ManyToMany( () => UserEntity )
 	@JoinTable()
-	baned: UserEntity[];
+	banned: UserEntity[];
 
 	@Column( { nullable: true })
 	password: string;

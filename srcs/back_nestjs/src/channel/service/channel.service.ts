@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +16,7 @@ import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import * as bcrypt from 'bcrypt';
 import { ChannelDto } from '../dto/channel.dto';
+import { BanMuteDto } from '../dto/banmute.dto';
 
 @Injectable()
 @Catch()
@@ -27,12 +29,21 @@ export class ChannelService {
 	private userRepository: Repository<UserEntity>,
 	) {}
 
-	getAllChannels() : Observable<ChannelEntity[]> {
-		return from(this.channelRepository.find(
+	async getAllChannels() : Promise<ChannelEntity[]> {
+		return await this.channelRepository.find(
 			{
 			relations: ["owner", "users"],
 			},
-			));
+			);
+	}
+
+	async getPrivateData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+		const channel = await this.getChannel(query_channel.name, ["owner", "users", "admins", "banned"]);
+		
+		if (channel.owner.username !== user.username && !channel.users.find( (member) => member.username === user.username))
+			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
+		//ADD HERE VERIFICATION OF CREDENTIALS, VIA USER.CHANNEL or USER.OWNER_OF
+		return channel;
 	}
 
 
@@ -124,7 +135,7 @@ export class ChannelService {
 		if ((user.channels && user.channels.find( ( elem ) => {elem.name === channel.name} )) 
 			|| (user.owner_of && user.owner_of.find( ( elem ) => {elem.name === channel.name})))
 			throw new UnprocessableEntityException("User is already member or owner of the channel.")
-		if (channel.baned && channel.baned.find( ( elem ) => {elem.username === user.username}))
+		if (channel.banned && channel.banned.find( ( elem ) => {elem.username === user.username}))
 			throw new ForbiddenException("You've been banned from this channel");
 
 		if (channel.status === 'Public') {
@@ -142,31 +153,34 @@ export class ChannelService {
 	}
 
 	verifyHierarychy(channel : ChannelEntity, requester : UserEntity, targeted_user: string){
+		console.log("channel.owner.username = ", channel.owner.username);
+		console.log("requester.username = ", requester.username);
+		console.log("result of find = ", channel.admins.find( (admin) => {admin.username === requester.username }))
 		if (channel.owner.username !== requester.username && !channel.admins.find( (admin) => {admin.username === requester.username }))
 			throw new ForbiddenException("Only an admin or owner of the channel can ban/unban other members.");
 		if (channel.owner.username !== requester.username && channel.admins.find( (admin) => { admin.username === targeted_user }))
 			throw new ForbiddenException("An admin cannot ban/unban another admin.");
 	}
 
-	async unBanUser(requested_channel: ChannelDto, requester: UserEntity, targeted_user: string) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users", "baned"]);
-		this.verifyHierarychy(channel, requester, targeted_user);
+	async unBanUser(request: BanMuteDto, requester: UserEntity) : Promise<ChannelEntity>{
+		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
+		this.verifyHierarychy(channel, requester, request.target);
 
-		channel.baned = channel.baned.filter( (user) => user.username !== targeted_user);
+		channel.banned = channel.banned.filter( (user) => user.username !== request.target);
 		return await this.channelRepository.save(channel);
 	}
 
-	async banUser(requested_channel: ChannelDto, requester: UserEntity, targeted_user: string) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users", "baned"]);
-		this.verifyHierarychy(channel, requester, targeted_user);
+	async banUser(request: BanMuteDto, requester: UserEntity) : Promise<ChannelEntity>{
+		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
+		this.verifyHierarychy(channel, requester, request.target);
 		
-		const userToBan = await this.userRepository.findOne( {where: {name: targeted_user}});
-		if (!channel.baned)
-			channel.baned = [userToBan];
+		const userToBan = await this.userRepository.findOne( {where: {username: request.target}});
+		if (!channel.banned)
+			channel.banned = [userToBan];
 		else
-			channel.baned.push(userToBan);
-		channel.admins = channel.admins.filter( (admin) => admin.username !== targeted_user );
-		channel.users = channel.users.filter( (user) => user.username !== targeted_user );
+			channel.banned.push(userToBan);
+		channel.admins = channel.admins.filter( (admin) => admin.username !== request.target );
+		channel.users = channel.users.filter( (user) => user.username !== request.target );
 		return await this.channelRepository.save(channel);
 	}
 
