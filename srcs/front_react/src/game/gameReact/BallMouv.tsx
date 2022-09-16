@@ -112,7 +112,7 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
-  } else if (player_right.score >= 100) {
+  } else if (player_right.score >= 5) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -132,7 +132,8 @@ export function BallCol_left(
     ballObj.ingame_dx *= -1;
 
     ballObj.is_col = true;
-  } else ballObj.is_col = false;
+  } else
+    ballObj.is_col = false;
 }
 
 export function BallCol_right(
@@ -147,7 +148,7 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
-  } else if (player_left.score >= 100) {
+  } else if (player_left.score >= 5) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -169,7 +170,8 @@ export function BallCol_right(
     ballObj.ingame_dy = -res;
     ballObj.ingame_dx *= -1;
     ballObj.is_col = true;
-  } else ballObj.is_col = false;
+  } else
+    ballObj.is_col = false;
 }
 
 class Ball {

@@ -7,6 +7,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Console } from 'console';
 import { randomUUID } from 'crypto';
 import { Server } from 'http';
 import { from, throwError } from 'rxjs';
@@ -63,7 +64,7 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('lookAllGameRoom')
   LookRoom(client: Socket, room: string) {
     client.join(room); //
-    this.nbr_in_room_spec--; //deplacer dans le leave spec
+    //this.nbr_in_room_spec--; //deplacer dans le leave spec
 
     /*     for (const [key, value] of Object.entries(this.roo)) {//////////
       console.log("room found = [" + key + "][" + value.room_name + "]");
@@ -98,7 +99,7 @@ export class GameGateway implements OnGatewayInit {
     }
     else 
       client.emit('startGameSpec', "Game Endded");
-      /*     for (const [key, value] of Object.entries(this.roo)) {//////////
+      /*     for (const [key, value] of Object.entries(this.roo)) {///////////
       console.log("room found = [" + key + "][" + value.room_name + "]");
   
     } 
@@ -211,15 +212,17 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  ////////READY AND START GAME //
-  ////////////////////////////////////////////////
+  ////////READY AND START GAME 
+  /////////////////////////////////////////////////
 
 
   @SubscribeMessage('readyGameRoom')
   ReadyGame(client: Socket, room: string) {
     const theroom = this.roo[room];
-    if (theroom.p1 === client.id) theroom.p1_ready = true;
-    else if (theroom.p2 === client.id) theroom.p2_ready = true;
+    if (theroom.p1 === client.id)
+      theroom.p1_ready = true;
+    else if (theroom.p2 === client.id)
+      theroom.p2_ready = true;
     if (theroom.p2_ready === true && theroom.p1_ready === true) {
       this.roo[room].game_started = true;
       this.roo[room].thedate = new Date();
@@ -227,7 +230,8 @@ export class GameGateway implements OnGatewayInit {
       client.emit('readyGame', theroom);
       client.to(room).emit('readyGame', theroom);
       console.log('DAAATE = ' + this.roo[room].thedate);
-    } else client.to(room).emit('readyGame', theroom);
+    } else
+      client.to(room).emit('readyGame', theroom);
     return this.all_game.save(theroom);
   }
   @SubscribeMessage('startGameRoom')
@@ -251,12 +255,6 @@ export class GameGateway implements OnGatewayInit {
     this.roo[room].set.set_p1.score = false;
     this.roo[room].set.set_p2.score = false;
 
-/*     if (this.nbr_in_room_spec >= 1)
-    {
-      client.to(room).emit('setDataPlayerRight_spec',
-      this.roo[room]);
-    }
- */
     client.to(room).emit('startGame', this.roo[room]);
     client.emit('startGame', this.roo[room]);
     return this.all_game.save(this.roo[room]);
@@ -269,13 +267,12 @@ export class GameGateway implements OnGatewayInit {
 
 
   ///////////////////////////////////////////////
-  //////////////// PADDLE 
+  //////////////// PADDLE DATA
   ////////////////////////////////////////////////
 
   @SubscribeMessage('paddleMouvLeft')
   Paddle_mouv_left(client: Socket, data: any) {
     if (!this.roo[data.room]) {
-     // console.log(' !!!!! NO ROOM !!!! [' + data.room + ']');
       return;
     }
     var room = data.room;
@@ -291,13 +288,12 @@ export class GameGateway implements OnGatewayInit {
 
     this.all_game.save(this.roo[room]);
 
-
+    console.log("nbr_in_room_spec = " + this.nbr_in_room_spec);
     if (this.nbr_in_room_spec >= 1)
     {
       client.to(room).emit('mouvPaddleLeft_spec',
       this.roo[room]);
     }
-
 
     client.emit('mouvPaddleLeft', this.roo[room]);
     client.to(room).emit('mouvPaddleLeft', this.roo[room]);
@@ -306,15 +302,11 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('paddleMouvRight')
   Paddle_mouv_right(client: Socket, data: any) {
-   // console.log("33333333333333PADDLE RIGHT MOUV");/
-    //console.log("data room = " + data.room);
-
     if (!this.roo[data.room]) {
       console.log(' !!!!! NO ROOM !!!! [' + data.room + ']');
       return;
     }
     var room = data.room;
-
     if (!this.roo[room].set.p2_padle_obj) {
       this.roo[room].set.p2_padle_obj = new PadleEntity();
       this.roo[room].set.p2_padle_obj.width = data.pd.width;
@@ -325,21 +317,18 @@ export class GameGateway implements OnGatewayInit {
     this.roo[room].set.p2_padle_obj.y = data.pd.y;
 
     this.all_game.save(this.roo[room]);
-
     if (this.nbr_in_room_spec >= 1)
     {
       client.to(room).emit('mouvPaddleRight_spec',
       this.roo[room]);
     }
-    //console.log("44444444444PADDLE RIGHT MOUV");
-
     client.emit('mouvPaddleRight', this.roo[room]);
     client.to(room).emit('mouvPaddleRight', this.roo[room]);
     return;
   }
 
   ///////////////////////////////////////////////
-  ////////////////  BALL /
+  ////////////////  BALL DATA /
   ///////////////////////////////////////////////
 
   @SubscribeMessage('sincBall')
@@ -393,12 +382,10 @@ export class GameGateway implements OnGatewayInit {
     if (!this.roo[room].set.set_p1)
       this.roo[room].set.set_p1 = new PlayerEntity();
 
-    //this.roo[room].set.set_p1.name = data.name;//
     this.roo[room].set.set_p1.score = data.score;
     this.roo[room].set.set_p1.won = data.won;
 
     this.all_game.save(this.roo[room]);
-
     if (this.nbr_in_room_spec >= 1)
     {
       client.to(room).emit('setDataPlayerLeft_spec',
@@ -428,18 +415,15 @@ export class GameGateway implements OnGatewayInit {
       this.roo[room].set.set_p2 = new PlayerEntity();
 
 
-    //this.roo[room].set.set_p2.name = data.name;
     this.roo[room].set.set_p2.score = data.score;
     this.roo[room].set.set_p2.won = data.won;
 
     this.all_game.save(this.roo[room]);
-
     if (this.nbr_in_room_spec >= 1)
     {
       client.to(room).emit('setDataPlayerRight_spec',
       this.roo[room]);
     }
-
     client.to(room).emit('setDataPlayerRight', this.roo[room]);
     client.emit('setDataPlayerRight', this.roo[room]);
     return;
