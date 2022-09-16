@@ -4,10 +4,12 @@ import {
   Redirect,
   Req,
   Request,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import FortyTwoGuard from '../guard/fortyTwo.guard';
+import JwtGuard from '../guard/jwt.guard';
 import JwtTwoFactorGuard from '../guard/jwtTwoFactor.guard';
 import { AuthService } from '../service/auth.service';
 
@@ -17,30 +19,36 @@ export class AuthController {
     private readonly authService: AuthService
   ) {}
 
-  @UseGuards(AuthGuard('jwt-2fa'))
-  @Get('/profile')
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('profile')
   getProfile(@Request() req) {
     return req.user;
   }
 
-  @UseGuards(FortyTwoGuard)
-  @Get('/')
-  async nothing() {
-    return 'hello';
+  @UseGuards(JwtGuard)
+  @Get('isTwoFactor')
+  async isTwoFactor(@Request() req) {
+    const user = req.user;
+    let isTwoFactor = false;
+    if (user.enabled2FA) {
+      isTwoFactor = true;
+    }
+    return {isTwoFactor: isTwoFactor};
   }
 
   @UseGuards(FortyTwoGuard)
-  @Get('/redirect')
+  @Get('')
   @Redirect('http://localhost:3000/', 301) // TODO env
-  async redirect(@Req() req) {
+  async oauthFortyTwo(@Req() req) {
     const user = req.user;
+    if (!user)
+      throw new UnauthorizedException('User not found');
     const accessToken = await this.authService.getCookie(user);
-    //req.res.setHeader('Set-Cookie','AuthToken=' + accessToken.access_token + '; Path=/;'); // TODO AuthToken const env
 
     req.res.cookie('AuthToken', accessToken, {
       httpOnly: false,
       path: '/',
     });  // TODO 'AuthToken' const env
-    return 'bye';
+    return user;
   }
 }
