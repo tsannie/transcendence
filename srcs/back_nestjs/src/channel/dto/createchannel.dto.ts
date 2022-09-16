@@ -7,6 +7,8 @@ export class CreateChannelDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
+  @MinLength(1)
+  @MaxLength(50)
   name: string;
 
   @IsDefined()
