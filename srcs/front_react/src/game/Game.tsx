@@ -1,4 +1,5 @@
 import React, {
+  createRef,
   useEffect,
   useRef,
   useState,
@@ -6,7 +7,7 @@ import React, {
 import "./Game.css";
 import io from "socket.io-client";
 import data from "./gameReact/data";
-import { The_whole_game } from "./gameReact/GameReact";
+import { GamePlayer_Left_right} from "./gameReact/GameReact";
 import { GameSpectator } from "./component/GameSpectator";
 import GameMenu from "./component/GameMenu";
 import { GameWaitPlayerReady } from "./component/GameWaitPlayer";
@@ -29,6 +30,7 @@ export let {
   paddleProps_right,
 } = data;
 let x = 0;
+
 export default function Game() {
   const [nbrconnect, setnbrconnect] = useState(0);
   const [room, setRoom] = useState("");
@@ -48,6 +50,8 @@ export default function Game() {
   const [gamestart, setgamestart] = useState(false);
   const [listGame, setListGame] = useState<string[]>([]);
   const [Specthegame, setSpecthegame] = useState(false);
+
+  const [requestAnimationFrameId, setrequestAnimationFrameId] = useState(0);
 
 
   const store = {
@@ -71,6 +75,9 @@ export default function Game() {
     listGame: listGame,
     Specthegame: Specthegame,
 
+    requestAnimationFrameId: requestAnimationFrameId,
+
+    setrequestAnimationFrameId: setrequestAnimationFrameId,     
     setSpecthegame: setSpecthegame,
 
     setnbrconnect: setnbrconnect,
@@ -174,6 +181,9 @@ export default function Game() {
       setimready(false);
       setgamestart(false);
       setop_id("");
+      console.log("leftRoom");
+      //clearInterval(theroom.interval);
+      cancelAnimationFrame(requestAnimationFrameId);
 
       if (theroom.set.set_p1 && theroom.set.set_p2) {
         player_left.name = theroom.set.set_p1.name;
@@ -205,6 +215,9 @@ export default function Game() {
   }, [socket]);
 
   function deleteGameRoom() {
+    console.log("deleteGameRoom FROOOONNNNT");
+    cancelAnimationFrame(requestAnimationFrameId);
+
     if (isinroom === true) {
       setisinroom(false);
       setgameover(true);
@@ -225,37 +238,18 @@ export default function Game() {
   //// REACT GAME
   ////////////////////////////////////////////////////
 
-  const canvasRef = useRef(null);
-  The_whole_game(canvasRef);
+  //const canvasRef2 = useRef(null);
+/*   const canvasRef = useRef(null);
+  if (gamestart === true) {
+    The_whole_game(canvasRef);
+  } */
+
+  let canvasRef = createRef();
 
   ////////////////////////////////////////////////////
 
-  if (gamestart === true && im_right === true) {
-    return (
-      <GamePlayer_right
-        setRoom={setRoom}
-        canvasRef={canvasRef}
-        deleteGameRoom={deleteGameRoom}
-        gamestart={gamestart}
-        im_right={im_right}
-        my_id={my_id}
-        op_id={op_id}
-        room={room}
-      />
-    );
-  } else if (gamestart === true && im_right === false) {
-    return (
-      <GamePlayer_left
-        setRoom={setRoom}
-        canvasRef={canvasRef}
-        deleteGameRoom={deleteGameRoom}
-        gamestart={gamestart}
-        im_right={im_right}
-        my_id={my_id}
-        op_id={op_id}
-        room={room}
-      />
-    );
+  if (gamestart === true) {
+    return <GamePlayer_Left_right store={store}  canvasRef={canvasRef} deleteGameRoom={deleteGameRoom}/>
   } else if (nbrconnect === 2 && isinroom) {
     return (
       <GameWaitPlayerReady
@@ -273,9 +267,9 @@ export default function Game() {
       <GameCreationSettings my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
     );
   } else if (islookingroom === true)
-    return <GameMenuSpectator store={store} listGame={listGame} canvasRef={canvasRef} />;
+    return <GameMenuSpectator store={store} listGame={listGame}/*  canvasRef={canvasRef} */ />;
   else if (Specthegame === true)
-    return <GameSpectator store={store} listGame={listGame} canvasRef={canvasRef} />
+    return <GameSpectator store={store} listGame={listGame}  canvasRef={canvasRef}  />
   else {
     return <GameMenu store={store} />;
   }
