@@ -37,6 +37,7 @@ export class AuthService {
       sub: user.id, // sub for jwt norm
       isSecondFactor: isSecondFactor,
     };
+    //console.log('payload', payload)
     const token: IToken = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
         secret:'secret',    // TODO const
         expiresIn: '1d'     // TODO const with time of cookie
