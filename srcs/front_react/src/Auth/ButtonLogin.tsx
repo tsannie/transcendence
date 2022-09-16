@@ -26,32 +26,23 @@ export default function ButtonLogin(props: any) {
   });*/
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        pt: "20vh",
-      }}
-    >
-      <Button
-        sx={{
+    <Box sx={{
+      display: "flex",
+      justifyContent: "center",
+      pt: "20vh",
+    }}>
+      <Button onClick={linkLog} variant="contained" sx={{
+        bgcolor: "white",
+        "&:hover": {
           bgcolor: "white",
-          "&:hover": {
-            bgcolor: "white",
-          },
-        }}
-        onClick={linkLog}
-        variant="contained"
-      >
-        <Typography
-          sx={{
-            fontWeight: "semibold",
-            fontFamily: "Montserrat",
-            fontSize: "1.5rem",
-            color: "black",
-          }}
-          variant="h4"
-        >
+        },
+      }}>
+        <Typography variant="h4" sx={{
+          fontWeight: "semibold",
+          fontFamily: "Montserrat",
+          fontSize: "1.5rem",
+          color: "black",
+        }}>
           SE CONNECTER AVEC 42
         </Typography>
       </Button>
