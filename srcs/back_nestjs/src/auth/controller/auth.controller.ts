@@ -53,12 +53,6 @@ export class AuthController {
 
   @UseGuards(AuthGuard('42'))
   @Get('/')
-  async nothing() {
-    return 'hello';
-  }
-
-  @UseGuards(AuthGuard('42'))
-  @Get('/redirect')
   @Redirect('http://localhost:3000/', 301) // TODO env
   async redirect(@Req() req, @Res({ passthrough: true }) res) {
     const user = req.user;
