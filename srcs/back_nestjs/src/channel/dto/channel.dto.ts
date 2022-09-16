@@ -1,6 +1,4 @@
-import { IsAlphanumeric, IsDefined, IsIn, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
-
-const statuses = [ "Public", "Private", "Protected" ]
+import { IsDefined, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class ChannelDto {
 
@@ -12,8 +10,5 @@ export class ChannelDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @IsAlphanumeric()
-  @MinLength(1)
-  @MaxLength(10)
   password: string;
 }
