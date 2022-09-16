@@ -18,7 +18,7 @@ export default function Sidebar(props: any) {
 
   // to do: passer d'icone en icone en remettant tous les autres state a false
 
-  function logout() {
+  function logout() { // TODO route api logout
     document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
     props.setIsLogin(false);
     window.location.reload();

@@ -12,7 +12,6 @@ export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') 
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           const cookie = request?.cookies['AuthToken'];
-          console.log('cookie', cookie)
           return cookie ? cookie.access_token : null;
         },
       ]),
