@@ -1,9 +1,9 @@
 import { MessageEntity } from "src/message/models/message.entity";
 import { UserEntity } from "src/user/models/user.entity";
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, ManyToMany, Column, OneToMany, ManyToOne } from "typeorm";
 
 @Entity()
-export abstract class DmEntity {
+export class DmEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
