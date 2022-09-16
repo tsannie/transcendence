@@ -121,6 +121,7 @@ export default function ChannelsList() {
               display: "flex",
               alignItems: "center",
             }}
+            key={channelData.name}
           >
             <Box
               sx={{
@@ -129,7 +130,6 @@ export default function ChannelsList() {
                 color: "black",
                 textAlign: "center",
               }}
-              key={channelData.name}
             >
               {channelData.name}
             </Box>

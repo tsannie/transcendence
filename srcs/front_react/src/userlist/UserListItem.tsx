@@ -19,16 +19,18 @@ export default function UserList(props: any) {
   const [users, setUsers] = React.useState<Array<IUser>>([]);
 
   async function getAllUsers() {
-    await api
-      .get("user")
-      .then((res) => {
-        setUsers(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-        console.log(res);
-        document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-      });
+    if (document.cookie.includes(COOKIE_NAME)) {
+      await api
+        .get("user")
+        .then((res) => {
+          setUsers(res.data);
+        })
+        .catch((res) => {
+          console.log("invalid jwt");
+          console.log(res);
+          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
+        });
+      }
   }
 
   // Similar to componentDidMount and componentDidUpdate
@@ -43,12 +45,12 @@ export default function UserList(props: any) {
         {users.map((user) => (
           <ListItem
             sx={{
-              border: "1px solid black",
+             /*  border: "1px solid black",
               mt: 2,
               alignItems: "center",
               width: "fit-content",
               height: "fit-content",
-              borderRadius: "3px",
+              borderRadius: "3px", */
             }}
             key={user.id}
             onClick={props.handleClick}

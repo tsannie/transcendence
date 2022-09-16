@@ -51,6 +51,12 @@ export class AuthController {
     return req.user;
   }
 
+  /* @UseGuards(AuthGuard('42'))
+  @Get('/')
+  async nothing() {
+    return 'hello';
+  } */
+
   @UseGuards(AuthGuard('42'))
   @Get('/')
   @Redirect('http://localhost:3000/', 301) // TODO env
