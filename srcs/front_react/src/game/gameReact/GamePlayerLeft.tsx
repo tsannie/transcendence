@@ -67,7 +67,7 @@ export function GamePlayer_left(props: any) {
             backgroundColor: "black",
             color: "white",
           }}
-          onClick={props.deleteGameRoom} 
+          onClick={props.deleteGameRoom_ingame} 
         >
           Leave The Game
         </Button>

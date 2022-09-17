@@ -22,8 +22,6 @@ import { GamePlayer_right } from "./GamePlayerRight";
 
 export function GamePlayer_Left_right(props: any) {
 
-  const [first_sinc, setfirst_sinc] = useState(false);
-
   let u = 0;
   useEffect(() => {
     socket.on("sincTheBall", (theroom: any) => {
@@ -65,13 +63,15 @@ export function GamePlayer_Left_right(props: any) {
       player_right.name = theroom.set.set_p2.name;
     });
 
-    //if (first_sinc === false) {
-      socket.on("startGameSpec", (theroom: any) => {
-        console.log("+_+_+_+_ startGameSpec real game is sinc with server");
-        sinc_ball(props.store.room, ballObj);
-        //setfirst_sinc(true);
-      });
-    //}
+    socket.on("player_give_upem", (theroom: any) => {
+      player_right.won = theroom.set.set_p2.won;
+      player_left.won = theroom.set.set_p1.won;
+    });
+
+    socket.on("leftbcgiveup", (theroom: any) => {
+      console.log("leftbcgiveup FRONT GAME");
+      props.deleteGameRoom();
+    });
 
   }, [socket]);
 
@@ -86,32 +86,23 @@ export function GamePlayer_Left_right(props: any) {
   }
 
   function sinc_player_left(room_name: string, player_left: any) {
-    if (player_left.won === false && player_right.won === false) {
-      var data = {
-        room: room_name,
-        name: player_left.name,
-        score: player_left.score,
-        won: player_left.won,
-      };
-      //console.log("room_name ", room_name);
-      //console.log("player left sinc ");
-    
-      socket.emit("playerActyLeft", data);
-    }
+    var data = {
+      room: room_name,
+      name: player_left.name,
+      score: player_left.score,
+      won: player_left.won,
+    };
+    socket.emit("playerActyLeft", data);
   }
   
   function sinc_player_right(room_name: string, player_right: any) {
-    if (player_left.won === false && player_right.won === false) {
       var data = {
         room: room_name,
         name: player_right.name,
         score: player_right.score,
         won: player_right.won,
       };
-      //console.log("room_name ", room_name);
-      //console.log("player right sinc ");
       socket.emit("playerActyRight", data);
-    }
   }
 
   let requestAnimationFrameId: any;
@@ -170,6 +161,9 @@ export function GamePlayer_Left_right(props: any) {
             PaddleMouv_left(ctx, canvas, paddleProps_left);
             PaddleMouv_right(ctx, canvas, paddleProps_right);
           } else {
+            console.log("------------------");
+            sinc_player_left(props.store.room, player_left);
+            sinc_player_right(props.store.room, player_right);
             draw_score(
               ctx,
               player_left,
@@ -185,6 +179,23 @@ export function GamePlayer_Left_right(props: any) {
   }, [socket]);
 
 
+  function deleteGameRoom_ingame() {
+
+      console.log("player_left.won ", player_left.won);
+      console.log("player_right.won ", player_right.won);
+
+    if (player_left.won == true || player_right.won == true) {
+      console.log("end_of_game");
+      socket.emit("end_of_the_game", props.store.room);
+    }
+    else {
+      console.log("player_give_up");
+      socket.emit("player_give_up", props.store.room);
+    }
+      //    props.deleteGameRoom();
+/*     if (props.store.gamestart === true) {
+    } */
+  }
   ////////////////////////////////////////////////////
 
   if (props.store.im_right === true) {
@@ -193,6 +204,7 @@ export function GamePlayer_Left_right(props: any) {
         setRoom={props.store.setRoom}
         canvasRef={props.canvasRef}
         deleteGameRoom={props.deleteGameRoom}
+        deleteGameRoom_ingame={deleteGameRoom_ingame}
         gamestart={props.store.gamestart}
         im_right={props.store.im_right}
         my_id={props.store.my_id}
@@ -206,6 +218,7 @@ export function GamePlayer_Left_right(props: any) {
         setRoom={props.store.setRoom}
         canvasRef={props.canvasRef}
         deleteGameRoom={props.deleteGameRoom}
+        deleteGameRoom_ingame={deleteGameRoom_ingame}
         gamestart={props.store.gamestart}
         im_right={props.store.im_right}
         my_id={props.store.my_id}

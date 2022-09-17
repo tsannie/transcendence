@@ -16,6 +16,20 @@ export function draw_line(
   ctx.fill();
 }
 
+
+export function draw_loading(
+  ctx: any,
+  canvas_height: number,
+  canvas_width: number
+) {
+  ctx.beginPath();
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText("Loading...", canvas_width / 2, canvas_height / 2);
+}
+
+
 export function draw_score(
   ctx: any,
   player_left: any,
@@ -112,7 +126,7 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
-  } else if (player_right.score >= 5) {
+  } else if (player_right.score >= 2) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -148,7 +162,7 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
-  } else if (player_left.score >= 5) {
+  } else if (player_left.score >= 2) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
