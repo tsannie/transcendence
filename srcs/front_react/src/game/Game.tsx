@@ -8,13 +8,13 @@ import "./Game.css";
 import io from "socket.io-client";
 import data from "./gameReact/data";
 import { GamePlayer_Left_right} from "./gameReact/GameReact";
-import { GameSpectator } from "./component/GameSpectator";
-import GameMenu from "./component/GameMenu";
-import { GameWaitPlayerReady } from "./component/GameWaitPlayer";
+import { GameSpectator } from "./gameSpectator/GameSpectator";
+import GameMenu from "./gameInitialisation/GameMenu";
+import { GameWaitPlayerReady } from "./gameInitialisation/GameWaitPlayer";
 import { GamePlayer_left } from "./gameReact/GamePlayerLeft";
 import { GamePlayer_right } from "./gameReact/GamePlayerRight";
-import GameCreationSettings from "./component/GameCreationSettings";
-import { GameMenuSpectator } from "./component/GameMenuSpectator";
+import GameCreationSettings from "./gameInitialisation/GameCreationSettings";
+import { GameMenuSpectator } from "./gameSpectator/GameMenuSpectator";
 
 export const socket = io("http://localhost:4000/game");
 
@@ -51,7 +51,6 @@ export default function Game() {
   const [listGame, setListGame] = useState<string[]>([]);
   const [Specthegame, setSpecthegame] = useState(false);
 
-  const [requestAnimationFrameId, setrequestAnimationFrameId] = useState(0);
 
 
   const store = {
@@ -75,9 +74,7 @@ export default function Game() {
     listGame: listGame,
     Specthegame: Specthegame,
 
-    requestAnimationFrameId: requestAnimationFrameId,
 
-    setrequestAnimationFrameId: setrequestAnimationFrameId,     
     setSpecthegame: setSpecthegame,
 
     setnbrconnect: setnbrconnect,
@@ -175,6 +172,7 @@ export default function Game() {
     ////////////////////////////////////////////////////
     // LOOKING ROOM
     ////////////////////////////////////////////////////
+
     socket.on("leftRoom", (theroom: any) => {
       setnbrconnect(theroom.nbr_co);
       setopready(false);
@@ -182,20 +180,17 @@ export default function Game() {
       setgamestart(false);
       setop_id("");
       console.log("leftRoom");
-      //clearInterval(theroom.interval);
-      cancelAnimationFrame(requestAnimationFrameId);
 
-      if (theroom.set.set_p1 && theroom.set.set_p2) {
-        player_left.name = theroom.set.set_p1.name;
-        player_left.score = theroom.set.set_p1.score;
-        player_left.won = theroom.set.set_p1.won;
+      player_left.name = "empty";
+      player_left.score = 0;
+      player_left.won = false;
 
-        player_right.name = theroom.set.set_p1.name;
-        player_right.score = theroom.set.set_p1.score;
-        player_right.won = theroom.set.set_p1.won;
-      }
+      player_right.name = "empty";
+      player_right.score = 0;
+      player_right.won = false;
+
       ballObj.init_ball_pos = false;
-      ballObj.first_col = false;
+      ballObj.first_col = false; 
       
     });
     
@@ -203,11 +198,24 @@ export default function Game() {
       setnbrconnect(0);
       setopready(false);
       setimready(false);
+      setgamestart(false);
+      setisinroom(false);
       setop_id("");
+      player_left.name = "empty";
+      player_left.score = 0;
+      player_left.won = false;
+
+      player_right.name = "empty";
+      player_right.score = 0;
+      player_right.won = false;
+
+      ballObj.init_ball_pos = false;
+      ballObj.first_col = false; 
     });
 
     setisFull("");
     setmy_id(socket.id);
+    
     socket.on("roomFull", (theroom: any) => {
       setisFull("This ROOM IS FULL MATE");
       console.log("THIS ROOM IS FULL");
@@ -216,7 +224,7 @@ export default function Game() {
 
   function deleteGameRoom() {
     console.log("deleteGameRoom FROOOONNNNT");
-    cancelAnimationFrame(requestAnimationFrameId);
+    //ancelAnimationFrame(requestAnimationFrameId);
 
     if (isinroom === true) {
       setisinroom(false);
