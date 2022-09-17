@@ -18,6 +18,7 @@ import {
   PaddleMouv_right,
   draw_line,
   draw_score,
+  draw_loading,
 } from "../gameReact/BallMouv";
 ////////////////////////////////////////////////////
 // WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
@@ -130,27 +131,31 @@ export function GameSpectator(props: any) {
             canvas.height,
             canvas.width
           );
-          if (first_sinc === true)
+          if (first_sinc === true) {
             BallMouv(ctx, ballObj, canvas.height, canvas.width);
-          BallCol_left(
-            ctx,
-            player_right,
-            ballObj,
-            paddleProps_left,
-            canvas.height,
-            canvas.width
-          );
-          BallCol_right(
-            ctx,
-            player_left,
-            ballObj,
-            paddleProps_right,
-            canvas.height,
-            canvas.width
-          );
-          PaddleMouv_left(ctx, canvas, paddleProps_left);
-          PaddleMouv_right(ctx, canvas, paddleProps_right);
+            BallCol_left(
+              ctx,
+              player_right,
+              ballObj,
+              paddleProps_left,
+              canvas.height,
+              canvas.width
+            );
+            BallCol_right(
+              ctx,
+              player_left,
+              ballObj,
+              paddleProps_right,
+              canvas.height,
+              canvas.width
+            );
+            PaddleMouv_left(ctx, canvas, paddleProps_left);
+            PaddleMouv_right(ctx, canvas, paddleProps_right);
+          }
+          else
+            draw_loading(ctx, canvas.height, canvas.width);
         } else {
+          console.log("score draw_end");
           draw_score(
             ctx,
             player_left,
