@@ -1,6 +1,6 @@
 import { IsDefined, IsNotEmpty, IsString } from "class-validator";
 
-export class BanMuteDto {
+export class ChannelActionsDto {
 	@IsDefined()
 	@IsNotEmpty()
 	@IsString()
