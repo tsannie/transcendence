@@ -6,7 +6,8 @@ import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import { ChannelService } from '../service/channel.service';
 import { UserEntity } from 'src/user/models/user.entity';
-import { BanMuteDto } from '../dto/banmute.dto';
+import { ChannelActionsDto } from '../dto/channelactions.dto';
+import { channel } from 'diagnostics_channel';
 
 @Controller('channel')
 export class ChannelController {
@@ -28,14 +29,26 @@ export class ChannelController {
 
 	@UseGuards( AuthGuard('jwt') )
 	@Post('banUser')
-	async banUser(@Body() ban_request: BanMuteDto, @Request() req) : Promise<ChannelEntity> {
+	async banUser(@Body() ban_request: ChannelActionsDto, @Request() req) : Promise<ChannelEntity> {
 		return await this.channelService.banUser(ban_request, req.user);
 	}
 
 	@UseGuards( AuthGuard('jwt') )
 	@Post('unBanUser')
-	async unBanUser(@Body() ban_request: BanMuteDto, @Request() req) : Promise<ChannelEntity> {
+	async unBanUser(@Body() ban_request: ChannelActionsDto, @Request() req) : Promise<ChannelEntity> {
 		return await this.channelService.unBanUser(ban_request, req.user);
+	}
+
+	@UseGuards( AuthGuard('jwt') )
+	@Post('makeAdmin')
+	async makeAdmin(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
+		return await this.channelService.makeAdmin(channel, req.user);
+	}
+
+	@UseGuards( AuthGuard('jwt') )
+	@Post('revokeAdmin')
+	async revokeAdmin(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
+		return await this.channelService.revokeAdmin(channel, req.user);
 	}
 
 	//ENTER IN A PUBLIC ROOM, 
@@ -74,8 +87,6 @@ export class ChannelController {
 		let new_user = await this.channelService.createFalseUser(data.username);
 		return await this.channelService.joinChannel(data.channel, new_user);
 	}
-
-	@Post("banUser")
 
 	@Post('password')
 	async comparePassword( @Body() data ){

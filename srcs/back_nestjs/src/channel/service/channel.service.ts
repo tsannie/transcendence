@@ -1,22 +1,20 @@
 import {
-  Body,
   Catch,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  NotAcceptableException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { from, Observable } from 'rxjs';
 import { UserEntity } from 'src/user/models/user.entity';
-import { MetadataAlreadyExistsError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import * as bcrypt from 'bcrypt';
 import { ChannelDto } from '../dto/channel.dto';
-import { BanMuteDto } from '../dto/banmute.dto';
+import { ChannelActionsDto } from '../dto/channelactions.dto';
+import { UserService } from 'src/user/service/user.service';
 
 @Injectable()
 @Catch()
@@ -25,6 +23,8 @@ export class ChannelService {
 	@InjectRepository(ChannelEntity)
 	private channelRepository: Repository<ChannelEntity>,
 
+	private readonly userService: UserService,
+		
 	@InjectRepository(UserEntity)
 	private userRepository: Repository<UserEntity>,
 	) {}
@@ -152,17 +152,16 @@ export class ChannelService {
 		}
 	}
 
+
+
 	verifyHierarychy(channel : ChannelEntity, requester : UserEntity, targeted_user: string){
-		console.log("channel.owner.username = ", channel.owner.username);
-		console.log("requester.username = ", requester.username);
-		console.log("result of find = ", channel.admins.find( (admin) => {admin.username === requester.username }))
 		if (channel.owner.username !== requester.username && !channel.admins.find( (admin) => {admin.username === requester.username }))
 			throw new ForbiddenException("Only an admin or owner of the channel can ban/unban other members.");
 		if (channel.owner.username !== requester.username && channel.admins.find( (admin) => { admin.username === targeted_user }))
 			throw new ForbiddenException("An admin cannot ban/unban another admin.");
 	}
 
-	async unBanUser(request: BanMuteDto, requester: UserEntity) : Promise<ChannelEntity>{
+	async unBanUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
 		this.verifyHierarychy(channel, requester, request.target);
 
@@ -170,7 +169,7 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
-	async banUser(request: BanMuteDto, requester: UserEntity) : Promise<ChannelEntity>{
+	async banUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
 		this.verifyHierarychy(channel, requester, request.target);
 		
@@ -216,6 +215,44 @@ export class ChannelService {
 	await this.userRepository.save(user);
 	return await this.userRepository.findOne({where : {username: username}, 
 		relations: ["channels", "owner_of"]});
+  }
+
+  async makeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
+	let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins"]);
+	
+	if (channel.owner.username === req_channel.target)
+		throw new UnauthorizedException(`Owner ${req_channel.target} is already admin by default of the channel ${channel.name}`)
+	if (channel.owner.username !== user.username)
+		throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
+	if (channel.admins && channel.admins.find((admin) => admin.username === req_channel.target))
+		throw new UnprocessableEntityException("This member is already an admin of this channel.")
+	
+	const new_admin = await this.userService.findByName(req_channel.target);
+	if (!new_admin)
+		throw new UnprocessableEntityException("This user doesn't seem to exist in database.");
+	if (channel.admins)
+		channel.admins.push(new_admin);
+	else
+		channel.admins = [new_admin];
+	return await this.channelRepository.save(channel);
+  }
+
+  async revokeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
+	let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins"]);
+	
+	if (channel.owner.username !== user.username)
+		throw new UnauthorizedException(`Only owner of channel can revoke administration rights of ${req_channel.target}`);
+	if (channel.admins)
+	{	
+		const filtered = channel.admins.filter( (admin) => admin.username !== req_channel.target);
+		if (filtered === channel.admins)
+			throw new UnprocessableEntityException("Member is already not an admin");
+		else
+		{
+			channel.admins = filtered;
+			return await this.channelRepository.save(channel);
+		}
+	}
   }
 
 }
