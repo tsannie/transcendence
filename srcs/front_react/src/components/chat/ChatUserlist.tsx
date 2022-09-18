@@ -8,11 +8,14 @@ import { IChannel } from "./types";
 export default function ChatUserlist(props: any) {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [targetUsername, setTargetUsername] = useState("");
   const open = Boolean(anchorEl);
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
     setAnchorEl(event.currentTarget);
+    console.log(event.currentTarget.innerHTML);
+    setTargetUsername(event.currentTarget.innerHTML);
   };
 
   function handleClose() {
@@ -33,12 +36,12 @@ export default function ChatUserlist(props: any) {
     setAnchorEl(null);
   }
 
-  async function joinMP(channel: IChannel) {
+  async function createDm(targetUsername: string) {
     await api
-      .post("channel/joinMP", channel)
+      .post("dm/createDm", targetUsername)
       .then((res) => {
         console.log("channel joined with success");
-        console.log(channel);
+        console.log(targetUsername);
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -47,7 +50,7 @@ export default function ChatUserlist(props: any) {
   }
 
   function handleNewMessage() {
-    joinMP(props.channel);
+    createDm(targetUsername);
     props.setOpenConv(true);
     console.log('handle new message');
     setAnchorEl(null);

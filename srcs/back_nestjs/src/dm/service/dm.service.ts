@@ -38,6 +38,7 @@ export class DmService {
   // create a new dm
   async createDm(channel: CreateDmDto, user: UserEntity): Promise<void | DmEntity> {
 
+    console.log("createDm");
     const newUser2 = await this.userService.findByName(channel.targetUsername);
 
     if (newUser2 === undefined) {
