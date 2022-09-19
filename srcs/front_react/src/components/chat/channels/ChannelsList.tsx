@@ -1,4 +1,4 @@
-import { Box, Button, Grid, SvgIcon, TextField } from "@mui/material";
+import { Alert, Box, Button, Grid, SvgIcon, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
 //import { socket } from "../Chat";
@@ -11,9 +11,9 @@ import { LockIcon } from "./LockIcon";
 
 export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
+  const [channelExistsError, setChannelExistsError] = useState("");
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
-
     if (channel.status === "Protected") {
       channel.password = channelPassword;
     }
@@ -22,10 +22,10 @@ export default function ChannelsList(props: any) {
     const newChannel = {
       name: channel.name,
       password: channel.password,
-    }
+    };
     console.log(newChannel);
 
-    return (newChannel);
+    return newChannel;
   }
 
   async function joinChannel(channel: IChannel) {
@@ -39,9 +39,14 @@ export default function ChannelsList(props: any) {
       })
       .catch((res) => {
         console.log("invalid channels");
-        console.log(res);
+        // display response error
+        console.log(res.response.data.message);
+        setChannelExistsError(res.response.data.message);
+
+        //console.log(res);
       });
-    setChannelPassword("")
+    setChannelPassword("");
+    setChannelExistsError("");
     // to do: refresh password after send (look send message)
   }
 
@@ -127,6 +132,9 @@ export default function ChannelsList(props: any) {
                 joinChannel(channelData);
               }}
             >
+              {channelExistsError !== "" && (
+                <Alert severity="error"> {channelExistsError}</Alert>
+              )}
               Join
             </Button>
             <Button
@@ -138,15 +146,17 @@ export default function ChannelsList(props: any) {
             >
               Leave
             </Button>
-            {props.isOwner && <Button
-              sx={{
-                color: "red",
-                ml: "1vh",
-              }}
-              onClick={() => deleteChannel(channelData)}
-            >
-              Delete
-            </Button> }
+            {props.isOwner && (
+              <Button
+                sx={{
+                  color: "red",
+                  ml: "1vh",
+                }}
+                onClick={() => deleteChannel(channelData)}
+              >
+                Delete
+              </Button>
+            )}
           </Box>
         );
       })}
