@@ -50,8 +50,8 @@ export default function GameMenu(props: any) {
 
   function lookAtAllGameRoom() {
     console.log("LOOK AT ALL GAME ROOM !!!!");
-    socket.emit("lookAllGameRoom", "lookroom");
-    
+    props.store.setisLookingRoom(true);
+    //socket.emit("lookAllGameRoom", "lookroom");
   }
 
   function createGameRoom() {
@@ -93,7 +93,7 @@ export default function GameMenu(props: any) {
 
       <h4>
         REGARDER une partie :
-        <button onClick={lookAtAllGameRoom}>regarder la partie</button>{" "}
+        <button onClick={lookAtAllGameRoom}>regarder la partie</button>
       </h4>
 
   

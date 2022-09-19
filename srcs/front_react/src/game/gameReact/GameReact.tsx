@@ -42,7 +42,7 @@ export function GamePlayer_Left_right(props: any) {
 
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
-      //console.log("ball is sinc with server");
+      console.log("ball is sinc with server");
     });
     socket.on("mouvPaddleLeft", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_padle_obj.x;
@@ -86,13 +86,13 @@ export function GamePlayer_Left_right(props: any) {
   }
 
   function sinc_player_left(room_name: string, player_left: any) {
-    var data = {
-      room: room_name,
-      name: player_left.name,
-      score: player_left.score,
-      won: player_left.won,
-    };
-    socket.emit("playerActyLeft", data);
+      var data = {
+        room: room_name,
+        name: player_left.name,
+        score: player_left.score,
+        won: player_left.won,
+      };
+      socket.emit("playerActyLeft", data);
   }
   
   function sinc_player_right(room_name: string, player_right: any) {
@@ -109,8 +109,6 @@ export function GamePlayer_Left_right(props: any) {
   useEffect(() => {
       sinc_player_left(props.store.room, player_left);
       sinc_player_right(props.store.room, player_right);
-     // player_left.name = theroom.set.set_p1.name;
-     // player_right.name = theroom.set.set_p2.name;
       sinc_ball(props.store.room, ballObj);
       const render = () => {
         requestAnimationFrameId = requestAnimationFrame(render);
@@ -161,7 +159,6 @@ export function GamePlayer_Left_right(props: any) {
             PaddleMouv_left(ctx, canvas, paddleProps_left);
             PaddleMouv_right(ctx, canvas, paddleProps_right);
           } else {
-            console.log("------------------");
             sinc_player_left(props.store.room, player_left);
             sinc_player_right(props.store.room, player_right);
             draw_score(
@@ -178,12 +175,9 @@ export function GamePlayer_Left_right(props: any) {
       render();
   }, [socket]);
 
-
   function deleteGameRoom_ingame() {
-
-      console.log("player_left.won ", player_left.won);
-      console.log("player_right.won ", player_right.won);
-
+    console.log("player_left.won ", player_left.won);
+    console.log("player_right.won ", player_right.won);
     if (player_left.won == true || player_right.won == true) {
       console.log("end_of_game");
       socket.emit("end_of_the_game", props.store.room);
@@ -192,9 +186,6 @@ export function GamePlayer_Left_right(props: any) {
       console.log("player_give_up");
       socket.emit("player_give_up", props.store.room);
     }
-      //    props.deleteGameRoom();
-/*     if (props.store.gamestart === true) {
-    } */
   }
   ////////////////////////////////////////////////////
 
