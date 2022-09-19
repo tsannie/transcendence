@@ -50,7 +50,7 @@ export default function Game() {
   const [gamestart, setgamestart] = useState(false);
   const [listGame, setListGame] = useState<string[]>([]);
   const [Specthegame, setSpecthegame] = useState(false);
-
+  const [listgamenotz, setlistgamenotz] = useState(false);
 
 
   const store = {
@@ -62,7 +62,6 @@ export default function Game() {
     op_id: op_id,
     im_right: im_right,
     islookingroom: islookingroom,
-    //Specthegame: Specthegame,
 
     isfull: isfull,
     isinroom: isinroom,
@@ -72,9 +71,11 @@ export default function Game() {
     gameover: gameover,
     gamestart: gamestart,
     listGame: listGame,
+    setListGame: setListGame,
     Specthegame: Specthegame,
+    listgamenotz: listgamenotz,
 
-
+    setlistgamenotz:setlistgamenotz,
     setSpecthegame: setSpecthegame,
 
     setnbrconnect: setnbrconnect,
@@ -85,7 +86,6 @@ export default function Game() {
     setop_id: setop_id,
     setim_right: setim_right,
     setisLookingRoom: setisLookingRoom,
-    //setSpecthegame: setSpecthegame,
     setisFull: setisFull,
     setisinroom: setisinroom,
     setimready: setimready,
@@ -93,7 +93,6 @@ export default function Game() {
     setPP_empty: setPP_empty,
     setgameover: setgameover,
     setgamestart: setgamestart,
-    setListGame: setListGame,
   };
 
   ////////////////////////////////////////////////////
@@ -111,64 +110,52 @@ export default function Game() {
     ////////////////////////////////////////////////////
     // LOOKING ROOM
     ////////////////////////////////////////////////////
-    socket.on("LeaveAllGameRoom", (theroom: Map<any, any>) => {
-      setisLookingRoom(false);
-      console.log("listGame = " + listGame);
-      console.log("propslistGame = " + store.listGame);
+/*     socket.on("LeaveAllGameRoom", (theroom: Map<any, any>) => {
+      //setisLookingRoom(false);
+      //console.log("listGame = " + listGame);
+      //console.log("propslistGame = " + store.listGame);
   
       listGame.splice(0, listGame.length);
 
-      console.log("------------------");
+      console.log("--------END----------");
+      //console.log("listGame = " + listGame);
+      //console.log("propslistGame = " + store.listGame);
 
-      console.log("listGame = " + listGame);
-      console.log("propslistGame = " + store.listGame);
 
-
-    });
-
-    socket.on("getAllGameRoom", (theroom: Map<any, any>) => {
-      // listGame = [];
-      console.log("------------------");
+    }); */
+/* 
+    socket.on("getAllGameRoom", (theroom: Map<any, any>, id: any) => {
+      console.log("------------------=", id);
       x++;
       console.log("x = " + x);
       console.log("1 socker");
       let donot = false;
       let key2;
       for (const [key, value] of Object.entries(theroom)) {
-        //console.log("first[" + key + "]");
-        // setListGame(key);
-        //setNames(prevNames => [...prevNames, 'Bob'])}
-        // setListGame((prevNames: any) => [...prevNames, key]);
-        // listGame.
+          //console.log(listGame.length);
+          //console.log("Value = " + value);
+         //console.log("key = " + key);
+          //console.log("value.nbr_co = " + value.nbr_co);
+          if (value.game_started === true) {
+            for (let i = 0; i <  listGame.length; i++) {
+              key2 =  listGame[i];
+              if (key === key2 || value.nbr_co !== 2) {
+                donot = true;
+              }
+            }
 
-          console.log( listGame.length);
-          for (let i = 0; i <  listGame.length; i++) {
-            key2 =  listGame[i];
-            //console.log("-[" + key2 + "][" + key + "]");
-            //console.log( listGame[i]);
-            if (key === key2) {
-              donot = true;
+            if (donot === false) {
+              listGame.push(key);
+            } else {
+              donot = false;
             }
           }
-
-          if (donot === false) {
-            // setListGame((prevNames: any) => [...prevNames, key]);
-             listGame.push(key);
-          } else {
-            donot = false;
-          }
-        
         }
-        
         for (let i = 0; i <  listGame.length; i++) {
-          key2 =  listGame[i];
-          //console.log("-[" + key2 + "][" + key + "]");
-          console.log("all list = " +  listGame[i]);
-
+          console.log(i + " === " +  listGame[i]);
         }
-        //store.listGame = listGame;
         setisLookingRoom(true);
-    });
+    }); */
     ////////////////////////////////////////////////////
     // LOOKING ROOM
     ////////////////////////////////////////////////////
