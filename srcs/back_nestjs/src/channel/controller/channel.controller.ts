@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { CreateChannelDto } from '../dto/createchannel.dto';
@@ -8,6 +8,7 @@ import { ChannelService } from '../service/channel.service';
 import { UserEntity } from 'src/user/models/user.entity';
 import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { channel } from 'diagnostics_channel';
+import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -82,6 +83,24 @@ export class ChannelController {
 		return await this.channelService.deleteChannel(query_channel, req.user);
 	}
 
+	@UseGuards( AuthGuard('jwt') )
+	@Post('addPassword')
+	async addPassword( @Body() channel: ChannelPasswordDto, @Request() req) {
+		return await this.channelService.addPassword(channel, req.user);
+	}
+
+	//USE SAME FUNCTION THAN ADDPASSWORD
+	@UseGuards( AuthGuard('jwt') )
+	@Post('modifyPassword')
+	async modifyPassword( @Body() channel: ChannelPasswordDto, @Request() req) {
+		return await this.channelService.addPassword(channel, req.user);
+	}
+
+	@UseGuards( AuthGuard('jwt') )
+	@Post('deletePassword')
+	async deletePassword( @Body() channel: ChannelDto, @Request() req) {
+		return await this.channelService.deletePassword(channel, req.user);
+	}
 
 
 /*PLEASE DELETE THESE ROUTE LATER, TEST ROUTES*/
