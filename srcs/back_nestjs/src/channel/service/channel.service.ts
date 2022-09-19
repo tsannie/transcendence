@@ -15,6 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { ChannelDto } from '../dto/channel.dto';
 import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { UserService } from 'src/user/service/user.service';
+import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 
 @Injectable()
 @Catch()
@@ -98,15 +99,19 @@ export class ChannelService {
 	//THIS FUNCTION COMPARE INPUTED PASSWORD WITH THE ONE STORED IN DATABASE
 	async checkPassword(inputed_password : string, room_name : string)
 	{
-		let channel = await this.channelRepository.findOne( {
-			where: {
-				name : room_name
-			}
-		})
+		if (!inputed_password)
+			throw new UnauthorizedException("No password inputed");
+
+		let channel = await this.getChannel(room_name);
+
 		if (await bcrypt.compare(inputed_password, channel.password))
 			return true;
 		else
-			return false;
+			throw new UnauthorizedException("Wrong Password.");
+	}
+
+	async hashPassword(inputed_password: string) : Promise<any> {
+		return await bcrypt.hash(inputed_password, await bcrypt.genSalt())
 	}
 
 	//THIS FUNTION CREATE A NEW CHANNEL USING A DTO THAT FRONT SEND US
@@ -118,26 +123,37 @@ export class ChannelService {
 		newChannel.owner = user;
 		newChannel.isMp = false;
 		if (channel.status === "Protected" && channel.password) {
-			newChannel.password = await bcrypt.hash(channel.password, await bcrypt.genSalt());
+			newChannel.password = await this.hashPassword(channel.password);
 		}
 		return await this.saveChannel(newChannel);
 	}
 
   async leaveChannel(requested_channel: ChannelDto, user: UserEntity) {
-		let channel = await this.getChannel(requested_channel.name, ["users"]);
-		if (channel.users){
-			channel.users = channel.users.filter( (channel_users) => { channel_users.username !== user.username } );
-			await this.channelRepository.save(channel);
+		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users"]);
+		
+		if (channel.owner.username === user.username)
+		{
+			if (!channel.admins && !channel.users)
+				return await this.deleteChannel(requested_channel, user);
+			if (channel.admins)
+				channel.owner = channel.admins[0];
+			if (channel.users)
+				channel.owner = channel.users[0];
 		}
+		if (channel.admins && channel.admins.find( (admins) => admins.username === user.username))
+			channel.admins = channel.admins.filter( (channel_admins) => { channel_admins.username !== user.username } )
+		if (channel.users && channel.users.find( (users) => users.username === user.username))
+			channel.users = channel.users.filter( (channel_users) => { channel_users.username !== user.username } );
+		await this.channelRepository.save(channel);
 	}
 
-	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<void | ChannelEntity> {
+	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(requested_channel.name, ["owner"]);
 		if (channel.owner.username === user.username)
 			return await this.channelRepository.remove(channel);
 	}
 
-	async joinChannel(requested_channel: ChannelDto, user: UserEntity) {
+	async joinChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(requested_channel.name, ["users"]);
 		
 		if ((user.channels && user.channels.find( ( elem ) => {elem.name === channel.name} )) 
@@ -160,7 +176,38 @@ export class ChannelService {
 		}
 	}
 
+	async addPassword(channel_requested: ChannelPasswordDto, user: UserEntity) : Promise<ChannelEntity> {
+		let channel = await this.getChannel(channel_requested.name, ["owner"]);
 
+		if (channel.owner.username !== user.username)
+			throw new ForbiddenException("Only the owner of the channel can add a password");
+		else
+		{
+			if (channel.status === "Protected")
+				await this.checkPassword(channel_requested.current_password, channel_requested.name);
+			channel.status = "Protected";
+			channel.password = await this.hashPassword(channel_requested.new_password);
+		}
+		return await this.channelRepository.save(channel);
+	}
+
+	async deletePassword(channel_requested: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+		let channel = await this.getChannel(channel_requested.name, ["owner"]);
+
+		if (channel.owner.username !== user.username)
+			throw new ForbiddenException("Only the owner of the channel can delete a password");
+		else
+		{
+			if (channel.status === "Private" || channel.status === "Public")
+				throw new UnprocessableEntityException(`Cannot perform that action of this server type: ${channel.status}`)
+			if (await this.checkPassword(channel_requested.password, channel_requested.name))
+			{	
+				channel.status = "Public";
+				channel.password = undefined;
+			}
+		}
+		return await this.channelRepository.save(channel);
+	}
 
 	verifyHierarychy(channel : ChannelEntity, requester : UserEntity, targeted_user: string){
 		if (requester.username === targeted_user)
