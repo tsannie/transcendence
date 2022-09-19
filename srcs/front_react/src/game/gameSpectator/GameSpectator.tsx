@@ -87,7 +87,6 @@ export function GameSpectator(props: any) {
 
       first_sinc = true;
       console.log("first_sinc", first_sinc);
-
       console.log("sincTheBall_spec FROM SERVER REAL GAME"); 
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
@@ -111,6 +110,8 @@ export function GameSpectator(props: any) {
       sinc_all_data(theroom);
       setp1id(theroom.set.set_p1.name);
       setp2id(theroom.set.set_p2.name);
+      //props.store.setSpecthegame(true);
+
     });
 
     const render = () => {
@@ -172,8 +173,10 @@ export function GameSpectator(props: any) {
 
 
   function deleteGameRoomSpec() {
+    first_sinc = false;
     props.store.setSpecthegame(false);
     props.store.setisLookingRoom(true);
+    //setlistgamenotz(true);
     //props.store.setLookingRoom("");
    // socket.emit("LeaveAllGameRoom", "lookroom");
   }

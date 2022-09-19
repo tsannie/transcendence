@@ -126,7 +126,7 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
-  } else if (player_right.score >= 2) {
+  } else if (player_right.score >= 12) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -162,7 +162,7 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
-  } else if (player_left.score >= 2) {
+  } else if (player_left.score >= 12) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
