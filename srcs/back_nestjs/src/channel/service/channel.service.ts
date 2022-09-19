@@ -136,9 +136,16 @@ export class ChannelService {
 			if (!channel.admins && !channel.users)
 				return await this.deleteChannel(requested_channel, user);
 			if (channel.admins)
+			{
 				channel.owner = channel.admins[0];
-			if (channel.users)
+				channel.admins = channel.admins.filter((channel_admins) => { channel_admins.username !== channel.admins[0].username });
+				channel.users = channel.users.filter((channel_users) => { channel_users.username !== channel.users[0].username });
+			}
+			else
+			{
 				channel.owner = channel.users[0];
+				channel.users = channel.users.filter((channel_users) => { channel_users.username !== channel.users[0].username });
+			}
 		}
 		if (channel.admins && channel.admins.find( (admins) => admins.username === user.username))
 			channel.admins = channel.admins.filter( (channel_admins) => { channel_admins.username !== user.username } )
