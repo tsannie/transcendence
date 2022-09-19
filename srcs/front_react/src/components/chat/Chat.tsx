@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { IMessage } from "./types";
+import { IChannel, IMessage } from "./types";
 import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
@@ -38,13 +38,13 @@ export default function Chat() {
   } */
 
   async function getUser() {
+    console.log("get user");
     if (document.cookie.includes(COOKIE_NAME)) {
       await api
         .get("auth/profile")
         .then((res) => {
           setAuthor(res.data.username);
           setUserId(res.data.id);
-          console.log(res.data.id);
         })
         .catch((res) => {
           console.log("invalid jwt");
@@ -76,7 +76,7 @@ export default function Chat() {
 
   useEffect(() => {
     getUser();
-  });
+  }, []);
 
   // listen message from backend
   useEffect(() => {

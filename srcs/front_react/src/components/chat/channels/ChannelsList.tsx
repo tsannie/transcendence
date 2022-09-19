@@ -9,12 +9,10 @@ import { LockIcon } from "./LockIcon";
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
-export default function ChannelsList() {
-  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
-  const [isOwner, setIsOwner] = useState(false);
 
-  function createNewChannelWithoutStatus(channel: IChannel) {
+  function joinNewChannelWithoutStatus(channel: IChannel) {
 
     if (channel.status === "Protected") {
       channel.password = channelPassword;
@@ -31,7 +29,7 @@ export default function ChannelsList() {
   }
 
   async function joinChannel(channel: IChannel) {
-    const newChannel = createNewChannelWithoutStatus(channel);
+    const newChannel = joinNewChannelWithoutStatus(channel);
 
     await api
       .post("channel/joinChannel", newChannel)
@@ -48,7 +46,7 @@ export default function ChannelsList() {
   }
 
   async function leaveChannel(channel: IChannel) {
-    const newChannel = createNewChannelWithoutStatus(channel);
+    const newChannel = joinNewChannelWithoutStatus(channel);
 
     await api
       .post("channel/leaveChannel", newChannel)
@@ -63,7 +61,7 @@ export default function ChannelsList() {
   }
 
   async function deleteChannel(channel: IChannel) {
-    const newChannel = createNewChannelWithoutStatus(channel);
+    const newChannel = joinNewChannelWithoutStatus(channel);
 
     await api
       .post("channel/deleteChannel", newChannel)
@@ -77,37 +75,9 @@ export default function ChannelsList() {
       });
   }
 
-  // get all channels
-  async function getChannels() {
-    await api
-      .get("channel/all")
-      .then((res) => {
-        setChannelsList(res.data);
-
-        // check if user is owner of channel
-        res.data.forEach((channel: any) => {
-          // get all users
-          channel.users.forEach((user: any) => {
-            if (channel.owner.id === user.id) {
-              setIsOwner(true);
-            }
-          });
-        })
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-        console.log(res);
-      });
-  }
-
-  // call getChannels() when channelList change
-  useEffect(() => {
-    getChannels();
-  }, [channelsList]);
-
   return (
     <Box>
-      {channelsList.map((channelData: IChannel) => {
+      {props.channelsList.map((channelData: IChannel) => {
         return (
           <Box
             sx={{
@@ -168,7 +138,7 @@ export default function ChannelsList() {
             >
               Leave
             </Button>
-            {isOwner && <Button
+            {props.isOwner && <Button
               sx={{
                 color: "red",
                 ml: "1vh",

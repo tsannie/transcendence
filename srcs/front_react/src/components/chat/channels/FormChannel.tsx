@@ -73,6 +73,11 @@ export default function FormChannel(props: any) {
     props.setNewChannel(false);
   }
 
+  // get all channels
+  useEffect(() => {
+    props.getChannels();
+  }, []);
+
   return (
     <Box sx={{}}>
       <TextField
@@ -107,7 +112,7 @@ export default function FormChannel(props: any) {
           <MenuItem value={"Protected"}>Protected</MenuItem>
         </Select>
       </FormControl>
-      {enablePassword === true && (
+      {enablePassword && (
         <TextField
           variant="outlined"
           placeholder="password"
