@@ -46,6 +46,18 @@ export class ChannelController {
 	}
 
 	@UseGuards( AuthGuard('jwt') )
+	@Post('muteUser')
+	async muteUser(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
+		return await this.channelService.muteUser(channel, req.user);
+	}
+
+	@UseGuards( AuthGuard('jwt') )
+	@Post('unmuteUser')
+	async unMuteUser(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
+		return await this.channelService.unMuteUser(channel, req.user);
+	}
+
+	@UseGuards( AuthGuard('jwt') )
 	@Post('revokeAdmin')
 	async revokeAdmin(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
 		return await this.channelService.revokeAdmin(channel, req.user);
