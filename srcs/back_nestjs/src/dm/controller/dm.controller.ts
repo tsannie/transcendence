@@ -22,4 +22,10 @@ export class DmController {
   async getAllDms(@Request() req): Promise<void | DmEntity[]> {
     return await this.dmService.getAllDms(req.user);
   }
+
+  // get a dm by id
+  @Get('getDmById')
+  async getDmById(id: number): Promise<void | DmEntity> {
+    return await this.dmService.getDmById(id);
+  }
 }

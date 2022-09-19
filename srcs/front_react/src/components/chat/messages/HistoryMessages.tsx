@@ -45,24 +45,26 @@ export default function DmList(props: any) {
         variant="h6"
       >
         Conv history
-        {/* <List sx={{}}>
-        {dms.map((dm) => (
-          <ListItem
-            sx={{
-              border: "1px solid black",
-              mt: 2,
-              alignItems: "center",
-              width: "fit-content",
-              height: "fit-content",
-              borderRadius: "3px",
-            }}
-            key={dm.id}
-            onClick={props.handleClick}
-          >
-            {dm.user1id}
-          </ListItem>
-        ))}
-      </List> */}
+        <List>
+          {dms && dms.map((dmData: IDm) => {
+            return (
+              <ListItem
+                sx={{
+                  border: "1px solid black",
+                  mt: 2,
+                  alignItems: "center",
+                  width: "fit-content",
+                  height: "fit-content",
+                  borderRadius: "3px",
+                }}
+                key={dmData.id}
+                onClick={props.handleClick}
+              >
+                {dmData.targetUsername}
+              </ListItem>
+            )
+            })}
+        </List>
       </Typography>
       <Grid
         item

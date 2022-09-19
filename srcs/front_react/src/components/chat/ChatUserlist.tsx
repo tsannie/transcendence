@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import React, { useState } from "react";
 import UserList, { api } from "../../userlist/UserListItem";
 import UserInfos, { IUser } from "../../userlist/UserListItem";
-import { IChannel } from "./types";
+import { IChannel, IDm } from "./types";
 
 export default function ChatUserlist(props: any) {
 
@@ -36,7 +36,7 @@ export default function ChatUserlist(props: any) {
     setAnchorEl(null);
   }
 
-  async function createDm(targetUsername: string) {
+  async function createDm(targetUsername: IDm) {
     await api
       .post("dm/createDm", targetUsername)
       .then((res) => {
@@ -50,9 +50,14 @@ export default function ChatUserlist(props: any) {
   }
 
   function handleNewMessage() {
-    createDm(targetUsername);
-    props.setOpenConv(true);
+    let newDm: IDm = {
+      targetUsername: targetUsername,
+    };
+
     console.log('handle new message');
+    console.log(targetUsername);
+    createDm(newDm);
+    props.setOpenConv(true);
     setAnchorEl(null);
     props.setIsNewMessage(true);
     //sendReceiverName(props.user);

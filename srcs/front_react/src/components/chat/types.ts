@@ -14,7 +14,6 @@ export interface IChannel {
 }
 
 export interface IDm {
-  id: number;
-  user1id: number;
-  user2id: number;
+  id?: number;
+  targetUsername: string;
 }
