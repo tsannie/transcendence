@@ -334,6 +334,7 @@ export class ChannelService {
 			channel.users.push(user);
 		else
 			channel.users = [user];
+		console.log("channel.users = ", channel.users);
 		return await this.channelRepository.save(channel);
 	}
 

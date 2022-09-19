@@ -1,5 +1,6 @@
 import { Channel } from 'diagnostics_channel';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
 import {
   Column,
   CreateDateColumn,
@@ -42,4 +43,10 @@ export class UserEntity {
   @JoinTable()
   channels?: ChannelEntity[];
 
-} 
+  @ManyToMany( () => DmEntity, (dms) => dms.users )
+  @JoinTable()
+  dms?: DmEntity[];
+
+  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
+  // mp_channels: ChannelEntity[]
+}
