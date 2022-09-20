@@ -7,46 +7,44 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import ButtonLogin from "./Auth/ButtonLogin";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
-import UserList, { api } from "./userlist/UserListItem";
 import LogoIcon from "./assets/logo-project.png";
-import { COOKIE_NAME } from "./const";
 import Settings from "./components/settings/Settings";
 import TwoFactorCode from "./Auth/TwoFactorCode";
+import { api, COOKIE_NAME } from "./const/const";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [inputSettings, setInputSettings] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-  const [is2fa, setIs2fa] = useState(false);
-  const [validationCode, setValidationCode] = useState(false);
+  const [is2FA, setIs2FA] = useState(false);
+  const [confirmed2FA, setConfirmed2FA] = useState(false);
 
-  //console.log('islogin = ' + isLogin);
-  /*if (document.cookie.includes(COOKIE_NAME)) {
-    //console.log('cookie exist');
-    api.post('2fa/auth2fa').then(res => {
-      setIsLogin(true);
-    }).catch(res => {
-      console.log('invalid jwt');
-      //console.log(res)
-      document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
-    });
-  }*/
+  useEffect(() => {
+    if (document.cookie.includes(COOKIE_NAME) && is2FA === true) {
+      api.get('auth/profile').then(res => {
+        setConfirmed2FA(true);
+      }).catch(res => {
+        setConfirmed2FA(false);
+      });
+    }
+  });
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
       api.get('auth/isTwoFactor').then(res => {
-        setIs2fa(res.data.isTwoFactor);
+        setIs2FA(res.data.isTwoFactor);
       }).catch(res => {
         console.log('invalid jwt');
-        //console.log(res)
-        //setIsLogin(false);
-        //document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
       });
-      console.log('is2fa = ' + is2fa);
-      if (is2fa === false) {
+      console.log('is2fa = ' + is2FA);
+      console.log('confirmed2fa = ' + confirmed2FA);
+      if (is2FA === false) {
         setIsLogin(true);
-      } else {
+      } else if (is2FA === true && confirmed2FA === false) {
         setIsLogin(false);
+      } else if (is2FA === true && confirmed2FA === true) {
+        setIsLogin(true);
       }
     }
   });
@@ -58,6 +56,8 @@ export default function App() {
     //console.log("strislogin = " + strIsLogin)
     setIsLogin(strIsLogin);
   }, []);*/
+
+  console.log('islogin = ' + isLogin);
 
   if (!isLogin) {
     return (
@@ -72,11 +72,11 @@ export default function App() {
       }}>
       <img src={LogoIcon}></img>
       </Box>
-        {!is2fa &&
+        {!is2FA &&
           <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
         }
-        {is2fa &&
-          <TwoFactorCode />
+        {is2FA &&
+          <TwoFactorCode setConfirmed2FA={setConfirmed2FA}/>
         }
       </Box>
     );
@@ -90,8 +90,8 @@ export default function App() {
         <Sidebar
           setInputChat={setInputChat}
           setInputSettings={setInputSettings}
-          isLogin={isLogin}
           setIsLogin={setIsLogin}
+          setIs2FA={setIs2FA}
         />
         {inputChat && <Chat />}
         {inputSettings && <Settings />}

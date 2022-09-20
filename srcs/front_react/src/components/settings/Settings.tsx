@@ -1,16 +1,9 @@
-import { Button, Snackbar } from "@mui/material";
+import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { COOKIE_NAME } from "../../const";
-import { api } from "../../userlist/UserListItem";
 import ActivationProcess from "./ActivationProcess";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
-
-export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref,
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import Success2FASnackbar from "./snackbar/Success2FASnackbar";
+import Error2FASnackbar from "./snackbar/Error2FASnackbar";
+import { api } from "../../const/const";
 
 export default function Settings() {
 
@@ -20,6 +13,7 @@ export default function Settings() {
   const [twoFactorA, setTwoFactorA] = useState(false);
   const [enable2FA, setEnable2FA] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
 
 
   async function getProfile() {
@@ -33,13 +27,6 @@ export default function Settings() {
 
   async function activate2fa() {
     setEnable2FA(true);
-  }
-
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenSuccess(false);
   }
 
   useEffect(() => {
@@ -70,14 +57,13 @@ export default function Settings() {
             setTwoFactorA={setTwoFactorA}
             setEnable2FA={setEnable2FA}
             setOpenSuccess={setOpenSuccess}
+            setOpenError={setOpenError}
           />
         }
-      {/* Activation 2FA success message */}
-      <Snackbar open={openSuccess} autoHideDuration={5000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-          2FA successfully activated !
-        </Alert>
-      </Snackbar>
+
+        <Success2FASnackbar openSuccess={openSuccess} setOpenSuccess={setOpenSuccess}/>
+        <Error2FASnackbar openError={openError} setOpenError={setOpenError}/>
+
     </div>
   );
 }
