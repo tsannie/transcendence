@@ -161,7 +161,7 @@ export class ChannelService {
 	}
 
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		let channel = await this.getChannel(requested_channel.name, ["owner", "users"]);
+		let channel = await this.getChannel(requested_channel.name, ["owner", "users", "banned"]);
 		
 		this.verifyBanned(channel, user);
 		if ((channel.users && channel.users.find( elem => elem.username === user.username )) 
@@ -211,10 +211,13 @@ export class ChannelService {
 	verifyHierarychy(channel : ChannelEntity, requester : UserEntity, targeted_user: string){
 		if (requester.username === targeted_user)
 			throw new ForbiddenException("Cannot apply this action to yourself");
-		if (channel.owner.username !== requester.username && !channel.admins.find( admin => admin.username === requester.username ))
-			throw new ForbiddenException("Only an admin or owner of the channel can ban/unban other members.");
-		if (channel.owner.username !== requester.username && channel.admins.find( admin =>  admin.username === targeted_user ))
-			throw new ForbiddenException("An admin cannot ban/unban another admin.");
+		if (channel.owner.username !== requester.username)
+		{
+			if ( !channel.admins.find( admin => admin.username === requester.username ))
+				throw new ForbiddenException("Only an admin or owner of the channel can ban/unban other members.");
+			if ( channel.admins.find( admin =>  admin.username === targeted_user ) || channel.owner.username === targeted_user )
+				throw new ForbiddenException("An admin cannot ban/unban another admin or owner.");
+		}
 	}
 
 	verifyBanned(channel : ChannelEntity, requester : UserEntity) {
