@@ -13,6 +13,8 @@ export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
 
+  console.log(props.isOwner);
+
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
       channel.password = channelPassword;
