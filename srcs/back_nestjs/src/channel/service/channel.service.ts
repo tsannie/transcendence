@@ -133,19 +133,19 @@ export class ChannelService {
 		
 		if (channel.owner.username === user.username)
 		{
-			if (!channel.admins && !channel.users)
-				return await this.deleteChannel(requested_channel, user);
-			if (channel.admins)
+			if (channel.admins && channel.admins[0])
 			{
 				channel.owner = channel.admins[0];
 				channel.admins = channel.admins.filter((channel_admins) => { channel_admins.username !== channel.admins[0].username });
 				channel.users = channel.users.filter((channel_users) => { channel_users.username !== channel.users[0].username });
 			}
-			else
+			else if (channel.users && channel.users[0])
 			{
 				channel.owner = channel.users[0];
 				channel.users = channel.users.filter((channel_users) => { channel_users.username !== channel.users[0].username });
 			}
+			else
+				return await this.deleteChannel(requested_channel, user);
 		}
 		if (channel.admins && channel.admins.find( (admins) => admins.username === user.username))
 			channel.admins = channel.admins.filter( (channel_admins) => { channel_admins.username !== user.username } )
@@ -156,7 +156,9 @@ export class ChannelService {
 
 	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(requested_channel.name, ["owner"]);
-		if (channel.owner.username === user.username)
+		if (channel.owner.username !== user.username)
+			throw new ForbiddenException("Only the owner of the channel can delete the channel.");
+		else
 			return await this.channelRepository.remove(channel);
 	}
 
