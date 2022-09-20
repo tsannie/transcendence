@@ -30,6 +30,9 @@ export function GameSpectator(props: any) {
 
   const [p1id, setp1id] = useState("null");
   const [p2id, setp2id] = useState("null");
+
+  const [ThisRoom, setThisRoom] = useState("");
+
   //const [first_sinc, setfirst_sinc] = useState(false);
 
   // UseEffect recupere les info des joueurs en temps reel et les stock dans les objets du jeu
@@ -110,7 +113,11 @@ export function GameSpectator(props: any) {
       sinc_all_data(theroom);
       setp1id(theroom.set.set_p1.name);
       setp2id(theroom.set.set_p2.name);
-      //props.store.setSpecthegame(true);
+      setThisRoom(theroom.room_name);
+
+/*       props.store.setisLookingRoom(false);
+      
+      props.store.setSpecthegame(true); */
 
     });
 
@@ -176,9 +183,7 @@ export function GameSpectator(props: any) {
     first_sinc = false;
     props.store.setSpecthegame(false);
     props.store.setisLookingRoom(true);
-    //setlistgamenotz(true);
-    //props.store.setLookingRoom("");
-   // socket.emit("LeaveAllGameRoom", "lookroom");
+    socket.emit("LeaveGameSpectator", ThisRoom);
   }
 
 
