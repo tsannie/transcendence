@@ -163,7 +163,8 @@ export class ChannelService {
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(requested_channel.name, ["owner", "users", "banned"]);
 		
-		this.verifyBanned(channel, user);
+		this.verifyBanned(channel, user.username);
+
 		if ((channel.users && channel.users.find( elem => elem.username === user.username )) 
 			|| (channel.owner.username === user.username))
 			throw new UnprocessableEntityException("User is already member or owner of the channel.")
@@ -220,19 +221,26 @@ export class ChannelService {
 		}
 	}
 
-	verifyIsMember(channel: ChannelEntity, target: string) {
+	verifyIfMember(channel: ChannelEntity, target: string) : boolean {
 		if (!channel.users || !channel.users.find( elem => elem.username === target))
-			throw new UnprocessableEntityException(`${target} is not a member of ${channel.name}`);
+			throw new UnprocessableEntityException(`${target} is not a member of ${channel.name}`)
+		return true;
 	}
 
-	verifyBanned(channel : ChannelEntity, requester : UserEntity) {
-		if (channel.banned && channel.banned.find( banned_guy => banned_guy.username === requester.username))
-			throw new ForbiddenException("You've been banned from this channel you cheeky bastard.");
+	verifyBanned(channel : ChannelEntity, target: string) {
+		if (channel.banned && channel.banned.find( banned_guy => banned_guy.username === target))
+			throw new ForbiddenException(`${target} is banned from ${channel.name}`);
+	}
+
+	verifyMuted(channel : ChannelEntity, target: string) {
+		if (channel.muted && channel.muted.find( muted_guy => muted_guy.username === target))
+			throw new ForbiddenException(`${target} is muted.`);
 	}
 
 	async unBanUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
 		this.verifyHierarchy(channel, requester, request.target);
+		this.verifyIfMember(channel, request.target);
 
 		if (!channel.banned)
 			throw new UnprocessableEntityException(`${request.target} is not banned.`);
@@ -250,6 +258,7 @@ export class ChannelService {
 	async banUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
 		this.verifyHierarchy(channel, requester, request.target);
+		this.verifyIfMember(channel, request.target);
 		
 		const userToBan = await this.getUser(request.target);
 		if (!channel.banned)
@@ -269,6 +278,7 @@ export class ChannelService {
 	async unMuteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "muted"]);
 		this.verifyHierarchy(channel, requester, request.target);
+		this.verifyIfMember(channel, request.target);
 
 		const userToUnMute = await this.getUser(request.target);
 		if (!channel.muted)
@@ -287,7 +297,7 @@ export class ChannelService {
 	async muteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "muted"]);
 		this.verifyHierarchy(channel, requester, request.target);
-		this.verifyIsMember(channel, request.target);
+		this.verifyIfMember(channel, request.target);
 
 		const userToMute = await this.getUser(request.target);
 		if (!channel.muted)
@@ -315,10 +325,9 @@ export class ChannelService {
 		if (await this.checkPassword(password, channel.password))
 			return await this.joinPublicChannels(user, channel);
 	}
-
 	
 	async makeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins", "banned", "muted"]);
+		let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins", "banned", "muted", "users"]);
 		
 		if (channel.owner.username !== user.username)
 			throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
@@ -326,10 +335,11 @@ export class ChannelService {
 			throw new UnauthorizedException(`Owner ${req_channel.target} is already admin by default of the channel ${channel.name}`);
 		if (channel.admins && channel.admins.find( admin => admin.username === req_channel.target))
 			throw new UnprocessableEntityException("This member is already an admin of this channel.");
+		this.verifyIfMember(channel, req_channel.target);
+		this.verifyMuted(channel, req_channel.target);
+		
 		if (channel.muted && channel.muted.find( muted_guys => muted_guys.username === req_channel.target) )
 			throw new UnprocessableEntityException("Cannot make admin a muted member");
-		if (channel.banned && channel.banned.find( muted_guys => muted_guys.username === req_channel.target) )
-			throw new UnprocessableEntityException("Cannot make admin a banned member");
 
 		const new_admin = await this.getUser(req_channel.target);
 		if (channel.admins)
@@ -340,12 +350,13 @@ export class ChannelService {
 	}
 
 	async revokeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins"]);
-		
+		let channel = await this.getChannel(req_channel.channel_name, ["owner", "users", "admins"]);
+		this.verifyIfMember(channel, req_channel.target);
+
 		if (channel.owner.username !== user.username)
 			throw new UnauthorizedException(`Only owner of channel can revoke administration rights of ${req_channel.target}`);
 		if (channel.admins)
-		{	
+		{
 			const filtered = channel.admins.filter( admin => admin.username !== req_channel.target);
 			if (filtered === channel.admins)
 				throw new UnprocessableEntityException("Member is already not an admin");
@@ -358,11 +369,10 @@ export class ChannelService {
 	}
 	//DELETEMEAFTERTESTING :
 	async createFalseUser(username : string) : Promise<UserEntity>{
-	const user = new UserEntity();
-	user.username = username;
-	user.email = username + "@student.42.fr";
-	await this.userRepository.save(user);
-	return await this.getUser(username, ["channels", "owner_of"]);
+		const user = new UserEntity();
+		user.username = username;
+		user.email = username + "@student.42.fr";
+		await this.userRepository.save(user);
+		return await this.getUser(username, ["channels"]);
 	}
-
 }
