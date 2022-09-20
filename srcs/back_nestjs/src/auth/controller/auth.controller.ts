@@ -38,17 +38,17 @@ export class AuthController {
 
   @UseGuards(FortyTwoGuard)
   @Get('')
-  @Redirect('http://localhost:3000/', 301) // TODO env
+  @Redirect(process.env.FRONT_URL, 301)
   async oauthFortyTwo(@Req() req) {
     const user = req.user;
     if (!user)
       throw new UnauthorizedException('User not found');
     const accessToken = await this.authService.getCookie(user);
 
-    req.res.cookie('AuthToken', accessToken, {
+    req.res.cookie(process.env.COOKIE_NAME, accessToken, {
       httpOnly: false,
       path: '/',
-    });  // TODO 'AuthToken' const env
+    });
     return user;
   }
 }

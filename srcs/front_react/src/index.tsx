@@ -10,10 +10,3 @@ const root = createRoot(document.getElementById("root")!);
 
 
 root.render(<App />);
-/* root.render(
-  <React.StrictMode>
-    <UserList />
-    <ButtonLogin />
-    <ButtonLogout />
-  </React.StrictMode>,
-) */

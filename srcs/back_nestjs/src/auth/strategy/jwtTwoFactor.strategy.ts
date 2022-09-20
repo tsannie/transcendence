@@ -16,7 +16,7 @@ export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') 
         },
       ]),
       ignoreExpiration: false,
-      secretOrKey: 'secret', // TODO edit that
+      secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET,
     });
   }
 
