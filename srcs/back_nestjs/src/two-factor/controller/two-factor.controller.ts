@@ -18,8 +18,7 @@ export class TwoFactorController {
   @UseGuards(JwtGuard)
   @Post('auth2fa')
   async auth2fa(@Body() tokenBody: TokenDto, @Request() req) {
-    console.log('HELLO')
-    console.log('auth2fa')
+    console.log('auth2fa: ', tokenBody.token)
     const validToken =  await this.twoFactorService.codeIsValid(tokenBody.token, req.user);
     if (!validToken) {
       throw new UnauthorizedException('Authentication failed - invalid token !');
