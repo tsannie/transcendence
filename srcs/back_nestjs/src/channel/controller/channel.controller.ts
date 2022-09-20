@@ -66,20 +66,20 @@ export class ChannelController {
 
 	//ENTER IN A PUBLIC ROOM, 
 	@UseGuards( AuthGuard('jwt') )
-	@Get( 'joinChannel' )
-	async joinChannel( @Query() query_channel : ChannelDto, @Request() req) {
+	@Post( 'joinChannel' )
+	async joinChannel( @Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.joinChannel(query_channel, req.user);
 	}
 
 	@UseGuards( AuthGuard('jwt') )
-	@Get( 'leaveChannel' )
-	async leaveChannel( @Query() query_channel : ChannelDto, @Request() req) {
+	@Post( 'leaveChannel' )
+	async leaveChannel( @Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.leaveChannel(query_channel, req.user);
 	}
 
 	@UseGuards( AuthGuard('jwt') )
-	@Get( 'deleteChannel' )
-	async deleteChannel(@Query() query_channel : ChannelDto, @Request() req) {
+	@Post( 'deleteChannel' )
+	async deleteChannel(@Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.deleteChannel(query_channel, req.user);
 	}
 
@@ -117,11 +117,6 @@ export class ChannelController {
   	async addFalseUser( @Body() data ){
 		let new_user = await this.channelService.createFalseUser(data.username);
 		return await this.channelService.joinChannel(data.channel, new_user);
-	}
-
-	@Post('password')
-	async comparePassword( @Body() data ){
-		return await this.channelService.checkPassword(data.room_name, data.password);
 	}
 
   //RETURN ALL ROOMS AVAILABLE (PUBLIC/PRIVATE/ETC...)
