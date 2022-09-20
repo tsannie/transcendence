@@ -22,6 +22,14 @@ export default function Channels(props: any) {
 
   // get all channels
   async function getChannels() {
+
+    let userId: number;
+    // get auth profile and put it in user variable
+    await api.get("auth/profile").then((res) => {
+      console.log(res.data);
+      userId = res.data.id;
+    });
+
     //console.log(channelCreated);
     console.log("get channels");
     await api
@@ -31,12 +39,10 @@ export default function Channels(props: any) {
 
         // check if user is owner of channel
         res.data.forEach((channel: any) => {
-          // get all users
-          channel.users.forEach((user: any) => {
-            if (channel.owner.id === user.id) {
-              setIsOwner(true);
-            }
-          });
+          console.log(channel);
+          if (channel.owner.id === userId) {
+            setIsOwner(true);
+          }
         });
       })
       .catch((res) => {
