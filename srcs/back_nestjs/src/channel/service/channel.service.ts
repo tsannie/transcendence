@@ -311,14 +311,18 @@ export class ChannelService {
 
 	
 	async makeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
-	let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins"]);
-	
-	if (channel.owner.username !== user.username)
-		throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
-	if (channel.owner.username === req_channel.target)
-		throw new UnauthorizedException(`Owner ${req_channel.target} is already admin by default of the channel ${channel.name}`)
-	if (channel.admins && channel.admins.find( admin => admin.username === req_channel.target))
-		throw new UnprocessableEntityException("This member is already an admin of this channel.")
+		let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins", "banned", "muted"]);
+		
+		if (channel.owner.username !== user.username)
+			throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
+		if (channel.owner.username === req_channel.target)
+			throw new UnauthorizedException(`Owner ${req_channel.target} is already admin by default of the channel ${channel.name}`);
+		if (channel.admins && channel.admins.find( admin => admin.username === req_channel.target))
+			throw new UnprocessableEntityException("This member is already an admin of this channel.");
+		if (channel.muted && channel.muted.find( muted_guys => muted_guys.username === req_channel.target) )
+			throw new UnprocessableEntityException("Cannot make admin a muted member");
+		if (channel.banned && channel.banned.find( muted_guys => muted_guys.username === req_channel.target) )
+			throw new UnprocessableEntityException("Cannot make admin a banned member");
 		
 		const new_admin = await this.getUser(req_channel.target);
 		if (channel.admins)
