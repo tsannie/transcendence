@@ -17,17 +17,6 @@ export default function App() {
   const [inputSettings, setInputSettings] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
-  const [confirmed2FA, setConfirmed2FA] = useState(false);
-
-  useEffect(() => {
-    if (document.cookie.includes(COOKIE_NAME) && is2FA === true) {
-      api.get('auth/profile').then(res => {
-        setConfirmed2FA(true);
-      }).catch(res => {
-        setConfirmed2FA(false);
-      });
-    }
-  });
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
@@ -37,14 +26,17 @@ export default function App() {
         console.log('invalid jwt');
         document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
       });
-      console.log('is2fa = ' + is2FA);
-      console.log('confirmed2fa = ' + confirmed2FA);
+
+      console.log('is2FA', is2FA);
+
       if (is2FA === false) {
         setIsLogin(true);
-      } else if (is2FA === true && confirmed2FA === false) {
-        setIsLogin(false);
-      } else if (is2FA === true && confirmed2FA === true) {
-        setIsLogin(true);
+      } else if (is2FA === true) {
+        api.get('auth/profile').then(res => {
+          setIsLogin(true);
+        }).catch(res => {
+          setIsLogin(false);
+        });
       }
     }
   });
@@ -68,7 +60,7 @@ export default function App() {
           <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
         }
         {is2FA &&
-          <TwoFactorCode setConfirmed2FA={setConfirmed2FA}/>
+          <TwoFactorCode setIsLogin={setIsLogin}/>
         }
       </Box>
     );

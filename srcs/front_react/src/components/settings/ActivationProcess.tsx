@@ -20,6 +20,10 @@ export default function ActivationProcess(props: any) {
     })
   }
 
+  function timeout(delay: number) {
+    return new Promise( res => setTimeout(res, delay) );
+  }
+
   async function checkToken() {
     await api.post('2fa/check-token', {
       token: token,

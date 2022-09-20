@@ -13,7 +13,7 @@ import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
 
 @Module({
   imports: [
-    JwtModule.register({ secret: 'secret' }), // TODO Why dont work ??
+    JwtModule.register({ secret: process.env.JWT_ACCESS_TOKEN_SECRET }), // TODO Why dont work ??
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     PassportModule,

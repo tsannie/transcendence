@@ -22,7 +22,7 @@ export default function TwoFactorCode(props: any) {
 
     api.post("/2fa/auth2fa", { token: up }).then((res) => {
       console.log('connected');
-      props.setConfirmed2FA(true);
+      props.setIsLogin(true);
     }).catch((res) => {
       console.log('invalid token');
       clearInput();
