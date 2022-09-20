@@ -9,7 +9,7 @@ import { IPayload } from "../models/payload.interface";
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
+      jwtFromRequest: ExtractJwt.fromExtractors([ //TODO add baerer ?
         (request: Request) => {
           console.log('hello')
           const cookie = request?.cookies['AuthToken'];
@@ -22,11 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IPayload) {  // TODO all check for validate jeton
-    console.log('validate')
-    console.log('payloade', payload)
-    //console.log(payload)
-    //console.log( await this.userService.findByName(payload.username));
+  async validate(payload: IPayload) {
     return await this.userService.findById(payload.sub);
   }
 }
