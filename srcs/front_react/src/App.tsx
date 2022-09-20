@@ -48,14 +48,6 @@ export default function App() {
       }
     }
   });
-        //setIs2fa(res.data.isTwoFactor);
-
-  // TODO ask dov what is that ??????
-  /*useEffect(() => {
-    const strIsLogin = JSON.parse(window.localStorage.getItem("isLogin") || "null");
-    //console.log("strislogin = " + strIsLogin)
-    setIsLogin(strIsLogin);
-  }, []);*/
 
   console.log('islogin = ' + isLogin);
 
