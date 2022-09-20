@@ -299,6 +299,7 @@ export class ChannelService {
 			else
 				channel.muted.push(userToMute);
 		}
+		channel.admins = channel.admins.filter( elem => elem.username !== request.target);
 		return await this.channelRepository.save(channel);
 	}
 
@@ -347,7 +348,7 @@ export class ChannelService {
 		{	
 			const filtered = channel.admins.filter( admin => admin.username !== req_channel.target);
 			if (filtered === channel.admins)
-			throw new UnprocessableEntityException("Member is already not an admin");
+				throw new UnprocessableEntityException("Member is already not an admin");
 			else
 			{
 				channel.admins = filtered;
