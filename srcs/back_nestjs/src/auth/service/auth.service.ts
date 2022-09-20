@@ -39,8 +39,8 @@ export class AuthService {
     };
     //console.log('payload', payload)
     const token: IToken = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
-        secret:'secret',    // TODO const
-        expiresIn: '1d'     // TODO const with time of cookie
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,    // TODO const
+        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME     // TODO const with time of cookie
       })
     };
     return token;

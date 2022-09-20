@@ -28,7 +28,7 @@ export class UserService {
     return await this.allUser.findOne(id);
   }
 
-  // TODO DELETE
+  // TODO DELETE unused routes
   async getAllUser(): Promise<UserEntity[]> {
     return await this.allUser.find();
   }
@@ -37,13 +37,13 @@ export class UserService {
     return await this.allUser.clear();
   }
 
-  // turn enabled2FA to false for user
+  // turn enabled2FA to false for user TODO delete in front ??
   async disable2FA(userId: number) {
     return await this.allUser.update(userId, { enabled2FA: false });
   }
 
   // turn enabled2FA to true for user
-  async enable2FA(userId: number) { // TODO update user ?
+  async enable2FA(userId: number) {
     return await this.allUser.update(userId, {enabled2FA: true})
   }
 

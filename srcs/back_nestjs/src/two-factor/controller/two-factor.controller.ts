@@ -26,7 +26,7 @@ export class TwoFactorController {
     const accessToken = await this.authService.getCookie(req.user, true);
     req.res.cookie('AuthToken', accessToken, {
       httpOnly: false,
-      path: '/',  // TODO test with path '/2fa/auth2fa'
+      path: '/',
     });
     return req.user
   }
