@@ -1,14 +1,12 @@
 import { Button, TextField } from "@mui/material";
 import Snackbar from '@mui/material/Snackbar';
 import React, { useEffect, useState } from "react";
-import { api } from "../../userlist/UserListItem";
-import { Alert } from "./Settings";
 import { Buffer } from 'buffer';
+import { api } from "../../const/const";
 
 
 export default function ActivationProcess(props: any) {
   const [token, setToken] = useState("");
-  const [openError, setOpenError] = useState(false);
   const [qrCode, setQrCode] = useState("");
 
   async function getQrCode() {
@@ -30,19 +28,12 @@ export default function ActivationProcess(props: any) {
       props.setTwoFactorA(true);
       props.setEnable2FA(false);
     }).catch(err => {
-      setOpenError(true);
+      props.setOpenError(true);
     })
   }
   const handleClick = () => {
     checkToken();
   };
-
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpenError(false);
-  }
 
   useEffect(() => {
     getQrCode();
@@ -61,12 +52,6 @@ export default function ActivationProcess(props: any) {
       <Button variant="contained" onClick={handleClick}>
         Validate
       </Button>
-
-      <Snackbar open={openError} autoHideDuration={5000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Invalid activation code !
-        </Alert>
-      </Snackbar>
     </div>
   );
 }

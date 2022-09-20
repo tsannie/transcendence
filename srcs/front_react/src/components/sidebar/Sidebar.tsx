@@ -9,7 +9,7 @@ import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
-import { COOKIE_NAME } from "../../const";
+import { COOKIE_NAME } from "../../const/const";
 
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
@@ -21,6 +21,7 @@ export default function Sidebar(props: any) {
   function logout() { // TODO route api logout
     document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
     props.setIsLogin(false);
+    props.setIs2FA(false);
     window.location.reload();
   };
 

@@ -1,7 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { REDIRECT_LINK_AUTH } from "../const";
-import { api } from "../userlist/UserListItem";
+import { REDIRECT_LINK_AUTH } from "../const/const";
 
 export default function ButtonLogin(props: any) {
 
