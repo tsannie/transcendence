@@ -333,9 +333,9 @@ export class ChannelService {
 
 		const new_admin = await this.getUser(req_channel.target);
 		if (channel.admins)
-		channel.admins.push(new_admin);
+			channel.admins.push(new_admin);
 		else
-		channel.admins = [new_admin];
+			channel.admins = [new_admin];
 		return await this.channelRepository.save(channel);
 	}
 
