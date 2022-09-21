@@ -21,36 +21,20 @@ export default function Chat() {
   const [openConv, setOpenConv] = useState(false);
 
   const socket = io("http://localhost:4000", {
-    /* auth: {
-      query: {
-        username: author,
-      },
-    }, */
+
   });
-
-  // to do: creer un tableau de conversations
-
-  /* function createRoom() {
-    if (room !== "") {
-      socket.emit("createRoom", room);
-      console.log(`User join room ${room}`);
-    }
-  } */
 
   async function getUser() {
     console.log("get user");
-    if (document.cookie.includes(COOKIE_NAME)) {
-      await api
-        .get("auth/profile")
-        .then((res) => {
-          setAuthor(res.data.username);
-          setUserId(res.data.id);
-        })
-        .catch((res) => {
-          console.log("invalid jwt");
-          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-        });
-    }
+    await api
+      .get("auth/profile")
+      .then((res) => {
+        setAuthor(res.data.username);
+        setUserId(res.data.id);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+      });
   }
 
   function sendMessage() {
@@ -75,6 +59,7 @@ export default function Chat() {
   }
 
   useEffect(() => {
+    console.log("use effect chat");
     getUser();
   }, []);
 

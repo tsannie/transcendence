@@ -295,7 +295,6 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
-<<<<<<< HEAD
 	async muteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "muted"]);
 		this.verifyHierarchy(channel, requester, request.target);
@@ -304,20 +303,6 @@ export class ChannelService {
 		const userToMute = await this.getUser(request.target);
 		if (!channel.muted)
 			channel.muted = [userToMute];
-=======
-	async banUser(requested_channel: ChannelDto, requester: UserEntity, toBan: string){
-		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users", "baned"]);
-
-		if (channel.owner.username !== requester.username && !channel.admins.find( (admin) => {admin.username === requester.username }))
-			throw new ForbiddenException("Only an admin or owner of the channel can ban other members.");
-		if (channel.owner.username !== requester.username && channel.admins.find( (admin) => { admin.username === toBan }))
-			throw new ForbiddenException("An admin cannot ban another admin.");
-
-		const userToBan = await this.userRepository.findOne( {where: {name: toBan}});
-
-		if (!channel.baned)
-			channel.baned = [userToBan];
->>>>>>> [+] start dm back, fix relation name pbm
 		else
 		{
 			if (channel.muted.find( muted_guys => request.target === muted_guys.username))
