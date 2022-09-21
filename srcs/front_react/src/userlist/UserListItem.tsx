@@ -19,24 +19,24 @@ export default function UserList(props: any) {
   const [users, setUsers] = React.useState<Array<IUser>>([]);
 
   async function getAllUsers() {
-    if (document.cookie.includes(COOKIE_NAME)) {
-      await api
-        .get("user")
-        .then((res) => {
-          setUsers(res.data);
-        })
-        .catch((res) => {
-          console.log("invalid jwt");
-          console.log(res);
-          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-        });
-      }
+    await api
+      .get("user")
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+        console.log(res);
+      });
   }
+
+
+  //TODO: create socket to get new users and update the list
 
   // Similar to componentDidMount and componentDidUpdate
   useEffect(() => {
     getAllUsers();
-  }, [users]);
+  }, []);
 
   // display all users connected in the database
   return (

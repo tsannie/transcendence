@@ -8,9 +8,15 @@ export interface IMessage {
 
 // TODO: add id
 export interface IChannel {
+  [key: string]: any;
   name: string;
   password?: string;
   status: string;
+  owner?: string;
+  users?: string[];
+  admins?: string[];
+  muted?: string[];
+  banned?: string[];
 }
 
 export interface IDm {
