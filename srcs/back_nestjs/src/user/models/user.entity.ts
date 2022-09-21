@@ -47,6 +47,9 @@ export class UserEntity {
   @JoinTable()
   dms?: DmEntity[];
 
+  @Column()
+  banned?: UserEntity[];
+
   // @OneToMany( () => ChannelEntity, (channels) => channels.users )
   // mp_channels: ChannelEntity[]
 }
