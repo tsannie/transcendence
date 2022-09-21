@@ -119,13 +119,16 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  //////////////// CREATE ROOM //////
+  //////////////// CREATE ROOM ///
   ///////////////////////////////////////////////
 
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
+    //console.log("MERRRDE room = [" + room + "]");
     if (room === '') {
       for (const [key, value] of Object.entries(this.roo)) {
+        //console.log("\n value = " + value.room_name);//
+        //console.log("\n co = \n" + value.nbr_co);//
         if (value.fast_play === true && value.nbr_co !==2 && value.nbr_co !==0)
           room = value.room_name;
       }
@@ -312,11 +315,9 @@ export class GameGateway implements OnGatewayInit {
       
       //this.all_game.save(this.roo[room]);
       
-/*         if (this.roo[room].spectator >== 1 && client.id === this.roo[room].p1)
-
-      client.to(room).emit('leftRoom_spec',
-      this.roo[room]);
-    } */
+    if (this.roo[room].spectator >= 1 ) {
+      client.to(room).emit('player_give_upem_spec', this.roo[room]);
+    }
     client.emit('player_give_upem', this.roo[room]);
     client.to(room).emit('player_give_upem', this.roo[room]);
     client.emit('leftRoomEmpty', this.roo[room], client.id);
@@ -421,13 +422,14 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  ////////////////  BALL DATA /
+  ////////////////  BALL DATA //
   ///////////////////////////////////////////////
 
   @SubscribeMessage('sincBall')
   sinc_ball(client: Socket, data: any) {
     var room = data.room;
-
+    if (!this.roo[room])
+      return ;
     if (!this.roo[room].set.ball) {
       this.roo[room].set.ball = new BallEntity();
     }
