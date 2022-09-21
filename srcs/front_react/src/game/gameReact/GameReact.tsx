@@ -175,7 +175,7 @@ export function GamePlayer_Left_right(props: any) {
       render();
   }, [props.canvasRef]);
 
-  function deleteGameRoom_ingame() {
+  function deleteGameRoom_ingame() { 
     console.log("player_left.won ", player_left.won);
     console.log("player_right.won ", player_right.won);
     props.store.setRoom("");
