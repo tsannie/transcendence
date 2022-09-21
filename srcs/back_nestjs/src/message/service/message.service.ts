@@ -12,14 +12,6 @@ export class MessageService {
   constructor(
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
-    private allUsers: UserService,
   ) {}
 
-  // getAllMessages(): Observable<IMessage[]> {
-  //   return from(this.allMessages.find());
-  // }
-
-  // add(message: IMessage): Observable<IMessage> {
-  //   return from(this.allMessages.save(message));
-  // }
 }
