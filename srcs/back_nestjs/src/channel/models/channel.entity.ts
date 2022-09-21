@@ -10,6 +10,7 @@ import {
 
 @Entity()
 export class ChannelEntity extends DmEntity {
+
 	@Column( {nullable: false, unique: true} )
 	name: string;
 
