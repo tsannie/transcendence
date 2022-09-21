@@ -16,7 +16,6 @@ import { from, map, Observable } from 'rxjs';
 import { Socket, Server, Namespace } from 'socket.io';
 import { Repository } from 'typeorm';
 import { MessageEntity } from './models/message.entity';
-import { IMessage } from './models/message.interface';
 import { Adapter } from 'socket.io-adapter';
 import { MessageChannel } from 'worker_threads';
 import { MessageController } from './controller/message.controller';
