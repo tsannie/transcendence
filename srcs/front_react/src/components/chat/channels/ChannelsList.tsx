@@ -1,4 +1,16 @@
-import { Alert, Box, Button, Grid, SvgIcon, TextField } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Popover,
+  SvgIcon,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
 //import { socket } from "../Chat";
@@ -12,8 +24,29 @@ import { LockIcon } from "./LockIcon";
 export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
+  //const [infosChannels, setInfosChannels] = useState<IChannel>({} as IChannel);
+  let infosChannels: Object;
 
-  console.log(props.isOwner);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  function handleClick(
+    channel: IChannel,
+    event: React.MouseEvent<HTMLButtonElement>
+  ) {
+    setAnchorEl(event.currentTarget);
+    infosChannel(channel);
+  }
+
+  function handleClose() {
+    setAnchorEl(null);
+  }
+
+  // TODO: find value with keys string in object
+
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -28,6 +61,28 @@ export default function ChannelsList(props: any) {
     console.log(newChannel);
 
     return newChannel;
+  }
+
+  async function infosChannel(channel: IChannel) {
+
+    await api
+      .get("channel/privateData", {
+        params: {
+          name: channel.name,
+        },
+      })
+      .then((res) => {
+        console.log("channel private data");
+        console.log(res.data);
+        infosChannels = res.data;
+        //setInfosChannels(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid channels private data");
+        // display response error
+        //console.log(res.response.data.message);
+        //console.log(res);
+      });
   }
 
   async function joinChannel(channel: IChannel) {
@@ -114,17 +169,17 @@ export default function ChannelsList(props: any) {
               {channelData.status === "Protected" ? <LockIcon /> : <div></div>}
             </Box>
             <TextField
-                sx={{
-                  minWidth: "15vw",
-                  display: channelData.status === "Protected" ? "block" : "none",
-                }}
-                placeholder="password"
-                type="password"
-                onChange={(event) => {
-                  setChannelPassword(event.target.value);
-                }}
-              >
-            </TextField>
+              sx={{
+                minWidth: "15vw",
+                display: channelData.status === "Protected" ? "block" : "none",
+              }}
+              placeholder="password"
+              type="password"
+              onChange={(event) => {
+                setChannelPassword(event.target.value);
+              }}
+            ></TextField>
+
             <Button
               sx={{
                 ml: "1vh",
@@ -159,6 +214,47 @@ export default function ChannelsList(props: any) {
                 Delete
               </Button>
             )}
+            <Button
+              sx={{
+                color: "black",
+                ml: "1vh",
+              }}
+              onClick={(event) => {
+                handleClick(channelData, event);
+              }}
+            >
+              Infos
+            </Button>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+            >
+              {open && (
+                <List>
+                  <ListItem>
+                    <ListItemText
+                      primary="owner"
+                      //secondary={findValueWithKey(infosChannels, "owner")}
+                    />
+                  </ListItem>
+                  {/* <ListItem>
+                  <ListItemText primary="admins" secondary={findValueWithKey(infosChannels, "admins")} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="banned" secondary={findValueWithKey(infosChannels, "banned")} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="muted" secondary={findValueWithKey(infosChannels, "muted")} />
+                </ListItem> */}
+                </List>
+              )}
+            </Popover>
           </Box>
         );
       })}
