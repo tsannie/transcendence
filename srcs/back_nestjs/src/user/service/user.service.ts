@@ -3,63 +3,68 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { userInfo } from 'os';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
+import { targetDto } from '../dto/target.dto';
 import { UserEntity } from '../models/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private allUser: Repository<UserEntity>,
+	@InjectRepository(UserEntity)
+	private allUser: Repository<UserEntity>,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
-    return await this.allUser.save(user);
+	return await this.allUser.save(user);
   }
 
   // find user by name
   async findByName( username: string, relations_ToLoad : Array<string> = undefined ): Promise<UserEntity> {
-    if (!relations_ToLoad)
-    {
-      return await this.allUser.findOne({
-        username: username,
-      });
-    }
-    else
-    {
-      return await this.allUser.findOne({
-        where: {username: username},
-        relations: relations_ToLoad
-      });
-    }
+	if (!relations_ToLoad)
+	{
+	  return await this.allUser.findOne({
+		username: username,
+	  });
+	}
+	else
+	{
+	  return await this.allUser.findOne({
+		where: {username: username},
+		relations: relations_ToLoad
+	  });
+	}
   }
 
   // find user by id
   async findById(id: number): Promise<UserEntity> {
-    return await this.allUser.findOne(id);
+	return await this.allUser.findOne(id);
   }
 
   // TODO DELETE
   async getAllUser(): Promise<UserEntity[]> {
-    return await this.allUser.find({
+	return await this.allUser.find({
 		relations : ["owner_of", "channels"]
 		}
 	)};
 
   async cleanAllUser(): Promise<void> {
-    return await this.allUser.clear();
+	return await this.allUser.clear();
   }
 
 
   async editUser(){
-    await this.allUser.update(1, {username: "newuser"});
+	await this.allUser.update(1, {username: "newuser"});
   }
 
   // turn enabled2FA to true for user
   async enable2FA(userId: number) { // TODO update user ?
-    return await this.allUser.update(userId, {enabled2FA: true})
+	return await this.allUser.update(userId, {enabled2FA: true})
   }
 
   async setSecret2FA(userId: number, secret: string) {
-    return await this.allUser.update(userId, {secret2FA: secret})
+	return await this.allUser.update(userId, {secret2FA: secret})
+  }
+
+  async banUser(target: string, requester: UserEntity) {
+	return requester;
   }
 }

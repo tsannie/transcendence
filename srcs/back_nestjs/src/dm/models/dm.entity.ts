@@ -13,9 +13,6 @@ export class DmEntity {
 	@ManyToMany( () => UserEntity, (user) => user.channels )
 	users: UserEntity[];
 
-	@Column( { default: true } )
-	isMp: boolean;
-
 	@OneToMany( () => MessageEntity, (message) => message.dm )
 	messages: MessageEntity[];
 }
