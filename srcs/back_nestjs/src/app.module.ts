@@ -34,12 +34,12 @@ import { TwoFactorController } from './two-factor/controller/two-factor.controll
       autoLoadEntities: true, // TODO check that
       synchronize: true,
     }),
-    MessageModule,
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     AuthModule,
     PassportModule,
     ChannelModule,
+    MessageModule,
   ],
   controllers: [AppController, TwoFactorController],
   providers: [

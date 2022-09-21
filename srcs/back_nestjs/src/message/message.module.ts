@@ -9,10 +9,11 @@ import { UserModule } from 'src/user/user.module';
 import { ChannelModule } from 'src/channel/channel.module';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { PrivateMessageEntity } from 'src/channel/models/private_message.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MessageEntity]),
+    TypeOrmModule.forFeature([MessageEntity, PrivateMessageEntity, UserEntity]),
     UserModule,
     ChannelModule
   ],
