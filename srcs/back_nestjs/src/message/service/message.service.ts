@@ -6,7 +6,6 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { MessageEntity } from '../models/message.entity';
-import { IMessage } from '../models/message.interface';
 
 @Injectable()
 export class MessageService {
