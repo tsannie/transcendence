@@ -25,6 +25,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { DmService } from 'src/dm/service/dm.service';
+import { IMessage } from './models/message.interface';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
