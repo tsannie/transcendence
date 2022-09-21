@@ -1,6 +1,6 @@
 import React from "react";
 import ReactCodeInput from "react-verification-code-input";
-import { api } from "../const/const";
+import { api } from "../../const/const";
 import InvalidSnackbar from "./InvalidSnackbar";
 import './twofactor.style.scss'
 
@@ -31,6 +31,7 @@ export default function TwoFactorCode(props: any) {
     });
   };
 
+  //TODO add cancel button
 
   return (
     <div>
