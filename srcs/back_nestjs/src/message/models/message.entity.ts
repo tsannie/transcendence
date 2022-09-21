@@ -1,4 +1,3 @@
-import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
@@ -6,7 +5,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
