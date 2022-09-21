@@ -7,8 +7,11 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
 import { Console } from 'console';
 import { randomUUID } from 'crypto';
+=======
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
 import { Server } from 'http';
 import { from, throwError } from 'rxjs';
 import { Socket } from 'socket.io';
@@ -21,6 +24,16 @@ import {
   SetEntity,
 } from './game_entity/game.entity';
 
+function makeid(length) {
+  var result = '';
+  var characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 @WebSocketGateway({
   namespace: '/game',
@@ -38,6 +51,7 @@ export class GameGateway implements OnGatewayInit {
   private logger: Logger = new Logger('GameGateway');
 
   fast_room = 1;
+
   roo = new Map<string, GameEntity>();
   rooms = new Map<string, number>();
 
@@ -45,6 +59,7 @@ export class GameGateway implements OnGatewayInit {
     this.logger.log('Initialized');
   }
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
   ///////////////////////////////////////////////
   //////////////// SPECTATOR ROOM /////
   ///////////////////////////////////////////////
@@ -70,12 +85,19 @@ export class GameGateway implements OnGatewayInit {
     }
   }
 
+=======
+  //WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!!//
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
 
   @SubscribeMessage('lookAllGameRoom')
   LookRoom(client: Socket, room: string) {
     client.join(room); //
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
     /*     for (const [key, value] of Object.entries(this.roo)) {//////////
+=======
+    /*     for (const [key, value] of Object.entries(this.roo)) {////////
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
       console.log("room found = [" + key + "][" + value.room_name + "]");
   
     } 
@@ -94,6 +116,7 @@ export class GameGateway implements OnGatewayInit {
 
   }
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
   ///////////////////////////////////////////////
   ///////////////////////////////////////////////
 
@@ -122,6 +145,8 @@ export class GameGateway implements OnGatewayInit {
   //////////////// CREATE ROOM ///
   ///////////////////////////////////////////////
 
+=======
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
     //console.log("MERRRDE room = [" + room + "]");
@@ -135,8 +160,7 @@ export class GameGateway implements OnGatewayInit {
       if (!this.roo[room]) {
         var theroom = new GameEntity();
         theroom.fast_play = true;
-        room = randomUUID();
-        
+        room = makeid(4);
         this.roo[room] = theroom;
       }
     }
@@ -170,10 +194,13 @@ export class GameGateway implements OnGatewayInit {
     }
   }
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
   ///////////////////////////////////////////////
   //////////////// LEAVE ROOM /
   ///////////////////////////////////////////////
 
+=======
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
   @SubscribeMessage('leaveGameRoom')
   LeaveRoom(client: Socket, room: string) {
     this.rooms[room] -= 1;
@@ -229,11 +256,14 @@ export class GameGateway implements OnGatewayInit {
       client.to(room).emit('leftbcgiveup'); */
   }
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
   ////////////////////////////////////////////////
   ////////READY AND START GAME ///
   ////////////////////////////////////////////////
 
 
+=======
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
   @SubscribeMessage('readyGameRoom')
   ReadyGame(client: Socket, room: string) {
     const theroom = this.roo[room];
@@ -288,6 +318,7 @@ export class GameGateway implements OnGatewayInit {
     return this.all_game.save(this.roo[room]);
   }
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
 
   ///////////////////////////////////////////////
   //////////////// INGAME ROOM 
@@ -364,6 +395,8 @@ export class GameGateway implements OnGatewayInit {
   //////////////// PADDLE DATA/
   ////////////////////////////////////////////////
 
+=======
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
   @SubscribeMessage('paddleMouvLeft')
   Paddle_mouv_left(client: Socket, data: any) {
     if (!this.roo[data.room]) {
@@ -421,10 +454,13 @@ export class GameGateway implements OnGatewayInit {
     return;
   }
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
   ///////////////////////////////////////////////
   ////////////////  BALL DATA //
   ///////////////////////////////////////////////
 
+=======
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
   @SubscribeMessage('sincBall')
   sinc_ball(client: Socket, data: any) {
     var room = data.room;
@@ -459,10 +495,13 @@ export class GameGateway implements OnGatewayInit {
     client.to(room).emit('sincTheBall', this.roo[room]);
   }
 
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.gateway.ts
   ////////////////////////////////////////////////
   //////////////// Player DATA ///
   ////////////////////////////////////////////////
 
+=======
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
   @SubscribeMessage('playerActyLeft')
   Player_actu_left(client: Socket, data: any) {
     var room = data.room;

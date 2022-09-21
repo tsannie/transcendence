@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, {
   createRef,
   useEffect,
@@ -15,6 +16,26 @@ import { GamePlayer_left } from "./gameReact/GamePlayerLeft";
 import { GamePlayer_right } from "./gameReact/GamePlayerRight";
 import GameCreationSettings from "./gameInitialisation/GameCreationSettings";
 import { GameMenuSpectator } from "./gameSpectator/GameMenuSpectator";
+=======
+import React, { createContext, useContext, useEffect, useRef, useState} from "react";
+import "./Game.css";
+import io from "socket.io-client";
+import { start } from "repl";
+import { render } from "@testing-library/react";
+import data from "./BallMouv";
+import { syncBuiltinESMExports } from "module";
+import {
+  hasSelectionSupport,
+  wait,
+} from "@testing-library/user-event/dist/utils";
+import { resolve } from "path";
+import {The_whole_game, GameStarted_left, GameStarted_right } from "./GameStarted";
+import {GameCreation} from "./GameCreation";
+import {The_whole_spectator, GameSpectator} from "./GameSpectator";
+import GameInit from "./GameInit";
+import { GameWaitReady, The_whole_creation } from "./GameWait";
+import The_whole_delete from "./GameDelete";
+>>>>>>> parent of 5ba09b04... [SAVE] all clean
 
 export const socket = io("http://localhost:4000/game");
 
@@ -32,6 +53,7 @@ export let {
 let x = 0;
 
 export default function Game() {
+    
   const [nbrconnect, setnbrconnect] = useState(0);
   const [room, setRoom] = useState("");
  // const [lookingroom, setLookingRoom] = useState("");
@@ -65,8 +87,8 @@ export default function Game() {
 
     isfull: isfull,
     isinroom: isinroom,
-    imready: imready,
-    opready: opready,
+    imready: imready, 
+    opready: opready, 
     PP_empty: PP_empty,
     gameover: gameover,
     gamestart: gamestart,
@@ -88,11 +110,12 @@ export default function Game() {
     setisLookingRoom: setisLookingRoom,
     setisFull: setisFull,
     setisinroom: setisinroom,
-    setimready: setimready,
-    setopready: setopready,
+    setimready: setimready, 
+    setopready: setopready, 
     setPP_empty: setPP_empty,
     setgameover: setgameover,
     setgamestart: setgamestart,
+<<<<<<< HEAD
   };
 
   ////////////////////////////////////////////////////
@@ -208,6 +231,12 @@ export default function Game() {
       console.log("THIS ROOM IS FULL");
     });
   }, [socket]);
+=======
+    setListGame: setListGame,
+  }
+  
+  The_whole_delete(store);
+>>>>>>> parent of 5ba09b04... [SAVE] all clean
 
   function deleteGameRoom() {
     console.log("deleteGameRoom FROOOONNNNT");
@@ -217,10 +246,15 @@ export default function Game() {
       setisinroom(false);
       setgameover(true);
       setgamestart(false);
+<<<<<<< HEAD
       setimready(false);
       setopready(false);
       setim_right(false);
       
+=======
+
+
+>>>>>>> parent of 5ba09b04... [SAVE] all clean
       ballObj.init_ball_pos = false;
       ballObj.first_col = false;
       setColor_ready("black");
@@ -229,9 +263,10 @@ export default function Game() {
     }
   }
 
-  ////////////////////////////////////////////////////
-  //// REACT GAME
-  ////////////////////////////////////////////////////
+  The_whole_creation(store);
+  The_whole_spectator(store);
+  //Creation_game();
+
 
   //const canvasRef2 = useRef(null);
 /*   const canvasRef = useRef(null);
@@ -239,6 +274,7 @@ export default function Game() {
     The_whole_game(canvasRef);
   } */
 
+<<<<<<< HEAD
   let canvasRef = createRef();
 
   ////////////////////////////////////////////////////
@@ -252,13 +288,30 @@ export default function Game() {
         room={room}
         deleteGameRoom={deleteGameRoom}
         setColor_ready={setColor_ready}
+=======
+  if (gamestart == true && im_right == true) {
+    return (
+        <GameStarted_right setRoom={setRoom} canvasRef={canvasRef}
+        deleteGameRoom={deleteGameRoom} gamestart={gamestart} im_right={im_right}
+        my_id={my_id} op_id={op_id} room={room}/>
+    );
+  } else if (gamestart == true && im_right == false) {
+    return (
+        <GameStarted_left setRoom={setRoom} canvasRef={canvasRef} 
+        deleteGameRoom={deleteGameRoom} gamestart={gamestart} im_right={im_right}
+        my_id={my_id} op_id={op_id} room={room}/>
+    );
+  } else if (nbrconnect == 2 && isinroom) {
+    return (
+        <GameWaitReady my_id={my_id} room={room}
+        deleteGameRoom={deleteGameRoom} setColor_ready={setColor_ready}
+>>>>>>> parent of 5ba09b04... [SAVE] all clean
         color_ready={color_ready}
-        opready={opready}
-        op_id={op_id}
-      />
+        opready={opready} op_id={op_id} />
     );
   } else if (isinroom === true) {
     return (
+<<<<<<< HEAD
       <GameCreationSettings my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
     );
   } else if (islookingroom === true)
@@ -267,5 +320,18 @@ export default function Game() {
     return <GameSpectator store={store} listGame={listGame}  canvasRef={canvasRef}  />
   else {
     return <GameMenu store={store} />;
+=======
+        <GameCreation my_id={my_id} room={room} deleteGameRoom={deleteGameRoom}/>
+    );
+  } else if (islookingroom == true) {
+    return (
+          <GameSpectator store={store}/>
+    );
+  } else {
+    return (
+        <GameInit my_id={my_id} setRoom={setRoom} PP_empty={PP_empty} room={room} isinroom={isinroom} 
+        isfull={isfull} setisLookingRoom={setisLookingRoom} />
+    );
+>>>>>>> parent of 5ba09b04... [SAVE] all clean
   }
 }

@@ -1,13 +1,18 @@
+<<<<<<< HEAD:srcs/front_react/src/game/gameReact/GameReact.tsx
 import { exit } from "process";
 import React, { createRef, useEffect, useRef, useState } from "react";
+=======
+import { Box, Button, TextField } from "@mui/material";
+import React, { useEffect } from "react";
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/front_react/src/game/GameStarted.tsx
 import {
   ballObj,
   paddleProps_left,
   paddleProps_right,
   player_left,
   player_right,
-  socket,
-} from "../Game";
+  socket
+} from "./Game";
 import {
   BallMouv,
   BallCol_right,
@@ -22,6 +27,11 @@ import { GamePlayer_right } from "./GamePlayerRight";
 
 export function GamePlayer_Left_right(props: any) {
 
+<<<<<<< HEAD:srcs/front_react/src/game/gameReact/GameReact.tsx
+=======
+export function The_whole_game(canvasRef: any)
+{
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/front_react/src/game/GameStarted.tsx
   let u = 0;
   useEffect(() => { // TODO EMIT IS SENDING TO MANY TIMES
     socket.on("sincTheBall", (theroom: any) => {
@@ -114,8 +124,13 @@ export function GamePlayer_Left_right(props: any) {
         requestAnimationFrameId = requestAnimationFrame(render);
         let canvas: any = props.canvasRef.current;
         var ctx = null;
+<<<<<<< HEAD:srcs/front_react/src/game/gameReact/GameReact.tsx
         if (canvas)
           ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+=======
+        if (canvas) ctx = canvas.getContext("2d");
+
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/front_react/src/game/GameStarted.tsx
         if (ctx) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           if (player_left.won === false && player_right.won === false) {
@@ -148,12 +163,18 @@ export function GamePlayer_Left_right(props: any) {
             );
             if (ballObj.is_col === true || ballObj.init_ball_pos === false)
               u = 1;
+<<<<<<< HEAD:srcs/front_react/src/game/gameReact/GameReact.tsx
             if (u > 0)
               u++;
             if (u === 12) {
               sinc_ball(props.store.room, ballObj);
               sinc_player_left(props.store.room, player_left);
               sinc_player_right(props.store.room, player_right);
+=======
+            if (u > 0) u++;
+            if (u == 6) {
+              sinc_ball(theroom.room_name, ballObj);
+>>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/front_react/src/game/GameStarted.tsx
               u = 0;
             }
             PaddleMouv_left(ctx, canvas, paddleProps_left);
@@ -219,3 +240,78 @@ export function GamePlayer_Left_right(props: any) {
       />
   ); 
 }
+
+function mouv_paddle_right(e: any, gamestart: any, im_right: any, room: any) {
+  if (
+    gamestart == true &&
+    im_right == true &&
+    player_left.won == false &&
+    player_right.won == false
+  ) {
+    paddleProps_right.y = e.clientY - paddleProps_right.width / 2 - 15;
+    var data = {
+      room: room,
+      pd: paddleProps_right,
+    };
+    socket.emit("paddleMouvRight", data);
+  }
+}
+
+function mouv_paddle_left(e: any, gamestart: any, im_right: any, room: any) {
+  if (
+    gamestart == true &&
+    im_right == false &&
+    player_left.won == false &&
+    player_right.won == false
+  ) {
+    paddleProps_left.y = e.clientY - paddleProps_left.width / 2 - 15;
+    var data = {
+      room: room,
+      pd: paddleProps_left,
+    };
+    socket.emit("paddleMouvLeft", data);
+  }
+}
+
+export function GameStarted_right(props: any) {
+
+
+  return (
+    <div className="readyGame">
+      <canvas
+        id="canvas"
+        ref={props.canvasRef}
+        height="500px"
+        width={1000}
+        onMouseMove={(e) => mouv_paddle_right(e, props.gamestart, props.im_right, props.room)}
+        style={{ backgroundColor: "black" }}
+      ></canvas>
+
+      <h1 style={{ color: "blue" }}> you are : {props.my_id} </h1>
+      <h2 style={{ color: "red" }}> opponent is : {props.op_id} </h2>
+      <button onClick={props.deleteGameRoom}>leave room {props.room}</button>
+    </div>
+  );
+};
+
+export function GameStarted_left(props: any) {
+
+
+  return (
+    <div className="readyGame">
+      <canvas
+        id="canvas"
+        ref={props.canvasRef}
+        height="500px"
+        width={1000}
+        onMouseMove={(e) => mouv_paddle_left(e, props.gamestart, props.im_right, props.room)}
+        style={{ backgroundColor: "black" }}
+      ></canvas>
+
+      <h1 style={{ color: "blue" }}> you are : {props.my_id} </h1>
+      <h2 style={{ color: "red" }}> opponent is : {props.op_id} </h2>
+      <button onClick={props.deleteGameRoom}>leave room {props.room}</button>
+    </div>
+  );
+}
+ 
