@@ -1,6 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
+
+//  Entity of the Ball in game
+
 export class BallEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: number;
@@ -54,8 +57,10 @@ export class BallEntity {
   right: boolean = true;
 }
 
+// Entity of the Paddle in game
+
 @Entity()
-export class PadleEntity {
+export class PaddleEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: number;
 
@@ -75,6 +80,9 @@ export class PadleEntity {
   color: string = 'white';
 }
 
+// Entity of the Players
+
+
 @Entity()
 export class PlayerEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -90,6 +98,8 @@ export class PlayerEntity {
   won: boolean;
 }
 
+// Entity of the Actual Set
+
 @Entity()
 export class SetEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -102,10 +112,10 @@ export class SetEntity {
   ball: BallEntity;
 
   @Column('jsonb', { nullable: true })
-  p1_padle_obj?: PadleEntity;
+  p1_padle_obj?: PaddleEntity;
 
   @Column('jsonb', { nullable: true })
-  p2_padle_obj?: PadleEntity;
+  p2_padle_obj?: PaddleEntity;
 
   @Column('jsonb', { nullable: true })
   set_p1: PlayerEntity;
@@ -119,6 +129,8 @@ export class SetEntity {
   @Column({ nullable: true })
   score_p2: number;
 }
+
+// Entity of the whole Game Room status
 
 @Entity()
 export class GameEntity {
@@ -136,12 +148,6 @@ export class GameEntity {
 
   @Column({ nullable: true })
   nbr_co: number;
-
-  @Column('boolean', { default: false })
-  gave_up: boolean;
-
-  @Column('boolean', { default: 0 })
-  spectator: number = 0;
 
   @Column({ nullable: true })
   p1?: string;

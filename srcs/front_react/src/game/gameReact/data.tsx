@@ -44,14 +44,14 @@ export default {
   },
 
   player_left: {
-    name: "data_null",
+    name: "phbarrad",
     lives: 5,
     score: 0,
     toutch: 0,
     won: false,
   },
   player_right: {
-    name: "data_null",
+    name: "ddjian",
     lives: 5,
     score: 0,
     toutch: 0,

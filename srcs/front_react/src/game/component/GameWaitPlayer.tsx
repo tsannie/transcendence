@@ -1,6 +1,9 @@
 import { socket } from "../Game";
 
 export function GameWaitPlayerReady(props: any) {
+
+  // 2nd Validation for start game // Players should be both ready
+
   function ReadyGame() {
     props.setColor_ready("green");
     socket.emit("readyGameRoom", props.room);

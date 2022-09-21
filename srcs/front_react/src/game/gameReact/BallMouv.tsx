@@ -1,63 +1,3 @@
-export default {
-  ballObj: {
-    x: 500,
-    y: 250,
-
-    init_ball_pos: false,
-    first_col: false,
-
-    rad: 10,
-    speed: 10,
-    right: true,
-    down: true,
-    is_col: false,
-
-    init_x: 500,
-    init_y: 250,
-
-    init_dx: 4,
-    init_dy: 6,
-
-    init_first_dx: 1,
-    init_first_dy: 2,
-
-    first_dx: 1,
-    first_dy: 2,
-
-    ingame_dx: 4,
-    ingame_dy: 6,
-  },
-
-  paddleProps_left: {
-    height: 100,
-    width: 20,
-    color: "white",
-    x: 100,
-    y: 5,
-  },
-  paddleProps_right: {
-    height: 100,
-    width: 20,
-    color: "white",
-    x: 1000 - 20 - 100,
-    y: 5,
-  },
-
-  player_left: {
-    name: "phbarrad",
-    lives: 5,
-    score: 0,
-    toutch: 0,
-    won: false,
-  },
-  player_right: {
-    name: "ddjian",
-    lives: 5,
-    score: 0,
-    toutch: 0,
-    won: false,
-  },
-};
 
 export function draw_line(
   ctx: any,
@@ -76,19 +16,7 @@ export function draw_line(
   ctx.fill();
 }
 
-
-export function draw_loading(
-  ctx: any,
-  canvas_height: number,
-  canvas_width: number
-) {
-  ctx.beginPath();
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "red";
-  ctx.textAlign = "center";
-  ctx.fillText("Loading...", canvas_width / 2, canvas_height / 2);
-}
-
+// Function display the score of the players
 
 export function draw_score(
   ctx: any,
@@ -104,20 +32,24 @@ export function draw_score(
   ctx.textAlign = "center";
 
   ctx.fillText(
-    player_left.score.toString() +
+    player_left.name +
+      " " +
+      player_left.score.toString() +
       "     " +
-    player_right.score.toString(),
+      player_right.name +
+      " " +
+      player_right.score.toString(),
     canvas_width / 2,
     canvas_height / 4
   );
 
-  if (player_left.won == 1)
+  if (player_left.won === 1)
     ctx.fillText(
       player_left.name + " WON !!!",
       canvas_width / 2,
       canvas_height / 2
     );
-  else if (player_right.won == 1)
+  else if (player_right.won === 1)
     ctx.fillText(
       player_right.name + " WON !!!",
       canvas_width / 2,
@@ -125,6 +57,8 @@ export function draw_score(
     );
   ctx.fill();
 }
+
+// Function for the mouvement of the ball
 
 export function BallMouv(
   ctx: any,
@@ -135,12 +69,7 @@ export function BallMouv(
   let data = new Ball(ballObj.x, ballObj.y, ballObj.rad);
   data.draw(ctx);
 
-<<<<<<< HEAD:srcs/front_react/src/game/BallMouv.tsx
   if (ballObj.init_ball_pos === false) {
-    console.log("init_ball_pos");
-=======
-  if (ballObj.init_ball_pos == false) {
->>>>>>> parent of dcc6d3c7... [SAVE] clean code:srcs/front_react/src/game/gameReact/BallMouv.tsx
     ballObj.init_dx *= -1;
     ballObj.init_first_dx *= -1;
 
@@ -156,21 +85,12 @@ export function BallMouv(
     ballObj.init_ball_pos = true;
   }
 
-<<<<<<< HEAD:srcs/front_react/src/game/BallMouv.tsx
   if (ballObj.first_col === false) {
-    //console.log("ballObj.x : " + ballObj.first_dx);
-    //console.log("ballObj.y : " + ballObj.first_dy);
-=======
-  if (ballObj.first_col == false) {
->>>>>>> parent of dcc6d3c7... [SAVE] clean code:srcs/front_react/src/game/gameReact/BallMouv.tsx
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
   } else {
-    //console.log("ingame col");
     ballObj.x += ballObj.ingame_dx;
     ballObj.y += ballObj.ingame_dy;
-    //console.log("ballObj.x : " + ballObj.ingame_dx);
-    //console.log("ballObj.y : " + ballObj.ingame_dy);
   }
 
   if (
@@ -181,6 +101,8 @@ export function BallMouv(
     ballObj.ingame_dy *= -1;
   }
 }
+
+// Function for the collision of the ball with the left paddle
 
 export function BallCol_left(
   ctx: any,
@@ -194,7 +116,7 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
-  } else if (player_right.score >= 12) {
+  } else if (player_right.score >= 10) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -214,9 +136,10 @@ export function BallCol_left(
     ballObj.ingame_dx *= -1;
 
     ballObj.is_col = true;
-  } else
-    ballObj.is_col = false;
+  } else ballObj.is_col = false;
 }
+
+// Function for the collision of the ball with the right paddle
 
 export function BallCol_right(
   ctx: any,
@@ -230,7 +153,7 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
-  } else if (player_left.score >= 12) {
+  } else if (player_left.score >= 100) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -252,8 +175,7 @@ export function BallCol_right(
     ballObj.ingame_dy = -res;
     ballObj.ingame_dx *= -1;
     ballObj.is_col = true;
-  } else
-    ballObj.is_col = false;
+  } else ballObj.is_col = false;
 }
 
 class Ball {
@@ -276,6 +198,8 @@ class Ball {
     ctx.stroke();
   }
 }
+
+// Function for the mouvement of the left paddle
 
 export function PaddleMouv_left(ctx: any, canvas: any, paddleProps: any) {
   class Paddle {
@@ -310,6 +234,8 @@ export function PaddleMouv_left(ctx: any, canvas: any, paddleProps: any) {
   else if (paddleProps.y + paddleProps.height >= canvas.height)
     paddleProps.y = canvas.height - paddleProps.height;
 }
+
+// Function for the mouvement of the right paddle
 
 export function PaddleMouv_right(ctx: any, canvas: any, paddleProps: any) {
   class Paddle {

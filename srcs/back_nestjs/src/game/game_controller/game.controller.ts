@@ -11,14 +11,9 @@ export class GameController {
     return this.gameService.findAll();
   }
 
-  @Get('/game_to_spec')
-  spec(): Promise<GameEntity[]> {
-    return this.gameService.findAll();
-  }
-
   @Get('/del')
   detail() {
-    for (let x = -10; x < 300; x++)
+    for (let x = 0; x < 1000; x++)
       this.gameService.deleteUser(x);
   }
 }
