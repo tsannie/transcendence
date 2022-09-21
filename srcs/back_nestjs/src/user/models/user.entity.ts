@@ -10,7 +10,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-//import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class UserEntity {
@@ -46,7 +45,8 @@ export class UserEntity {
   @JoinTable()
   dms?: DmEntity[];
 
-  @Column()
+  @ManyToMany( () => UserEntity)
+  @JoinTable()
   banned?: UserEntity[];
 
   // @OneToMany( () => ChannelEntity, (channels) => channels.users )
