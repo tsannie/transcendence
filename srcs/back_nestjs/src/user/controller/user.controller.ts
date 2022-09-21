@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Header, Post } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { Body, Controller, Delete, Get, Header, Post, Request, UseGuards } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
+import { targetDto } from '../dto/target.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -20,6 +21,12 @@ export class UserController {
   @Get('edit')
   async editUsername() {
     return await this.userService.editUser();
+  }
+
+	@UseGuards( AuthGuard('jwt') )
+  @Post("banUser")
+  async banUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
+    return await this.userService.banUser(body.target, req.user);
   }
 
 }

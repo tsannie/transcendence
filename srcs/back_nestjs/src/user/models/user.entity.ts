@@ -1,4 +1,3 @@
-import { Channel } from 'diagnostics_channel';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import {

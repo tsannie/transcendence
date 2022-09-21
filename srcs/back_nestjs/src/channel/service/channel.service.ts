@@ -116,7 +116,6 @@ export class ChannelService {
 		newChannel.name = channel.name;
 		newChannel.status = channel.status;
 		newChannel.owner = user;
-		newChannel.isMp = false;
 		if (channel.status === "Protected" && channel.password) {
 			newChannel.password = await this.hashPassword(channel.password);
 		}
