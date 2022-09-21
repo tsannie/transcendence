@@ -1,19 +1,21 @@
 import {
-  Body,
   Catch,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  NotAcceptableException,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { from, Observable } from 'rxjs';
 import { UserEntity } from 'src/user/models/user.entity';
-import { MetadataAlreadyExistsError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import * as bcrypt from 'bcrypt';
 import { ChannelDto } from '../dto/channel.dto';
+import { ChannelActionsDto } from '../dto/channelactions.dto';
+import { UserService } from 'src/user/service/user.service';
+import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 
 @Injectable()
 @Catch()
@@ -22,16 +24,27 @@ export class ChannelService {
 	@InjectRepository(ChannelEntity)
 	private channelRepository: Repository<ChannelEntity>,
 
+	private readonly userService: UserService,
+		
 	@InjectRepository(UserEntity)
 	private userRepository: Repository<UserEntity>,
 	) {}
 
-	getAllChannels() : Observable<ChannelEntity[]> {
-		return from(this.channelRepository.find(
+	async getAllChannels() : Promise<ChannelEntity[]> {
+		return await this.channelRepository.find(
 			{
 			relations: ["owner", "users"],
 			},
-			));
+			);
+	}
+
+	async getPrivateData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+		const channel = await this.getChannel(query_channel.name, ["owner", "users", "admins", "banned", "muted"]);
+		
+		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
+			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
+		//ADD HERE VERIFICATION OF CREDENTIALS, VIA USER.CHANNEL or USER.OWNER_OF
+		return channel;
 	}
 
 
@@ -40,13 +53,21 @@ export class ChannelService {
   	redundancy if it happens
  */
 	async saveChannel(newChannelEntity : ChannelEntity) : Promise<void | ChannelEntity>{
-		return await this.channelRepository.save(newChannelEntity).catch( (e) => {
+		return await this.channelRepository.save(newChannelEntity).catch( e => {
 			if (e.code === "23505")
 				throw new UnprocessableEntityException("Name of Server already exist. Choose another one.");
 			else
 				console.log(e)
 				throw new InternalServerErrorException("Saving of new Channel failed.");
 			});
+	}
+
+	async getUser(username : string, inputed_relations : Array<string> = undefined) : Promise<UserEntity> {
+		const user = await this.userService.findByName(username, inputed_relations);
+
+		if (!user)
+			throw new UnprocessableEntityException(`Cannot find ${username} in database to process`);
+		return user;
 	}
 
 	async getChannel(channel_name : string, inputed_relations : Array<string> = undefined) : Promise<ChannelEntity> {
@@ -76,17 +97,19 @@ export class ChannelService {
 	}
 
 	//THIS FUNCTION COMPARE INPUTED PASSWORD WITH THE ONE STORED IN DATABASE
-	async checkPassword(password : string, room_name : string)
+	async checkPassword(inputed_password : string, channel_password: string)
 	{
-		let channel = await this.channelRepository.findOne( {
-			where: {
-				name : room_name
-			}
-		})
-		if (await bcrypt.compare(password, channel.password))
+		if (!inputed_password)
+			throw new UnauthorizedException("No password inputed");
+
+		if (await bcrypt.compare(inputed_password, channel_password))
 			return true;
 		else
-			return false;
+			throw new UnauthorizedException("Wrong Password.");
+	}
+
+	async hashPassword(inputed_password: string) : Promise<any> {
+		return await bcrypt.hash(inputed_password, await bcrypt.genSalt())
 	}
 
 	//THIS FUNTION CREATE A NEW CHANNEL USING A DTO THAT FRONT SEND US
@@ -96,49 +119,201 @@ export class ChannelService {
 		newChannel.name = channel.name;
 		newChannel.status = channel.status;
 		newChannel.owner = user;
+		newChannel.isMp = false;
 		if (channel.status === "Protected" && channel.password) {
-			newChannel.password = await bcrypt.hash(channel.password, await bcrypt.genSalt());
+			newChannel.password = await this.hashPassword(channel.password);
 		}
 		return await this.saveChannel(newChannel);
 	}
 
   async leaveChannel(requested_channel: ChannelDto, user: UserEntity) {
-		let channel = await this.getChannel(requested_channel.name, ["users"]);
-		console.log("channel = ", channel, "\nchannel.users = ", channel.users);
-		if (channel.users){
-			channel.users = channel.users.filter( (channel_users) => { channel_users.username !== user.username } );
-			await this.channelRepository.save(channel);
+		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users"]);
+		
+		if (channel.owner.username === user.username)
+		{
+			if (channel.admins && channel.admins[0])
+			{
+				channel.owner = channel.admins[0];
+				channel.admins = channel.admins.filter(channel_admins => channel_admins.username !== channel.admins[0].username );
+				channel.users = channel.users.filter(channel_users => channel_users.username !== channel.users[0].username );
+			}
+			else if (channel.users && channel.users[0])
+			{
+				channel.owner = channel.users[0];
+				channel.users = channel.users.filter(channel_users =>  channel_users.username !== channel.users[0].username );
+			}
+			else
+				return await this.deleteChannel(requested_channel, user);
 		}
+		if (channel.admins && channel.admins.find( admins => admins.username === user.username))
+			channel.admins = channel.admins.filter( channel_admins => channel_admins.username !== user.username )
+		if (channel.users && channel.users.find( users => users.username === user.username))
+			channel.users = channel.users.filter( channel_users =>  channel_users.username !== user.username );
+		await this.channelRepository.save(channel);
 	}
 
-	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<void | ChannelEntity> {
+	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		let channel = await this.getChannel(requested_channel.name, ["owner"]);
-		if (channel.owner.username === user.username)
+		if (channel.owner.username !== user.username)
+			throw new ForbiddenException("Only the owner of the channel can delete the channel.");
+		else
 			return await this.channelRepository.remove(channel);
 	}
 
-	async joinChannel(requested_channel: ChannelDto, user: UserEntity) {
-		console.log("requested_channel = ", requested_channel);
-		let channel = await this.getChannel(requested_channel.name);
-		if (user.channels && user.channels.find( ( elem ) => elem === channel ))
-			throw new UnprocessableEntityException("User is already a member of the channel.")
+	async joinChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+		let channel = await this.getChannel(requested_channel.name, ["owner", "users", "banned"]);
+		
+		this.verifyBanned(channel, user.username);
 
-			if (channel.status === 'Public') {
-			return (await this.joinPublicChannels(user, channel));
+		if ((channel.users && channel.users.find( elem => elem.username === user.username )) 
+			|| (channel.owner.username === user.username))
+			throw new UnprocessableEntityException("User is already member or owner of the channel.")
+
+		if (channel.status === 'Protected') {
+			return await this.joinProtectedChannels(requested_channel.password, user, channel);
+		} 
+		else 
+			return await this.joinPublicChannels(user, channel);
+	}
+
+	async addPassword(channel_requested: ChannelPasswordDto, user: UserEntity) : Promise<ChannelEntity> {
+		let channel = await this.getChannel(channel_requested.name, ["owner"]);
+
+		if (channel.owner.username !== user.username)
+			throw new ForbiddenException("Only the owner of the channel can add a password");
+		else
+		{
+			if (channel.status === "Protected")
+				await this.checkPassword(channel_requested.current_password, channel.password);
+			channel.status = "Protected";
+			channel.password = await this.hashPassword(channel_requested.new_password);
 		}
-		else if (channel.status === 'Private') {
-			this.joinPrivateChannels();
+		return await this.channelRepository.save(channel);
+	}
+
+	async deletePassword(channel_requested: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+		let channel = await this.getChannel(channel_requested.name, ["owner"]);
+
+		if (channel.owner.username !== user.username)
+			throw new ForbiddenException("Only the owner of the channel can delete a password");
+		else
+		{
+			if (channel.status === "Private" || channel.status === "Public")
+				throw new UnprocessableEntityException(`Cannot perform that action of this server type: ${channel.status}`)
+			if (await this.checkPassword(channel_requested.password, channel.password))
+			{	
+				channel.status = "Public";
+				channel.password = undefined;
+			}
 		}
-		else if (channel.status === 'Protected') {
-			this.joinProtectedChannels();
-		}
-		else {
-			console.log('error');
+		return await this.channelRepository.save(channel);
+	}
+
+	verifyHierarchy(channel : ChannelEntity, requester : UserEntity, targeted_user: string){
+		if (requester.username === targeted_user)
+			throw new ForbiddenException("Cannot apply this action to yourself");
+		if (channel.owner.username !== requester.username)
+		{
+			if ( !channel.admins.find( admin => admin.username === requester.username ))
+				throw new ForbiddenException("Only an admin or owner of the channel can ban/unban other members.");
+			if ( channel.admins.find( admin =>  admin.username === targeted_user ) || channel.owner.username === targeted_user )
+				throw new ForbiddenException("An admin cannot ban/unban another admin or owner.");
 		}
 	}
 
+	verifyIfMember(channel: ChannelEntity, target: string) : boolean {
+		if (!channel.users || !channel.users.find( elem => elem.username === target))
+			throw new UnprocessableEntityException(`${target} is not a member of ${channel.name}`)
+		return true;
+	}
+
+	verifyBanned(channel : ChannelEntity, target: string) {
+		if (channel.banned && channel.banned.find( banned_guy => banned_guy.username === target))
+			throw new ForbiddenException(`${target} is banned from ${channel.name}`);
+	}
+
+	verifyMuted(channel : ChannelEntity, target: string) {
+		if (channel.muted && channel.muted.find( muted_guy => muted_guy.username === target))
+			throw new ForbiddenException(`${target} is muted.`);
+	}
+
+	async unBanUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
+		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
+		this.verifyHierarchy(channel, requester, request.target);
+		this.verifyIfMember(channel, request.target);
+
+		if (!channel.banned)
+			throw new UnprocessableEntityException(`${request.target} is not banned.`);
+		else
+		{
+			const res = channel.banned.find( user => user.username === request.target );
+			if (!res)
+				throw new UnprocessableEntityException(`${request.target} is not banned.`);
+			else
+				channel.banned = channel.banned.filter( banned_user => banned_user.username !== request.target);
+		}
+		return await this.channelRepository.save(channel);
+	}
+
+	async banUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
+		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
+		this.verifyHierarchy(channel, requester, request.target);
+		this.verifyIfMember(channel, request.target);
+		
+		const userToBan = await this.getUser(request.target);
+		if (!channel.banned)
+			channel.banned = [userToBan];
+		else
+		{
+			if (channel.banned.find( banned_guys => request.target === banned_guys.username))
+				throw new UnprocessableEntityException(`${userToBan.username} is already banned`);
+			else
+				channel.banned.push(userToBan);
+		}
+		channel.admins = channel.admins.filter( admin => admin.username !== request.target );
+		channel.users = channel.users.filter( user => user.username !== request.target );
+		return await this.channelRepository.save(channel);
+	}
+
+	async unMuteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
+		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "muted"]);
+		this.verifyHierarchy(channel, requester, request.target);
+		this.verifyIfMember(channel, request.target);
+
+		const userToUnMute = await this.getUser(request.target);
+		if (!channel.muted)
+			throw new UnprocessableEntityException(`${request.target} is not muted.`);
+		else
+		{
+			const res = channel.muted.find( user => user.username === request.target);
+			if (!res)
+				throw new UnprocessableEntityException(`${request.target} is not muted.`);
+			else
+				channel.muted = channel.muted.filter( muted_users => muted_users.username !== request.target);
+		}
+		return await this.channelRepository.save(channel);
+	}
+
+	async muteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
+		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "muted"]);
+		this.verifyHierarchy(channel, requester, request.target);
+		this.verifyIfMember(channel, request.target);
+
+		const userToMute = await this.getUser(request.target);
+		if (!channel.muted)
+			channel.muted = [userToMute];
+		else
+		{
+			if (channel.muted.find( muted_guys => request.target === muted_guys.username))
+				throw new UnprocessableEntityException(`${userToMute.username} is already muted`);
+			else
+				channel.muted.push(userToMute);
+		}
+		channel.admins = channel.admins.filter( elem => elem.username !== request.target);
+		return await this.channelRepository.save(channel);
+	}
+
 	async joinPublicChannels(user : UserEntity, channel : ChannelEntity): Promise<ChannelEntity> {
-		console.log('public channels');
 		if (channel.users)
 			channel.users.push(user);
 		else
@@ -146,10 +321,58 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
-  joinPrivateChannels(): void {
-    console.log('private channels');
-  }
-  joinProtectedChannels(): void {
-    console.log('protected channels');
-  }
+	async joinProtectedChannels(password: string, user: UserEntity, channel: ChannelEntity) : Promise<ChannelEntity> {
+		if (await this.checkPassword(password, channel.password))
+			return await this.joinPublicChannels(user, channel);
+	}
+	
+	async makeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
+		let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins", "banned", "muted", "users"]);
+		
+		if (channel.owner.username !== user.username)
+			throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
+		if (channel.owner.username === req_channel.target)
+			throw new UnauthorizedException(`Owner ${req_channel.target} is already admin by default of the channel ${channel.name}`);
+		if (channel.admins && channel.admins.find( admin => admin.username === req_channel.target))
+			throw new UnprocessableEntityException("This member is already an admin of this channel.");
+		this.verifyIfMember(channel, req_channel.target);
+		this.verifyMuted(channel, req_channel.target);
+		
+		if (channel.muted && channel.muted.find( muted_guys => muted_guys.username === req_channel.target) )
+			throw new UnprocessableEntityException("Cannot make admin a muted member");
+
+		const new_admin = await this.getUser(req_channel.target);
+		if (channel.admins)
+			channel.admins.push(new_admin);
+		else
+			channel.admins = [new_admin];
+		return await this.channelRepository.save(channel);
+	}
+
+	async revokeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
+		let channel = await this.getChannel(req_channel.channel_name, ["owner", "users", "admins"]);
+		this.verifyIfMember(channel, req_channel.target);
+
+		if (channel.owner.username !== user.username)
+			throw new UnauthorizedException(`Only owner of channel can revoke administration rights of ${req_channel.target}`);
+		if (channel.admins)
+		{
+			const filtered = channel.admins.filter( admin => admin.username !== req_channel.target);
+			if (filtered === channel.admins)
+				throw new UnprocessableEntityException("Member is already not an admin");
+			else
+			{
+				channel.admins = filtered;
+				return await this.channelRepository.save(channel);
+			}
+		}
+	}
+	//DELETEMEAFTERTESTING :
+	async createFalseUser(username : string) : Promise<UserEntity>{
+		const user = new UserEntity();
+		user.username = username;
+		user.email = username + "@student.42.fr";
+		await this.userRepository.save(user);
+		return await this.getUser(username, ["channels"]);
+	}
 }

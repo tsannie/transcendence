@@ -17,10 +17,20 @@ export class UserService {
   }
 
   // find user by name
-  async findByName(username: string): Promise<UserEntity> {
-    return await this.allUser.findOne({
-      username: username,
-    });
+  async findByName( username: string, relations_ToLoad : Array<string> = undefined ): Promise<UserEntity> {
+    if (!relations_ToLoad)
+    {
+      return await this.allUser.findOne({
+        username: username,
+      });
+    }
+    else
+    {
+      return await this.allUser.findOne({
+        where: {username: username},
+        relations: relations_ToLoad
+      });
+    }
   }
 
   // find user by id
