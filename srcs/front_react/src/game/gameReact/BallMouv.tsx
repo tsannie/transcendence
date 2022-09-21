@@ -16,6 +16,20 @@ export function draw_line(
   ctx.fill();
 }
 
+
+export function draw_loading(
+  ctx: any,
+  canvas_height: number,
+  canvas_width: number
+) {
+  ctx.beginPath();
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText("Loading...", canvas_width / 2, canvas_height / 2);
+}
+
+
 export function draw_score(
   ctx: any,
   player_left: any,
@@ -30,13 +44,9 @@ export function draw_score(
   ctx.textAlign = "center";
 
   ctx.fillText(
-    player_left.name +
-      " " +
-      player_left.score.toString() +
+    player_left.score.toString() +
       "     " +
-      player_right.name +
-      " " +
-      player_right.score.toString(),
+    player_right.score.toString(),
     canvas_width / 2,
     canvas_height / 4
   );
@@ -66,6 +76,7 @@ export function BallMouv(
   data.draw(ctx);
 
   if (ballObj.init_ball_pos === false) {
+    console.log("init_ball_pos");
     ballObj.init_dx *= -1;
     ballObj.init_first_dx *= -1;
 
@@ -82,11 +93,16 @@ export function BallMouv(
   }
 
   if (ballObj.first_col === false) {
+    //console.log("ballObj.x : " + ballObj.first_dx);
+    //console.log("ballObj.y : " + ballObj.first_dy);
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
   } else {
+    //console.log("ingame col");
     ballObj.x += ballObj.ingame_dx;
     ballObj.y += ballObj.ingame_dy;
+    //console.log("ballObj.x : " + ballObj.ingame_dx);
+    //console.log("ballObj.y : " + ballObj.ingame_dy);
   }
 
   if (
@@ -110,7 +126,7 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
-  } else if (player_right.score >= 10) {
+  } else if (player_right.score >= 12) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -130,7 +146,8 @@ export function BallCol_left(
     ballObj.ingame_dx *= -1;
 
     ballObj.is_col = true;
-  } else ballObj.is_col = false;
+  } else
+    ballObj.is_col = false;
 }
 
 export function BallCol_right(
@@ -145,7 +162,7 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
-  } else if (player_left.score >= 100) {
+  } else if (player_left.score >= 12) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -167,7 +184,8 @@ export function BallCol_right(
     ballObj.ingame_dy = -res;
     ballObj.ingame_dx *= -1;
     ballObj.is_col = true;
-  } else ballObj.is_col = false;
+  } else
+    ballObj.is_col = false;
 }
 
 class Ball {

@@ -6,8 +6,9 @@ export default function GameMenu(props: any) {
   function StartGame(rom: string) {
     socket.emit("startGameRoom", rom);
   }
-
+  
   useEffect(() => {
+    
     socket.on("readyGame", (theroom: any) => {
       props.store.setColor_ready("green");
       if (
@@ -25,6 +26,9 @@ export default function GameMenu(props: any) {
         StartGame(theroom.room_name);
         props.store.setgamestart(true);
       }
+
+
+
     });
 
     socket.on("joinedRoom", (theroom: any) => {
@@ -45,8 +49,9 @@ export default function GameMenu(props: any) {
   }, [socket]);
 
   function lookAtAllGameRoom() {
+    console.log("LOOK AT ALL GAME ROOM !!!!");
     props.store.setisLookingRoom(true);
-    socket.emit("lookAllGameRoom", "lookroom");
+    //socket.emit("lookAllGameRoom", "lookroom");
   }
 
   function createGameRoom() {
@@ -88,25 +93,10 @@ export default function GameMenu(props: any) {
 
       <h4>
         REGARDER une partie :
-        <button onClick={lookAtAllGameRoom}>regarder la partie</button>{" "}
+        <button onClick={lookAtAllGameRoom}>regarder la partie</button>
       </h4>
 
-      {
-        // WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!! ----------
-        /*       <p> La partie dans la room :  "{listGame}"" + "{listGame[0]}" + "{listGame[1]}" + "{listGame[2]}"
-      <button onClick={createFastGameRoom}>regarder la partie</button>
-      </p>
-      
-      {listGame.map((element, index) => {
-      return (
-        <div key={index}>
-          <p>partie : "{element}" <button onClick={createFastGameRoom}>regarder la partie</button>
-          </p>
-        </div>
-      );
-      })} */
-        // WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!! ----------
-      }
+  
     </div>
   );
 }

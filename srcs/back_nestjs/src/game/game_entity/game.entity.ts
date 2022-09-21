@@ -137,6 +137,12 @@ export class GameEntity {
   @Column({ nullable: true })
   nbr_co: number;
 
+  @Column('boolean', { default: false })
+  gave_up: boolean;
+
+  @Column('boolean', { default: 0 })
+  spectator: number = 0;
+
   @Column({ nullable: true })
   p1?: string;
 
