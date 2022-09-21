@@ -23,7 +23,7 @@ import { GamePlayer_right } from "./GamePlayerRight";
 export function GamePlayer_Left_right(props: any) {
 
   let u = 0;
-  useEffect(() => {
+  useEffect(() => { // TODO EMIT IS SENDING TO MANY TIMES
     socket.on("sincTheBall", (theroom: any) => {
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
@@ -68,11 +68,11 @@ export function GamePlayer_Left_right(props: any) {
       player_left.won = theroom.set.set_p1.won;
     });
 
-    socket.on("leftbcgiveup", (theroom: any) => {
+/*     socket.on("leftbcgiveup", (theroom: any) => {
       console.log("leftbcgiveup FRONT GAME");
       props.deleteGameRoom();
     });
-
+ */
   }, [socket]);
 
   function sinc_ball(room_name: string, objball: any) {
@@ -150,7 +150,7 @@ export function GamePlayer_Left_right(props: any) {
               u = 1;
             if (u > 0)
               u++;
-            if (u === 6) {
+            if (u === 12) {
               sinc_ball(props.store.room, ballObj);
               sinc_player_left(props.store.room, player_left);
               sinc_player_right(props.store.room, player_right);
@@ -173,11 +173,12 @@ export function GamePlayer_Left_right(props: any) {
         }
       };
       render();
-  }, [socket]);
+  }, [props.canvasRef]);
 
   function deleteGameRoom_ingame() {
     console.log("player_left.won ", player_left.won);
     console.log("player_right.won ", player_right.won);
+    props.store.setRoom("");
     if (player_left.won == true || player_right.won == true) {
       console.log("end_of_game");
       socket.emit("end_of_the_game", props.store.room);

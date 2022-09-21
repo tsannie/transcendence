@@ -114,11 +114,11 @@ export function GameSpectator(props: any) {
       setp1id(theroom.set.set_p1.name);
       setp2id(theroom.set.set_p2.name);
       setThisRoom(theroom.room_name);
-
-/*       props.store.setisLookingRoom(false);
-      
-      props.store.setSpecthegame(true); */
-
+    });
+    
+    socket.on("player_give_upem_spec", (theroom: any) => {
+      player_right.won = theroom.set.set_p2.won;
+      player_left.won = theroom.set.set_p1.won;
     });
 
     const render = () => {
@@ -176,7 +176,7 @@ export function GameSpectator(props: any) {
       }
     };
     render();
-  }, [socket]);
+  }, [props.canvasRef]);
 
 
   function deleteGameRoomSpec() {
