@@ -1,16 +1,17 @@
 import {
   Box
 } from "@mui/material";
-
-import React, { createContext, useContext, useEffect, useState } from "react";
-
-import ButtonLogin from "./Auth/ButtonLogin";
+import React, { useEffect, useState } from "react";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
 import LogoIcon from "./assets/logo-project.png";
 import Settings from "./components/settings/Settings";
-import TwoFactorCode from "./Auth/TwoFactorCode";
+import ButtonLogin from "./components/auth/ButtonLogin";
+import TwoFactorCode from "./components/auth/TwoFactorCode";
+import LoginPage from "./components/auth/LoginPage";
 import { api, COOKIE_NAME } from "./const/const";
+
+import './app.style.scss'
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
@@ -19,12 +20,13 @@ export default function App() {
   const [is2FA, setIs2FA] = useState(false);
 
   useEffect(() => {
+    console.log('hello')
     if (document.cookie.includes(COOKIE_NAME)) {
       api.get('auth/isTwoFactor').then(res => {
         setIs2FA(res.data.isTwoFactor);
       }).catch(res => {
         console.log('invalid jwt');
-        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';  // TODO call logout api
       });
 
       console.log('is2FA', is2FA);
@@ -41,15 +43,25 @@ export default function App() {
     }
   });
 
-  console.log('islogin = ' + isLogin);
+  return (
+    <div className="app">
+      {isLogin === false &&
+        <LoginPage setIsLogin={setIsLogin}
+          is2FA={is2FA}
+          isLogin={isLogin}
+        />
+      }
+    </div>
+  );
 
-  if (!isLogin) {
+  /*if (!isLogin) {
     return (
       <Box sx={{
-          bgcolor: "rgba(0, 0, 0, 0.70)",
-          height: "100vh",
-          pt: "2vh",
+        bgcolor: "rgba(0, 0, 0, 0.70)",
+        height: "100vh",
+        pt: "2vh",
       }}>
+      <Auth setIsLogin={setIsLogin} is2FA={is2FA} setIs2FA={setIs2FA}/>
       <Box sx={{
           display: "flex",
           justifyContent: "center",
@@ -64,7 +76,9 @@ export default function App() {
         }
       </Box>
     );
-  } else {
+  }*/
+
+  /*else {
     return (
       <Box
         sx={{
@@ -81,5 +95,5 @@ export default function App() {
         {inputSettings && <Settings />}
       </Box>
     );
-  }
+  }*/
 }
