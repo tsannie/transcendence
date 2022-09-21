@@ -239,10 +239,14 @@ export default function Game() {
 >>>>>>> parent of 5ba09b04... [SAVE] all clean
 
   function deleteGameRoom() {
+<<<<<<< HEAD
     console.log("deleteGameRoom FROOOONNNNT");
     //ancelAnimationFrame(requestAnimationFrameId);
 
     if (isinroom === true) {
+=======
+    if (isinroom == true) {
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code
       setisinroom(false);
       setgameover(true);
       setgamestart(false);
@@ -277,11 +281,41 @@ export default function Game() {
 <<<<<<< HEAD
   let canvasRef = createRef();
 
+<<<<<<< HEAD
   ////////////////////////////////////////////////////
 
   if (gamestart === true) {
     return <GamePlayer_Left_right store={store}  canvasRef={canvasRef} deleteGameRoom={deleteGameRoom}/>
   } else if (nbrconnect === 2 && isinroom) {
+=======
+  if (gamestart == true && im_right == true) {
+    return (
+      <GamePlayer_right
+        setRoom={setRoom}
+        canvasRef={canvasRef}
+        deleteGameRoom={deleteGameRoom}
+        gamestart={gamestart}
+        im_right={im_right}
+        my_id={my_id}
+        op_id={op_id}
+        room={room}
+      />
+    );
+  } else if (gamestart == true && im_right == false) {
+    return (
+      <GamePlayer_left
+        setRoom={setRoom}
+        canvasRef={canvasRef}
+        deleteGameRoom={deleteGameRoom}
+        gamestart={gamestart}
+        im_right={im_right}
+        my_id={my_id}
+        op_id={op_id}
+        room={room}
+      />
+    );
+  } else if (nbrconnect == 2 && isinroom) {
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code
     return (
       <GameWaitPlayerReady
         my_id={my_id}
@@ -309,16 +343,22 @@ export default function Game() {
         color_ready={color_ready}
         opready={opready} op_id={op_id} />
     );
-  } else if (isinroom === true) {
+  } else if (isinroom == true) {
     return (
 <<<<<<< HEAD
       <GameCreationSettings my_id={my_id} room={room} deleteGameRoom={deleteGameRoom} />
     );
+<<<<<<< HEAD
   } else if (islookingroom === true)
     return <GameMenuSpectator store={store} listGame={listGame}/*  canvasRef={canvasRef} */ />;
   else if (Specthegame === true)
     return <GameSpectator store={store} listGame={listGame}  canvasRef={canvasRef}  />
   else {
+=======
+  } else if (islookingroom == true) {
+    return <GameSpectator store={store} />;
+  } else {
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code
     return <GameMenu store={store} />;
 =======
         <GameCreation my_id={my_id} room={room} deleteGameRoom={deleteGameRoom}/>

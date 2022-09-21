@@ -12,16 +12,16 @@ export default function GameMenu(props: any) {
     socket.on("readyGame", (theroom: any) => {
       props.store.setColor_ready("green");
       if (
-        (theroom.p2 === socket.id && theroom.p2_ready === true) ||
-        (theroom.p1 === socket.id && theroom.p1_ready === true)
+        (theroom.p2 == socket.id && theroom.p2_ready == true) ||
+        (theroom.p1 == socket.id && theroom.p1_ready == true)
       )
         props.store.setimready(true);
       if (
-        (theroom.p1 !==socket.id && theroom.p1_ready === true) ||
-        (theroom.p2 !==socket.id && theroom.p2_ready === true)
+        (theroom.p1 != socket.id && theroom.p1_ready == true) ||
+        (theroom.p2 != socket.id && theroom.p2_ready == true)
       )
         props.store.setopready(true);
-      if (theroom.p1_ready === true && theroom.p2_ready === true) {
+      if (theroom.p1_ready == true && theroom.p2_ready == true) {
         props.store.setRoom(theroom.room_name);
         StartGame(theroom.room_name);
         props.store.setgamestart(true);
@@ -36,10 +36,10 @@ export default function GameMenu(props: any) {
       props.store.setisinroom(true);
       props.store.setRoom(theroom.room_name);
 
-      if (theroom.p2 === socket.id) {
+      if (theroom.p2 == socket.id) {
         props.store.setop_id(theroom.p1);
         props.store.setim_right(true);
-      } else if (theroom.p1 === socket.id) {
+      } else if (theroom.p1 == socket.id) {
         props.store.setop_id(theroom.p2);
         props.store.setim_right(false);
       }
@@ -55,16 +55,16 @@ export default function GameMenu(props: any) {
   }
 
   function createGameRoom() {
-    if (props.store.room === "")
+    if (props.store.room == "")
       props.store.setPP_empty("INVALID ROOM NAME");
-    else if (props.store.isinroom === false) {
+    else if (props.store.isinroom == false) {
       socket.emit("createGameRoom", props.store.room);
     }
   }
 
   function createFastGameRoom() {
     props.store.setRoom("");
-    if (props.store.isinroom === false) {
+    if (props.store.isinroom == false) {
       socket.emit("createGameRoom", props.store.room);
     }
   }

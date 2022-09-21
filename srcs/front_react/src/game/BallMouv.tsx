@@ -111,13 +111,13 @@ export function draw_score(
     canvas_height / 4
   );
 
-  if (player_left.won === 1)
+  if (player_left.won == 1)
     ctx.fillText(
       player_left.name + " WON !!!",
       canvas_width / 2,
       canvas_height / 2
     );
-  else if (player_right.won === 1)
+  else if (player_right.won == 1)
     ctx.fillText(
       player_right.name + " WON !!!",
       canvas_width / 2,
@@ -135,8 +135,12 @@ export function BallMouv(
   let data = new Ball(ballObj.x, ballObj.y, ballObj.rad);
   data.draw(ctx);
 
+<<<<<<< HEAD:srcs/front_react/src/game/BallMouv.tsx
   if (ballObj.init_ball_pos === false) {
     console.log("init_ball_pos");
+=======
+  if (ballObj.init_ball_pos == false) {
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code:srcs/front_react/src/game/gameReact/BallMouv.tsx
     ballObj.init_dx *= -1;
     ballObj.init_first_dx *= -1;
 
@@ -152,9 +156,13 @@ export function BallMouv(
     ballObj.init_ball_pos = true;
   }
 
+<<<<<<< HEAD:srcs/front_react/src/game/BallMouv.tsx
   if (ballObj.first_col === false) {
     //console.log("ballObj.x : " + ballObj.first_dx);
     //console.log("ballObj.y : " + ballObj.first_dy);
+=======
+  if (ballObj.first_col == false) {
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code:srcs/front_react/src/game/gameReact/BallMouv.tsx
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
   } else {

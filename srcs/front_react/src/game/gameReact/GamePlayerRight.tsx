@@ -3,6 +3,7 @@ import { Box } from "@mui/system";
 import { paddleProps_right, player_left, player_right, socket } from "../Game";
 
 export function GamePlayer_right(props: any) {
+<<<<<<< HEAD
 
   // Fonction qui envoie les mouvements de la raquette droite au serveur
 
@@ -24,6 +25,21 @@ export function GamePlayer_right(props: any) {
 
         socket.emit("paddleMouvRight", data);
       }
+=======
+  function mouv_paddle_right(e: any) {
+    if (
+      props.gamestart == true &&
+      props.im_right == true &&
+      player_left.won == false &&
+      player_right.won == false
+    ) {
+      paddleProps_right.y = e.clientY - paddleProps_right.width / 2 - 15;
+      var data = {
+        room: props.room,
+        pd: paddleProps_right,
+      };
+      socket.emit("paddleMouvRight", data);
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code
     }
   
     return (

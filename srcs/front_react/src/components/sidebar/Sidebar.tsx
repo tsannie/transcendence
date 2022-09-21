@@ -23,11 +23,11 @@ export default function Sidebar(props: any) {
   };
   function reinit(str: any) {
 
-      if (str !=="game")
+      if (str != "game")
         props.setInputGame(false)
       else
         props.setInputGame(true)
-      if (str !=="chat")
+      if (str != "chat")
         props.setInputChat(false)
       else
         props.setInputChat(true)

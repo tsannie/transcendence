@@ -149,12 +149,18 @@ export class GameGateway implements OnGatewayInit {
 >>>>>>> parent of 5ba09b04... [SAVE] all clean:srcs/back_nestjs/src/game/game.getaway.ts
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.getaway.ts
     //console.log("MERRRDE room = [" + room + "]");
     if (room === '') {
       for (const [key, value] of Object.entries(this.roo)) {
         //console.log("\n value = " + value.room_name);//
         //console.log("\n co = \n" + value.nbr_co);//
         if (value.fast_play === true && value.nbr_co !==2 && value.nbr_co !==0)
+=======
+    if (room == '') {
+      for (const [key, value] of Object.entries(this.roo)) {
+        if (value.fast_play == true && value.nbr_co != 2 && value.nbr_co != 0)
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code:srcs/back_nestjs/src/game/game.gateway.ts
           room = value.room_name;
       }
       if (!this.roo[room]) {
@@ -166,7 +172,7 @@ export class GameGateway implements OnGatewayInit {
     }
     client.join(room);
 
-    if (!this.rooms[room] || this.rooms[room] === 0) {
+    if (!this.rooms[room] || this.rooms[room] == 0) {
       this.rooms[room] = 1;
       if (!this.roo[room]) var theroom = new GameEntity();
       else var theroom = this.roo[room];
@@ -178,7 +184,7 @@ export class GameGateway implements OnGatewayInit {
       client.emit('joinedRoom', theroom);
       this.roo[room] = theroom;
       return this.all_game.save(theroom);
-    } else if (this.rooms[room] === 1) {
+    } else if (this.rooms[room] == 1) {
       this.rooms[room] += 1;
 
       const theroom = this.roo[room];
@@ -189,7 +195,7 @@ export class GameGateway implements OnGatewayInit {
       client.to(room).emit('joinedRoom', theroom);
       client.emit('joinedRoom', theroom);
       return this.all_game.save(theroom);
-    } else if (this.rooms[room] === 2) {
+    } else if (this.rooms[room] == 2) {
       client.emit('roomFull', theroom);
     }
   }
@@ -223,13 +229,17 @@ export class GameGateway implements OnGatewayInit {
       this.roo[room].set.set_p2.won = false;
       this.roo[room].set.set_p2.name = 'null';
     }
-    if (this.roo[room].p1 === client.id) {
+    if (this.roo[room].p1 == client.id) {
       this.roo[room].p1 = this.roo[room].p2;
       this.roo[room].p2 = null;
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.getaway.ts
     } else if (this.roo[room].p2 === client.id)
       this.roo[room].p2 = null;
+=======
+    } else if (this.roo[room].p2 == client.id) this.roo[room].p2 = null;
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code:srcs/back_nestjs/src/game/game.gateway.ts
 
-    if (this.roo[room].nbr_co === 0) {
+    if (this.roo[room].nbr_co == 0) {
       this.all_game.remove(this.roo[room]);
       delete this.roo[room];
       
@@ -267,11 +277,17 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('readyGameRoom')
   ReadyGame(client: Socket, room: string) {
     const theroom = this.roo[room];
+<<<<<<< HEAD:srcs/back_nestjs/src/game/game.getaway.ts
     if (theroom.p1 === client.id)
       theroom.p1_ready = true;
     else if (theroom.p2 === client.id)
       theroom.p2_ready = true;
     if (theroom.p2_ready === true && theroom.p1_ready === true) {
+=======
+    if (theroom.p1 == client.id) theroom.p1_ready = true;
+    else if (theroom.p2 == client.id) theroom.p2_ready = true;
+    if (theroom.p2_ready == true && theroom.p1_ready == true) {
+>>>>>>> parent of dcc6d3c7... [SAVE] clean code:srcs/back_nestjs/src/game/game.gateway.ts
       this.roo[room].game_started = true;
       this.roo[room].thedate = new Date();
 
