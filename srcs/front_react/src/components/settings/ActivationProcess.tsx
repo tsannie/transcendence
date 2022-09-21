@@ -15,13 +15,8 @@ export default function ActivationProcess(props: any) {
     })
     .then((res) => {
       const base64 = Buffer.from(res.data, 'utf8').toString('base64');
-
       setQrCode(base64);
     })
-  }
-
-  function timeout(delay: number) {
-    return new Promise( res => setTimeout(res, delay) );
   }
 
   async function checkToken() {
@@ -59,5 +54,3 @@ export default function ActivationProcess(props: any) {
     </div>
   );
 }
-
-
