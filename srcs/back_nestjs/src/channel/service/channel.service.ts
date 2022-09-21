@@ -24,11 +24,7 @@ export class ChannelService {
 	@InjectRepository(ChannelEntity)
 	private channelRepository: Repository<ChannelEntity>,
 
-	private readonly userService: UserService,
-
-	@InjectRepository(UserEntity)
-	private userRepository: Repository<UserEntity>,
-	) {}
+	private readonly userService: UserService) {}
 
 	async getAllChannels() : Promise<ChannelEntity[]> {
 		return await this.channelRepository.find(
@@ -373,7 +369,7 @@ export class ChannelService {
 		const user = new UserEntity();
 		user.username = username;
 		user.email = username + "@student.42.fr";
-		await this.userRepository.save(user);
+		await this.userService.add(user);
 		return await this.getUser(username, ["channels"]);
 	}
 }
