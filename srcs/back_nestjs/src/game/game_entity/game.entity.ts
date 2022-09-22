@@ -2,9 +2,6 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class BallEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id!: number;
-
   @Column({ default: 0 })
   x: number = 0;
 
@@ -77,8 +74,6 @@ export class PadleEntity {
 
 @Entity()
 export class PlayerEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id!: number;
 
   @Column({ nullable: true })
   name: string;
@@ -92,9 +87,6 @@ export class PlayerEntity {
 
 @Entity()
 export class SetEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id!: number;
-
   @Column({ nullable: true })
   room_name: string;
 
@@ -160,9 +152,6 @@ export class GameEntity {
 
   @Column('time', { nullable: true })
   thedate?: Date;
-
-  @Column('time', { nullable: true })
-  timer?: Date;
 
   @Column('jsonb', { nullable: true })
   set: SetEntity;

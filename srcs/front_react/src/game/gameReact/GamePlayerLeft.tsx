@@ -7,9 +7,16 @@ import {
   TextField,
 } from "@mui/material";
 import { MuiThemeProvider } from "@material-ui/core";
+import useWindowDimensions from "./window_size";
+import { useState } from "react";
 
 
 export function GamePlayer_left(props: any) {
+
+  const [windo, setwindo] = useState(false);
+  
+  const { height, width } = useWindowDimensions();
+
   function mouv_paddle_left(e: any) {
     if (
       props.gamestart === true &&
@@ -17,7 +24,7 @@ export function GamePlayer_left(props: any) {
       player_left.won === false &&
       player_right.won === false
     ) {
-      paddleProps_left.y = e.clientY - paddleProps_left.width / 2 - 220;
+      paddleProps_left.y = e.clientY - paddleProps_left.width - 220;
       var data = {
         room: props.room,
         pd: paddleProps_left,
@@ -54,8 +61,8 @@ export function GamePlayer_left(props: any) {
         <canvas
           id="canvas"
           ref={props.canvasRef}
-          height="500px"
-          width={1000}
+          height={1000}
+          width={500}
           onMouseMove={(e) => mouv_paddle_left(e)}
           style={{ backgroundColor: "black" }}
         ></canvas>
