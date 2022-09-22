@@ -17,6 +17,7 @@ import { api } from "../../../userlist/UserListItem";
 import { IChannel } from "../types";
 import { display } from "@mui/system";
 import { LockIcon } from "./LockIcon";
+import InfosChannels from "./InfosChannels";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
@@ -24,39 +25,7 @@ import { LockIcon } from "./LockIcon";
 export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
-  const [isInfosOpen, setIsInfosOpen] = useState(false);
   const [users, setAdmins] = useState<string[]>([]);
-  const [infosChannel, setInfosChannel] = useState({});
-
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
-
-  function handleClick(
-    channel: IChannel,
-    event: React.MouseEvent<HTMLButtonElement>
-  ) {
-
-    setAnchorEl(event.currentTarget);
-    getInfosChannel(channel);
-    console.log(isInfosOpen)
-  }
-
-  function handleClose() {
-    setAnchorEl(null);
-    setIsInfosOpen(false);
-  }
-
-  // TODO: find value with keys
-  function findValueWithKey(obj: any, keys: string) {
-    let value: any = "";
-
-    console.log("obj", obj);
-
-    return value;
-  }
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -71,30 +40,6 @@ export default function ChannelsList(props: any) {
     console.log(newChannel);
 
     return newChannel;
-  }
-
-  async function getInfosChannel(channel: IChannel) {
-    console.log("333");
-
-    await api
-      .get("channel/privateData", {
-        params: {
-          name: channel.name,
-        },
-      })
-      .then((res) => {
-        console.log("get infos channels");
-        setInfosChannel(res.data);
-        setIsInfosOpen(true);
-        findValueWithKey(res.data, "id");
-      })
-      .catch((res) => {
-        console.log("invalid channels private data");
-        // display response error
-        //console.log(res.response.data.message);
-        //console.log(res);
-      });
-    console.log("bbbbb");
   }
 
   async function joinChannel(channel: IChannel) {
@@ -226,62 +171,9 @@ export default function ChannelsList(props: any) {
                 Delete
               </Button>
             )}
-            <Button
-              sx={{
-                color: "black",
-                ml: "1vh",
-              }}
-              onClick={(event) => {
-                handleClick(channelData, event);
-              }}
-            >
-              Infos
-            </Button>
-            <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-            >
-              {isInfosOpen === true && (
-                <List>
-                  {
-                    Object.entries(infosChannel).map(([key, value]) => {
-                      if (typeof value === "string") {
-                        return (
-                          <ListItem key={key}>
-                            <ListItemText primary={key} secondary={value} />
-                          </ListItem>
-                        );
-                      }
-                      else if (typeof value === "object" && value !== null) {
-                        return (
-                          <ListItem key={key}>
-                            <ListItemText
-                              primary={key}
-                              secondary=
-                              {
-                                Object.entries(value).map(([key, childValue]) => {
-                                  return (
-                                    <div key={key}>
-                                      {key} : {childValue}
-                                    </div>
-                                  );
-                                })
-                              }
-                              />
-                          </ListItem>
-                        );
-                      }
-                    })
-                  }
-                </List>
-              )}
-            </Popover>
+            <InfosChannels
+              channelData={channelData}
+            />
           </Box>
         );
       })}
