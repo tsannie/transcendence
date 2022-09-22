@@ -11,6 +11,7 @@ export default function LoginPage(props: any) {
   //<img src={LogoIcon}></img>
   return (
     <div className="login">
+      <h1>Account Sign in</h1>
       {!props.is2FA &&
         <ButtonLogin isLogin={props.isLogin} setIsLogin={props.setIsLogin} />
       }
