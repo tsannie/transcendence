@@ -43,16 +43,29 @@ export default function App() {
     }
   });
 
+  const test = "--i:10;";
+
   return (
     <div className="app">
-      {isLogin === false &&
-        <LoginPage setIsLogin={setIsLogin}
-          is2FA={is2FA}
-          isLogin={isLogin}
-        />
-      }
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
+      <div className="ball"></div>
     </div>
   );
+
+  /*{isLogin === false &&
+    <LoginPage setIsLogin={setIsLogin}
+      is2FA={is2FA}
+      isLogin={isLogin}
+    />
+  }*/
 
   /*if (!isLogin) {
     return (
