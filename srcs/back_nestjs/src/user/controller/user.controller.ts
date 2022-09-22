@@ -29,4 +29,11 @@ export class UserController {
     return await this.userService.banUser(body.target, req.user);
   }
 
+  @UseGuards( AuthGuard('jwt') )
+  @Post("unBanUser")
+  async unBanUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
+    return await this.userService.unBanUser(body.target, req.user);
+  }
+
+
 }
