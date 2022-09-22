@@ -1,8 +1,6 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { userInfo } from 'os';
-import { MessageService } from 'src/message/service/message.service';
-import { CreateDmDto } from '../dto/dm.dto';
+import { DmDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 import { DmService } from '../service/dm.service';
 
@@ -21,14 +19,21 @@ export class DmController {
 
 	@UseGuards( AuthGuard('jwt') )
 	@Post('createDm')
-	async createDm(@Body() channel: CreateDmDto, @Request() req): Promise<void | DmEntity> {
+	async createDm(@Body() channel: DmDto, @Request() req): Promise<void | DmEntity> {
 		return await this.dmService.createDm(channel, req.user);
 	}
 
 
 	// get a dm by id
+	@UseGuards( AuthGuard('jwt') )
 	@Get('getDmById')
 	async getDmById(id: number): Promise<void | DmEntity> {
 		return await this.dmService.getDmById(id);
+	}
+
+	@UseGuards( AuthGuard('jwt') )
+	@Get('getDmByName')
+	async getDmByName( @Query() data: DmDto, @Request() req): Promise<void | DmEntity> {
+		return await this.dmService.getDmByName(data, req.user);
 	}
 }
