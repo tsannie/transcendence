@@ -9,8 +9,6 @@ export class MessageService {
   constructor(
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
-
-    // private allUsers: UserService,
   ) {}
 
 }
