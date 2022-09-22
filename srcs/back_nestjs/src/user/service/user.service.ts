@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { userInfo } from 'os';
-import { from, Observable } from 'rxjs';
+import { request } from 'http';
 import { Repository } from 'typeorm';
-import { targetDto } from '../dto/target.dto';
 import { UserEntity } from '../models/user.entity';
 
 @Injectable()
@@ -42,7 +40,7 @@ export class UserService {
   // TODO DELETE
   async getAllUser(): Promise<UserEntity[]> {
 	return await this.allUser.find({
-		relations : ["owner_of", "channels"]
+		relations : ["owner_of", "channels", "banned"]
 		}
 	)};
 
@@ -64,7 +62,33 @@ export class UserService {
 	return await this.allUser.update(userId, {secret2FA: secret})
   }
 
-  async banUser(target: string, requester: UserEntity) {
-	return requester;
-  }
+	async banUser(target: string, requester: UserEntity) : Promise<UserEntity>{
+		if (target === requester.username)
+			throw new UnprocessableEntityException(`Cannot ban yourself.`);
+		let toBan = await this.findByName(target);
+		if (!toBan)
+			throw new UnprocessableEntityException(`Cannot find a ${target} in database.`);
+		else
+		{
+			if (!requester.banned)
+				requester.banned = [toBan];
+			else
+			{
+				if (requester.banned.find( elem => elem.username === target))
+					throw new UnprocessableEntityException(`You've already banned ${target}`);
+				else
+					requester.banned.push(toBan);
+			}
+		}
+		return await this.allUser.save(requester);
+	}
+
+	async unBanUser(target: string, requester: UserEntity) : Promise<UserEntity> {
+		if (target === requester.username)
+			throw new UnprocessableEntityException(`Cannot unban yourself.`);
+		if (!requester.banned || !requester.banned.find( banned_guys => banned_guys.username === target))
+			throw new UnprocessableEntityException(`${target} is not banned.`);
+		requester.banned = requester.banned.filter( banned_guys => banned_guys.username !== target );
+		return await this.allUser.save(requester);
+	}
 }
