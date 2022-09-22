@@ -25,9 +25,6 @@ export class MessageEntity {
 	@JoinColumn()
 	author: UserEntity;
 
-	@ManyToOne( () => DmEntity, (dm) => dm.messages,
-		{
-			onDelete: "CASCADE",
-		})
+	@ManyToOne( () => DmEntity, (dm) => dm.messages )
 	dm: DmEntity;
 }

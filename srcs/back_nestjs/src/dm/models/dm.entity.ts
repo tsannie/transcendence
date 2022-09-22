@@ -19,6 +19,6 @@ export class DmEntity {
 	@ManyToMany( 'UserEntity', 'channels' )
 	users: UserEntity[];
 
-	@OneToMany( 'MessageEntity', 'dm' )
+	@OneToMany( 'MessageEntity', 'dm', { cascade: ["insert", "remove"] } )
 	messages: MessageEntity[];
 }
