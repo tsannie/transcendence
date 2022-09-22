@@ -22,6 +22,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: any) {  // TODO all check for validate jeton
     //console.log(payload)
     //console.log( await this.userService.findByName(payload.username));
-    return await this.userService.findByName(payload.username);
+    return await this.userService.findByName(payload.username, ["banned"]);
   }
 }
