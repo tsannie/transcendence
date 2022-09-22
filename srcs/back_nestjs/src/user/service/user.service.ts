@@ -32,6 +32,15 @@ export class UserService {
 	}
   }
 
+  //same as findbyName but throw error if not found
+  async findUser(username: string, relations_ToLoad : Array<string> = undefined) : Promise<UserEntity> {
+	let user = await this.findByName(username, relations_ToLoad);
+	if (!user)
+		throw new UnprocessableEntityException(`User ${user} is not registered in database.`);
+	else
+		return user;
+  }
+
   // find user by id
   async findById(id: number): Promise<UserEntity> {
 	return await this.allUser.findOne(id);
