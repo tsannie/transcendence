@@ -1,55 +1,79 @@
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+$number_ball: 10;
 
-  body {
-    min-height: 100vh;
-    background-color: black;
-  }
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #14151A;
 
-  .app {
-    position: relative;
+  //box-sizing: border-box;
+}
+
+.app {
+  display: flex;
+}
+
+.bg {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.ball {
+  position: relative;
+  display: flex;
+  right: 100px;
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+  //background-color: blueviolet;
+  animation: 20s linear infinite;
+  &::before {
+    content: "";
     width: 100%;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .ball {
-    position: relative;
-    display: flex;
-    right: 100px;
-    flex-direction: column;
-    width: 30px;
-    height: 30px;
-    background-color: white;
-    margin: 5px;
+    height: 100%;
     border-radius: 50%;
+    background-color: white;
   }
-
-  @for $i from 1 through 100 {
-    .ball:nth-of-type(#{$i}) {
+  @for $i from 1 through $number_ball {
+    &:nth-of-type(#{$i}) {
       @if $i % 2 == 0 {
-        animation: 10s ballAnimationLeft linear infinite;
-        animation-delay: random(5) + s;
+        animation-name: ballAnimationLeft#{$i};
       } @else {
-        //animation: random(10) + s ballAnimationRight linear infinite;
+        animation-name: ballAnimationRight#{$i};
       }
-
-      @keyframes ballAnimationLeft {
-        0% {
-          transform: translateX(110vw)
-            translateY(random(100) + vh);
-        }
-        100% {
-          transform: translateX(-10vw)
-            translateY(random(100) + vh);
-        }
+      animation-duration: random(10000) + 6000ms;
+      animation-delay: random(6000) + 100ms; // less than max duration
+    }
+    @keyframes ballAnimationLeft#{$i} {
+      $random: 1 + random(10) / 10;
+      0% {
+        transform: translateX(130vw)
+          translateY(random(100) + vh)
+          scale($random);
       }
-
+      100% {
+        transform: translateX(-30vw)
+          translateY(random(100) + vh)
+          scale($random);
+      }
+    }
+    @keyframes ballAnimationRight#{$i} {
+      $random: 1 + random(10) / 10;
+      0% {
+        transform: translateX(-30vw)
+          translateY(random(100) + vh)
+          scale($random);
+      }
+      100% {
+        transform: translateX(130vw)
+          translateY(random(100) + vh)
+          scale($random);
+      }
     }
   }
+}
 
 
   //animation: ballAnimation 15s linear infinite;
