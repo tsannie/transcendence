@@ -24,8 +24,9 @@ import { LockIcon } from "./LockIcon";
 export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
-  //const [infosChannels, setInfosChannels] = useState<IChannel>({} as IChannel);
-  let infosChannels: Object;
+  const [isInfosOpen, setIsInfosOpen] = useState(false);
+  const [users, setAdmins] = useState<string[]>([]);
+  const [infosChannel, setInfosChannel] = useState({});
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -37,16 +38,25 @@ export default function ChannelsList(props: any) {
     channel: IChannel,
     event: React.MouseEvent<HTMLButtonElement>
   ) {
+
     setAnchorEl(event.currentTarget);
-    infosChannel(channel);
+    getInfosChannel(channel);
+    console.log(isInfosOpen)
   }
 
   function handleClose() {
     setAnchorEl(null);
+    setIsInfosOpen(false);
   }
 
-  // TODO: find value with keys string in object
+  // TODO: find value with keys
+  function findValueWithKey(obj: any, keys: string) {
+    let value: any = "";
 
+    console.log("obj", obj);
+
+    return value;
+  }
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -63,7 +73,8 @@ export default function ChannelsList(props: any) {
     return newChannel;
   }
 
-  async function infosChannel(channel: IChannel) {
+  async function getInfosChannel(channel: IChannel) {
+    console.log("333");
 
     await api
       .get("channel/privateData", {
@@ -72,10 +83,10 @@ export default function ChannelsList(props: any) {
         },
       })
       .then((res) => {
-        console.log("channel private data");
-        console.log(res.data);
-        infosChannels = res.data;
-        //setInfosChannels(res.data);
+        console.log("get infos channels");
+        setInfosChannel(res.data);
+        setIsInfosOpen(true);
+        findValueWithKey(res.data, "id");
       })
       .catch((res) => {
         console.log("invalid channels private data");
@@ -83,6 +94,7 @@ export default function ChannelsList(props: any) {
         //console.log(res.response.data.message);
         //console.log(res);
       });
+    console.log("bbbbb");
   }
 
   async function joinChannel(channel: IChannel) {
@@ -235,23 +247,38 @@ export default function ChannelsList(props: any) {
                 horizontal: "right",
               }}
             >
-              {open && (
+              {isInfosOpen === true && (
                 <List>
-                  <ListItem>
-                    <ListItemText
-                      primary="owner"
-                      //secondary={findValueWithKey(infosChannels, "owner")}
-                    />
-                  </ListItem>
-                  {/* <ListItem>
-                  <ListItemText primary="admins" secondary={findValueWithKey(infosChannels, "admins")} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="banned" secondary={findValueWithKey(infosChannels, "banned")} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="muted" secondary={findValueWithKey(infosChannels, "muted")} />
-                </ListItem> */}
+                  {
+                    Object.entries(infosChannel).map(([key, value]) => {
+                      if (typeof value === "string") {
+                        return (
+                          <ListItem key={key}>
+                            <ListItemText primary={key} secondary={value} />
+                          </ListItem>
+                        );
+                      }
+                      else if (typeof value === "object" && value !== null) {
+                        return (
+                          <ListItem key={key}>
+                            <ListItemText
+                              primary={key}
+                              secondary=
+                              {
+                                Object.entries(value).map(([key, childValue]) => {
+                                  return (
+                                    <div key={key}>
+                                      {key} : {childValue}
+                                    </div>
+                                  );
+                                })
+                              }
+                              />
+                          </ListItem>
+                        );
+                      }
+                    })
+                  }
                 </List>
               )}
             </Popover>
