@@ -35,7 +35,7 @@ export default function Game() {
   const [nbrconnect, setnbrconnect] = useState(0);
   const [room, setRoom] = useState("");
  // const [lookingroom, setLookingRoom] = useState("");
-  const [color_ready, setColor_ready] = useState("");
+  const [color_ready, setColor_ready] = useState(""); // TO DOP probleme to reinit
   const [my_id, setmy_id] = useState(socket.id);
   const [op_id, setop_id] = useState("2");
   const [im_right, setim_right] = useState(false);
@@ -104,61 +104,6 @@ export default function Game() {
 
 
   useEffect(() => {
-
-    
-    
-    ////////////////////////////////////////////////////
-    // LOOKING ROOM
-    ////////////////////////////////////////////////////
-/*     socket.on("LeaveAllGameRoom", (theroom: Map<any, any>) => {
-      //setisLookingRoom(false);
-      //console.log("listGame = " + listGame);
-      //console.log("propslistGame = " + store.listGame);
-  
-      listGame.splice(0, listGame.length);
-
-      console.log("--------END----------");
-      //console.log("listGame = " + listGame);
-      //console.log("propslistGame = " + store.listGame);
-
-
-    }); */
-/* 
-    socket.on("getAllGameRoom", (theroom: Map<any, any>, id: any) => {
-      console.log("------------------=", id);
-      x++;
-      console.log("x = " + x);
-      console.log("1 socker");
-      let donot = false;
-      let key2;
-      for (const [key, value] of Object.entries(theroom)) {
-          //console.log(listGame.length);
-          //console.log("Value = " + value);
-         //console.log("key = " + key);
-          //console.log("value.nbr_co = " + value.nbr_co);
-          if (value.game_started === true) {
-            for (let i = 0; i <  listGame.length; i++) {
-              key2 =  listGame[i];
-              if (key === key2 || value.nbr_co !== 2) {
-                donot = true;
-              }
-            }
-
-            if (donot === false) {
-              listGame.push(key);
-            } else {
-              donot = false;
-            }
-          }
-        }
-        for (let i = 0; i <  listGame.length; i++) {
-          console.log(i + " === " +  listGame[i]);
-        }
-        setisLookingRoom(true);
-    }); */
-    ////////////////////////////////////////////////////
-    // LOOKING ROOM
-    ////////////////////////////////////////////////////
 
     socket.on("leftRoom", (theroom: any) => {
       setnbrconnect(theroom.nbr_co);

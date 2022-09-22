@@ -1,10 +1,14 @@
 import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { paddleProps_right, player_left, player_right, socket } from "../Game";
+import useWindowDimensions from "./window_size";
+
 
 export function GamePlayer_right(props: any) {
-
+  
+  const { height, width } = useWindowDimensions();
   // Fonction qui envoie les mouvements de la raquette droite au serveur
+
 
     function mouv_paddle_right(e: any) {
      // console.log("111111111PADDLE DIDNT EMIT MOUV");
@@ -15,13 +19,14 @@ export function GamePlayer_right(props: any) {
         player_left.won === false &&
         player_right.won === false
       ) {
-        paddleProps_right.y = e.clientY - paddleProps_right.width / 2 - 220;
+        paddleProps_right.y = e.clientY - paddleProps_right.width - 220;
         var data = {
           room: props.room,
           pd: paddleProps_right,
         };
        // console.log("222222PADDLE RIGHT EMIT MOUV");
-
+        //console.log("height", height);
+        //console.log("width", width);
         socket.emit("paddleMouvRight", data);
       }
     }
@@ -54,8 +59,8 @@ export function GamePlayer_right(props: any) {
           <canvas
             id="canvas"
             ref={props.canvasRef}
-            height="500px"
-            width={1000}
+            height={1000}
+            width={500}
             onMouseMove={(e) => mouv_paddle_right(e)}
             style={{ backgroundColor: "black" }}
           ></canvas>
