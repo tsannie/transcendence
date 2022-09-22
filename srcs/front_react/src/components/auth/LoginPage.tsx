@@ -8,9 +8,9 @@ import './login.style.scss'
 
 export default function LoginPage(props: any) {
 
+  //<img src={LogoIcon}></img>
   return (
     <div className="login">
-    <img src={LogoIcon}></img>
       {!props.is2FA &&
         <ButtonLogin isLogin={props.isLogin} setIsLogin={props.setIsLogin} />
       }
