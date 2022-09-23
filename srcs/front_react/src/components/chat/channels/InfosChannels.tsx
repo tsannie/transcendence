@@ -5,9 +5,25 @@ import { IChannel } from "../types";
 
 export default function InfosChannels(props: any) {
   const [infosChannel, setInfosChannel] = useState({});
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  // check if user is admin of the channel in infosChannel
+  function isAdmin() {
+    Object.entries(infosChannel).map(([key, value]) => {
+      if (key === "admins" && typeof value === "object" && value !== null) {
+        Object.entries(value).map(([childKey, childValue]) => {
+          if (childKey === "id" && childValue === props.userid) {
+            return true;
+          }
+        });
+      }
+    });
+    return false;
+  }
 
   function handleClick(
     channel: IChannel,
@@ -73,17 +89,22 @@ export default function InfosChannels(props: any) {
                   </ListItem>
                 );
               } else if (typeof value === "object" && value !== null) {
-                return (
-                  <ListItem key={key}>
-                    {Object.entries(value).map(
-                      ([childKey, childValue]) => {
+                if ((key === "banned" && isAdmin()) || key !== "banned") {
+                  return (
+                    <ListItem key={key}>
+                      {Object.entries(value).map(([childKey, childValue]) => {
                         if (childKey === "username") {
-                          return <ListItemText primary={key} secondary={childValue} />;
+                          return (
+                            <ListItemText
+                              primary={key}
+                              secondary={childValue}
+                            />
+                          );
                         }
-                      }
-                    )}
-                  </ListItem >
-                );
+                      })}
+                    </ListItem>
+                  );
+                }
               }
             })}
           </List>

@@ -14,6 +14,7 @@ export default function Channels(props: any) {
   const [channelCreated, setChannelCreated] = useState(false);
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
   const [isOwner, setIsOwner] = useState(false);
+  const [userId, setUserId] = useState("");
 
   function setChannel() {
     if (!newChannel) setNewChannel(true);
@@ -28,6 +29,7 @@ export default function Channels(props: any) {
     await api.get("auth/profile").then((res) => {
       console.log(res.data);
       userId = res.data.id;
+      setUserId(res.data.id);
     });
 
     //console.log(channelCreated);
@@ -87,7 +89,7 @@ export default function Channels(props: any) {
           getChannels={getChannels}
         />
       )}
-      <ChannelsList channelsList={channelsList} isOwner={isOwner} />
+      <ChannelsList channelsList={channelsList} isOwner={isOwner} userId={userId} />
     </Box>
   );
 }
