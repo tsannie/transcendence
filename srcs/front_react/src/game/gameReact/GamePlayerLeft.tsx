@@ -61,8 +61,8 @@ export function GamePlayer_left(props: any) {
         <canvas
           id="canvas"
           ref={props.canvasRef}
-          height={1000}
-          width={500}
+          height={500}
+          width={1000}
           onMouseMove={(e) => mouv_paddle_left(e)}
           style={{ backgroundColor: "black" }}
         ></canvas>

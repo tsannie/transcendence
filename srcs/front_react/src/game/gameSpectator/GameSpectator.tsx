@@ -20,9 +20,6 @@ import {
   draw_score,
   draw_loading,
 } from "../gameReact/BallMouv";
-////////////////////////////////////////////////////
-// WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
-////////////////////////////////////////////////////
 
 let first_sinc = false;
 
@@ -31,7 +28,7 @@ export function GameSpectator(props: any) {
   const [p1id, setp1id] = useState("null");
   const [p2id, setp2id] = useState("null");
 
-  const [ThisRoom, setThisRoom] = useState("");
+  //const [ThisRoom, setThisRoom] = useState("");
 
   //const [first_sinc, setfirst_sinc] = useState(false);
 
@@ -95,30 +92,45 @@ export function GameSpectator(props: any) {
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_padle_obj.x;
       paddleProps_left.y = theroom.set.p1_padle_obj.y;
+
     });
     socket.on("mouvPaddleRight_spec", (theroom: any) => {
       paddleProps_right.x = theroom.set.p2_padle_obj.x;
       paddleProps_right.y = theroom.set.p2_padle_obj.y;
+
     });
     socket.on("setDataPlayerLeft_spec", (theroom: any) => {
       player_left.score = theroom.set.set_p1.score;
       player_left.won = theroom.set.set_p1.won;
+
     });
     socket.on("setDataPlayerRight_spec", (theroom: any) => {
       player_right.score = theroom.set.set_p2.score;
       player_right.won = theroom.set.set_p2.won;
+
     });
 
     socket.on("startGameSpec", (theroom: any) => {
-      sinc_all_data(theroom);
+/*       sinc_all_data(theroom);
       setp1id(theroom.set.set_p1.name);
       setp2id(theroom.set.set_p2.name);
       setThisRoom(theroom.room_name);
+      console.log("theroom.set.set_p1.name", theroom.set.set_p1.name);
+      console.log("theroom.set.set_p2.name", theroom.set.set_p2.name);
+      console.log("--------------------");
+      console.log("p1id = ", p1id);
+      console.log("p2id = ", p2id); */
+      console.log("--------------------");
+      console.log("theroom.room_name = ", theroom.room_name);
+      //console.log("ThisRoom = ", ThisRoom);
+      console.log("--------------------");
     });
     
     socket.on("player_give_upem_spec", (theroom: any) => {
       player_right.won = theroom.set.set_p2.won;
       player_left.won = theroom.set.set_p1.won;
+      //setThisRoom(theroom.room_name);
+
     });
 
     const render = () => {
@@ -179,11 +191,12 @@ export function GameSpectator(props: any) {
   }, [props.canvasRef]);
 
 
-  function deleteGameRoomSpec() {
+  function leaveGameRoomSpec() {
     first_sinc = false;
     props.store.setSpecthegame(false);
     props.store.setisLookingRoom(true);
-    socket.emit("LeaveGameSpectator", ThisRoom);
+    //console.log("this room = !!!!!!!!!!!!!!!!![" + ThisRoom + "]!1");
+    //socket.emit("LeaveGameSpectator", ThisRoom);
   }
 
 
@@ -223,7 +236,7 @@ export function GameSpectator(props: any) {
         <br />
         <br />
         <Button variant="contained"
-          onClick={deleteGameRoomSpec} 
+          onClick={leaveGameRoomSpec} 
         >
           Leave the spectator Game
         </Button>

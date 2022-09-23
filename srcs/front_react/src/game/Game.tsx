@@ -52,7 +52,8 @@ export default function Game() {
   const [Specthegame, setSpecthegame] = useState(false);
   const [listgamenotz, setlistgamenotz] = useState(false);
 
-
+  const [Room_name_spec, setRoom_name_spec] = useState("");
+  
   const store = {
     nbrconnect: nbrconnect,
     room: room,
@@ -62,6 +63,9 @@ export default function Game() {
     op_id: op_id,
     im_right: im_right,
     islookingroom: islookingroom,
+    
+    Room_name_spec:Room_name_spec, 
+    setRoom_name_spec: setRoom_name_spec,
 
     isfull: isfull,
     isinroom: isinroom,

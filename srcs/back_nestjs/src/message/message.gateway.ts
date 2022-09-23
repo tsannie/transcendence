@@ -80,7 +80,7 @@ export class MessageGateway
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.push(client);
     this.connectedClients.forEach(client => {
-      console.log(client.id);
+      //console.log(client.id);
     });
   }
 
@@ -108,7 +108,7 @@ export class MessageGateway
   createChannel(@MessageBody() data: IChannel, @ConnectedSocket() client: Socket) {
     data.ownerid = client.id;
     client.join(data.id);
-    console.log(data);
+    //console.log(data);
     this.logger.log(`client ${client.id} create channel ${data} `);
     this.channelService.handleChannels(data);
     client.emit("channel", data);
