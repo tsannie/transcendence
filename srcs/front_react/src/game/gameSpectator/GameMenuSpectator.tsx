@@ -30,25 +30,56 @@ export function GameMenuSpectator(props: any) {
       console.log("ended")
     });
 
-    socket.on("change_status", () => {
-    setlistGamenotz(false);
-    props.store.setisLookingRoom(false);
-    props.store.setSpecthegame(true);
-    });
+/*     socket.on("change_status", () => {
+      setlistGamenotz(false);
+      props.store.setisLookingRoom(false);
+      props.store.setSpecthegame(true);
+    }); */
 
   }, [socket]);
 
-  function Specthegamedisplayfunc(room : string) {
+/*   function Specthegamedisplayfunc(room : string) {
+    console.log("||||||||Specthegamedisplayfunc room [", room, "]");
+    setlistGamenotz(false);
+    props.store.setisLookingRoom(false);
+    props.store.setSpecthegame(true);
     socket.emit("Specthegame", room);
   }
-
+ */
 
   // Fonction qui gere le bouton pour quitter le mode spectateur
 
   const Specthegamedisplay = (event : any, param : any) => {
-    console.log(param);
+    //console.log(param);
+
+    api.get("/game/game_to_spec").then((res) => {
+      console.log(res.data);
+    for (const [key, value] of Object.entries(res.data)) {
+          let obj: any = value;
+          if (obj)
+            console.log("room_name = ", obj.room_name);
+          if (obj && obj.room_name == param)
+          {
+            console.log("\n\n||||||||Specthegamedisplayfunc room [", param, "]");
+            setlistGamenotz(false);
+            props.store.setisLookingRoom(false);
+            props.store.setSpecthegame(true);
+            props.store.setRoom_name_spec(obj.room_name);
+
+            //socket.emit("Specthegame", param);
+          }
+        }
+      
+    }).catch((res) => {
+      console.log("invalid jwt");
+      console.log(res);
+    });
+    if (props.store.Specthegame === false)
+    {
+      console.log("game already ended");
+      setgame_already_ended("game already ended");
+    }
     //props.store.setSpecthegame(true);
-    Specthegamedisplayfunc(param);
   };
 
   function leavelookingroom() {
@@ -63,7 +94,7 @@ export function GameMenuSpectator(props: any) {
   async function get_all_game_room_api() {
     await api.get("/game/game_to_spec").then((res) => {
       console.log(res.data);
-      //setlistGame(res.data);
+      //setlistGame(res.data);//
 
       //console.log("res.data = ", res.data. , "\nvalue = ", res.data.room_name);
       let donot = false;

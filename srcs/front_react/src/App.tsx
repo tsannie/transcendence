@@ -23,7 +23,7 @@ export default function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [inputGame, setInputGame] = useState(false);
 
-  console.log(isLogin);
+  //console.log(isLogin);
 
   useEffect(() => {
     const strIsLogin = JSON.parse(window.localStorage.getItem("isLogin") || "null");

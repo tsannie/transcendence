@@ -46,11 +46,11 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  //////////////// SPECTATOR ROOM /////
+  //////////////// SPECTATOR ROOM ////
   ///////////////////////////////////////////////
 
 
-  //WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!!///
+  //WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!!
 
   
   @SubscribeMessage('LeaveAllGameRoom')
@@ -73,7 +73,7 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('lookAllGameRoom')
   LookRoom(client: Socket, room: string) {
-    client.join(room); //
+    client.join(room); 
 
     /*     for (const [key, value] of Object.entries(this.roo)) {//////////
       console.log("room found = [" + key + "][" + value.room_name + "]");
@@ -90,37 +90,36 @@ export class GameGateway implements OnGatewayInit {
     console.log('room = [' + room + ']');
     //client.to(room).emit('getAllGameRoom', this.roo);
     client.emit('getAllGameRoom', this.roo);
-    //client.emit('fill_list_Game', this.roo);//
+    ///client.emit('fill_list_Game', this.roo);///
 
   }
 
-  ///////////////////////////////////////////////
-  ///////////////////////////////////////////////
+  /////////////////////////////////////////////
+  //////////////////////////////////////////////
 
   @SubscribeMessage('Specthegame')
   Specthegame(client: Socket, room: string) {
 
-    if (this.roo[room]) {
-    client.leave("\nlookroom EXIST\n");
+    console.log ("\n\nBAAAAAAACK SPEC -=-=-=-")
+
+    client.leave("lookroom");
     client.join(room); ////
 
-    console.log("room SPEC = [" + room + "]");
+    console.log("BAAAAAACK SPEC = [" + room + "]");
 
     this.roo[room].spectator++;
+    console.log("spectator = " + this.roo[room].spectator);
     this.all_game.save(this.roo[room]);
 
-    client.emit('change_status');
+    //client.emit('change_status');//
     client.emit('startGameSpec', this.roo[room]);
-
-    }
-    else
-      client.emit('GameSpecEmpty');
+  
 
   }
 
   ///////////////////////////////////////////////
-  //////////////// CREATE ROOM ///
-  ///////////////////////////////////////////////
+  //////////////// CREATE ROOM /
+  //////////////////////////////////////////////
 
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
@@ -231,7 +230,7 @@ export class GameGateway implements OnGatewayInit {
 
   ////////////////////////////////////////////////
   ////////READY AND START GAME ////
-  ////////////////////////////////////////////////
+  //////////////////////////////////////////////
 
 
   @SubscribeMessage('readyGameRoom')
@@ -247,7 +246,7 @@ export class GameGateway implements OnGatewayInit {
 
       client.emit('readyGame', theroom);
       client.to(room).emit('readyGame', theroom);
-      //console.log('DAAATE = ' + this.roo[room].thedate);/
+      //console.log('DAAATE = ' + this.roo[room].thedate);////
     } else
       client.to(room).emit('readyGame', theroom);
     return this.all_game.save(theroom);
@@ -329,6 +328,7 @@ export class GameGateway implements OnGatewayInit {
       this.all_game.remove(this.roo[room]);
       delete this.roo[room];
     }
+
 /*     this.roo[room];
 
 
@@ -467,7 +467,7 @@ export class GameGateway implements OnGatewayInit {
   Player_actu_left(client: Socket, data: any) {
     var room = data.room;
 
-    console.log("playerActyLeft BACK END");
+    //console.log("playerActyLeft BACK END");
     if (!this.roo[room]) {
       console.log('playerActyLeft !!!!! NO ROOM !!!! [' + room + ']');
       return;
@@ -476,9 +476,9 @@ export class GameGateway implements OnGatewayInit {
     if (!this.roo[room].set.set_p1)
       this.roo[room].set.set_p1 = new PlayerEntity();
 
-      console.log("playerActyrIGHT BACK END");
-      console.log("data.p.score = " + data.score);
-      console.log("data.p.won = " + data.won);
+      //console.log("playerActyrIGHT BACK END");
+     // console.log("data.p.score = " + data.score);
+      //console.log("data.p.won = " + data.won);
       
     this.roo[room].set.set_p1.score = data.score;
     this.roo[room].set.set_p1.won = data.won;
@@ -498,9 +498,9 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('playerActyRight')
   Player_actu_right(client: Socket, data: any) {
   
-    console.log("playerActyrIGHT BACK END");
-    console.log("data.p.score = " + data.score);
-    console.log("data.p.won = " + data.won);
+    //console.log("playerActyrIGHT BACK END");
+    //console.log("data.p.score = " + data.score);
+    //console.log("data.p.won = " + data.won);
 
 
     var room = data.room;

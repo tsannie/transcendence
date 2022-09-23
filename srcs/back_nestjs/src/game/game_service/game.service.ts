@@ -21,4 +21,8 @@ export class GameService {
   async deleteUser(id: number): Promise<void> {
     await this.all_game.delete(id);
   }
+
+  async delete_room_name(room_name: string): Promise<void> {
+    await this.all_game.delete({ room_name });
+  }
 }

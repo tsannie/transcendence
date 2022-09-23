@@ -21,4 +21,9 @@ export class GameController {
     for (let x = -10; x < 300; x++)
       this.gameService.deleteUser(x);
   }
+
+  @Get('/dell/:room_name')
+  detail2(room_name: string) {
+    this.gameService.delete_room_name(room_name)
+  }
 }
