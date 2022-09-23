@@ -11,13 +11,17 @@ export default function LoginPage(props: any) {
   //<img src={LogoIcon}></img>
   return (
     <div className="login">
-      <h1>Account Sign in</h1>
-      {!props.is2FA &&
-        <ButtonLogin isLogin={props.isLogin} setIsLogin={props.setIsLogin} />
-      }
-      {props.is2FA &&
-        <TwoFactorCode setIsLogin={props.setIsLogin}/>
-      }
+      <h1>transcendence</h1>
+      <div className="loginBox">
+        <h2>Account Sign in</h2>
+        {!props.is2FA &&
+          <ButtonLogin isLogin={props.isLogin} setIsLogin={props.setIsLogin} />
+        }
+        {props.is2FA &&
+          <TwoFactorCode setIsLogin={props.setIsLogin}/>
+        }
+      </div>
     </div>
+
   );
 }
