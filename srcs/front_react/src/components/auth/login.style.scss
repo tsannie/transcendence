@@ -6,6 +6,20 @@
 .login {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  h1 {
+    margin-bottom: 20%;
+    font-family: 'Arcade';
+    font-size: 3em;
+    letter-spacing: 0.5em;
+    color: #fff;
+    text-shadow: 0 0 8px #fff;
+  }
+}
+
+.loginBox {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   width: 40vw;
 
@@ -13,11 +27,11 @@
   //border-width: 1vw;
   border-style: dashed;
   border-color: white;
-  h1 {
+  h2 {
     text-align: center;
     font-family: 'Arcade', sans-serif;
     font-size: 220%;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.1rem;
     color: white;
   }
 }
