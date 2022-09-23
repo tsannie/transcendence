@@ -25,7 +25,6 @@ import InfosChannels from "./InfosChannels";
 export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
-  const [users, setAdmins] = useState<string[]>([]);
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -173,6 +172,7 @@ export default function ChannelsList(props: any) {
             )}
             <InfosChannels
               channelData={channelData}
+              userId={props.userId}
             />
           </Box>
         );
