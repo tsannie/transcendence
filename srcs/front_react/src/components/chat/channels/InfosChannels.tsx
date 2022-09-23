@@ -66,7 +66,7 @@ export default function InfosChannels(props: any) {
         {open === true && (
           <List>
             {Object.entries(infosChannel).map(([key, value]) => {
-              if (typeof value === "string") {
+              if (typeof value === "string" && key !== "password") {
                 return (
                   <ListItem key={key}>
                     <ListItemText primary={key} secondary={value} />
@@ -75,17 +75,14 @@ export default function InfosChannels(props: any) {
               } else if (typeof value === "object" && value !== null) {
                 return (
                   <ListItem key={key}>
-                    <ListItemText
-                      primary={key}
-                      secondary={Object.entries(value).map(
-                        ([key, childValue]) => {
-                          if (key === "username") {
-                            return <div key={key}>{childValue}</div>;
-                          }
+                    {Object.entries(value).map(
+                      ([childKey, childValue]) => {
+                        if (childKey === "username") {
+                          return <ListItemText primary={key} secondary={childValue} />;
                         }
-                      )}
-                    />
-                  </ListItem>
+                      }
+                    )}
+                  </ListItem >
                 );
               }
             })}
