@@ -1,6 +1,6 @@
 import { REDIRECT_LINK_AUTH } from "../../const/const";
 import './login.style.scss'
-import FTLogo from "../../assets/42_Logo.svg";
+import FTLogo from "../../assets/42_Logo_white.png";
 
 export default function ButtonLogin(props: any) {
 
