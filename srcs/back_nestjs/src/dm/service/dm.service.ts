@@ -17,9 +17,9 @@ export class DmService {
 
 	private readonly userService: UserService,
 	) {}
-
+	
 	async checkifBanned(user: UserEntity, target: string) : Promise<UserEntity> {
-		let user2 = await this.userService.findUser(target, ["banned"]);
+		let user2 = await this.userService.findUser(target, ["banned", "dms"]);
 
 		if (user.banned && user.banned.find( banned_guys => banned_guys.username === target))
 			throw new UnprocessableEntityException(`You've banned ${target}`);
@@ -34,24 +34,15 @@ export class DmService {
 		
 	}
 	
-	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
-		let user2 = await this.userService.findUser(data.target);
-		let sorted = [user, user2].sort( (user, user2) => {
-			if (user.username < user2.username)
-				return -1;
-			else
-				return 1;
-		});
-		console.log(sorted);
+	async getDmByName(data: DmDto, user: UserEntity): Promise<void | DmEntity> {
+		let user2 = await this.userService.findUser(data.target, ["banned", "dms"]);
+
 		return await this.dmRepository.findOne({
-			where: {
-				users: ArrayContains([user, user2]),
-			}
 		});
 	}
 
 	// get all conversations of a user
-	async getAllDms(user: UserEntity): Promise<void | DmEntity[]> {
+	async getAllDms(user: UserEntity): Promise<DmEntity[]> {
 		return user.dms;
 	}
 	
@@ -62,11 +53,7 @@ export class DmService {
 		let user2 = await this.checkifBanned(user, data.target);
 		let new_dm = new DmEntity();
 
-		new_dm.users = [user, user2].sort( (user, user2) => (user.username < user2.username)? -1 : 1)
-		console.log(new_dm.users);
-
-		let result = await this.dmRepository.save(new_dm);
-		console.log("kikoo")
-		return result;
+		new_dm.users = [user, user2];
+		return await this.dmRepository.save(new_dm);
 	}
 }
