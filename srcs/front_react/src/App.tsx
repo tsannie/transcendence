@@ -45,13 +45,13 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="bg">
         { isLogin === false &&
           <LoginPage setIsLogin={setIsLogin}
             is2FA={is2FA}
             isLogin={isLogin}
           />
         }
+      <div className="bg">
         <div className="ball"></div>
         <div className="ball"></div>
         <div className="ball"></div>
