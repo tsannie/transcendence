@@ -1,95 +1,77 @@
-import { Button, List, ListItemButton } from "@mui/material";
-import React, { useState } from "react";
+import { Button, List, ListItemButton, Popover } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { api } from "../../../userlist/UserListItem";
 import { IChannel } from "../types";
+import BanUser from "./BanUser";
+import MuteUser from "./MuteUser";
+import UnbanUser from "./UnbanUser";
+import UnmuteUser from "./UnmuteUser";
 
 export default function AdminsActions(props: any) {
-  const [targetUsername, setTargetUsername] = useState("");
+  const [infosChannel, setInfosChannel] = useState<IChannel>();
 
-  function createChannelActions(channel: IChannel) {
+  function isMuted(channel: any) {
     console.log("channel = ", channel);
-    const newChannel = {
-      name: channel.name,
-      targetUsername: targetUsername,
-    };
-    console.log(newChannel);
-
-    return newChannel;
-  }
-
-  // create function who display the list of users and setTargetUsername to the user clicked
-
-  function listUsers(users: any) {
-    console.log("users = ", users);
-
-    return (
-      <List>
-        {users.map((user: any) => (
-          <ListItemButton onClick={() => setTargetUsername(user.username)}>
-            {user.username}
-          </ListItemButton>
-        ))}
-      </List>
-    );
-  }
-
-  async function muteChannel(channel: IChannel) {
-    listUsers(channel.users);
-    console.log("targetUsername = ", targetUsername);
-    const newChannel = createChannelActions(channel);
-
-    if (newChannel.targetUsername !== "") {
-      await api
-        .post("channel/muteUser", newChannel)
-        .then((res) => {
-          console.log("channel left with success");
-          console.log(channel);
-        })
-        .catch((res) => {
-          console.log("invalid channels");
-          console.log(res);
-        });
+    //console.log("channel.muted.length = ", channel.muted.length);
+    // parcourir les muted users et return true si userId === muted.id
+    if (channel !== undefined) {
+      for (let i = 0; i < channel.muted.length; i++) {
+        if (channel.muted[i].id === props.userId) {
+          return true;
+        }
+      }
     }
+    console.log("isMuted = false");
+    return false;
   }
 
-  async function banChannel(channel: IChannel) {
-    listUsers(channel.users);
-    const newChannel = createChannelActions(channel);
-
-    if (newChannel.targetUsername !== "") {
-      await api
-        .post("channel/banUser", newChannel)
-        .then((res) => {
-          console.log("channel left with success");
-          console.log(channel);
-        })
-        .catch((res) => {
-          console.log("invalid channels");
-          console.log(res);
-        });
+  function isBanned(channel: any) {
+    if (channel !== undefined) {
+      for (let i = 0; i < channel.banned.length; i++) {
+        if (channel.banned[i].id === props.userId) {
+          return true;
+        }
+      }
     }
+    return false;
   }
+
+  async function getInfosChannel(channel: IChannel) {
+    await api
+      .get("channel/privateData", {
+        params: {
+          name: channel.name,
+        },
+      })
+      .then((res) => {
+        console.log("get infos channels");
+        setInfosChannel(res.data);
+        //setChannelId(res.data.id);
+      })
+      .catch((res) => {
+        console.log("invalid channels private data");
+      });
+  }
+
+  useEffect(() => {
+    getInfosChannel(props.channelData);
+  }, [props.channelData]);
+
+  // TODO unmute unban btn
 
   return (
     <div>
-      <Button
-        sx={{
-          color: "black",
-          ml: "1vh",
-        }}
-        onClick={() => muteChannel(props.channelData)}
-      >
-        Mute
-      </Button>
-      <Button
-        sx={{
-          color: "black",
-          ml: "1vh",
-        }}
-        onClick={() => banChannel(props.channelData)}
-      >
-        Ban
-      </Button>
+      {isMuted(infosChannel) ? (
+        <UnmuteUser channelData={props.channelData} />
+      ) : (
+        <MuteUser channelData={props.channelData} />
+      )}
+
+      {isBanned(infosChannel) ? (
+        <UnbanUser channelData={props.channelData} />
+      ) : (
+        <BanUser channelData={props.channelData} />
+      )}
     </div>
   );
 }

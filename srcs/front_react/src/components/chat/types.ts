@@ -18,6 +18,11 @@ export interface IChannel {
   banned?: string[];
 }
 
+export interface IChannelActions {
+  channel_name: string;
+  target: string;
+}
+
 export interface IDm {
   id?: number;
   targetUsername: string;

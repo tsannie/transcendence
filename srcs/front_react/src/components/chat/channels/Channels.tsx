@@ -13,8 +13,7 @@ export default function Channels(props: any) {
   const [newChannel, setNewChannel] = useState(false);
   const [channelCreated, setChannelCreated] = useState(false);
   const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
-  const [isOwner, setIsOwner] = useState(false);
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(0);
 
   function setChannel() {
     if (!newChannel) setNewChannel(true);
@@ -23,12 +22,10 @@ export default function Channels(props: any) {
 
   // get all channels
   async function getChannels() {
-
-    let userId: number;
     // get auth profile and put it in user variable
     await api.get("auth/profile").then((res) => {
-      console.log(res.data);
-      userId = res.data.id;
+      //console.log(res.data);
+      //console.log(res.data.id);
       setUserId(res.data.id);
     });
 
@@ -38,14 +35,6 @@ export default function Channels(props: any) {
       .get("channel/all")
       .then((res) => {
         setChannelsList(res.data);
-
-        // check if user is owner of channel
-        res.data.forEach((channel: any) => {
-          console.log(channel);
-          if (channel.owner.id === userId) {
-            setIsOwner(true);
-          }
-        });
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -85,11 +74,10 @@ export default function Channels(props: any) {
           setNewChannel={setNewChannel}
           setChannelCreated={setChannelCreated}
           setChannelsList={setChannelsList}
-          setIsOwner={setIsOwner}
           getChannels={getChannels}
         />
       )}
-      <ChannelsList channelsList={channelsList} isOwner={isOwner} userId={userId} />
+      <ChannelsList channelsList={channelsList} userId={userId} />
     </Box>
   );
 }
