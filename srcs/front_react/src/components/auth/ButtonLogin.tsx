@@ -14,6 +14,7 @@ export default function ButtonLogin(props: any) {
 
   return (
     <div className='listConnection'>
+      <h2>Account Sign in</h2>
       <button onClick={linkLog}>
         <img src={FTLogo}/>
         <p>Continue with 42</p>
