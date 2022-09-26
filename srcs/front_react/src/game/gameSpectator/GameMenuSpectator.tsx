@@ -4,18 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { threadId } from "worker_threads";
 import { api } from "../../userlist/UserListItem";
 import {
-  ballObj,
   socket,
 } from "../Game";
-import Display_game from "./display_game";
-////////////////////////////////////////////////////
-// WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
-////////////////////////////////////////////////////
 let game_ended = false;
 
 export function GameMenuSpectator(props: any) {
   
-  //let [listGame, setlistGame] = useState<string[]>(props.listGame);
   const [listGame, setlistGame] = useState<string[]>([]);
   const [listGamenotz, setlistGamenotz] = useState(false);
   const [g, setg] = useState(true);
@@ -29,25 +23,9 @@ export function GameMenuSpectator(props: any) {
       props.store.setSpecthegame(false);
       console.log("ended")
     });
-
-    
-
-/*     socket.on("change_status", () => {
-      setlistGamenotz(false);
-      props.store.setisLookingRoom(false);
-      props.store.setSpecthegame(true);
-    }); */
-
   }, [socket]);
 
-/*   function Specthegamedisplayfunc(room : string) {
-    console.log("||||||||Specthegamedisplayfunc room [", room, "]");
-    setlistGamenotz(false);
-    props.store.setisLookingRoom(false);
-    props.store.setSpecthegame(true);
-    socket.emit("Specthegame", room);
-  }
- */
+
 
   // Fonction qui gere le bouton pour quitter le mode spectateur
 
@@ -88,7 +66,6 @@ export function GameMenuSpectator(props: any) {
       props.store.setisLookingRoom(false);
       props.store.setSpecthegame(true);
       props.store.setRoom_name_spec(param);
-      //socket.emit("Specthegame", param);
     }
     else {
       console.log("game already ended");
@@ -107,7 +84,6 @@ export function GameMenuSpectator(props: any) {
 
   function leavelookingroom() {
     game_ended = true;
-    //socket.emit("LeaveAllGameRoom", "lookroom");
     listGame.splice(0, listGame.length);
     props.store.setisLookingRoom(false);
 
@@ -117,17 +93,12 @@ export function GameMenuSpectator(props: any) {
   async function get_all_game_room_api() {
     await api.get("/game/game_to_spec").then((res) => {
       console.log(res.data);
-      //setlistGame(res.data);//
-
-      //console.log("res.data = ", res.data. , "\nvalue = ", res.data.room_name);
       let donot = false;
       let key2;
       for (const [key, value] of Object.entries(res.data)) {
-          //console.log("key = ", key, "\nvalue = ", value);
           let obj: any = value;
           if (obj)
             console.log("room_name = ", obj.room_name);
-          //console.log(listGame.length);
           for (let i = 0;
           i <listGame.length && donot === false; i++) {
             key2 =  listGame[i];
@@ -142,7 +113,6 @@ export function GameMenuSpectator(props: any) {
           } else {
             donot = false;
           }
-        
         }
         for (let i = 0; i <  listGame.length; i++) {
           console.log(i + " === " +  listGame[i]);
@@ -211,7 +181,3 @@ export function GameMenuSpectator(props: any) {
       );
     }
 }
-
-////////////////////////////////////////////////////
-// WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
-////////////////////////////////////////////////////
