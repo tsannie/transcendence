@@ -18,6 +18,7 @@ import { IChannel } from "../types";
 import { display } from "@mui/system";
 import { LockIcon } from "./LockIcon";
 import InfosChannels from "./InfosChannels";
+import AdminsActions from "./AdminsActions";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
@@ -94,7 +95,7 @@ export default function ChannelsList(props: any) {
   }
 
   return (
-    <Box>
+    <div>
       {props.channelsList.map((channelData: IChannel) => {
         return (
           <Box
@@ -121,9 +122,9 @@ export default function ChannelsList(props: any) {
             >
               {channelData.name}
             </Box>
-            <Box>
+            <div>
               {channelData.status === "Protected" ? <LockIcon /> : <div></div>}
-            </Box>
+            </div>
             <TextField
               sx={{
                 minWidth: "15vw",
@@ -170,13 +171,15 @@ export default function ChannelsList(props: any) {
                 Delete
               </Button>
             )}
-            <InfosChannels
-              channelData={channelData}
-              userId={props.userId}
-            />
+            {props.isOwner && (
+              <AdminsActions
+                channelData={channelData}
+              />
+            )}
+            <InfosChannels channelData={channelData} userId={props.userId} />
           </Box>
         );
       })}
-    </Box>
+    </div>
   );
 }

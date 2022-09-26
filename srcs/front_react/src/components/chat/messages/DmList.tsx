@@ -11,7 +11,7 @@ import { IDm, IMessage } from "../types";
 export default function DmList(props: any) {
   const [dms, setDms] = React.useState<Array<IDm>>([]);
 
-  async function getAllDms() {
+  /* async function getAllDms() {
     await api
       .get("dm/getAllDms")
       .then((res) => {
@@ -21,10 +21,15 @@ export default function DmList(props: any) {
         console.log("invalid jwt");
         console.log(res);
       });
-  }
+  } */
 
   useEffect(() => {
-    getAllDms();
+    props.socket.on("getDM", (data: any) => {
+      console.log("getDM");
+      console.log(data);
+      setDms(data);
+    });
+    //getAllDms();
   }, [dms]);
 
   return (

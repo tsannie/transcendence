@@ -12,7 +12,7 @@ export default function MessagesList(props: any) {
         border: "1px solid black",
       }}
     >
-      <Box>
+      <div>
         {props.messagesList.map((messageData: IMessage) => {
           if (props.author === messageData.author)
             return (
@@ -56,7 +56,7 @@ export default function MessagesList(props: any) {
             </Box>
           );
         })}
-      </Box>
+      </div>
     </Box>
   );
 }

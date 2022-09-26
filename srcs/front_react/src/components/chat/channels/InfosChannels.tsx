@@ -8,6 +8,8 @@ export default function InfosChannels(props: any) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
+  const [channelId, setChannelId] = useState(0);
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -49,6 +51,7 @@ export default function InfosChannels(props: any) {
       .then((res) => {
         console.log("get infos channels");
         setInfosChannel(res.data);
+        setChannelId(res.data.id);
       })
       .catch((res) => {
         console.log("invalid channels private data");
@@ -80,7 +83,9 @@ export default function InfosChannels(props: any) {
         }}
       >
         {open === true && (
-          <List>
+          <List
+            key={channelId}
+          >
             {Object.entries(infosChannel).map(([key, value]) => {
               if (typeof value === "string" && key !== "password") {
                 return (
