@@ -132,8 +132,8 @@ export class GameEntity {
   @Column('boolean', { default: false })
   gave_up: boolean;
 
-  @Column('boolean', { default: 0 })
-  spectator: number = 0;
+  @Column({ default: 0 })
+  spectator: number;
 
   @Column({ nullable: true })
   p1?: string;

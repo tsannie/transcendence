@@ -46,75 +46,47 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  //////////////// SPECTATOR ROOM ////
+  //////////////// SPECTATOR ROOM /////
   ///////////////////////////////////////////////
 
 
   //WORK IN PROGRESS !!! WORK IN PROGRESS !!! WORK IN PROGRESS !!!
 
   
-  @SubscribeMessage('LeaveAllGameRoom')
-  LeaveLookRoom(client: Socket, room: string) {
-    client.leave(room);
-    //client.emit('LeaveAllGameRoom', this.roo);
-  }
-
   @SubscribeMessage('LeaveGameSpectator')
   LeaveGameSpectator(client: Socket, room: string) {
-    console.log("leaved room SPEC = [" + room + "]");
+    console.log("BAAAAAAACK leaved room SPEC = [" + room + "]");
     client.leave(room);
     if (this.roo[room])
     {
-      console.log("spectator = " + this.roo[room].spectator);
       this.roo[room].spectator--;
+      console.log("spectator = " + this.roo[room].spectator);
+      this.all_game.save(this.roo[room]);
     }
-  }
-
-
-  @SubscribeMessage('lookAllGameRoom')
-  LookRoom(client: Socket, room: string) {
-    client.join(room); 
-
-    /*     for (const [key, value] of Object.entries(this.roo)) {//////////
-      console.log("room found = [" + key + "][" + value.room_name + "]");
-  
-    } 
-     */
-    //console.log('------------wannawatch----------------]');///
-
-    /*  for (const [key, value] of Object.entries(this.roo)) {
-      console.log('rooma are : [' + key + '][' + value.nbr_co + ']');
-    }
-    */
-    console.log('now to wannawatch client'); 
-    console.log('room = [' + room + ']');
-    //client.to(room).emit('getAllGameRoom', this.roo);
-    client.emit('getAllGameRoom', this.roo);
-    ///client.emit('fill_list_Game', this.roo);///
-
   }
 
   /////////////////////////////////////////////
-  //////////////////////////////////////////////
+  /////////////////////////////////////////////
 
   @SubscribeMessage('Specthegame')
   Specthegame(client: Socket, room: string) {
 
-    console.log ("\n\nBAAAAAAACK SPEC -=-=-=-")
+    console.log ("\n\nBAAAAAAACK SPEC -=-=-=-[ " + room + " ]-=-=-=-=-")
+    client.join(room); //
+    if (this.roo[room])
+    {
+    //client.leave("lookroom");//
 
-    client.leave("lookroom");
-    client.join(room); ////
+      //console.log("BAAAAAACK SPEC = [" + room + "]");
 
-    console.log("BAAAAAACK SPEC = [" + room + "]");
+      this.roo[room].spectator++;
+      this.all_game.save(this.roo[room]);
+      console.log("12spectator joined = " + this.roo[room].spectator);
 
-    this.roo[room].spectator++;
-    console.log("spectator = " + this.roo[room].spectator);
-    this.all_game.save(this.roo[room]);
-
-    //client.emit('change_status');//
-    client.emit('startGameSpec', this.roo[room]);
-  
-
+      //client.emit('change_status');
+      client.emit('startGameSpec', this.roo[room]);
+    }
+    
   }
 
   ///////////////////////////////////////////////
@@ -123,7 +95,7 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('createGameRoom')
   CreateRoom(client: Socket, room: string) {
-    //console.log("MERRRDE room = [" + room + "]");
+    //console.log("MERRRDE room = [" + room + "]");///
     if (room === '') {
       for (const [key, value] of Object.entries(this.roo)) {
         //console.log("\n value = " + value.room_name);//
@@ -212,24 +184,12 @@ export class GameGateway implements OnGatewayInit {
     }
     this.all_game.save(this.roo[room]);
 
-/*         if (this.roo[room].spectator >== 1 && client.id === this.roo[room].p1)
-
-    {
-      client.to(room).emit('leftRoom_spec',
-      this.roo[room]);
-    } */
-
-    //spectator
-    //client.to(room).emit('getAllGameRoom', this.roo);
-
     client.to(room).emit('leftRoom', this.roo[room], client.id);
     client.emit('leftRoom', this.roo[room], client.id);
-/*     if (this.roo[room].game_started === true)
-      client.to(room).emit('leftbcgiveup'); */
   }
 
   ////////////////////////////////////////////////
-  ////////READY AND START GAME ////
+  ////////READY AND START GAME//
   //////////////////////////////////////////////
 
 
@@ -272,6 +232,9 @@ export class GameGateway implements OnGatewayInit {
     this.roo[room].set.set_p1.score = false;
     this.roo[room].set.set_p2.score = false;
 
+    this.roo[room].spectator = 0;
+
+    
     //client.to(room).emit('startGame', this.roo[room]);
     client.emit('startGame', this.roo[room]);
 
@@ -279,7 +242,7 @@ export class GameGateway implements OnGatewayInit {
     {
       console.log("\n=================client.id =" + client.id);
       console.log("=========this.roo[room].p1 =\n" + this.roo[room].p1);
-      client.to("lookroom").emit('getAllGameRoom', this.roo, client.id);
+      //client.to("lookroom").emit('getAllGameRoom', this.roo, client.id);
     }
       //spectator/
     //client.to(room).emit('getAllGameRoom', this.roo);///
@@ -452,15 +415,14 @@ export class GameGateway implements OnGatewayInit {
 
     if (this.roo[room].spectator >= 1 && client.id === this.roo[room].p1)
     {
-      client.to(room).emit('sincTheBall_spec',
-      this.roo[room]);
+      client.to(room).emit('sincTheBall_spec', this.roo[room]);
     }
-    client.emit('sincTheBall', this.roo[room]); 
+    //client.emit('sincTheBall', this.roo[room]); 
     client.to(room).emit('sincTheBall', this.roo[room]);
   }
 
   ////////////////////////////////////////////////
-  //////////////// Player DATA ///
+  //////////////// Player DATA //
   ////////////////////////////////////////////////
 
   @SubscribeMessage('playerActyLeft')
@@ -478,7 +440,7 @@ export class GameGateway implements OnGatewayInit {
 
       //console.log("playerActyrIGHT BACK END");
      // console.log("data.p.score = " + data.score);
-      //console.log("data.p.won = " + data.won);
+      //console.log("data.p.won = " + data.won);//
       
     this.roo[room].set.set_p1.score = data.score;
     this.roo[room].set.set_p1.won = data.won;

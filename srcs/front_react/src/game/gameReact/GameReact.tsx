@@ -150,7 +150,7 @@ export function GamePlayer_Left_right(props: any) {
               u = 1;
             if (u > 0)
               u++;
-            if (u === 12) {
+            if (u === 6) {
               sinc_ball(props.store.room, ballObj);
               sinc_player_left(props.store.room, player_left);
               sinc_player_right(props.store.room, player_right);
