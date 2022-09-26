@@ -22,13 +22,14 @@ import {
 } from "../gameReact/BallMouv";
 
 let first_sinc = false;
+let emit_to_get_room = true;
 
 export function GameSpectator(props: any) {
 
   const [p1id, setp1id] = useState("null");
   const [p2id, setp2id] = useState("null");
 
-  //const [ThisRoom, setThisRoom] = useState("");
+  const [ThisRoom, setThisRoom] = useState("");
 
   //const [first_sinc, setfirst_sinc] = useState(false);
 
@@ -65,7 +66,7 @@ export function GameSpectator(props: any) {
 
   let requestAnimationFrameId: any;
   useEffect(() => {
-    socket.on("sincTheBall_spec", (theroom: any) => {
+      socket.on("sincTheBall_spec", (theroom: any) => {
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
 
@@ -109,29 +110,35 @@ export function GameSpectator(props: any) {
       player_right.won = theroom.set.set_p2.won;
 
     });
-
-    socket.on("startGameSpec", (theroom: any) => {
-/*       sinc_all_data(theroom);
+      socket.on("startGameSpec", (theroom: any) => {
+      console.log("+*+*+*-+-startGameSpec+*++++-*+*-+");
+      sinc_all_data(theroom);
       setp1id(theroom.set.set_p1.name);
       setp2id(theroom.set.set_p2.name);
       setThisRoom(theroom.room_name);
+      console.log("\n\n------------------");
       console.log("theroom.set.set_p1.name", theroom.set.set_p1.name);
       console.log("theroom.set.set_p2.name", theroom.set.set_p2.name);
       console.log("--------------------");
       console.log("p1id = ", p1id);
-      console.log("p2id = ", p2id); */
+      console.log("p2id = ", p2id); 
       console.log("--------------------");
       console.log("theroom.room_name = ", theroom.room_name);
-      //console.log("ThisRoom = ", ThisRoom);
-      console.log("--------------------");
+      //console.log("ThisRoom = ", ThisRoom); 
+
+      console.log("--------------------ERRORORORORO\n\n");
     });
-    
     socket.on("player_give_upem_spec", (theroom: any) => {
       player_right.won = theroom.set.set_p2.won;
       player_left.won = theroom.set.set_p1.won;
       //setThisRoom(theroom.room_name);
 
     });
+
+    if (props.store.Specthegame === true && emit_to_get_room === true) {
+      socket.emit("Specthegame", props.store.Room_name_spec);
+      emit_to_get_room = false;
+    }
 
     const render = () => {
       requestAnimationFrameId = requestAnimationFrame(render);
@@ -188,15 +195,16 @@ export function GameSpectator(props: any) {
       }
     };
     render();
-  }, [props.canvasRef]);
+  }, [socket]);
 
 
   function leaveGameRoomSpec() {
     first_sinc = false;
+    emit_to_get_room = true;
     props.store.setSpecthegame(false);
     props.store.setisLookingRoom(true);
-    //console.log("this room = !!!!!!!!!!!!!!!!![" + ThisRoom + "]!1");
-    //socket.emit("LeaveGameSpectator", ThisRoom);
+    console.log("this room = !!!!!!!!!!!!!!!!![" + ThisRoom + "]!1");
+    socket.emit("LeaveGameSpectator", ThisRoom);
   }
 
 

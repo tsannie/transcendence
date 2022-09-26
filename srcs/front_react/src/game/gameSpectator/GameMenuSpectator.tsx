@@ -11,8 +11,8 @@ import Display_game from "./display_game";
 ////////////////////////////////////////////////////
 // WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
 ////////////////////////////////////////////////////
+let game_ended = false;
 
-let x = 0;
 export function GameMenuSpectator(props: any) {
   
   //let [listGame, setlistGame] = useState<string[]>(props.listGame);
@@ -29,6 +29,8 @@ export function GameMenuSpectator(props: any) {
       props.store.setSpecthegame(false);
       console.log("ended")
     });
+
+    
 
 /*     socket.on("change_status", () => {
       setlistGamenotz(false);
@@ -49,42 +51,63 @@ export function GameMenuSpectator(props: any) {
 
   // Fonction qui gere le bouton pour quitter le mode spectateur
 
-  const Specthegamedisplay = (event : any, param : any) => {
-    //console.log(param);
+  async function makeGetRequest(param: any){
 
-    api.get("/game/game_to_spec").then((res) => {
+    await api.get("/game/game_to_spec").then((res) => {
       console.log(res.data);
     for (const [key, value] of Object.entries(res.data)) {
           let obj: any = value;
           if (obj)
             console.log("room_name = ", obj.room_name);
-          if (obj && obj.room_name == param)
+          if (obj && obj.room_name === param)
           {
-            console.log("\n\n||||||||Specthegamedisplayfunc room [", param, "]");
-            setlistGamenotz(false);
-            props.store.setisLookingRoom(false);
-            props.store.setSpecthegame(true);
-            props.store.setRoom_name_spec(obj.room_name);
-
-            //socket.emit("Specthegame", param);
+            game_ended = false;
+/*             console.log("====================================");
+            console.log("111111111game_ended = ", game_ended);
+            console.log("===================================="); */
           }
         }
-      
-    }).catch((res) => {
-      console.log("invalid jwt");
-      console.log(res);
-    });
-    if (props.store.Specthegame === false)
-    {
+      }).catch((res) => {
+        console.log("invalid jwt");
+        console.log(res);
+      });
+
+  }
+
+
+  async function set_spectator_to_room(param: any) {
+    await makeGetRequest(param);
+
+/*     console.log("====================================");
+    console.log("22222game_ended = ", game_ended);
+    console.log("===================================="); */
+
+    if (game_ended === false) {
+      console.log("\n\n||||||||Specthegamedisplayfunc room [", param, "]");
+      setlistGamenotz(false);
+      props.store.setisLookingRoom(false);
+      props.store.setSpecthegame(true);
+      props.store.setRoom_name_spec(param);
+      //socket.emit("Specthegame", param);
+    }
+    else {
       console.log("game already ended");
       setgame_already_ended("game already ended");
     }
-    //props.store.setSpecthegame(true);
+
+  }
+
+
+  const Specthegamedisplay = (event : any, param : any) => {
+    set_spectator_to_room(param);
+
   };
+  
+
 
   function leavelookingroom() {
-
-    socket.emit("LeaveAllGameRoom", "lookroom");
+    game_ended = true;
+    //socket.emit("LeaveAllGameRoom", "lookroom");
     listGame.splice(0, listGame.length);
     props.store.setisLookingRoom(false);
 
@@ -137,6 +160,7 @@ export function GameMenuSpectator(props: any) {
 
 
     function  refresh_games_spec_solo() {
+      game_ended = true;
       setlistGamenotz(false);
       listGame.splice(0, listGame.length);
       get_all_game_room_api();
@@ -146,10 +170,10 @@ export function GameMenuSpectator(props: any) {
         refresh_games_spec_solo()
       }
   
-      if (g === true) {
-        refresh_games_spec_solo();
-        setg(false);
-      }
+    if (g === true) {
+      refresh_games_spec_solo();
+      setg(false);
+    }
     if (listGamenotz === true) {
       return (
           <div className="look">

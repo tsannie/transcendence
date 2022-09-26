@@ -51,7 +51,6 @@ export default function GameMenu(props: any) {
   function lookAtAllGameRoom() {
     console.log("LOOK AT ALL GAME ROOM !!!!");
     props.store.setisLookingRoom(true);
-    //socket.emit("lookAllGameRoom", "lookroom");
   }
 
   function createGameRoom() {

@@ -54,6 +54,17 @@ export default function Game() {
 
   const [Room_name_spec, setRoom_name_spec] = useState("");
   
+/*   
+  TODOP NEW MAP IN GAME
+  TODOP EGALISER PADDLE SOURIS
+  TODOP refresh page delete room ?
+  TODOP if room exist in back and db verif
+  TODOP historique game for user
+	
+  TODOP RESPONSIVE GAME
+  */
+
+
   const store = {
     nbrconnect: nbrconnect,
     room: room,
