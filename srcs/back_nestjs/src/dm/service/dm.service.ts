@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ArrayContains } from 'class-validator';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, Repository } from 'typeorm';
 import { DmDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 
@@ -19,7 +19,7 @@ export class DmService {
 	) {}
 	
 	async checkifBanned(user: UserEntity, target: string) : Promise<UserEntity> {
-		let user2 = await this.userService.findUser(target, ["banned", "dms"]);
+		let user2 = await this.userService.findUser(target, ["banned"]);
 
 		if (user.banned && user.banned.find( banned_guys => banned_guys.username === target))
 			throw new UnprocessableEntityException(`You've banned ${target}`);
@@ -30,16 +30,25 @@ export class DmService {
 
 	
 	// get a dm by id
-	async getDmById(id: number): Promise<void | DmEntity> {
-		
+	async getDmById(inputed_id: number): Promise<DmEntity> {
+		return await this.dmRepository.findOne( inputed_id,
+			{
+				relations: ["messages"],
+			}
+		)
 	}
 	
-	async getDmByName(data: DmDto, user: UserEntity): Promise<void | DmEntity> {
-		let user2 = await this.userService.findUser(data.target, ["banned", "dms"]);
-
-		return await this.dmRepository.findOne({
-		});
+	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
+		let convo = user.dms.find( (dm) => 
+				(dm.users[0].username === user.username && dm.users[1].username === data.target) || (dm.users[0].username === data.target && dm.users[1].username === user.username)
+		)
+		if (!convo)
+			throw new UnprocessableEntityException(`No conversation with ${data.target}`);
+		else
+			return await this.getDmById(convo.id);
 	}
+
+
 
 	// get all conversations of a user
 	async getAllDms(user: UserEntity): Promise<DmEntity[]> {
