@@ -2,6 +2,14 @@
 .twoFactor {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  button {
+    margin-top: 1.5vh;
+    margin-bottom: 0.5vh;
+    font-size: 1.5vw;
+    background: transparent;
+    border: dashed white;
+  }
 }
 
 .authInput {
@@ -10,6 +18,10 @@
   justify-content: center;
   width: 100% !important;
   margin-bottom: 0.3vw;
+  ::placeholder {
+    color: white; // TODO replace by 42 color
+    font-size: 3.5vw;
+  }
   input {
     width: 6vw !important;
     height: 6vw !important;
@@ -20,7 +32,10 @@
     margin-right: 0.3vw;
     margin-left: 0.3vw;
     font-size: 4vw;
-    color: black;
+    color: white; // TODO replace with const
+    //background-color: #14151A; // TODO replace with const
+    background-color: transparent;
+    font-family: 'Arcade';
   }
   @media screen and (min-width: 1000px) {
     input {

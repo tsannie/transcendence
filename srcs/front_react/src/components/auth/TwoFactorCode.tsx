@@ -16,6 +16,11 @@ export default function TwoFactorCode(props: any) {
     }
   }
 
+  const handleCancel = () => {
+    // TODO logout route
+  }
+
+
   const handleOnComplete = (up: string) => {
     setCheck(true);
     console.log('up', up);
@@ -31,8 +36,6 @@ export default function TwoFactorCode(props: any) {
     });
   };
 
-  //TODO add cancel button
-
   return (
     <div className="twoFactor">
       <h2>Validation Code</h2>
@@ -43,6 +46,7 @@ export default function TwoFactorCode(props: any) {
         onComplete={handleOnComplete}
         ref={inputRef}
       />
+      <button onClick={handleCancel} >cancel</button>
       <InvalidSnackbar openError={openError} setOpenError={setOpenError}/>
     </div>
   );

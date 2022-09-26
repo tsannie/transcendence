@@ -51,6 +51,23 @@ export default function App() {
             isLogin={isLogin}
           />
         }
+        {
+          isLogin === true &&
+          <Box
+          sx={{
+            display: "flex",
+          }}
+        >
+          <Sidebar
+            setInputChat={setInputChat}
+            setInputSettings={setInputSettings}
+            setIsLogin={setIsLogin}
+            setIs2FA={setIs2FA}
+          />
+          {inputChat && <Chat />}
+          {inputSettings && <Settings />}
+          </Box>
+        }
       <div className="bg">
         <div className="ball"></div>
         <div className="ball"></div>

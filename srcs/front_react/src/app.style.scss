@@ -17,6 +17,14 @@ body {
   flex-wrap: wrap;
   flex-direction: column;
   overflow: hidden;
+  * {
+    font-family: 'Arcade';
+    color: white;
+  }
+  button {
+    cursor: pointer;
+  }
+
 }
 
 .bg {
