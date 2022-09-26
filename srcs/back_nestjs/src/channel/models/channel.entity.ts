@@ -36,7 +36,7 @@ export class ChannelEntity {
 	@ManyToMany( () => UserEntity, (user) => user.channels )
 	users: UserEntity[];
 
-	@OneToMany( () => MessageEntity, (message) => message.dm )
+	@OneToMany( () => MessageEntity, (message) => message.channel )
 	messages: MessageEntity[];
 
 	@ManyToMany( () => UserEntity )
