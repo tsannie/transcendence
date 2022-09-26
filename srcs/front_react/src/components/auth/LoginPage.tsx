@@ -12,7 +12,6 @@ export default function LoginPage(props: any) {
     <div className="login">
       <h1>transcendence</h1>
       <div className="loginBox">
-        <h2>Account Sign in</h2>
         { !props.is2FA &&
           <ButtonLogin isLogin={props.isLogin} setIsLogin={props.setIsLogin} />
         }
