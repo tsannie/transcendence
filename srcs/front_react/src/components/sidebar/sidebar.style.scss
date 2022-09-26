@@ -1,0 +1,11 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-style: dashed;
+  border-color: white;
+  img {
+    filter: invert(100%);
+    width: 7vw;
+    height: auto;
+  }
+}

@@ -9,17 +9,13 @@ body {
 }
 
 .app {
-  display: flex;
+  display: flex;    // TODO check if postion block is better
   width: 100%;
   height: 100vh;
-  justify-content: center;
-  align-content: center;
-  flex-wrap: wrap;
-  flex-direction: column;
   overflow: hidden;
   * {
-    font-family: 'Arcade';
-    color: white;
+    font-family: 'Arcade' !important;
+    color: white !important;
   }
   button {
     cursor: pointer;

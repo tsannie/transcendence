@@ -19,7 +19,7 @@
   width: 100% !important;
   margin-bottom: 0.3vw;
   ::placeholder {
-    color: white; // TODO replace by 42 color
+    color: white; // TODO const
     font-size: 3.5vw;
   }
   input {
@@ -32,10 +32,7 @@
     margin-right: 0.3vw;
     margin-left: 0.3vw;
     font-size: 4vw;
-    color: white; // TODO replace with const
-    //background-color: #14151A; // TODO replace with const
     background-color: transparent;
-    font-family: 'Arcade';
   }
   @media screen and (min-width: 1000px) {
     input {
