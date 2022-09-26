@@ -1,3 +1,5 @@
+import { channel } from 'diagnostics_channel';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
@@ -27,4 +29,7 @@ export class MessageEntity {
 
 	@ManyToOne( () => DmEntity, (dm) => dm.messages )
 	dm: DmEntity;
+
+	@ManyToOne( () => ChannelEntity, (channel) => channel.messages )
+	channel: ChannelEntity;
 }
