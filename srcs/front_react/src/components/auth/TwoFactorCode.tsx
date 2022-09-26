@@ -34,8 +34,8 @@ export default function TwoFactorCode(props: any) {
   //TODO add cancel button
 
   return (
-    <div>
-      <h1>Validation Code</h1>
+    <div className="twoFactor">
+      <h2>Validation Code</h2>
       <ReactCodeInput
         placeholder={["_", "_", "_", "_", "_", "_"]}
         disabled={check}
