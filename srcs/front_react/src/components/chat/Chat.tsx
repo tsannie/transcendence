@@ -9,7 +9,7 @@ import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
 import { api, IUser } from "../../userlist/UserListItem";
 import { COOKIE_NAME } from "../../const";
-import HistoryMessages from "./messages/HistoryMessages";
+import DmList from "./messages/DmList";
 
 export default function Chat() {
   const [room, setRoom] = useState("");
@@ -87,18 +87,19 @@ export default function Chat() {
           Live chat
         </Typography>
       </Box>
-      <Box>
-        <HistoryMessages
+      <div>
+        <DmList
+          socket={socket}
           isNewMessage={isNewMessage}
           setOpenConv={setOpenConv}
         />
-      </Box>
-      <Box>
+      </div>
+      <div>
         {openConv && (
           <MessagesList messagesList={messagesList} author={author} />
         )}
-      </Box>
-      <Box>
+      </div>
+      <div>
         {openConv && (
           <PromptMessage
             setCurrentMessage={setCurrentMessage}
@@ -106,13 +107,13 @@ export default function Chat() {
             sendMessage={sendMessage}
           />
         )}
-      </Box>
-      <Box>
+      </div>
+      <div>
         <ChatUserlist
           setOpenConv={setOpenConv}
           setIsNewMessage={setIsNewMessage}
         />
-      </Box>
+      </div>
       <Box
         sx={{
           position: "relative",

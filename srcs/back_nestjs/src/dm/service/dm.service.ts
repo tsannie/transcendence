@@ -20,7 +20,7 @@ export class DmService {
   ) {}
 
   // get all conversations of a user
-  async getAllDms(user: UserEntity): Promise<void | DmEntity[]> {
+  async getAllDms(data: string): Promise<void | DmEntity[]> {
     /* console.log('users = ', user);
     try {
       console.log("avant le find");

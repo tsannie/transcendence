@@ -81,10 +81,10 @@ export default function ChatUserlist(props: any) {
       >
         Users
       </Typography>
-      <Box>
-        <Box>
+      <div>
+        <div>
           <UserList handleClick={handleClick} />
-        </Box>
+        </div>
         <Menu
           open={open}
           onClose={handleClose}
@@ -94,7 +94,7 @@ export default function ChatUserlist(props: any) {
           <MenuItem onClick={handleNewMessage}>New Message</MenuItem>
           <MenuItem onClick={handleInvite}>Invite to play</MenuItem>
         </Menu>
-      </Box>
+      </div>
     </Box>
   );
 }
