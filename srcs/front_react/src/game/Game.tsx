@@ -11,8 +11,6 @@ import { GamePlayer_Left_right} from "./gameReact/GameReact";
 import { GameSpectator } from "./gameSpectator/GameSpectator";
 import GameMenu from "./gameInitialisation/GameMenu";
 import { GameWaitPlayerReady } from "./gameInitialisation/GameWaitPlayer";
-import { GamePlayer_left } from "./gameReact/GamePlayerLeft";
-import { GamePlayer_right } from "./gameReact/GamePlayerRight";
 import GameCreationSettings from "./gameInitialisation/GameCreationSettings";
 import { GameMenuSpectator } from "./gameSpectator/GameMenuSpectator";
 
@@ -35,7 +33,7 @@ export default function Game() {
   const [nbrconnect, setnbrconnect] = useState(0);
   const [room, setRoom] = useState("");
  // const [lookingroom, setLookingRoom] = useState("");
-  const [color_ready, setColor_ready] = useState(""); // TO DOP probleme to reinit
+  const [color_ready, setColor_ready] = useState(""); // TODOP probleme to reinit
   const [my_id, setmy_id] = useState(socket.id);
   const [op_id, setop_id] = useState("2");
   const [im_right, setim_right] = useState(false);
@@ -55,14 +53,19 @@ export default function Game() {
   const [Room_name_spec, setRoom_name_spec] = useState("");
   
 /*   
-  TODOP NEW MAP IN GAME
-  TODOP EGALISER PADDLE SOURIS
-  TODOP refresh page delete room ?
-  TODOP if room exist in back and db verif
   TODOP historique game for user
-	
+
+  DELL STORE
+
+  TODOP EGALISER PADDLE SOURIS
+  TODOP NEW MAP IN GAME
   TODOP RESPONSIVE GAME
+
+  TODOP ONE TO ONE ?
   */
+
+
+  // if refresh page display alert 
 
 
   const store = {

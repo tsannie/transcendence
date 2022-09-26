@@ -155,4 +155,5 @@ export class GameEntity {
 
   @Column('jsonb', { nullable: true })
   set: SetEntity;
+
 }

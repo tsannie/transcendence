@@ -46,7 +46,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  //////////////// SPECTATOR ROOM /////
+  //////////////// SPECTATOR ROOM ////
   ///////////////////////////////////////////////
 
 
@@ -235,18 +235,6 @@ export class GameGateway implements OnGatewayInit {
     this.roo[room].spectator = 0;
 
     
-    //client.to(room).emit('startGame', this.roo[room]);
-    client.emit('startGame', this.roo[room]);
-
-    if (client.id === this.roo[room].p1)
-    {
-      console.log("\n=================client.id =" + client.id);
-      console.log("=========this.roo[room].p1 =\n" + this.roo[room].p1);
-      //client.to("lookroom").emit('getAllGameRoom', this.roo, client.id);
-    }
-      //spectator/
-    //client.to(room).emit('getAllGameRoom', this.roo);///
-
     return this.all_game.save(this.roo[room]);
   }
 
@@ -256,8 +244,35 @@ export class GameGateway implements OnGatewayInit {
   ///////////////////////////////////////////////
 
   ///////////////////////////////////////////////
-  //////////////// PLAYER GIVE UP////
+  //////////////// PLAYER GIVE UP ////////
   ///////////////////////////////////////////////
+
+  handleDisconnect(client: Socket) {
+    this.logger.log(`Client GAME disconnected: ${client.id}`);
+
+    let room: string;
+    for (const [key, value] of Object.entries(this.roo)) {
+      //console.log("\n value = " + value.room_name);//
+      //console.log("\n co = \n" + value.nbr_co);//
+      room = value.room_name;
+      if (value.p1 === client.id && value.game_started === true) {
+        console.log("123  ", value.room_name);
+        //this.all_game.remove(this.roo[room]);
+        //delete this.roo[room];
+        this.PlayerGiveUp(client, room);
+      }
+      else if (value.p2 === client.id && value.game_started === true)
+      {
+        console.log("456  ", value.room_name);
+        //this.all_game.remove(this.roo[room]);
+        //delete this.roo[room];
+        this.PlayerGiveUp(client, room);
+      }
+    }
+  }
+
+
+
   @SubscribeMessage('player_give_up')
   PlayerGiveUp(client: Socket, room: string) {
     this.rooms[room] = 0;
@@ -274,7 +289,7 @@ export class GameGateway implements OnGatewayInit {
     else if (this.roo[room].set.set_p2.name === client.id)
       this.roo[room].set.set_p1.won = true;
 
-      
+    console.log("HOOO LE NULL player_give_up = " + client.id);
       //this.all_game.save(this.roo[room]);
       
     if (this.roo[room].spectator >= 1 ) {
@@ -440,7 +455,7 @@ export class GameGateway implements OnGatewayInit {
 
       //console.log("playerActyrIGHT BACK END");
      // console.log("data.p.score = " + data.score);
-      //console.log("data.p.won = " + data.won);//
+      //console.log("data.p.won = " + data.won);///
       
     this.roo[room].set.set_p1.score = data.score;
     this.roo[room].set.set_p1.won = data.won;
