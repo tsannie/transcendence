@@ -4,9 +4,11 @@
 }
 
 .login {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   h1 {
     margin-bottom: 20%;
     font-size: 5vw;
@@ -20,14 +22,11 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
   //height: 20vh;
   //border-width: 1vw;
   border-style: dashed;
   border-color: white;
   h2 {
-    text-align: center;
-    font-family: 'Arcade', sans-serif;
     font-size: 2.5vw;
     letter-spacing: 0.1rem;
   }
@@ -37,6 +36,7 @@
 .listConnection {
   display: flex;
   flex-direction: column;
+  align-items: center;
   //background-color: aqua;
   button {
     cursor: pointer;

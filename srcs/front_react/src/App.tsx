@@ -1,5 +1,5 @@
 import {
-  Box
+  Box, Menu
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Chat from "./components/chat/Chat";
@@ -12,6 +12,7 @@ import LoginPage from "./components/auth/LoginPage";
 import { api, COOKIE_NAME } from "./const/const";
 
 import './app.style.scss'
+import Home from "./components/menu/Home";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
@@ -53,20 +54,7 @@ export default function App() {
         }
         {
           isLogin === true &&
-          <Box
-          sx={{
-            display: "flex",
-          }}
-        >
-          <Sidebar
-            setInputChat={setInputChat}
-            setInputSettings={setInputSettings}
-            setIsLogin={setIsLogin}
-            setIs2FA={setIs2FA}
-          />
-          {inputChat && <Chat />}
-          {inputSettings && <Settings />}
-          </Box>
+          <Home/>
         }
       <div className="bg">
         <div className="ball"></div>
@@ -82,54 +70,6 @@ export default function App() {
       </div>
     </div>
   );
-
-  /*{isLogin === false &&
-    <LoginPage setIsLogin={setIsLogin}
-      is2FA={is2FA}
-      isLogin={isLogin}
-    />
-  }*/
-
-  /*if (!isLogin) {
-    return (
-      <Box sx={{
-        bgcolor: "rgba(0, 0, 0, 0.70)",
-        height: "100vh",
-        pt: "2vh",
-      }}>
-      <Auth setIsLogin={setIsLogin} is2FA={is2FA} setIs2FA={setIs2FA}/>
-      <Box sx={{
-          display: "flex",
-          justifyContent: "center",
-      }}>
-      <img src={LogoIcon}></img>
-      </Box>
-        {!is2FA &&
-          <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
-        }
-        {is2FA &&
-          <TwoFactorCode setIsLogin={setIsLogin}/>
-        }
-      </Box>
-    );
-  }*/
-
-  /*else {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-        }}
-      >
-        <Sidebar
-          setInputChat={setInputChat}
-          setInputSettings={setInputSettings}
-          setIsLogin={setIsLogin}
-          setIs2FA={setIs2FA}
-        />
-        {inputChat && <Chat />}
-        {inputSettings && <Settings />}
-      </Box>
-    );
-  }*/
 }
+
+
