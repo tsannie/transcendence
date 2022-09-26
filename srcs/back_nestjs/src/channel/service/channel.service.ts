@@ -29,9 +29,9 @@ export class ChannelService {
 	async getAllChannels() : Promise<ChannelEntity[]> {
 		return await this.channelRepository.find(
 			{
-			relations: ["owner", "users"],
+				relations: ["owner", "users"],
 			},
-			);
+		);
 	}
 
 	async getPrivateData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
