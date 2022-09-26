@@ -27,6 +27,14 @@ export default function ChannelsList(props: any) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
 
+  // function to know if userId is owner of channel
+  function isOwner(channel: any) {
+    if (channel.owner.id === props.userId) {
+      return true;
+    }
+    return false;
+  }
+
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
       channel.password = channelPassword;
@@ -160,7 +168,7 @@ export default function ChannelsList(props: any) {
             >
               Leave
             </Button>
-            {props.isOwner && (
+            {isOwner(channelData) && (
               <Button
                 sx={{
                   color: "red",
@@ -171,9 +179,10 @@ export default function ChannelsList(props: any) {
                 Delete
               </Button>
             )}
-            {props.isOwner && (
+            {isOwner(channelData) && (
               <AdminsActions
                 channelData={channelData}
+                userId={props.userId}
               />
             )}
             <InfosChannels channelData={channelData} userId={props.userId} />
