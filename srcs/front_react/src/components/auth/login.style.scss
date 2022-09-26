@@ -57,7 +57,9 @@
     color: white;
   }
   img {
-    width: 10%;
+    width: 100%;
+    max-width: 50px;
+    height: auto;
     fill: white;  // TODO edit color for 42 color
   }
 }
