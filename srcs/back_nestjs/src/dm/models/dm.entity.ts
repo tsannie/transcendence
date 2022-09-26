@@ -10,15 +10,15 @@ export class DmEntity {
 	@CreateDateColumn()
 	time: string;
 
-	// @ManyToMany( () => UserEntity, (user) => user.channels )
-	// users: UserEntity[];
+	@ManyToMany( () => UserEntity, (user) => user.dms )
+	users: UserEntity[];
 
-	// @OneToMany( () => MessageEntity, (message) => message.dm )
-	// messages: MessageEntity[];
+	@OneToMany( () => MessageEntity, (message) => message.dm )
+	messages: MessageEntity[];
 
-	@ManyToMany( 'UserEntity', 'dms' )
-	users?: UserEntity[];
+	// @ManyToMany( 'UserEntity', 'dms' )
+	// users?: UserEntity[];
 
-	@OneToMany( 'MessageEntity', 'dm', { cascade: ["insert", "remove"] } )
-	messages?: MessageEntity[];
+	// @OneToMany( 'MessageEntity', 'dm', { cascade: ["insert", "remove"] } )
+	// messages?: MessageEntity[];
 }

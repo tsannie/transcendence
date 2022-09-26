@@ -37,9 +37,9 @@ export class UserEntity {
   @OneToMany( () => ChannelEntity, (channels) => channels.owner )
   owner_of?: ChannelEntity[];
 
-  @ManyToMany( () => DmEntity, (channels) => channels.users )
+  @ManyToMany( () => ChannelEntity, (channels) => channels.users )
   @JoinTable()
-  channels?: DmEntity[];
+  channels?: ChannelEntity[];
 
   @ManyToMany( () => DmEntity, (dms) => dms.users )
   @JoinTable()
@@ -48,7 +48,4 @@ export class UserEntity {
   @ManyToMany( () => UserEntity)
   @JoinTable()
   banned?: UserEntity[];
-
-  // @OneToMany( () => ChannelEntity, (channels) => channels.users )
-  // mp_channels: ChannelEntity[]
 }
