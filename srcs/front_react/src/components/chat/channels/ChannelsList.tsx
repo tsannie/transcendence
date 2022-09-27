@@ -179,12 +179,11 @@ export default function ChannelsList(props: any) {
                 Delete
               </Button>
             )}
-            {isOwner(channelData) && (
-              <AdminsActions
-                channelData={channelData}
-                userId={props.userId}
-              />
-            )}
+            <AdminsActions
+              channelData={channelData}
+              userId={props.userId}
+              isOwner={isOwner}
+            />
             <InfosChannels channelData={channelData} userId={props.userId} />
           </Box>
         );
