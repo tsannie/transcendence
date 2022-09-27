@@ -13,6 +13,6 @@ export class DmEntity {
 	@ManyToMany( () => UserEntity, (user) => user.dms, {eager: true})
 	users: UserEntity[];
 
-	@OneToMany( () => MessageEntity, (message) => message.dm )
+	@OneToMany( () => MessageEntity, (message) => message.dm, {onDelete: "CASCADE"} )
 	messages: MessageEntity[];
 }

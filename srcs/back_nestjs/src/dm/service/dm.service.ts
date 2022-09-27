@@ -2,10 +2,9 @@ import {
   Injectable, UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArrayContains } from 'class-validator';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
-import { createQueryBuilder, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DmDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 
