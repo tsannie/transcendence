@@ -10,7 +10,7 @@ import UnmuteUser from "./UnmuteUser";
 export default function AdminsActions(props: any) {
   const [infosChannel, setInfosChannel] = useState<IChannel>();
 
-  function isMuted(channel: any) {
+  /* function isMuted(channel: any) {
     console.log("channel = ", channel);
     //console.log("channel.muted.length = ", channel.muted.length);
     // parcourir les muted users et return true si userId === muted.id
@@ -34,7 +34,7 @@ export default function AdminsActions(props: any) {
       }
     }
     return false;
-  }
+  } */
 
   async function getInfosChannel(channel: IChannel) {
     await api
@@ -60,18 +60,11 @@ export default function AdminsActions(props: any) {
   // TODO unmute unban btn
 
   return (
-    <div>
-      {isMuted(infosChannel) ? (
-        <UnmuteUser channelData={props.channelData} />
-      ) : (
-        <MuteUser channelData={props.channelData} />
-      )}
-
-      {isBanned(infosChannel) ? (
-        <UnbanUser channelData={props.channelData} />
-      ) : (
-        <BanUser channelData={props.channelData} />
-      )}
-    </div>
+    <>
+      <MuteUser channelData={props.channelData} />
+      <UnmuteUser channelData={props.channelData} />
+      <BanUser channelData={props.channelData} />
+      <UnbanUser channelData={props.channelData} />
+    </>
   );
 }
