@@ -71,7 +71,7 @@ export default function BanUser(props: any) {
           horizontal: "right",
         }}
       >
-        {open === true && (
+        {open && (
           <List
             key={props.channelData.users.id}
           >

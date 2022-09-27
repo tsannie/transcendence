@@ -241,7 +241,6 @@ export class ChannelService {
 	async unBanUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
 		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
 		this.verifyHierarchy(channel, requester, request.target);
-		this.verifyIfMember(channel, request.target);
 
 		if (!channel.banned)
 			throw new UnprocessableEntityException(`${request.target} is not banned.`);

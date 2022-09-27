@@ -9,7 +9,7 @@ export default function UnmuteUser(props: any) {
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-ban" : undefined;
+  const id = open ? "popover-unmute" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -37,7 +37,7 @@ export default function UnmuteUser(props: any) {
     console.log("newChannel = ", newChannel);
     if (newChannel.target !== "") {
       await api
-        .post("channel/unmuteUser", newChannel)
+        .post("channel/unMuteUser", newChannel)
         .then((res) => {
           console.log("user unmute with success");
           console.log(channel);

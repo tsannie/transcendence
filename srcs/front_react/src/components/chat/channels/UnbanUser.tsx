@@ -8,7 +8,7 @@ export default function UnbanUser(props: any) {
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-ban" : undefined;
+  const id = open ? "popover-unban" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -36,7 +36,7 @@ export default function UnbanUser(props: any) {
 
     if (newChannel.target !== "") {
       await api
-        .post("channel/unbanUser", newChannel)
+        .post("channel/unBanUser", newChannel)
         .then((res) => {
           console.log("user unban with success");
           console.log(channel);
@@ -73,9 +73,9 @@ export default function UnbanUser(props: any) {
       >
         {open === true && (
           <List
-            key={props.channelData.users.id}
+            key={props.channelData.banned.id}
           >
-            {props.channelData.users.map((user: any) => (
+            {props.channelData.banned.map((user: any) => (
               <ListItemButton onClick={() => unbanUser(user, props.channelData)}>
                 {user.username}
               </ListItemButton>

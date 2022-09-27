@@ -3,13 +3,12 @@ import React, { useState } from 'react'
 import { api } from '../../../userlist/UserListItem';
 import { IChannel, IChannelActions } from '../types';
 
-export default function MuteUser(props: any) {
-
+export default function RevokeAdmin(props: any) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-mute" : undefined;
+  const id = open ? "popover-revokeAdmin" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -22,28 +21,28 @@ export default function MuteUser(props: any) {
   }
 
   function createChannelActions(channel: IChannel, targetUsername: string) {
+    //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
       channel_name: channel.name,
       target: targetUsername,
     };
-    //console.log("newchannel = ", newChannel);
+    console.log(newChannel);
 
     return newChannel;
   }
 
-  async function muteUser(user: any, channel: IChannel) {
-    const newChannel: IChannelActions = createChannelActions(channel, user.username);
+  async function revokeAdmin(user: any, channel: IChannel) {
+    const newChannel = createChannelActions(channel, user.username);
 
-    //console.log("newChannel = ", newChannel);
     if (newChannel.target !== "") {
       await api
-        .post("channel/muteUser", newChannel)
+        .post("channel/revokeAdmin", newChannel)
         .then((res) => {
-          console.log("user mute with success");
+          console.log("user is admin now");
           console.log(channel);
         })
         .catch((res) => {
-          console.log("invalid mute user");
+          console.log("user can't be admin");
           console.log(res);
         });
     }
@@ -60,7 +59,7 @@ export default function MuteUser(props: any) {
           handleClick(event);
         }}
       >
-        Mute
+        Revoke Admin
       </Button>
       <Popover
         id={id}
@@ -77,7 +76,7 @@ export default function MuteUser(props: any) {
             key={props.channelData.users.id}
           >
             {props.channelData.users.map((user: any) => (
-              <ListItemButton onClick={() => muteUser(user, props.channelData)}>
+              <ListItemButton onClick={() => revokeAdmin(user, props.channelData)}>
                 {user.username}
               </ListItemButton>
             ))}
