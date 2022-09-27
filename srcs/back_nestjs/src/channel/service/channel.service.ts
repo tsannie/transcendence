@@ -43,7 +43,6 @@ export class ChannelService {
 		return channel;
 	}
 
-
  /*
  	this function is responsible of saving a new Channel and do manage error or
   	redundancy if it happens
