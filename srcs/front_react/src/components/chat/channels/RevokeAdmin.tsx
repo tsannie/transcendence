@@ -40,6 +40,7 @@ export default function RevokeAdmin(props: any) {
         .then((res) => {
           console.log("user is admin now");
           console.log(channel);
+          props.getChannels();
         })
         .catch((res) => {
           console.log("user can't be admin");
@@ -73,10 +74,10 @@ export default function RevokeAdmin(props: any) {
       >
         {open === true && (
           <List
-            key={props.channelData.users.id}
+            key={props.infosChannel.admins.id}
           >
-            {props.channelData.users.map((user: any) => (
-              <ListItemButton onClick={() => revokeAdmin(user, props.channelData)}>
+            {props.infosChannel.admins.map((user: any) => (
+              <ListItemButton onClick={() => revokeAdmin(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>
             ))}

@@ -40,6 +40,7 @@ export default function BanUser(props: any) {
         .then((res) => {
           console.log("user ban with success");
           console.log(channel);
+          props.getChannels();
         })
         .catch((res) => {
           console.log("invalid channels");
@@ -73,10 +74,10 @@ export default function BanUser(props: any) {
       >
         {open && (
           <List
-            key={props.channelData.users.id}
+            key={props.infosChannel.users.id}
           >
-            {props.channelData.users.map((user: any) => (
-              <ListItemButton onClick={() => banUser(user, props.channelData)}>
+            {props.infosChannel.users.map((user: any) => (
+              <ListItemButton onClick={() => banUser(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>
             ))}

@@ -40,6 +40,7 @@ export default function UnbanUser(props: any) {
         .then((res) => {
           console.log("user unban with success");
           console.log(channel);
+          props.getChannels();
         })
         .catch((res) => {
           console.log("invalid unban user");
@@ -73,10 +74,10 @@ export default function UnbanUser(props: any) {
       >
         {open === true && (
           <List
-            key={props.channelData.banned.id}
+            key={props.infosChannel.banned.id}
           >
-            {props.channelData.banned.map((user: any) => (
-              <ListItemButton onClick={() => unbanUser(user, props.channelData)}>
+            {props.infosChannel.banned.map((user: any) => (
+              <ListItemButton onClick={() => unbanUser(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>
             ))}
