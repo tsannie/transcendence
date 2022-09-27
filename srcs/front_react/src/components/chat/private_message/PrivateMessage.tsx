@@ -17,7 +17,7 @@ async function joinMP(channel: IChannel) {
 
 function PrivateMessage() {
   return (
-    <div>PrivateMessage</div>
+    <>PrivateMessage</>
   )
 }
 

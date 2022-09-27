@@ -79,7 +79,7 @@ export default function FormChannel(props: any) {
   }, []);
 
   return (
-    <Box sx={{}}>
+    <>
       <TextField
         sx={{}}
         variant="outlined"
@@ -124,6 +124,6 @@ export default function FormChannel(props: any) {
       <Button sx={{}} variant="contained" onClick={createChannels}>
         Create channel
       </Button>
-    </Box>
+    </>
   );
 }

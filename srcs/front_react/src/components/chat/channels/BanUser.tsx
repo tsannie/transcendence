@@ -49,7 +49,7 @@ export default function BanUser(props: any) {
   }
 
   return (
-    <div>
+    <>
       <Button
         sx={{
           color: "black",
@@ -83,6 +83,6 @@ export default function BanUser(props: any) {
           </List>
         )}
       </Popover>
-    </div>
+    </>
   )
 }

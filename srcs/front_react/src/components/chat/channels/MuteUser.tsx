@@ -50,7 +50,7 @@ export default function MuteUser(props: any) {
   }
 
   return (
-    <div>
+    <>
       <Button
         sx={{
           color: "black",
@@ -84,6 +84,6 @@ export default function MuteUser(props: any) {
           </List>
         )}
       </Popover>
-    </div>
+    </>
   )
 }
