@@ -60,7 +60,7 @@ export default function InfosChannels(props: any) {
   }
 
   return (
-    <div>
+    <>
       <Button
         sx={{
           color: "black",
@@ -115,6 +115,6 @@ export default function InfosChannels(props: any) {
           </List>
         )}
       </Popover>
-    </div>
+    </>
   );
 }

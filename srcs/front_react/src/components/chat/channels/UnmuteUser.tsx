@@ -50,7 +50,7 @@ export default function UnmuteUser(props: any) {
   }
 
   return (
-    <div>
+    <>
       <Button
         sx={{
           color: "black",
@@ -84,6 +84,6 @@ export default function UnmuteUser(props: any) {
           </List>
         )}
       </Popover>
-    </div>
+    </>
   )
 }

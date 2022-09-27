@@ -103,7 +103,7 @@ export default function ChannelsList(props: any) {
   }
 
   return (
-    <div>
+    <>
       {props.channelsList.map((channelData: IChannel) => {
         return (
           <Box
@@ -130,9 +130,9 @@ export default function ChannelsList(props: any) {
             >
               {channelData.name}
             </Box>
-            <div>
-              {channelData.status === "Protected" ? <LockIcon /> : <div></div>}
-            </div>
+            <>
+              {channelData.status === "Protected" ? <LockIcon /> : <></>}
+            </>
             <TextField
               sx={{
                 minWidth: "15vw",
@@ -189,6 +189,6 @@ export default function ChannelsList(props: any) {
           </Box>
         );
       })}
-    </div>
+    </>
   );
 }

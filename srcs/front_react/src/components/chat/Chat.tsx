@@ -87,19 +87,19 @@ export default function Chat() {
           Live chat
         </Typography>
       </Box>
-      <div>
+      <>
         <DmList
           socket={socket}
           isNewMessage={isNewMessage}
           setOpenConv={setOpenConv}
         />
-      </div>
-      <div>
+      </>
+      <>
         {openConv && (
           <MessagesList messagesList={messagesList} author={author} />
         )}
-      </div>
-      <div>
+      </>
+      <>
         {openConv && (
           <PromptMessage
             setCurrentMessage={setCurrentMessage}
@@ -107,13 +107,13 @@ export default function Chat() {
             sendMessage={sendMessage}
           />
         )}
-      </div>
-      <div>
+      </>
+      <>
         <ChatUserlist
           setOpenConv={setOpenConv}
           setIsNewMessage={setIsNewMessage}
         />
-      </div>
+      </>
       <Box
         sx={{
           position: "relative",

@@ -40,7 +40,7 @@ export default function UserList(props: any) {
 
   // display all users connected in the database
   return (
-    <div>
+    <>
       <List sx={{}}>
         {users.map((user) => (
           <ListItem
@@ -59,6 +59,6 @@ export default function UserList(props: any) {
           </ListItem>
         ))}
       </List>
-    </div>
+    </>
   );
 }
