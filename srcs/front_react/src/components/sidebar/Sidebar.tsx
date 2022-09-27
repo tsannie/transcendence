@@ -1,14 +1,10 @@
 import { useState } from "react";
 import HomeIcon from "../../assets/img/icon/home.png";
 import ChatIcon from "../../assets/img/icon/chat.png";
-import Chat from "../chat/Chat";
-import LogoIcon from "../../assets/logo-project.png";
-import ProfileIcon from "../../assets/profile.png";
-import GameIcon from "../../assets/game.png";
-import SettingsIcon from "../../assets/settings.png";
-import ExitIcon from "../../assets/exit.png";
-import { Box } from "@mui/system";
-import { Grid } from "@mui/material";
+import GameIcon from "../../assets/img/icon/game.png";
+import SettingsIcon from "../../assets/img/icon/settings.png";
+import LogOutIcon from "../../assets/img/icon/log-out.png";
+import ProfileIcon from "../../assets/img/icon/user.png";
 import { COOKIE_NAME } from "../../const/const";
 import './sidebar.style.scss';
 
@@ -24,14 +20,14 @@ export default function Sidebar(props: any) {
 
   return (
     <div className="sidebar">
-      <img src={HomeIcon}></img>
-      <img src={ChatIcon}></img>
-      <img src={LogoIcon}></img>
-      <img src={ProfileIcon}></img>
-      <img src={GameIcon}></img>
-      <img src={SettingsIcon}></img>
-      <img src={ExitIcon}></img>
+      <div className="sidebar__icon">
+        <img src={HomeIcon}></img>
+        <img src={ProfileIcon}></img>
+        <img src={ChatIcon}></img>
+        <img src={GameIcon}></img>
+        <img src={SettingsIcon}></img>
+        <img src={LogOutIcon}></img>
+      </div>
     </div>
-
   );
 }

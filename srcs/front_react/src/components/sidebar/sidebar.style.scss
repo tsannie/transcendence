@@ -1,11 +1,34 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+
+}
+
+.sidebar__icon {
+  display: flex;
+  flex-direction: column;
   border-style: dashed;
   border-color: white;
   img {
     filter: invert(100%);
-    width: 7vw;
+    width: 4vw;
     height: auto;
+    margin-bottom: 35%;
+    margin-top: 35%;
+    padding: 0.8vw;
+    transition-duration: 0.2s;
+    border-radius: 50%;
+  }
+
+  img:hover {
+    filter: invert(70%);
+  }
+
+  @media screen and (min-width: 800px) {
+    img {
+      width: 30px;
+      padding: 8px;
+    }
   }
 }
