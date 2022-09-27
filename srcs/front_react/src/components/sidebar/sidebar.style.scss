@@ -8,10 +8,10 @@
 .sidebar__icon {
   display: flex;
   flex-direction: column;
+  align-items: center;
   border-style: dashed;
   border-color: white;
   img {
-    filter: invert(100%);
     width: 4vw;
     height: auto;
     margin-bottom: 35%;
@@ -19,6 +19,11 @@
     padding: 0.8vw;
     transition-duration: 0.2s;
     border-radius: 50%;
+  }
+
+  .selected {
+    border-style: dashed;
+    border-color: white;
   }
 
   img:hover {
