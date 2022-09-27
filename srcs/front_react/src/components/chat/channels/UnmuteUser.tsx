@@ -41,6 +41,7 @@ export default function UnmuteUser(props: any) {
         .then((res) => {
           console.log("user unmute with success");
           console.log(channel);
+          props.getChannels();
         })
         .catch((res) => {
           console.log("invalid unmute user");
@@ -74,10 +75,10 @@ export default function UnmuteUser(props: any) {
       >
         {open === true && (
           <List
-            key={props.channelData.users.id}
+            key={props.infosChannel.muted.id}
           >
-            {props.channelData.users.map((user: any) => (
-              <ListItemButton onClick={() => unmuteUser(user, props.channelData)}>
+            {props.infosChannel.muted.map((user: any) => (
+              <ListItemButton onClick={() => unmuteUser(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>
             ))}

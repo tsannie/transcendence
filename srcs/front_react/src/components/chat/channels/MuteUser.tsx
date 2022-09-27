@@ -21,6 +21,20 @@ export default function MuteUser(props: any) {
     setAnchorEl(null);
   }
 
+  function isMuted(channel: any, user: any) {
+    if (channel !== undefined) {
+      for (let i = 0; i < channel.muted.length; i++) {
+        console.log(channel.muted[i].id);
+        console.log(props.userId);
+        if (channel.muted[i].id === user.id) {
+          return true;
+        }
+      }
+    }
+    console.log("isMuted = false");
+    return false;
+  }
+
   function createChannelActions(channel: IChannel, targetUsername: string) {
     const newChannel: IChannelActions = {
       channel_name: channel.name,
@@ -41,6 +55,7 @@ export default function MuteUser(props: any) {
         .then((res) => {
           console.log("user mute with success");
           console.log(channel);
+          props.getChannels();
         })
         .catch((res) => {
           console.log("invalid mute user");
@@ -74,11 +89,11 @@ export default function MuteUser(props: any) {
       >
         {open === true && (
           <List
-            key={props.channelData.users.id}
+            key={props.infosChannel.users.id}
           >
-            {props.channelData.users.map((user: any) => (
-              <ListItemButton onClick={() => muteUser(user, props.channelData)}>
-                {user.username}
+            {props.infosChannel.users.map((user: any) => (
+              <ListItemButton onClick={() => muteUser(user, props.infosChannel)}>
+                {(!isMuted(props.infosChannel, user)) ? user.username : <></>}
               </ListItemButton>
             ))}
           </List>

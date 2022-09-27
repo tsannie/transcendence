@@ -19,6 +19,7 @@ export default function AdminsActions(props: any) {
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
+    props.getChannels();
   }
 
   function handleClose() {
@@ -88,22 +89,22 @@ export default function AdminsActions(props: any) {
           >
             <List>
               <ListItem>
-                <BanUser channelData={props.channelData} />
+                <BanUser infosChannel={infosChannel} getChannels={props.getChannels}/>
               </ListItem>
               <ListItem>
-                <UnbanUser channelData={props.channelData} />
+                <UnbanUser infosChannel={infosChannel} getChannels={props.getChannels}/>
               </ListItem>
               <ListItem>
-                <MuteUser channelData={props.channelData} />
+                <MuteUser infosChannel={infosChannel} getChannels={props.getChannels} userId={props.userId} />
               </ListItem>
               <ListItem>
-                <UnmuteUser channelData={props.channelData} />
+                <UnmuteUser infosChannel={infosChannel} getChannels={props.getChannels}/>
               </ListItem>
               <ListItem>
-                <MakeAdmin channelData={props.channelData} />
+                <MakeAdmin infosChannel={infosChannel} getChannels={props.getChannels} isAdmin={isAdmin}/>
               </ListItem>
               <ListItem>
-                <RevokeAdmin channelData={props.channelData} />
+                <RevokeAdmin infosChannel={infosChannel} getChannels={props.getChannels}/>
               </ListItem>
             </List>
           </Popover>
