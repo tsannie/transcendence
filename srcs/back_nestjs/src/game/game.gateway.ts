@@ -13,13 +13,12 @@ import { Server } from 'http';
 import { from, throwError } from 'rxjs';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import {
-  BallEntity,
-  GameEntity,
-  PadleEntity,
-  PlayerEntity,
-  SetEntity,
-} from './game_entity/game.entity';
+import { BallEntity } from './game_entity/ball.entity';
+import { GameEntity } from './game_entity/game.entity';
+import { PadleEntity } from './game_entity/padle.entity';
+import { PlayerEntity } from './game_entity/players.entity';
+import { ResumeEntity } from './game_entity/resume.entity';
+import { SetEntity } from './game_entity/set.entity';
 
 
 @WebSocketGateway({
@@ -211,13 +210,27 @@ export class GameGateway implements OnGatewayInit {
       client.to(room).emit('readyGame', theroom);
     return this.all_game.save(theroom);
   }
+
   @SubscribeMessage('startGameRoom')
   StartGame(client: Socket, room: string) {
     console.log('START GAME ROOM = [' + room);
 
-    if (!this.roo[room].set) this.roo[room].set = new SetEntity();
-    if (!this.roo[room].set.ball) this.roo[room].set.ball = new BallEntity();
+    console.log("-- ------------------ --");
 
+    if (!this.roo[room].set)
+      this.roo[room].set = new SetEntity();
+
+    console.log("-- ------------------ --");
+    if (!this.roo[room].set.ball)
+    {
+      //const ball = new BallEntity()
+      // await dataSource.manager.save(resume)
+      console.log("BUG ????")
+      this.roo[room].set.ball = new BallEntity();
+      console.log("BUG ????")
+
+      //this.roo[room].set.ball = new BallEntity();
+    }
     if (!this.roo[room].set.set_p1)
       this.roo[room].set.set_p1 = new PlayerEntity();
     if (!this.roo[room].set.set_p2)
@@ -234,6 +247,20 @@ export class GameGateway implements OnGatewayInit {
 
     this.roo[room].spectator = 0;
 
+    const resume = new ResumeEntity()
+    // await dataSource.manager.save(resume)
+    console.log("BUG ????")
+    this.roo[room].resume = resume;
+    
+    
+    this.roo[room].resume.name_player_win = "male"
+    this.roo[room].resume.name_player_lose = "me.jpg"
+
+
+    console.log("BUG ????")
+    console.log("this.roo[room].resume = " + this.roo[room].resume.name_player_win)
+    console.log("this.roo[room].resume = " + this.roo[room].resume.name_player_lose)
+   // await dataSource.manager.save(user)
     
     return this.all_game.save(this.roo[room]);
   }
@@ -267,6 +294,11 @@ export class GameGateway implements OnGatewayInit {
         //this.all_game.remove(this.roo[room]);
         //delete this.roo[room];
         this.PlayerGiveUp(client, room);
+      }
+      else if (value.p1 === client.id || value.p2 === client.id)
+      {
+        console.log("789  ", value.room_name);
+        this.LeaveRoom(client, room);
       }
     }
   }
@@ -409,7 +441,8 @@ export class GameGateway implements OnGatewayInit {
     if (!this.roo[room])
       return ;
     if (!this.roo[room].set.ball) {
-      this.roo[room].set.ball = new BallEntity();
+      const ball = new BallEntity()
+      this.roo[room].set.ball = ball;
     }
     this.roo[room].set.ball.x = data.ball.x;
     this.roo[room].set.ball.y = data.ball.y;
