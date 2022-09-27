@@ -77,7 +77,7 @@ export default function Channels(props: any) {
           getChannels={getChannels}
         />
       )}
-      <ChannelsList channelsList={channelsList} userId={userId} />
+      <ChannelsList channelsList={channelsList} userId={userId} getChannels={getChannels} />
     </Box>
   );
 }

@@ -58,6 +58,7 @@ export default function ChannelsList(props: any) {
       .then((res) => {
         console.log("channel joined with success");
         console.log(channel);
+        props.getChannels();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -80,6 +81,7 @@ export default function ChannelsList(props: any) {
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
+        props.getChannels();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -95,6 +97,7 @@ export default function ChannelsList(props: any) {
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
+        props.getChannels();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -130,9 +133,7 @@ export default function ChannelsList(props: any) {
             >
               {channelData.name}
             </Box>
-            <>
-              {channelData.status === "Protected" ? <LockIcon /> : <></>}
-            </>
+            <>{channelData.status === "Protected" ? <LockIcon /> : <></>}</>
             <TextField
               sx={{
                 minWidth: "15vw",
@@ -183,6 +184,7 @@ export default function ChannelsList(props: any) {
               channelData={channelData}
               userId={props.userId}
               isOwner={isOwner}
+              getChannels={props.getChannels}
             />
             <InfosChannels channelData={channelData} userId={props.userId} />
           </Box>
