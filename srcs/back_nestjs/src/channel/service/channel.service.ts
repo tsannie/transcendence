@@ -26,16 +26,25 @@ export class ChannelService {
 
 	private readonly userService: UserService) {}
 
-	async getAllChannels() : Promise<ChannelEntity[]> {
-		return await this.channelRepository.find(
-			{
-				relations: ["owner", "users"],
-			},
-		);
+	/* This function return all the public datas of channel */
+	async getPublicData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+		const channel = await this.getChannel(query_channel.name, ["owner", "users", "status"]);
+		return channel;
 	}
 
+	/* This function gets all the data for a normal user. No sensitive information here */
+	async getUserData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+		const channel = await this.getChannel(query_channel.name, ["owner", "users", "admins", "messages", "status", "time"]);
+
+		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
+			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
+		//ADD HERE VERIFICATION OF CREDENTIALS, VIA USER.CHANNEL or USER.OWNER_OF
+		return channel;
+	}
+
+	/* This function returns full data of channel. Sensitive information here. Should be accessed only by admin or owner */
 	async getPrivateData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, ["owner", "users", "admins", "banned", "muted"]);
+		const channel = await this.getChannel(query_channel.name, ["owner", "users", "admins", "banned", "muted", "messages", "status", "time"]);
 
 		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
 			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
@@ -108,7 +117,6 @@ export class ChannelService {
 		return await bcrypt.hash(inputed_password, await bcrypt.genSalt())
 	}
 
-	//THIS FUNTION CREATE A NEW CHANNEL USING A DTO THAT FRONT SEND US
 	async createChannel(channel: CreateChannelDto, user : UserEntity) : Promise<void | ChannelEntity> {
 		let newChannel = new ChannelEntity();
 
@@ -362,6 +370,11 @@ export class ChannelService {
 			}
 		}
 	}
+
+
+
+
+
 	//DELETEMEAFTERTESTING :
 	async createFalseUser(username : string) : Promise<UserEntity>{
 		const user = new UserEntity();
@@ -369,5 +382,13 @@ export class ChannelService {
 		user.email = username + "@student.42.fr";
 		await this.userService.add(user);
 		return await this.getUser(username, ["channels"]);
+	}
+
+	async getAllChannels() : Promise<ChannelEntity[]> {
+		return await this.channelRepository.find(
+			{
+				relations: ["owner", "users"],
+			},
+		);
 	}
 }
