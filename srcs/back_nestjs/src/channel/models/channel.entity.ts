@@ -24,6 +24,9 @@ export class ChannelEntity {
 	
 	@Column({ nullable: false } )
 	status: string;
+
+	@Column( { nullable: true })
+	password: string;
 	
 	@ManyToOne( () => UserEntity, (user) => user.owner_of )
 	owner: UserEntity;
@@ -46,8 +49,5 @@ export class ChannelEntity {
 	@ManyToMany( () => UserEntity )
 	@JoinTable()
 	banned: UserEntity[];
-
-	@Column( { nullable: true })
-	password: string;
 }
 

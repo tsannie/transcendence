@@ -28,13 +28,13 @@ export class ChannelService {
 
 	/* This function return all the public datas of channel */
 	async getPublicData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, status: true});
+		const channel = await this.getChannel(query_channel.name, {owner: true, users: true});
 		return channel;
 	}
 
 	/* This function gets all the data for a normal user. No sensitive information here */
 	async getUserData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, {owner: true, users:true, admins: true, messages: true, status: true, time: true});
+		const channel = await this.getChannel(query_channel.name, {owner: true, users:true, admins: true, messages: true});
 
 		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
 			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
@@ -44,7 +44,7 @@ export class ChannelService {
 
 	/* This function returns full data of channel. Sensitive information here. Should be accessed only by admin or owner */
 	async getPrivateData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, admins: true, banned: true, muted: true, messages: true, status: true, time: true});
+		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, admins: true, banned: true, muted: true, messages: true});
 
 		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
 			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
