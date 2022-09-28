@@ -1,6 +1,3 @@
-import {
-  Box, Menu
-} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -10,9 +7,8 @@ import ButtonLogin from "./components/auth/ButtonLogin";
 import TwoFactorCode from "./components/auth/TwoFactorCode";
 import LoginPage from "./components/auth/LoginPage";
 import { api, COOKIE_NAME } from "./const/const";
-
+import Menu from "./components/menu/Menu";
 import './app.style.scss'
-import Home from "./components/menu/Home";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
@@ -54,7 +50,7 @@ export default function App() {
         }
         {
           isLogin === true &&
-          <Home/>
+          <Menu/>
         }
       <div className="bg">
         <div className="ball"></div>

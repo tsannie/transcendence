@@ -4,6 +4,7 @@ import ActivationProcess from "./ActivationProcess";
 import Success2FASnackbar from "./snackbar/Success2FASnackbar";
 import Error2FASnackbar from "./snackbar/Error2FASnackbar";
 import { api } from "../../const/const";
+import './settings.style.scss';
 
 export default function Settings() {
 
@@ -34,7 +35,7 @@ export default function Settings() {
   }, []);
 
   return (
-    <div>
+    <div className="settings">
       {/* Display profile information */}
       <h1>Profile</h1>
       <h2>Username</h2>
@@ -42,14 +43,14 @@ export default function Settings() {
       <h2>Email</h2>
         <p>{email}</p>
 
-      <h2>Two Factor Authentication</h2>
+      <h2>Two Factor Authentication (2FA)</h2>
         {!enable2FA &&
           <p>{twoFactorA ? "Enabled" : "Disabled"}</p>
         }
         {!twoFactorA && !enable2FA &&
-          <Button variant="contained" onClick={activate2fa}>
-            Enable
-          </Button>
+          <button onClick={activate2fa}>
+            Activate 2FA
+          </button>
         }
         {/* 2FA activatione process */}
         {enable2FA &&
