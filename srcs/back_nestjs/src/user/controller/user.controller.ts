@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Header, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
 import { targetDto } from '../dto/target.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AvatarDto } from '../dto/avatar.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
@@ -36,10 +37,17 @@ export class UserController {
     return await this.userService.unBanUser(body.target, req.user);
   }
 
-
-
+  @UseGuards( AuthGuard('jwt') )
   @Post("addAvatar")
-  async addAvatar( @Body() data: AvatarDto) : Promise<UserEntity> {
-    return await this.userService.addAvatar(data);
+  @UseInterceptors(FileInterceptor('image'))
+  async addAvatar( @UploadedFile() file: any, @Request() req) : Promise<void|UserEntity> {
+    return await this.userService.addAvatar(file, req.user);
+  }
+
+  //DELETE OR INTEGRATE IN USER GETTER
+  @UseGuards( AuthGuard('jwt') )
+  @Get("getAvatar")
+  async getAvatar (@Request() req) {//: Promise<string> {
+    // return await this.userService.getAvatar(req.user);
   }
 }

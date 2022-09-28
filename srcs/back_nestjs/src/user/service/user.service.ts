@@ -113,10 +113,14 @@ export class UserService {
 		return await this.allUser.save(requester);
 	}
 
-  async addAvatar(data: AvatarDto) {
-    let user = await this.findByName(data.user);
+  async addAvatar(file: any, user: UserEntity) {
+    console.log(file);
+	return file;
+	// user.avatar = data.image;
+    // return await this.allUser.save(user);
+  }
 
-    user.avatar = data.image;
-    return await this.allUser.save(user);
+  async getAvatar(user: UserEntity) {
+	//return user.avatar;
   }
 }
