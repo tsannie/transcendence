@@ -14,16 +14,16 @@ export default function InfosChannels(props: any) {
   const id = open ? "simple-popover" : undefined;
 
   // check if user is admin of the channel in infosChannel
-  function isAdmin() {
-    Object.entries(infosChannel).map(([key, value]) => {
-      if (key === "admins" && typeof value === "object" && value !== null) {
-        Object.entries(value).map(([childKey, childValue]) => {
-          if (childKey === "id" && childValue === props.userid) {
-            return true;
-          }
-        });
+  function isAdmin(channel: any, id: number) {
+    if (infosChannel === undefined)
+      getInfosChannel(channel);
+    if (channel !== undefined) {
+      for (let i = 0; i < channel.admins.length; i++) {
+        if (channel.admins[i].id === id) {
+          return true;
+        }
       }
-    });
+    }
     return false;
   }
 
@@ -94,7 +94,7 @@ export default function InfosChannels(props: any) {
                   </ListItem>
                 );
               } else if (typeof value === "object" && value !== null) {
-                if ((key === "banned" && isAdmin()) || key !== "banned") {
+                if ((key === "banned" && isAdmin(infosChannel, props.userId)) || key !== "banned") {
                   return (
                     <ListItem key={key}>
                       {Object.entries(value).map(([childKey, childValue]) => {

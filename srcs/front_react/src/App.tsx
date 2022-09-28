@@ -57,11 +57,7 @@ export default function App() {
       </Box>
     );
   return (
-    <Box
-      sx={{
-        display: "flex",
-      }}
-    >
+    <>
       <Sidebar
         inputChat={inputChat}
         setInputChat={setInputChat}
@@ -69,6 +65,6 @@ export default function App() {
         setIsLogin={setIsLogin}
       />
       {inputChat && <Chat />}
-    </Box>
+    </>
   );
 }

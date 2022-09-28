@@ -55,7 +55,7 @@ export default function MuteUser(props: any) {
         .then((res) => {
           console.log("user mute with success");
           console.log(channel);
-          props.getChannels();
+          props.getInfosChannel(channel);
         })
         .catch((res) => {
           console.log("invalid mute user");
