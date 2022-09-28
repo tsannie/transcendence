@@ -34,6 +34,12 @@ export class UserEntity {
   @Column({ nullable: true })
   secret2FA?: string
 
+  @Column({
+    type:"bytea",
+    nullable: true
+  })
+  avatar: string;
+
   @OneToMany( () => ChannelEntity, (channels) => channels.owner )
   owner_of?: ChannelEntity[];
 
