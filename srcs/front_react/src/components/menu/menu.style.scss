@@ -9,4 +9,19 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  line-height: 0px;
+
+  h1 {
+    font-size: 5vw;
+    letter-spacing: 0.3em;
+  }
+  h2 {
+    font-size: 3vw;
+  }
+  h3 {
+    font-size: 2vw;
+  }
+  p {
+    font-size: 1.7vw;
+  }
 }
