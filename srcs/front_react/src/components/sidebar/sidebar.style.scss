@@ -12,21 +12,31 @@
   border-style: dashed;
   border-color: white;
   img {
+    cursor: pointer;
     width: 4vw;
     height: auto;
     margin-bottom: 35%;
     margin-top: 35%;
     padding: 0.8vw;
-    transition-duration: 0.2s;
+    transition-duration: 0.3s;
     border-radius: 50%;
   }
 
+  button {
+    display: flex;
+    background-color: transparent;
+  }
+
   .selected {
+    border-radius: 50%;
     border-style: dashed;
     border-color: white;
   }
 
   img:hover {
+    filter: invert(40%);
+  }
+  img:active {
     filter: invert(70%);
   }
 

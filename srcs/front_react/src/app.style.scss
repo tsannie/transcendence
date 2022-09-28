@@ -18,8 +18,12 @@ body {
     font-family: 'Arcade' !important;
     color: white !important;
     -webkit-user-drag: none;
+    letter-spacing: 0.1em;
   }
   button {
+    padding: 2%;
+    border: dashed;
+    background: transparent;
     cursor: pointer;
   }
 
