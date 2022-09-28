@@ -41,7 +41,7 @@ export default function UnmuteUser(props: any) {
         .then((res) => {
           console.log("user unmute with success");
           console.log(channel);
-          props.getChannels();
+          props.getInfosChannel(channel);
         })
         .catch((res) => {
           console.log("invalid unmute user");

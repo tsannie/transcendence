@@ -38,12 +38,12 @@ export default function RevokeAdmin(props: any) {
       await api
         .post("channel/revokeAdmin", newChannel)
         .then((res) => {
-          console.log("user is admin now");
+          console.log("user is not admin anymore");
           console.log(channel);
-          props.getChannels();
+          props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("user can't be admin");
+          console.log("user can't be remove to admin");
           console.log(res);
         });
     }
