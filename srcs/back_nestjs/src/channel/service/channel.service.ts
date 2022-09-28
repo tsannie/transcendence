@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import * as bcrypt from 'bcrypt';
@@ -28,13 +28,13 @@ export class ChannelService {
 
 	/* This function return all the public datas of channel */
 	async getPublicData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, ["owner", "users", "status"]);
+		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, status: true});
 		return channel;
 	}
 
 	/* This function gets all the data for a normal user. No sensitive information here */
 	async getUserData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, ["owner", "users", "admins", "messages", "status", "time"]);
+		const channel = await this.getChannel(query_channel.name, {owner: true, users:true, admins: true, messages: true, status: true, time: true});
 
 		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
 			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
@@ -44,7 +44,7 @@ export class ChannelService {
 
 	/* This function returns full data of channel. Sensitive information here. Should be accessed only by admin or owner */
 	async getPrivateData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, ["owner", "users", "admins", "banned", "muted", "messages", "status", "time"]);
+		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, admins: true, banned: true, muted: true, messages: true, status: true, time: true});
 
 		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
 			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
@@ -66,7 +66,7 @@ export class ChannelService {
 			});
 	}
 
-	async getUser(username : string, inputed_relations : Array<string> = undefined) : Promise<UserEntity> {
+	async getUser(username : string, inputed_relations : FindOptionsRelations<UserEntity> = undefined) : Promise<UserEntity> {
 		const user = await this.userService.findByName(username, inputed_relations);
 
 		if (!user)
@@ -74,7 +74,7 @@ export class ChannelService {
 		return user;
 	}
 
-	async getChannel(channel_name : string, inputed_relations : Array<string> = undefined) : Promise<ChannelEntity> {
+	async getChannel(channel_name : string, inputed_relations : FindOptionsRelations<ChannelEntity> = undefined) : Promise<ChannelEntity> {
 		let returned_channel;
 
 
@@ -130,7 +130,7 @@ export class ChannelService {
 	}
 
   async leaveChannel(requested_channel: ChannelDto, user: UserEntity) {
-		let channel = await this.getChannel(requested_channel.name, ["owner", "admins", "users"]);
+		let channel = await this.getChannel(requested_channel.name, {owner: true, admins: true, users: true});
 
 		if (channel.owner.username === user.username)
 		{
@@ -156,7 +156,7 @@ export class ChannelService {
 	}
 
 	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		let channel = await this.getChannel(requested_channel.name, ["owner"]);
+		let channel = await this.getChannel(requested_channel.name, {owner: true});
 		if (channel.owner.username !== user.username)
 			throw new ForbiddenException("Only the owner of the channel can delete the channel.");
 		else
@@ -164,7 +164,7 @@ export class ChannelService {
 	}
 
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		let channel = await this.getChannel(requested_channel.name, ["owner", "users", "banned"]);
+		let channel = await this.getChannel(requested_channel.name, {owner: true, users: true, banned: true});
 
 		this.verifyBanned(channel, user.username);
 
@@ -180,7 +180,7 @@ export class ChannelService {
 	}
 
 	async addPassword(channel_requested: ChannelPasswordDto, user: UserEntity) : Promise<ChannelEntity> {
-		let channel = await this.getChannel(channel_requested.name, ["owner"]);
+		let channel = await this.getChannel(channel_requested.name, {owner: true});
 
 		if (channel.owner.username !== user.username)
 			throw new ForbiddenException("Only the owner of the channel can add a password");
@@ -195,7 +195,7 @@ export class ChannelService {
 	}
 
 	async deletePassword(channel_requested: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
-		let channel = await this.getChannel(channel_requested.name, ["owner"]);
+		let channel = await this.getChannel(channel_requested.name, {owner: true});
 
 		if (channel.owner.username !== user.username)
 			throw new ForbiddenException("Only the owner of the channel can delete a password");
@@ -241,7 +241,7 @@ export class ChannelService {
 	}
 
 	async unBanUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
+		let channel = await this.getChannel(request.channel_name, {owner: true, admins: true, users: true, banned: true});
 		this.verifyHierarchy(channel, requester, request.target);
 
 		if (!channel.banned)
@@ -258,7 +258,7 @@ export class ChannelService {
 	}
 
 	async banUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "banned"]);
+		let channel = await this.getChannel(request.channel_name, {owner: true, admins: true, users: true, banned: true});
 		this.verifyHierarchy(channel, requester, request.target);
 		this.verifyIfMember(channel, request.target);
 
@@ -278,7 +278,7 @@ export class ChannelService {
 	}
 
 	async unMuteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
-		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "muted"]);
+		let channel = await this.getChannel(request.channel_name, {owner: true, admins: true, users: true, muted: true});
 		this.verifyHierarchy(channel, requester, request.target);
 		this.verifyIfMember(channel, request.target);
 
@@ -297,7 +297,7 @@ export class ChannelService {
 	}
 
 	async muteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
-		let channel = await this.getChannel(request.channel_name, ["owner", "admins", "users", "muted"]);
+		let channel = await this.getChannel(request.channel_name, {owner: true, admins: true, users: true, muted: true});
 		this.verifyHierarchy(channel, requester, request.target);
 		this.verifyIfMember(channel, request.target);
 
@@ -330,7 +330,7 @@ export class ChannelService {
 	}
 
 	async makeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(req_channel.channel_name, ["owner", "admins", "banned", "muted", "users"]);
+		let channel = await this.getChannel(req_channel.channel_name, {owner: true, admins: true, banned: true, muted: true, users: true});
 
 		if (channel.owner.username !== user.username)
 			throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
@@ -353,7 +353,7 @@ export class ChannelService {
 	}
 
 	async revokeAdmin(req_channel: ChannelActionsDto, user: UserEntity) : Promise<ChannelEntity>{
-		let channel = await this.getChannel(req_channel.channel_name, ["owner", "users", "admins"]);
+		let channel = await this.getChannel(req_channel.channel_name, {owner: true, users: true, admins: true});
 		this.verifyIfMember(channel, req_channel.target);
 
 		if (channel.owner.username !== user.username)
@@ -381,13 +381,16 @@ export class ChannelService {
 		user.username = username;
 		user.email = username + "@student.42.fr";
 		await this.userService.add(user);
-		return await this.getUser(username, ["channels"]);
+		return await this.getUser(username, {channels: true});
 	}
 
 	async getAllChannels() : Promise<ChannelEntity[]> {
 		return await this.channelRepository.find(
 			{
-				relations: ["owner", "users"],
+				relations: {
+					owner: true,
+					users: true
+				}
 			},
 		);
 	}
