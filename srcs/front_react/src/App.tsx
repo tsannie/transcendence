@@ -57,7 +57,14 @@ export default function App() {
       </Box>
     );
   return (
-    <>
+    <Box
+      // sx to create coluns for each child
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        height: "100vh",
+      }}
+    >
       <Sidebar
         inputChat={inputChat}
         setInputChat={setInputChat}
@@ -65,6 +72,6 @@ export default function App() {
         setIsLogin={setIsLogin}
       />
       {inputChat && <Chat />}
-    </>
+    </Box>
   );
 }
