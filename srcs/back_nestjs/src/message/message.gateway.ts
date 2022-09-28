@@ -109,7 +109,7 @@ export class MessageGateway
   @SubscribeMessage('getDM')
   getDM(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
     client.join(data);
-    this.dmService.getAllDms(data);
+    //this.dmService.getAllDms(data);
     this.logger.log(`client ${client.id} join room ${data} `);
   }
 }
