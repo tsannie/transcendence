@@ -45,12 +45,12 @@ export function GamePlayer_Left_right(props: any) {
       console.log("ball is sinc with server");
     });
     socket.on("mouvPaddleLeft", (theroom: any) => {
-      paddleProps_left.x = theroom.set.p1_padle_obj.x;
-      paddleProps_left.y = theroom.set.p1_padle_obj.y;
+      paddleProps_left.x = theroom.set.p1_paddle_obj.x;
+      paddleProps_left.y = theroom.set.p1_paddle_obj.y;
     });
     socket.on("mouvPaddleRight", (theroom: any) => {
-      paddleProps_right.x = theroom.set.p2_padle_obj.x;
-      paddleProps_right.y = theroom.set.p2_padle_obj.y;
+      paddleProps_right.x = theroom.set.p2_paddle_obj.x;
+      paddleProps_right.y = theroom.set.p2_paddle_obj.y;
     });
     socket.on("setDataPlayerLeft", (theroom: any) => {
       player_left.score = theroom.set.set_p1.score;

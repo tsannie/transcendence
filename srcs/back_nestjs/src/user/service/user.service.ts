@@ -20,7 +20,9 @@ export class UserService {
   async findByName(username: string): Promise<UserDto> {
     // TODO check observable or promise ??
     return await this.allUser.findOne({
-      username: username,
+      where: {
+        username: username,
+      }
     });
   }
 

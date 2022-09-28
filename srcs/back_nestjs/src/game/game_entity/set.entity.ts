@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BallEntity } from './ball.entity';
-import { PadleEntity } from './padle.entity';
+import { PaddleEntity } from './paddle.entity';
 import { PlayerEntity } from './players.entity';
 
 @Entity()
@@ -11,29 +11,23 @@ export class SetEntity {
   @Column({ nullable: true })
   room_name: string;
 
-  @OneToOne(() => BallEntity, {eager: true})
+  @OneToOne(() => BallEntity, {eager: true, cascade: true})
   @JoinColumn()
   ball: BallEntity
 
-  @OneToOne(() => PadleEntity, {eager: true})
+  @OneToOne(() => PaddleEntity, {eager: true, cascade: true})
   @JoinColumn()
-  p1_padle_obj: PadleEntity
+  p1_paddle_obj: PaddleEntity
 
-  @OneToOne(() => PadleEntity, {eager: true})
+  @OneToOne(() => PaddleEntity, {eager: true, cascade: true})
   @JoinColumn()
-  p2_padle_obj: PadleEntity
+  p2_paddle_obj: PaddleEntity
 
-  @OneToOne(() => PlayerEntity, {eager: true})
+  @OneToOne(() => PlayerEntity, {eager: true, cascade: true})
   @JoinColumn()
   set_p1: PlayerEntity
 
-  @OneToOne(() => PlayerEntity, {eager: true})
+  @OneToOne(() => PlayerEntity, {eager: true, cascade: true})
   @JoinColumn()
   set_p2: PlayerEntity
-
-  @Column({ nullable: true })
-  score_p1: number;
-
-  @Column({ nullable: true })
-  score_p2: number;
 }
