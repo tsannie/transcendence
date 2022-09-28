@@ -73,48 +73,36 @@ export default function Chat() {
     <>
       <Box
         sx={{
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          sx={{
-            fontWeight: "bold",
-          }}
-          variant="h4"
-        >
-          Live chat
-        </Typography>
-      </Box>
-
-      <DmList
-        socket={socket}
-        isNewMessage={isNewMessage}
-        setOpenConv={setOpenConv}
-      />
-
-      {openConv && <MessagesList messagesList={messagesList} author={author} />}
-
-      {openConv && (
-        <PromptMessage
-          setCurrentMessage={setCurrentMessage}
-          currentMessage={currentMessage}
-          sendMessage={sendMessage}
-        />
-      )}
-
-      <ChatUserlist
-        setOpenConv={setOpenConv}
-        setIsNewMessage={setIsNewMessage}
-      />
-
-      <Box
-        sx={{
-          position: "relative",
           display: "flex",
-          float: "right",
+          flexDirection: "column",
+          //justifyContent: "space-between",
+          alignItems: "flex-start",
+          height: "100%",
         }}
       >
+        <DmList
+          socket={socket}
+          isNewMessage={isNewMessage}
+          setOpenConv={setOpenConv}
+        />
+
         <Channels />
+        {openConv && (
+          <MessagesList messagesList={messagesList} author={author} />
+        )}
+
+        {openConv && (
+          <PromptMessage
+            setCurrentMessage={setCurrentMessage}
+            currentMessage={currentMessage}
+            sendMessage={sendMessage}
+          />
+        )}
+
+        <ChatUserlist
+          setOpenConv={setOpenConv}
+          setIsNewMessage={setIsNewMessage}
+        />
       </Box>
     </>
   );
