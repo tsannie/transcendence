@@ -19,14 +19,22 @@ body {
     color: white !important;
     -webkit-user-drag: none;
     letter-spacing: 0.1em;
+    border-width: 0.3em;
+
   }
   button {
     padding: 2%;
     border: dashed;
     background: transparent;
+    transition: 0.3s;
     cursor: pointer;
+    &:hover {
+      filter: invert(40%);
+    }
+    &:active {
+      filter: invert(70%);
+    }
   }
-
 }
 
 .bg {
