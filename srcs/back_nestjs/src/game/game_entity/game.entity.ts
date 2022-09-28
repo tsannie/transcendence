@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ResumeEntity } from './resume.entity';
 import { SetEntity } from './set.entity';
 
@@ -43,8 +49,7 @@ export class GameEntity {
   @Column('time', { nullable: true })
   thedate?: Date;
 
-  @OneToOne(() => SetEntity, {eager: true, cascade: true})
+  @OneToOne(() => SetEntity, { eager: true, cascade: true })
   @JoinColumn()
-  set: SetEntity
-
+  set: SetEntity;
 }

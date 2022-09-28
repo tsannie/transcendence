@@ -11,7 +11,16 @@ import { PaddleEntity } from './game_entity/paddle.entity';
 import { PlayerEntity } from './game_entity/players.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([GameEntity, ResumeEntity, SetEntity, PlayerEntity, PaddleEntity, BallEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      GameEntity,
+      ResumeEntity,
+      SetEntity,
+      PlayerEntity,
+      PaddleEntity,
+      BallEntity,
+    ]),
+  ],
   controllers: [GameController],
   providers: [GameService, GameGateway],
 })

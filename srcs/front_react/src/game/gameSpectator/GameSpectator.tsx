@@ -25,7 +25,6 @@ let first_sinc = false;
 let emit_to_get_room = true;
 
 export function GameSpectator(props: any) {
-
   const [p1id, setp1id] = useState("null");
   const [p2id, setp2id] = useState("null");
 
@@ -62,11 +61,10 @@ export function GameSpectator(props: any) {
   /*   UseEffect qui gere le canvas en mode spectateur afficher les info recupere dans 
   les socker.on precedents sans pouvoir modifier les variables et objets 
   du jeu des joueurs */
-    
 
   let requestAnimationFrameId: any;
   useEffect(() => {
-      socket.on("sincTheBall_spec", (theroom: any) => {
+    socket.on("sincTheBall_spec", (theroom: any) => {
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
 
@@ -88,29 +86,25 @@ export function GameSpectator(props: any) {
 
       first_sinc = true;
       console.log("first_sinc", first_sinc);
-      console.log("sincTheBall_spec FROM SERVER REAL GAME"); 
+      console.log("sincTheBall_spec FROM SERVER REAL GAME");
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_paddle_obj.x;
       paddleProps_left.y = theroom.set.p1_paddle_obj.y;
-
     });
     socket.on("mouvPaddleRight_spec", (theroom: any) => {
       paddleProps_right.x = theroom.set.p2_paddle_obj.x;
       paddleProps_right.y = theroom.set.p2_paddle_obj.y;
-
     });
     socket.on("setDataPlayerLeft_spec", (theroom: any) => {
       player_left.score = theroom.set.set_p1.score;
       player_left.won = theroom.set.set_p1.won;
-
     });
     socket.on("setDataPlayerRight_spec", (theroom: any) => {
       player_right.score = theroom.set.set_p2.score;
       player_right.won = theroom.set.set_p2.won;
-
     });
-      socket.on("startGameSpec", (theroom: any) => {
+    socket.on("startGameSpec", (theroom: any) => {
       console.log("+*+*+*-+-startGameSpec+*++++-*+*-+");
       sinc_all_data(theroom);
       setp1id(theroom.set.set_p1.name);
@@ -121,10 +115,10 @@ export function GameSpectator(props: any) {
       console.log("theroom.set.set_p2.name", theroom.set.set_p2.name);
       console.log("--------------------");
       console.log("p1id = ", p1id);
-      console.log("p2id = ", p2id); 
+      console.log("p2id = ", p2id);
       console.log("--------------------");
       console.log("theroom.room_name = ", theroom.room_name);
-      //console.log("ThisRoom = ", ThisRoom); 
+      //console.log("ThisRoom = ", ThisRoom);
 
       console.log("--------------------ERRORORORORO\n\n");
     });
@@ -132,17 +126,16 @@ export function GameSpectator(props: any) {
       player_right.won = theroom.set.set_p2.won;
       player_left.won = theroom.set.set_p1.won;
       //setThisRoom(theroom.room_name);
-
     });
 
-    if (props.store.Specthegame === true && emit_to_get_room === true) {
-      socket.emit("Specthegame", props.store.Room_name_spec);
+    if (props.Specthegame === true && emit_to_get_room === true) {
+      socket.emit("Specthegame", props.Room_name_spec);
       emit_to_get_room = false;
     }
 
     const render = () => {
       requestAnimationFrameId = requestAnimationFrame(render);
-      
+
       let canvas: any = props.canvasRef.current;
       var ctx = null;
       if (canvas)
@@ -189,42 +182,40 @@ export function GameSpectator(props: any) {
             player_right,
             canvas.height,
             canvas.width
-            );
-            cancelAnimationFrame(requestAnimationFrameId);
-          }
+          );
+          cancelAnimationFrame(requestAnimationFrameId);
+        }
       }
     };
     render();
   }, [socket]);
 
-
   function leaveGameRoomSpec() {
     first_sinc = false;
     emit_to_get_room = true;
-    props.store.setSpecthegame(false);
-    props.store.setisLookingRoom(true);
+    props.setSpecthegame(false);
+    props.setisLookingRoom(true);
     console.log("this room = !!!!!!!!!!!!!!!!![" + ThisRoom + "]!1");
     socket.emit("LeaveGameSpectator", ThisRoom);
   }
 
+  return (
+    <Grid
+      container
+      spacing={0}
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      style={{ minHeight: "50vmin" }}
+    >
+      <h1>THE PONG SPECTATOR</h1>
 
-    return (
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        style={{ minHeight: "50vmin" }}
-      >
-        <h1>THE PONG SPECTATOR</h1>
-
-        <Box
+      <Box
         sx={{
-          display: 'flex',
+          display: "flex",
           p: 1,
           m: 1,
-          bgcolor: 'background.paper',
+          bgcolor: "background.paper",
           borderRadius: 1,
         }}
       >
@@ -233,25 +224,19 @@ export function GameSpectator(props: any) {
         <h2 style={{ color: "red", textAlign: "right" }}>{p2id}</h2>
       </Box>
 
-        <canvas
-          id="canvas"
-          ref={props.canvasRef}
-          height="500px"
-          width={1000}
-          style={{ backgroundColor: "black" }}
-        ></canvas>
+      <canvas
+        id="canvas"
+        ref={props.canvasRef}
+        height="500px"
+        width={1000}
+        style={{ backgroundColor: "black" }}
+      ></canvas>
 
-        <br />
-        <br />
-        <Button variant="contained"
-          onClick={leaveGameRoomSpec} 
-        >
-          Leave the spectator Game
-        </Button>
-      </Grid>
+      <br />
+      <br />
+      <Button variant="contained" onClick={leaveGameRoomSpec}>
+        Leave the spectator Game
+      </Button>
+    </Grid>
   );
-  }
-
-////////////////////////////////////////////////////
-// WORK IN PROGESS !!!  WORK IN PROGESS !!!  WORK IN PROGESS !!!
-////////////////////////////////////////////////////
+}

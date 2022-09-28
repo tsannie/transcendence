@@ -24,6 +24,6 @@ export class GameController {
 
   @Get('/dell/:room_name')
   detail2(room_name: string) {
-    this.gameService.delete_room_name(room_name)
+    this.gameService.delete_room_name(room_name);
   }
 }

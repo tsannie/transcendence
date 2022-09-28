@@ -1,4 +1,3 @@
-
 export default function GameCreationSettings(props: any) {
   return (
     <div className="queues">
