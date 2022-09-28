@@ -1,6 +1,6 @@
 import { Grid, List, ListItem, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { api } from "../../../userlist/UserListItem";
+import { api } from "../../../userlist/UserList";
 import { IDm, IMessage } from "../types";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
@@ -11,19 +11,7 @@ import { IDm, IMessage } from "../types";
 export default function DmList(props: any) {
   const [dms, setDms] = React.useState<Array<IDm>>([]);
 
-  /* async function getAllDms() {
-    await api
-      .get("dm/getAllDms")
-      .then((res) => {
-        setDms(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-        console.log(res);
-      });
-  } */
-
-  useEffect(() => {
+  /* useEffect(() => {
     props.socket.on("getDM", (data: any) => {
       console.log("getDM");
       console.log(data);
@@ -31,61 +19,30 @@ export default function DmList(props: any) {
     });
     //getAllDms();
   }, [dms]);
-
+ */
   return (
-    <Grid
-      alignItems="left"
-      container
-      direction="column"
-      sx={{
-        maxWidth: "fit-content",
-        maxHeight: "fit-content",
-        border: "1px solid red",
-      }}
-    >
-      <Typography
-        sx={{
-          fontWeight: "bold",
-        }}
-        variant="h6"
-      >
-        Conv history
-        <List>
-          {dms && dms.map((dmData: IDm) => {
-            return (
-              <ListItem
-                sx={{
-                  border: "1px solid black",
-                  mt: 2,
-                  alignItems: "center",
-                  width: "fit-content",
-                  height: "fit-content",
-                  borderRadius: "3px",
-                }}
-                key={dmData.id}
-                onClick={props.handleClick}
-              >
-                {dmData.targetUsername}
-              </ListItem>
-            )
-            })}
-        </List>
-      </Typography>
-      <Grid
-        item
-        sx={{
-          display: { xs: props.isNewMessage ? "block" : "none" },
-        }}
-      >
-        <Typography
-          sx={{
-            fontWeight: "semi-bold",
-          }}
-          variant="subtitle1"
-        >
-          Conv 1
-        </Typography>
-      </Grid>
-    </Grid>
+    <>
+      <List sx={{ /* border: "1px solid grey" */ }}>
+        {dms.map((dm: any) => (
+          <ListItem
+            sx={{
+              border: "1px solid black",
+              mt: 2,
+              alignItems: "center",
+              width: "fit-content",
+              height: "fit-content",
+              borderRadius: "3px",
+            }}
+            key={dm.id}
+            onClick={() => {
+              props.setOpenConv(true);
+              //props.setConvId(dm.id);
+            }}
+          >
+            {dm.name}
+          </ListItem>
+        ))}
+      </List>
+    </>
   );
 }

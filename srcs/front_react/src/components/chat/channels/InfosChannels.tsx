@@ -1,6 +1,6 @@
 import { Button, List, ListItem, ListItemText, Popover } from "@mui/material";
 import React, { useState } from "react";
-import { api } from "../../../userlist/UserListItem";
+import { api } from "../../../userlist/UserList";
 import { IChannel } from "../types";
 
 export default function InfosChannels(props: any) {

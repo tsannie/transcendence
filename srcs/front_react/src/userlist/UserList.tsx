@@ -16,33 +16,19 @@ export interface IUser {
 
 export default function UserList(props: any) {
   // Declare a new state variable
-  const [users, setUsers] = React.useState<Array<IUser>>([]);
-
-  async function getAllUsers() {
-    await api
-      .get("user")
-      .then((res) => {
-        setUsers(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-        console.log(res);
-      });
-  }
-
 
   //TODO: create socket to get new users and update the list
 
   // Similar to componentDidMount and componentDidUpdate
   useEffect(() => {
-    getAllUsers();
+    props.getAllUsers();
   }, []);
 
   // display all users connected in the database
   return (
     <>
       <List sx={{}}>
-        {users.map((user) => (
+        {props.users.map((user: any) => (
           <ListItem
             sx={{
              /*  border: "1px solid black",
