@@ -1,4 +1,3 @@
-
 export function draw_line(
   ctx: any,
   ballObj: any,
@@ -16,7 +15,6 @@ export function draw_line(
   ctx.fill();
 }
 
-
 export function draw_loading(
   ctx: any,
   canvas_height: number,
@@ -28,7 +26,6 @@ export function draw_loading(
   ctx.textAlign = "center";
   ctx.fillText("Loading...", canvas_width / 2, canvas_height / 2);
 }
-
 
 export function draw_score(
   ctx: any,
@@ -44,9 +41,7 @@ export function draw_score(
   ctx.textAlign = "center";
 
   ctx.fillText(
-    player_left.score.toString() +
-      "     " +
-    player_right.score.toString(),
+    player_left.score.toString() + "     " + player_right.score.toString(),
     canvas_width / 2,
     canvas_height / 4
   );

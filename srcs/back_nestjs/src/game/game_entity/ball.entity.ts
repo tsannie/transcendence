@@ -5,34 +5,34 @@ export class BallEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   x: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   y: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   ingame_dx: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   ingame_dy: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   init_dx: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   init_dy: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   init_first_dx: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   init_first_dy: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   first_dx: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   first_dy: number;
 
   @Column({ default: false })
@@ -47,4 +47,3 @@ export class BallEntity {
   @Column({ default: true })
   right: boolean = true;
 }
- 

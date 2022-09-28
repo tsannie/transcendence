@@ -9,26 +9,24 @@ export class GameService {
   constructor(
     @InjectRepository(GameEntity)
     private all_game: Repository<GameEntity>,
-
-/*     @InjectRepository(ResumeEntity)
+  ) /*     @InjectRepository(ResumeEntity)
     private all_resume: Repository<ResumeEntity> */
-  ) {}
+  {}
 
   findAll(): Promise<GameEntity[]> {
     return this.all_game.find();
   }
 
-/*   findAllR(): Promise<ResumeEntity[]> {
+  /*   findAllR(): Promise<ResumeEntity[]> {
     return this.all_resume.find();
   } */
 
   findByName(room_name: string): Promise<GameEntity> {
-    return this.all_game.findOne({ 
+    return this.all_game.findOne({
       where: {
-        room_name: room_name
-      }
-    }
-    );
+        room_name: room_name,
+      },
+    });
   }
 
   async deleteUser(id: number): Promise<void> {
