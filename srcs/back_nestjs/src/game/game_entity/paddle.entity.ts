@@ -1,14 +1,14 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class PadleEntity {
+export class PaddleEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: number;
 
-  @Column({ default: 20 })
+  @Column({nullable: true, type: 'float'})
   x: number;
 
-  @Column({ default: 3 })
+  @Column({nullable: true, type: 'float'})
   y: number;
 
   @Column({ default: 80 })

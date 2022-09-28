@@ -1,5 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { JoinAttribute } from 'typeorm/query-builder/JoinAttribute';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ResumeEntity } from './resume.entity';
 import { SetEntity } from './set.entity';
 
@@ -44,17 +43,8 @@ export class GameEntity {
   @Column('time', { nullable: true })
   thedate?: Date;
 
-  @Column('jsonb', { nullable: true })
-  set: SetEntity;
-
-/*   @OneToOne(() => SetEntity, {eager: true, cascade: true})
+  @OneToOne(() => SetEntity, {eager: true, cascade: true})
   @JoinColumn()
-  game_set: SetEntity */
-
-
-  @OneToOne(() => ResumeEntity, {eager: true})
-  @JoinColumn()
-  resume: ResumeEntity
-
+  set: SetEntity
 
 }

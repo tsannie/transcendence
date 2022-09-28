@@ -54,7 +54,7 @@ export default function Game() {
   
 /*   
   TODOP historique game for user
-
+  TODOP FIX GAME
   DELL STORE
 
   TODOP EGALISER PADDLE SOURIS
@@ -63,10 +63,6 @@ export default function Game() {
 
   TODOP ONE TO ONE ?
   */
-
-
-  // if refresh page display alert 
-
 
   const store = {
     nbrconnect: nbrconnect,
