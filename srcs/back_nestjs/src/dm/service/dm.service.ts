@@ -18,7 +18,7 @@ export class DmService {
 	) {}
 	
 	async checkifBanned(user: UserEntity, target: string) : Promise<UserEntity> {
-		let user2 = await this.userService.findUser(target, ["banned"]);
+		let user2 = await this.userService.findUser(target, {banned: true});
 
 		if (user.banned && user.banned.find( banned_guys => banned_guys.username === target))
 			throw new UnprocessableEntityException(`You've banned ${target}`);
@@ -30,11 +30,14 @@ export class DmService {
 	
 	// get a dm by id
 	async getDmById(inputed_id: number): Promise<DmEntity> {
-		return await this.dmRepository.findOne( inputed_id,
-			{
-				relations: ["messages"],
+		return await this.dmRepository.findOne({
+			where:{
+				id: inputed_id
+			},
+			relations:{
+				messages: true
 			}
-		)
+		})
 	}
 	
 	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
