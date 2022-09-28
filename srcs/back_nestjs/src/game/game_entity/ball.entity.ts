@@ -5,34 +5,34 @@ export class BallEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: number;
 
-  @Column({ default: 0 })
-  x: number = 0;
+  @Column({nullable: true, type: 'float'})
+  x: number;
 
-  @Column({ default: 3 })
-  y: number = 10;
+  @Column({nullable: true, type: 'float'})
+  y: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   ingame_dx: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   ingame_dy: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   init_dx: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   init_dy: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   init_first_dx: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   init_first_dy: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   first_dx: number;
 
-  @Column({ default: 5 })
+  @Column({nullable: true, type: 'float'})
   first_dy: number;
 
   @Column({ default: false })
@@ -40,12 +40,6 @@ export class BallEntity {
 
   @Column({ default: false })
   first_col: boolean = false;
-
-  @Column({ default: 10 })
-  rad: number = 10;
-
-  @Column({ default: 3 })
-  speed: number = 3;
 
   @Column({ default: 'white' })
   color: string = 'white';

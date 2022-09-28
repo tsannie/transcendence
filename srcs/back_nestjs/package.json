@@ -29,7 +29,7 @@
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/platform-socket.io": "^9.0.3",
-    "@nestjs/typeorm": "^8.0.3",
+    "@nestjs/typeorm": "^9.0.1",
     "@nestjs/websockets": "^9.0.3",
     "@types/socket.io": "^3.0.2",
     "axios": "^0.27.2",
@@ -51,7 +51,7 @@
     "rxjs": "^7.2.0",
     "socket.io": "^4.5.1",
     "socket.io-adapter": "^2.4.0",
-    "typeorm": "^0.2.45",
+    "typeorm": "^0.3.10",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {

@@ -91,13 +91,13 @@ export function GameSpectator(props: any) {
       console.log("sincTheBall_spec FROM SERVER REAL GAME"); 
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
-      paddleProps_left.x = theroom.set.p1_padle_obj.x;
-      paddleProps_left.y = theroom.set.p1_padle_obj.y;
+      paddleProps_left.x = theroom.set.p1_paddle_obj.x;
+      paddleProps_left.y = theroom.set.p1_paddle_obj.y;
 
     });
     socket.on("mouvPaddleRight_spec", (theroom: any) => {
-      paddleProps_right.x = theroom.set.p2_padle_obj.x;
-      paddleProps_right.y = theroom.set.p2_padle_obj.y;
+      paddleProps_right.x = theroom.set.p2_paddle_obj.x;
+      paddleProps_right.y = theroom.set.p2_paddle_obj.y;
 
     });
     socket.on("setDataPlayerLeft_spec", (theroom: any) => {

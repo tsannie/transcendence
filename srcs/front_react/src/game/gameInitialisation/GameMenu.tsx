@@ -26,9 +26,6 @@ export default function GameMenu(props: any) {
         StartGame(theroom.room_name);
         props.store.setgamestart(true);
       }
-
-
-
     });
 
     socket.on("joinedRoom", (theroom: any) => {
@@ -94,8 +91,6 @@ export default function GameMenu(props: any) {
         REGARDER une partie :
         <button onClick={lookAtAllGameRoom}>regarder la partie</button>
       </h4>
-
-  
     </div>
   );
 }
