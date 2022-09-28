@@ -1,8 +1,8 @@
 import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import UserList, { api } from "../../userlist/UserListItem";
-import UserInfos, { IUser } from "../../userlist/UserListItem";
+import UserList, { api } from "../../userlist/UserList";
+import { IUser } from "../../userlist/UserList";
 import { IChannel, IDm } from "./types";
 
 export default function ChatUserlist(props: any) {
@@ -20,10 +20,6 @@ export default function ChatUserlist(props: any) {
 
   function handleClose() {
     setAnchorEl(null);
-  }
-
-  function sendReceiverName(receiver: IUser) {
-    props.setReceiver(receiver);
   }
 
   function handleProfile() {
@@ -83,7 +79,7 @@ export default function ChatUserlist(props: any) {
       </Typography>
       <>
         <>
-          <UserList handleClick={handleClick} />
+          <UserList handleClick={handleClick} users={props.users} getAllUsers={props.getAllUsers}/>
         </>
         <Menu
           open={open}

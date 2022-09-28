@@ -1,6 +1,6 @@
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { api } from "../userlist/UserListItem"; // TODO replace to constant value
+import { api } from "../userlist/UserList"; // TODO replace to constant value
 
 interface IFormRegister {
   username: string;

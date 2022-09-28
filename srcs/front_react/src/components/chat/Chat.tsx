@@ -7,11 +7,12 @@ import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
-import { api, IUser } from "../../userlist/UserListItem";
+import { api, IUser } from "../../userlist/UserList";
 import { COOKIE_NAME } from "../../const";
 import DmList from "./messages/DmList";
+import Conv from "./messages/Conv";
 
-export default function Chat() {
+export default function Chat(props: any) {
   const [room, setRoom] = useState("");
   const [author, setAuthor] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
@@ -20,7 +21,7 @@ export default function Chat() {
   const [userId, setUserId] = useState(0);
   const [openConv, setOpenConv] = useState(false);
 
-  const socket = io("http://localhost:4000", {});
+  //const socket = io("http://localhost:4000", {});
 
   async function getUser() {
     console.log("get user");
@@ -50,24 +51,24 @@ export default function Chat() {
           ":" +
           String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
       };
-      socket.emit("message", messageData);
+      //socket.emit("message", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
     }
   }
 
+  // get user once on load
   useEffect(() => {
-    console.log("use effect chat");
     getUser();
   }, []);
 
   // listen message from backend
-  useEffect(() => {
+  /* useEffect(() => {
     socket.on("message", (data) => {
       console.log(data);
       setMessagesList((list) => [...list, data]);
     });
-  }, [socket]);
+  }, [socket]); */
 
   return (
     <>
@@ -78,30 +79,27 @@ export default function Chat() {
           //justifyContent: "space-between",
           alignItems: "flex-start",
           height: "100%",
+          weight: "30%",
         }}
       >
         <DmList
-          socket={socket}
+          //socket={socket}
           isNewMessage={isNewMessage}
           setOpenConv={setOpenConv}
         />
-
         <Channels />
-        {openConv && (
-          <MessagesList messagesList={messagesList} author={author} />
-        )}
-
-        {openConv && (
-          <PromptMessage
-            setCurrentMessage={setCurrentMessage}
-            currentMessage={currentMessage}
-            sendMessage={sendMessage}
-          />
-        )}
-
+        <Conv
+          openConv={openConv}
+          messagesList={messagesList}
+          author={author}
+          setCurrentMessage={setCurrentMessage}
+          sendMessage={sendMessage}
+        />
         <ChatUserlist
           setOpenConv={setOpenConv}
           setIsNewMessage={setIsNewMessage}
+          getAllUsers={props.getAllUsers}
+          users={props.users}
         />
       </Box>
     </>
