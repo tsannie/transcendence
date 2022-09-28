@@ -2,6 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { request } from 'http';
 import { FindOptionsRelations, Repository } from 'typeorm';
+import { AvatarDto } from '../dto/avatar.dto';
 import { UserEntity } from '../models/user.entity';
 
 @Injectable()
@@ -111,4 +112,11 @@ export class UserService {
 		requester.banned = requester.banned.filter( banned_guys => banned_guys.username !== target );
 		return await this.allUser.save(requester);
 	}
+
+  async addAvatar(data: AvatarDto) {
+    let user = await this.findByName(data.user);
+
+    user.avatar = data.image;
+    return await this.allUser.save(user);
+  }
 }

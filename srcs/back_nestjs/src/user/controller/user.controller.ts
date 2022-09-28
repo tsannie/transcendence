@@ -3,6 +3,7 @@ import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
 import { targetDto } from '../dto/target.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AvatarDto } from '../dto/avatar.dto';
 
 @Controller('user')
 export class UserController {
@@ -36,4 +37,9 @@ export class UserController {
   }
 
 
+
+  @Post("addAvatar")
+  async addAvatar( @Body() data: AvatarDto) : Promise<UserEntity> {
+    return await this.userService.addAvatar(data);
+  }
 }
