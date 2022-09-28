@@ -19,7 +19,7 @@ export class MessageService {
   ) {}
 
 	async addMessagetoChannel(data: IMessage) : Promise<MessageEntity> {
-		const user = await this.userService.findByName(data.author, ["channels", "owner_of"])
+		const user = await this.userService.findByName(data.author, {channels: true, owner_of: true})
 		let channel = user.channels.find( channel => channel.name === data.channel );
 		if (!channel)
 			channel = user.owner_of.find( channel => channel.name === data.channel);
@@ -34,7 +34,7 @@ export class MessageService {
 	}
 
 	async addMessagetoDm(data: IMessage) : Promise<MessageEntity> {
-		const user = await this.userService.findByName(data.author, ["dms"]);
+		const user = await this.userService.findByName(data.author, {dms: true});
 		const dm = await this.dmService.getDmByName({target: data.target}, user);
 
 		const message = new MessageEntity();

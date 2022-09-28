@@ -1,7 +1,7 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { request } from 'http';
-import { Repository } from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import { UserEntity } from '../models/user.entity';
 
 @Injectable()
@@ -16,11 +16,13 @@ export class UserService {
   }
 
   // find user by name
-  async findByName( username: string, relations_ToLoad : Array<string> = undefined ): Promise<UserEntity> {
+  async findByName( username: string, relations_ToLoad : FindOptionsRelations<UserEntity> = undefined ): Promise<UserEntity> {
 	if (!relations_ToLoad)
 	{
 	  return await this.allUser.findOne({
-		username: username,
+		where:{
+			username: username,
+		}
 	  });
 	}
 	else
@@ -33,7 +35,7 @@ export class UserService {
   }
 
   //same as findbyName but throw error if not found
-  async findUser(username: string, relations_ToLoad : Array<string> = undefined) : Promise<UserEntity> {
+  async findUser(username: string, relations_ToLoad : FindOptionsRelations<UserEntity> = undefined) : Promise<UserEntity> {
 	let user = await this.findByName(username, relations_ToLoad);
 	if (!user)
 		throw new UnprocessableEntityException(`User ${user} is not registered in database.`);
@@ -42,16 +44,25 @@ export class UserService {
   }
 
   // find user by id
-  async findById(id: number): Promise<UserEntity> {
-	return await this.allUser.findOne(id);
+  async findById(input_id: number): Promise<UserEntity> {
+	return await this.allUser.findOne({
+		where: {
+			id: input_id
+		}
+	});
   }
 
   // TODO DELETE
   async getAllUser(): Promise<UserEntity[]> {
 	return await this.allUser.find({
-		relations : ["owner_of", "channels", "banned"]
+		relations : {
+			owner_of: true, 
+			channels: true,
+			banned: true
 		}
-	)};
+		}
+	)
+	};
 
   async cleanAllUser(): Promise<void> {
 	return await this.allUser.clear();
