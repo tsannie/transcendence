@@ -5,10 +5,10 @@ export class PaddleEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   x: number;
 
-  @Column({nullable: true, type: 'float'})
+  @Column({ nullable: true, type: 'float' })
   y: number;
 
   @Column({ default: 80 })

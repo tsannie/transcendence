@@ -12,7 +12,7 @@ export class ResumeEntity {
   @Column({ nullable: true })
   name_player_lose: string;
 
-/*   @Column({ default: 0 })
+  /*   @Column({ default: 0 })
   score_player_win: number = 0;
 
   @Column({ default: 0 })
@@ -21,7 +21,6 @@ export class ResumeEntity {
   @Column('time', { nullable: true })
   thedate: any  = new Date(); */
 
-/*   @OneToOne(() => GameEntity, (game) => game.resume)
+  /*   @OneToOne(() => GameEntity, (game) => game.resume)
   game: GameEntity; */
-
 }

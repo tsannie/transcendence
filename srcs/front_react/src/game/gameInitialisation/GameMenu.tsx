@@ -1,53 +1,52 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "../Game";
 
 export default function GameMenu(props: any) {
+  const [PP_empty, setPP_empty] = useState("");
 
   function StartGame(rom: string) {
     socket.emit("startGameRoom", rom);
   }
-  
+
   useEffect(() => {
-    
     socket.on("readyGame", (theroom: any) => {
-      props.store.setColor_ready("green");
       if (
         (theroom.p2 === socket.id && theroom.p2_ready === true) ||
         (theroom.p1 === socket.id && theroom.p1_ready === true)
       )
-        props.store.setimready(true);
+        props.setimready(true);
       if (
-        (theroom.p1 !==socket.id && theroom.p1_ready === true) ||
-        (theroom.p2 !==socket.id && theroom.p2_ready === true)
+        (theroom.p1 !== socket.id && theroom.p1_ready === true) ||
+        (theroom.p2 !== socket.id && theroom.p2_ready === true)
       )
-        props.store.setopready(true);
+        props.setopready(true);
       if (theroom.p1_ready === true && theroom.p2_ready === true) {
-        props.store.setRoom(theroom.room_name);
+        props.setRoom(theroom.room_name);
         StartGame(theroom.room_name);
-        props.store.setgamestart(true);
+        props.setgamestart(true);
       }
     });
 
     socket.on("joinedRoom", (theroom: any) => {
-      props.store.setnbrconnect(theroom.nbr_co);
-      props.store.setisinroom(true);
-      props.store.setRoom(theroom.room_name);
+      props.setnbrconnect(theroom.nbr_co);
+      props.setisinroom(true);
+      props.setRoom(theroom.room_name);
 
       if (theroom.p2 === socket.id) {
-        props.store.setop_id(theroom.p1);
-        props.store.setim_right(true);
+        props.setop_id(theroom.p1);
+        props.setim_right(true);
       } else if (theroom.p1 === socket.id) {
-        props.store.setop_id(theroom.p2);
-        props.store.setim_right(false);
+        props.setop_id(theroom.p2);
+        props.setim_right(false);
       }
     });
-    props.store.setisFull("");
-    props.store.setmy_id(socket.id);
+    props.setisFull("");
+    props.setmy_id(socket.id);
   }, [socket]);
 
   function lookAtAllGameRoom() {
     console.log("LOOK AT ALL GAME ROOM !!!!");
-    props.store.setisLookingRoom(true);
+    props.setisLookingRoom(true);
   }
 
   function createGameRoom() {
@@ -59,15 +58,15 @@ export default function GameMenu(props: any) {
   }
 
   function createFastGameRoom() {
-    props.store.setRoom("");
-    if (props.store.isinroom === false) {
-      socket.emit("createGameRoom", props.store.room);
+    props.setRoom("");
+    if (props.isinroom === false) {
+      socket.emit("createGameRoom", props.room);
     }
   }
 
   return (
     <div className="Game">
-      <h2> you are : {props.store.my_id} </h2>
+      <h2> you are : {props.my_id} </h2>
 
       <h4> Invite un ami a jouer</h4>
       <input
@@ -75,17 +74,17 @@ export default function GameMenu(props: any) {
         placeholder="username"
         id="room"
         onChange={(event) => {
-          props.store.setRoom(event.target.value);
+          props.setRoom(event.target.value);
         }}
       ></input>
       <button onClick={createGameRoom}>PARTIE PERSONALISE</button>
-      <p>{props.store.PP_empty}</p>
+      <p>{PP_empty}</p>
       <br />
       <h4> partie classee</h4>
 
       <button onClick={createFastGameRoom}>PARTIE RAPIDE</button>
 
-      <p style={{ color: "red" }}> {props.store.isfull} </p>
+      <p style={{ color: "red" }}> {props.isfull} </p>
 
       <h4>
         REGARDER une partie :
