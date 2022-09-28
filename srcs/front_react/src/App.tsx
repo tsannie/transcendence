@@ -7,13 +7,26 @@ import React, { useEffect, useState } from "react";
 import ButtonLogin from "./Auth/ButtonLogin";
 import Chat from "./components/chat/Chat";
 import Sidebar from "./components/sidebar/Sidebar";
-import UserList, { api } from "./userlist/UserListItem";
+import UserList, { api, IUser } from "./userlist/UserList";
 import LogoIcon from "./assets/logo-project.png";
 import { COOKIE_NAME } from "./const";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [users, setUsers] = React.useState<Array<IUser>>([]);
+
+  async function getAllUsers() {
+    await api
+      .get("user")
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+        console.log(res);
+      });
+  }
 
   //console.log(isLogin);
   if (document.cookie.includes(COOKIE_NAME))
@@ -53,13 +66,16 @@ export default function App() {
         >
           <img src={LogoIcon}></img>
         </Box>
-        <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
+        <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} users={users} getAllUsers={getAllUsers}/>
       </Box>
     );
   return (
     <Box
+      // sx to create coluns for each child
       sx={{
         display: "flex",
+        flexDirection: "row",
+        height: "100vh",
       }}
     >
       <Sidebar
@@ -68,7 +84,7 @@ export default function App() {
         isLogin={isLogin}
         setIsLogin={setIsLogin}
       />
-      {inputChat && <Chat />}
+      {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
     </Box>
   );
 }

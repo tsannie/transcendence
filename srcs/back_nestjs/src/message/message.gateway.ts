@@ -25,6 +25,7 @@ import { uuid } from 'uuidv4';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelService } from 'src/channel/service/channel.service';
+import { DmService } from 'src/dm/service/dm.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -39,6 +40,7 @@ export class MessageGateway
     private messageService: MessageService,
     private channelService: ChannelService,
     private userService: UserService,
+    private dmService: DmService,
   ) {}
 
   connectedClients = [];
@@ -101,6 +103,13 @@ export class MessageGateway
     /* this.connectedClients.forEach( (connectedClient) => {
       console.log(connectedClient.id);
     }); */
+    this.logger.log(`client ${client.id} join room ${data} `);
+  }
+
+  @SubscribeMessage('getDM')
+  getDM(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
+    client.join(data);
+    this.dmService.getAllDms(data);
     this.logger.log(`client ${client.id} join room ${data} `);
   }
 }

@@ -1,3 +1,4 @@
+import { DmEntity } from 'src/dm/models/dm.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
@@ -7,10 +8,9 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { PrivateMessageEntity } from './private_message.entity';
 
 @Entity()
-export class ChannelEntity extends PrivateMessageEntity{
+export class ChannelEntity extends DmEntity {
 	@Column( {nullable: false, unique: true} )
 	name: string;
 

@@ -16,39 +16,27 @@ export interface IUser {
 
 export default function UserList(props: any) {
   // Declare a new state variable
-  const [users, setUsers] = React.useState<Array<IUser>>([]);
 
-  async function getAllUsers() {
-    await api
-      .get("user")
-      .then((res) => {
-        setUsers(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-        console.log(res);
-        document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-      });
-  }
+  //TODO: create socket to get new users and update the list
 
   // Similar to componentDidMount and componentDidUpdate
   useEffect(() => {
-    getAllUsers();
-  }, [users]);
+    props.getAllUsers();
+  }, []);
 
   // display all users connected in the database
   return (
-    <Box>
+    <>
       <List sx={{}}>
-        {users.map((user) => (
+        {props.users.map((user: any) => (
           <ListItem
             sx={{
-              border: "1px solid black",
+             /*  border: "1px solid black",
               mt: 2,
               alignItems: "center",
               width: "fit-content",
               height: "fit-content",
-              borderRadius: "3px",
+              borderRadius: "3px", */
             }}
             key={user.id}
             onClick={props.handleClick}
@@ -57,6 +45,6 @@ export default function UserList(props: any) {
           </ListItem>
         ))}
       </List>
-    </Box>
+    </>
   );
 }
