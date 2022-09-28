@@ -5,7 +5,6 @@ import { REDIRECT_LINK_AUTH } from "../const";
 export default function ButtonLogin(props: any) {
   function linkLog() {
     window.location.href = REDIRECT_LINK_AUTH;
-
   }
 
   return (

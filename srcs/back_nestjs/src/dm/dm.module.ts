@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DmEntity } from 'src/dm/models/dm.entity';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { MessageEntity } from 'src/message/models/message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
-import { ChannelController } from './controller/channel.controller';
-import { ChannelEntity } from './models/channel.entity';
-import { ChannelService } from './service/channel.service';
+import { DmController } from './controller/dm.controller';
+import { DmEntity } from './models/dm.entity';
+import { DmService } from './service/dm.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity]),
   ],
-  controllers: [ChannelController],
-  providers: [ChannelService, UserService],
-  exports: [ChannelService]
+  controllers: [DmController],
+  providers: [DmService, UserService],
+  exports: [DmService]
 })
-export class ChannelModule {}
+export class DmModule {}

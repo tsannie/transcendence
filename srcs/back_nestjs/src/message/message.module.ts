@@ -9,13 +9,15 @@ import { UserModule } from 'src/user/user.module';
 import { ChannelModule } from 'src/channel/channel.module';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
-import { PrivateMessageEntity } from 'src/channel/models/private_message.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
+import { DmModule } from 'src/dm/dm.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MessageEntity, PrivateMessageEntity, UserEntity]),
+    TypeOrmModule.forFeature([MessageEntity, DmEntity, UserEntity]),
     UserModule,
-    ChannelModule
+    ChannelModule,
+    DmModule
   ],
   controllers: [MessageController],
   providers: [MessageService, MessageGateway],

@@ -1,26 +1,25 @@
 import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import UserList, { api } from "../../userlist/UserListItem";
-import UserInfos, { IUser } from "../../userlist/UserListItem";
-import { IChannel } from "./types";
+import UserList, { api } from "../../userlist/UserList";
+import { IUser } from "../../userlist/UserList";
+import { IChannel, IDm } from "./types";
 
 export default function ChatUserlist(props: any) {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [targetUsername, setTargetUsername] = useState("");
   const open = Boolean(anchorEl);
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
     setAnchorEl(event.currentTarget);
+    console.log(event.currentTarget.innerHTML);
+    setTargetUsername(event.currentTarget.innerHTML);
   };
 
   function handleClose() {
     setAnchorEl(null);
-  }
-
-  function sendReceiverName(receiver: IUser) {
-    props.setReceiver(receiver);
   }
 
   function handleProfile() {
@@ -33,12 +32,12 @@ export default function ChatUserlist(props: any) {
     setAnchorEl(null);
   }
 
-  async function joinMP(channel: IChannel) {
+  async function createDm(targetUsername: IDm) {
     await api
-      .post("channel/joinMP", channel)
+      .post("dm/createDm", targetUsername)
       .then((res) => {
         console.log("channel joined with success");
-        console.log(channel);
+        console.log(targetUsername);
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -47,9 +46,14 @@ export default function ChatUserlist(props: any) {
   }
 
   function handleNewMessage() {
-    joinMP(props.channel);
-    props.setOpenConv(true);
+    let newDm: IDm = {
+      targetUsername: targetUsername,
+    };
+
     console.log('handle new message');
+    console.log(targetUsername);
+    createDm(newDm);
+    props.setOpenConv(true);
     setAnchorEl(null);
     props.setIsNewMessage(true);
     //sendReceiverName(props.user);
@@ -61,6 +65,7 @@ export default function ChatUserlist(props: any) {
         position: "absolute",
         top: 0,
         right: 0,
+        border: "1px solid pink",
       }}
     >
       <Typography
@@ -72,10 +77,10 @@ export default function ChatUserlist(props: any) {
       >
         Users
       </Typography>
-      <Box>
-        <Box>
-          <UserList handleClick={handleClick} />
-        </Box>
+      <>
+        <>
+          <UserList handleClick={handleClick} users={props.users} getAllUsers={props.getAllUsers}/>
+        </>
         <Menu
           open={open}
           onClose={handleClose}
@@ -85,7 +90,7 @@ export default function ChatUserlist(props: any) {
           <MenuItem onClick={handleNewMessage}>New Message</MenuItem>
           <MenuItem onClick={handleInvite}>Invite to play</MenuItem>
         </Menu>
-      </Box>
+      </>
     </Box>
   );
 }

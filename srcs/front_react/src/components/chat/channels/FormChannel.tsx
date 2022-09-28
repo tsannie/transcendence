@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 //import { socket } from "../Chat";
 import { IChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
-import { api } from "../../../userlist/UserListItem";
+import { api } from "../../../userlist/UserList";
 //import ChannelsList from "./ChannelsList";
 import { COOKIE_NAME } from "../../../const";
 
@@ -73,8 +73,13 @@ export default function FormChannel(props: any) {
     props.setNewChannel(false);
   }
 
+  // get all channels
+  useEffect(() => {
+    props.getChannels();
+  }, []);
+
   return (
-    <Box sx={{}}>
+    <>
       <TextField
         sx={{}}
         variant="outlined"
@@ -107,7 +112,7 @@ export default function FormChannel(props: any) {
           <MenuItem value={"Protected"}>Protected</MenuItem>
         </Select>
       </FormControl>
-      {enablePassword === true && (
+      {enablePassword && (
         <TextField
           variant="outlined"
           placeholder="password"
@@ -119,6 +124,6 @@ export default function FormChannel(props: any) {
       <Button sx={{}} variant="contained" onClick={createChannels}>
         Create channel
       </Button>
-    </Box>
+    </>
   );
 }
