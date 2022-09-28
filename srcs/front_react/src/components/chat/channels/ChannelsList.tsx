@@ -123,14 +123,7 @@ export default function ChannelsList(props: any) {
             }}
             key={channelData.name}
           >
-            <Box
-              sx={{
-                height: "100%",
-                ml: "1vh",
-                color: "black",
-                textAlign: "center",
-              }}
-            >
+            <Box sx={{ml: "1vw"}}>
               {channelData.name}
             </Box>
             <>{channelData.status === "Protected" ? <LockIcon /> : <></>}</>
