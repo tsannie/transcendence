@@ -19,6 +19,7 @@ export default function AdminsActions(props: any) {
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
+    getInfosChannel(props.channelData);
     props.getChannels();
   }
 
@@ -26,10 +27,11 @@ export default function AdminsActions(props: any) {
     setAnchorEl(null);
   }
 
-  function isAdmin(channel: any) {
+  // create a function isAdmin to check if the user is admin
+  function isAdmin(channel: any, id: number) {
     if (channel !== undefined) {
       for (let i = 0; i < channel.admins.length; i++) {
-        if (channel.admins[i].id === props.userId) {
+        if (channel.admins[i].id === id) {
           return true;
         }
       }
@@ -38,33 +40,26 @@ export default function AdminsActions(props: any) {
   }
 
   async function getInfosChannel(channel: IChannel) {
-    if (props.isOwner(channel)) {
-      await api
-        .get("channel/privateData", {
-          params: {
-            name: channel.name,
-          },
-        })
-        .then((res) => {
-          console.log("get infos channels");
-          setInfosChannel(res.data);
-          //setChannelId(res.data.id);
-        })
-        .catch((res) => {
-          console.log("invalid channels private data");
-        });
-    }
+    await api
+      .get("channel/privateData", {
+        params: {
+          name: channel.name,
+        },
+      })
+      .then((res) => {
+        console.log("get infos channels");
+        setInfosChannel(res.data);
+        //console.log(res.data);
+        //setChannelId(res.data.id);
+      })
+      .catch((res) => {
+        console.log("invalid channels private data");
+      });
   }
-
-  useEffect(() => {
-    getInfosChannel(props.channelData);
-  }, [props.channelData]);
-
-  // TODO unmute unban btn
 
   return (
     <>
-      {isAdmin(infosChannel) || props.isOwner(props.channelData) ? (
+      {isAdmin(infosChannel, props.userId) || props.isOwner(props.channelData) ? (
         <div>
           <Button
             //aria-describedby={id}
@@ -89,22 +84,22 @@ export default function AdminsActions(props: any) {
           >
             <List>
               <ListItem>
-                <BanUser infosChannel={infosChannel} getChannels={props.getChannels}/>
+                <BanUser infosChannel={infosChannel} getInfosChannel={getInfosChannel}/>
               </ListItem>
               <ListItem>
-                <UnbanUser infosChannel={infosChannel} getChannels={props.getChannels}/>
+                <UnbanUser infosChannel={infosChannel} getInfosChannel={getInfosChannel} />
               </ListItem>
               <ListItem>
-                <MuteUser infosChannel={infosChannel} getChannels={props.getChannels} userId={props.userId} />
+                <MuteUser infosChannel={infosChannel} getInfosChannel={getInfosChannel} userId={props.userId} />
               </ListItem>
               <ListItem>
-                <UnmuteUser infosChannel={infosChannel} getChannels={props.getChannels}/>
+                <UnmuteUser infosChannel={infosChannel} getInfosChannel={getInfosChannel} />
               </ListItem>
               <ListItem>
-                <MakeAdmin infosChannel={infosChannel} getChannels={props.getChannels} isAdmin={isAdmin}/>
+                <MakeAdmin infosChannel={infosChannel} getInfosChannel={getInfosChannel} isAdmin={isAdmin} />
               </ListItem>
               <ListItem>
-                <RevokeAdmin infosChannel={infosChannel} getChannels={props.getChannels}/>
+                <RevokeAdmin infosChannel={infosChannel} getInfosChannel={getInfosChannel}/>
               </ListItem>
             </List>
           </Popover>

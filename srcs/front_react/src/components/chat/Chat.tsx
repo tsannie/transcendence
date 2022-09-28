@@ -20,9 +20,7 @@ export default function Chat() {
   const [userId, setUserId] = useState(0);
   const [openConv, setOpenConv] = useState(false);
 
-  const socket = io("http://localhost:4000", {
-
-  });
+  const socket = io("http://localhost:4000", {});
 
   async function getUser() {
     console.log("get user");
@@ -72,7 +70,7 @@ export default function Chat() {
   }, [socket]);
 
   return (
-    <Box sx={{}}>
+    <>
       <Box
         sx={{
           textAlign: "center",
@@ -87,33 +85,28 @@ export default function Chat() {
           Live chat
         </Typography>
       </Box>
-      <>
-        <DmList
-          socket={socket}
-          isNewMessage={isNewMessage}
-          setOpenConv={setOpenConv}
+
+      <DmList
+        socket={socket}
+        isNewMessage={isNewMessage}
+        setOpenConv={setOpenConv}
+      />
+
+      {openConv && <MessagesList messagesList={messagesList} author={author} />}
+
+      {openConv && (
+        <PromptMessage
+          setCurrentMessage={setCurrentMessage}
+          currentMessage={currentMessage}
+          sendMessage={sendMessage}
         />
-      </>
-      <>
-        {openConv && (
-          <MessagesList messagesList={messagesList} author={author} />
-        )}
-      </>
-      <>
-        {openConv && (
-          <PromptMessage
-            setCurrentMessage={setCurrentMessage}
-            currentMessage={currentMessage}
-            sendMessage={sendMessage}
-          />
-        )}
-      </>
-      <>
-        <ChatUserlist
-          setOpenConv={setOpenConv}
-          setIsNewMessage={setIsNewMessage}
-        />
-      </>
+      )}
+
+      <ChatUserlist
+        setOpenConv={setOpenConv}
+        setIsNewMessage={setIsNewMessage}
+      />
+
       <Box
         sx={{
           position: "relative",
@@ -123,6 +116,6 @@ export default function Chat() {
       >
         <Channels />
       </Box>
-    </Box>
+    </>
   );
 }

@@ -40,7 +40,7 @@ export default function BanUser(props: any) {
         .then((res) => {
           console.log("user ban with success");
           console.log(channel);
-          props.getChannels();
+          props.getInfosChannel(channel);
         })
         .catch((res) => {
           console.log("invalid channels");

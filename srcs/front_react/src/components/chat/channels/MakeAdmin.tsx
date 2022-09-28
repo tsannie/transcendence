@@ -40,7 +40,7 @@ export default function MakeAdmin(props: any) {
         .then((res) => {
           console.log("user is admin now");
           console.log(channel);
-          props.getChannels();
+          props.getInfosChannel(channel);
         })
         .catch((res) => {
           console.log("user can't be admin");
@@ -78,7 +78,7 @@ export default function MakeAdmin(props: any) {
           >
             {props.infosChannel.users.map((user: any) => (
               <ListItemButton onClick={() => makeAdmin(user, props.infosChannel)}>
-                {(!props.isAdmin(props.infosChannel)) ? user.username : <></>}
+                {(!props.isAdmin(props.infosChannel, user.id)) ? user.username : <></>}
               </ListItemButton>
             ))}
           </List>

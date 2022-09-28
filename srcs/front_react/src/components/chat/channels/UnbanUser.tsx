@@ -40,7 +40,7 @@ export default function UnbanUser(props: any) {
         .then((res) => {
           console.log("user unban with success");
           console.log(channel);
-          props.getChannels();
+          props.getInfosChannel(channel);
         })
         .catch((res) => {
           console.log("invalid unban user");
