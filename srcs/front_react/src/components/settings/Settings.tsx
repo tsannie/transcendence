@@ -37,7 +37,9 @@ export default function Settings() {
   return (
     <div className="settings">
       {/* Display profile information */}
-      <h1>Profile</h1>
+      <div className="settings__title">
+        <h1>Profile</h1>
+      </div>
       <h2>Username</h2>
         <p>{username}</p>
       <h2>Email</h2>
