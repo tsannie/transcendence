@@ -2,16 +2,17 @@ import { Box, Typography } from "@mui/material";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { IMessage } from "./types";
+import { IChannel, IMessage } from "./types";
 import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
-import { api, IUser } from "../../userlist/UserListItem";
+import { api, IUser } from "../../userlist/UserList";
 import { COOKIE_NAME } from "../../const";
-import HistoryMessages from "./messages/HistoryMessages";
+import DmList from "./messages/DmList";
+import Conv from "./messages/Conv";
 
-export default function Chat() {
+export default function Chat(props: any) {
   const [room, setRoom] = useState("");
   const [author, setAuthor] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
@@ -20,37 +21,19 @@ export default function Chat() {
   const [userId, setUserId] = useState(0);
   const [openConv, setOpenConv] = useState(false);
 
-  const socket = io("http://localhost:4000", {
-    /* auth: {
-      query: {
-        username: author,
-      },
-    }, */
-  });
-
-  // to do: creer un tableau de conversations
-
-  /* function createRoom() {
-    if (room !== "") {
-      socket.emit("createRoom", room);
-      console.log(`User join room ${room}`);
-    }
-  } */
+  //const socket = io("http://localhost:4000", {});
 
   async function getUser() {
-    if (document.cookie.includes(COOKIE_NAME)) {
-      await api
-        .get("auth/profile")
-        .then((res) => {
-          setAuthor(res.data.username);
-          setUserId(res.data.id);
-          console.log(res.data.id);
-        })
-        .catch((res) => {
-          console.log("invalid jwt");
-          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-        });
-    }
+    console.log("get user");
+    await api
+      .get("auth/profile")
+      .then((res) => {
+        setAuthor(res.data.username);
+        setUserId(res.data.id);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+      });
   }
 
   function sendMessage() {
@@ -68,75 +51,57 @@ export default function Chat() {
           ":" +
           String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
       };
-      socket.emit("message", messageData);
+      //socket.emit("message", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
     }
   }
 
+  // get user once on load
   useEffect(() => {
     getUser();
-  });
+  }, []);
 
   // listen message from backend
-  useEffect(() => {
+  /* useEffect(() => {
     socket.on("message", (data) => {
       console.log(data);
       setMessagesList((list) => [...list, data]);
     });
-  }, [socket]);
+  }, [socket]); */
 
   return (
-    <Box sx={{}}>
+    <>
       <Box
         sx={{
-          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          //justifyContent: "space-between",
+          alignItems: "flex-start",
+          height: "100%",
+          weight: "30%",
         }}
       >
-        <Typography
-          sx={{
-            fontWeight: "bold",
-          }}
-          variant="h4"
-        >
-          Live chat
-        </Typography>
-      </Box>
-      <Box>
-        <HistoryMessages
+        <DmList
+          //socket={socket}
           isNewMessage={isNewMessage}
           setOpenConv={setOpenConv}
         />
-      </Box>
-      <Box>
-        {openConv && (
-          <MessagesList messagesList={messagesList} author={author} />
-        )}
-      </Box>
-      <Box>
-        {openConv && (
-          <PromptMessage
-            setCurrentMessage={setCurrentMessage}
-            currentMessage={currentMessage}
-            sendMessage={sendMessage}
-          />
-        )}
-      </Box>
-      <Box>
+        <Channels />
+        <Conv
+          openConv={openConv}
+          messagesList={messagesList}
+          author={author}
+          setCurrentMessage={setCurrentMessage}
+          sendMessage={sendMessage}
+        />
         <ChatUserlist
           setOpenConv={setOpenConv}
           setIsNewMessage={setIsNewMessage}
+          getAllUsers={props.getAllUsers}
+          users={props.users}
         />
       </Box>
-      <Box
-        sx={{
-          position: "relative",
-          display: "flex",
-          float: "right",
-        }}
-      >
-        <Channels />
-      </Box>
-    </Box>
+    </>
   );
 }
