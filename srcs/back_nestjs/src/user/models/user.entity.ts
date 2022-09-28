@@ -36,9 +36,9 @@ export class UserEntity {
 
   @Column({
     type:"bytea",
-    nullable: true
+    nullable: true,
   })
-  avatar: string;
+  avatar?: string;
 
   @OneToMany( () => ChannelEntity, (channels) => channels.owner )
   owner_of?: ChannelEntity[];
