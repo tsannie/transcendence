@@ -1,6 +1,6 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../userlist/UserListItem';
+import { api } from '../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../types';
 
 export default function RevokeAdmin(props: any) {

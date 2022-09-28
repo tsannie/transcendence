@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 //import { socket } from "../Chat";
 import { IChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
-import { api } from "../../../userlist/UserListItem";
+import { api } from "../../../userlist/UserList";
 //import ChannelsList from "./ChannelsList";
 import { COOKIE_NAME } from "../../../const";
 
