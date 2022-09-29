@@ -1,19 +1,12 @@
-import React, { createRef, useEffect, useRef, useState } from "react";
-import "./Game.css";
+import React, { createRef, useEffect, useState } from "react";
 import io from "socket.io-client";
-import data from "./gameReact/data";
 import { GamePlayer_Left_right } from "./gameReact/GameReact";
 import { GameSpectator } from "./gameSpectator/GameSpectator";
 import GameMenu from "./gameInitialisation/GameMenu";
 import { GameWaitPlayerReady } from "./gameInitialisation/GameWaitPlayer";
 import GameCreationSettings from "./gameInitialisation/GameCreationSettings";
 import { GameMenuSpectator } from "./gameSpectator/GameMenuSpectator";
-
-export const socket = io("http://localhost:4000/game");
-
-socket.on("connect_error", (err) => {
-  console.log(`|||||||||||connect_error due to ${err.message}`);
-});
+import data from "./gameReact/data";
 
 export let {
   ballObj,
@@ -22,7 +15,12 @@ export let {
   paddleProps_left,
   paddleProps_right,
 } = data;
-let x = 0;
+
+export const socket = io("http://localhost:4000/game");
+
+socket.on("connect_error", (err) => {
+  console.log(`|||||||||||connect_error due to ${err.message}`);
+});
 
 export default function Game() {
   const [nbrconnect, setnbrconnect] = useState(0);
@@ -37,16 +35,22 @@ export default function Game() {
   const [opready, setopready] = useState(false);
   const [gamestart, setgamestart] = useState(false);
   const [Specthegame, setSpecthegame] = useState(false);
-
   const [Room_name_spec, setRoom_name_spec] = useState("");
 
-  /*   
-  TODOP historique game for user
-  TODOP FIX GAME
-  TODOP EGALISER PADDLE SOURIS
-  TODOP NEW MAP IN GAME
-  TODOP RESPONSIVE GAME
-  */
+  // useEffect reinint the game when the player leave the room or the game is over or the player give up
+
+  function reinit_game(){
+    player_left.name = "empty";
+    player_left.score = 0;
+    player_left.won = false;
+
+    player_right.name = "empty";
+    player_right.score = 0;
+    player_right.won = false;
+
+    ballObj.init_ball_pos = false;
+    ballObj.first_col = false;
+  }
 
   useEffect(() => {
     socket.on("leftRoom", (theroom: any) => {
@@ -55,18 +59,7 @@ export default function Game() {
       setimready(false);
       setgamestart(false);
       setop_id("");
-      console.log("leftRoom");
-
-      player_left.name = "empty";
-      player_left.score = 0;
-      player_left.won = false;
-
-      player_right.name = "empty";
-      player_right.score = 0;
-      player_right.won = false;
-
-      ballObj.init_ball_pos = false;
-      ballObj.first_col = false;
+      reinit_game();
     });
 
     socket.on("leftRoomEmpty", () => {
@@ -76,17 +69,7 @@ export default function Game() {
       setgamestart(false);
       setisinroom(false);
       setop_id("");
-
-      player_left.name = "empty";
-      player_left.score = 0;
-      player_left.won = false;
-
-      player_right.name = "empty";
-      player_right.score = 0;
-      player_right.won = false;
-
-      ballObj.init_ball_pos = false;
-      ballObj.first_col = false;
+      reinit_game();
     });
 
     setisFull("");
@@ -94,23 +77,17 @@ export default function Game() {
 
     socket.on("roomFull", (theroom: any) => {
       setisFull("This ROOM IS FULL MATE");
-      console.log("THIS ROOM IS FULL");
     });
   }, [socket]);
 
   function deleteGameRoom() {
-    console.log("deleteGameRoom FROOOONNNNT");
-    //ancelAnimationFrame(requestAnimationFrameId);
-
     if (isinroom === true) {
       setisinroom(false);
       setgamestart(false);
       setimready(false);
       setopready(false);
       setim_right(false);
-
-      ballObj.init_ball_pos = false;
-      ballObj.first_col = false;
+      reinit_game();
       socket.emit("leaveGameRoom", room);
       setRoom("");
     }

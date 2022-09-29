@@ -71,7 +71,6 @@ export function BallMouv(
   data.draw(ctx);
 
   if (ballObj.init_ball_pos === false) {
-    console.log("init_ball_pos");
     ballObj.init_dx *= -1;
     ballObj.init_first_dx *= -1;
 
@@ -88,16 +87,11 @@ export function BallMouv(
   }
 
   if (ballObj.first_col === false) {
-    //console.log("ballObj.x : " + ballObj.first_dx);
-    //console.log("ballObj.y : " + ballObj.first_dy);
     ballObj.x += ballObj.first_dx;
     ballObj.y += ballObj.first_dy;
   } else {
-    //console.log("ingame col");
     ballObj.x += ballObj.ingame_dx;
     ballObj.y += ballObj.ingame_dy;
-    //console.log("ballObj.x : " + ballObj.ingame_dx);
-    //console.log("ballObj.y : " + ballObj.ingame_dy);
   }
 
   if (
@@ -121,7 +115,7 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
-  } else if (player_right.score >= 12) {
+  } else if (player_right.score >= 2) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -157,7 +151,7 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
-  } else if (player_left.score >= 12) {
+  } else if (player_left.score >= 2) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
@@ -233,7 +227,8 @@ export function PaddleMouv_left(ctx: any, canvas: any, paddleProps: any) {
 
   const paddle = new Paddle(paddleProps.y);
   paddle.move();
-  if (paddleProps.y <= 0) paddleProps = 0;
+  if (paddleProps.y <= 0)
+    paddleProps = 0;
   else if (paddleProps.y + paddleProps.height >= canvas.height)
     paddleProps.y = canvas.height - paddleProps.height;
 }

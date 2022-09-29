@@ -3,7 +3,7 @@ import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class BallEntity {
   @PrimaryGeneratedColumn('uuid')
-  id!: number;
+  id?: number;
 
   @Column({ nullable: true, type: 'float' })
   x: number;

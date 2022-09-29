@@ -2,7 +2,9 @@ import { useState } from "react";
 import { socket } from "../Game";
 
 export function GameWaitPlayerReady(props: any) {
-  const [color_ready, setColor_ready] = useState(""); // TODOP probleme to reinit
+  const [color_ready, setColor_ready] = useState("");
+
+  // Set both players ready before game start
 
   function ReadyGame() {
     setColor_ready("green");

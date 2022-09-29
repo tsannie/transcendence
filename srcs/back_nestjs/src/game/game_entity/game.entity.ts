@@ -5,13 +5,12 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ResumeEntity } from './resume.entity';
 import { SetEntity } from './set.entity';
 
 @Entity()
 export class GameEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column({ nullable: true })
   room_name: string;
