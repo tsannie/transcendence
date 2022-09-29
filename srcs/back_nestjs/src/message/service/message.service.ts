@@ -1,8 +1,7 @@
-import { Get, Injectable, Post, Request, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { from, Observable } from 'rxjs';
-import { UserEntity } from 'src/user/models/user.entity';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { DmService } from 'src/dm/service/dm.service';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { MessageEntity } from '../models/message.entity';
@@ -13,14 +12,35 @@ export class MessageService {
   constructor(
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
-    private allUsers: UserService,
+
+	private channelService: ChannelService,
+	private dmService: DmService,
+	private userService: UserService,
   ) {}
 
-  // getAllMessages(): Observable<IMessage[]> {
-  //   return from(this.allMessages.find());
-  // }
+	async addMessagetoChannel(data: IMessage) : Promise<MessageEntity> {
+		const user = await this.userService.findByName(data.author, {channels: true, owner_of: true})
+		let channel = user.channels.find( channel => channel.name === data.channel );
+		if (!channel)
+			channel = user.owner_of.find( channel => channel.name === data.channel);
+		if (!channel)
+			throw new UnprocessableEntityException("User is not part of the channel.");
 
-  // add(message: IMessage): Observable<IMessage> {
-  //   return from(this.allMessages.save(message));
-  // }
+		let message = new MessageEntity();
+		message.content = data.content;
+		message.author = user;
+		message.channel = channel;
+		return await this.allMessages.save(message);
+	}
+
+	async addMessagetoDm(data: IMessage) : Promise<MessageEntity> {
+		const user = await this.userService.findByName(data.author, {dms: true});
+		const dm = await this.dmService.getDmByName({target: data.target}, user);
+
+		const message = new MessageEntity();
+		message.content = data.content;
+		message.author = user;
+		message.dm = dm;
+		return await this.allMessages.save(message);
+	}
 }
