@@ -48,24 +48,24 @@ export default function Sidebar(props: any) {
       <Grid item sx={{}}>
         <img src={LogoIcon}></img>
       </Grid>
-      <Grid item sx={{}}>
+{/*       <Grid item sx={{}}>
         <img src={HomeIcon}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ProfileIcon}></img>
-      </Grid>
+      </Grid> */}
       <Grid item sx={{}}>
         <img src={GameIcon} onClick={() => reinit("game")}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ChatIcon} onClick={() => reinit("chat")}></img>
       </Grid>
-      <Grid item sx={{}}>
+{/*       <Grid item sx={{}}>
         <img src={SettingsIcon}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ExitIcon} onClick={logout}></img>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

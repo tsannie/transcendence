@@ -1,22 +1,20 @@
 import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import { paddleProps_right, player_left, player_right, socket } from "../Game";
-import useWindowDimensions from "./window_size";
+import { socket } from "../Game";
+import { paddleProps_right } from "../Game";
 
 export function GamePlayer_right(props: any) {
-  const { height, width } = useWindowDimensions();
+
+  // Mouve the paddle right with the mouse and send the data to the server to send it to the other player
 
   function mouv_paddle_right(e: any) {
     if (props.opready === true && props.im_right === true) {
-      //console.log("111111111PADDLE DIDNT EMIT MOUV");
       paddleProps_right.y = e.clientY - paddleProps_right.width - 220;
       var data = {
         room: props.room,
         pd: paddleProps_right,
       };
-      // console.log("222222PADDLE RIGHT EMIT MOUV");
-      //console.log("height", height);
-      //console.log("width", width);
+      console.log("paddlemouvRight");
       socket.emit("paddleMouvRight", data);
     }
   }

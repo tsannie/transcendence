@@ -1,7 +1,4 @@
-import { Button, Grid } from "@mui/material";
-import { Box } from "@mui/system";
-import { useEffect, useRef, useState } from "react";
-import { threadId } from "worker_threads";
+import { useEffect, useState } from "react";
 import { api } from "../../userlist/UserListItem";
 import { socket } from "../Game";
 let game_ended = false;
@@ -9,29 +6,27 @@ let game_ended = false;
 export function GameMenuSpectator(props: any) {
   const [listGame, setlistGame] = useState<string[]>([]);
   const [listGamenotz, setlistGamenotz] = useState(false);
-  const [g, setg] = useState(true);
+  const [game_empty, setgame_empty] = useState(true);
   const [game_already_ended, setgame_already_ended] = useState("");
 
   useEffect(() => {
     socket.on("GameSpecEmpty", () => {
-      setg(true);
+      setgame_empty(true);
       setgame_already_ended("game already ended");
       props.setisLookingRoom(true);
       props.setSpecthegame(false);
-      console.log("ended");
     });
   }, [socket]);
 
+  // check if the game is already ended or not for the spectator to know if he can join or not
 
   async function makeGetRequest(param: any) {
     await api
       .get("/game/game_to_spec")
       .then((res) => {
-        console.log(res.data);
         for (const [key, value] of Object.entries(res.data)) {
           let obj: any = value;
           if (obj)
-            console.log("room_name = ", obj.room_name);
           if (obj && obj.room_name === param) {
             game_ended = false;
           }
@@ -46,18 +41,12 @@ export function GameMenuSpectator(props: any) {
   async function set_spectator_to_room(param: any) {
     await makeGetRequest(param);
 
-    /*     console.log("====================================");
-    console.log("22222game_ended = ", game_ended);
-    console.log("===================================="); */
-
     if (game_ended === false) {
-      console.log("\n\n||||||||Specthegamedisplayfunc room [", param, "]");
       setlistGamenotz(false);
       props.setisLookingRoom(false);
       props.setSpecthegame(true);
       props.setRoom_name_spec(param);
     } else {
-      console.log("game already ended");
       setgame_already_ended("game already ended");
     }
   }
@@ -72,32 +61,27 @@ export function GameMenuSpectator(props: any) {
     props.setisLookingRoom(false);
   }
 
+  // Get all game available to spectate and display them by room name
+
   async function get_all_game_room_api() {
     await api
       .get("/game/game_to_spec")
       .then((res) => {
-        console.log(res.data);
         let donot = false;
         let key2;
         for (const [key, value] of Object.entries(res.data)) {
           let obj: any = value;
-          if (obj) console.log("room_name = ", obj.room_name);
           for (let i = 0; i < listGame.length && donot === false; i++) {
             key2 = listGame[i];
             if (key === key2 || obj.game_started === false) {
               donot = true;
             }
           }
-          console.log("obj.game_started = ", obj.game_started);
           if (donot === false && obj.game_started === true) {
-            console.log("obj = ", obj);
             listGame.push(obj.room_name);
           } else {
             donot = false;
           }
-        }
-        for (let i = 0; i < listGame.length; i++) {
-          console.log(i + " === " + listGame[i]);
         }
         if (listGame.length !== 0) {
           setlistGamenotz(true);
@@ -115,14 +99,15 @@ export function GameMenuSpectator(props: any) {
     listGame.splice(0, listGame.length);
     get_all_game_room_api();
   }
+
   function refresh_games_spec() {
     setgame_already_ended("");
     refresh_games_spec_solo();
   }
 
-  if (g === true) {
+  if (game_empty === true) {
     refresh_games_spec_solo();
-    setg(false);
+    setgame_empty(false);
   }
   if (listGamenotz === true) {
     return (

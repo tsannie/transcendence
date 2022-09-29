@@ -1,22 +1,19 @@
-import { paddleProps_left, player_left, player_right, socket } from "../Game";
-import { Box, Button, createTheme, Grid, TextField } from "@mui/material";
-import { MuiThemeProvider } from "@material-ui/core";
-import useWindowDimensions from "./window_size";
-import { useState } from "react";
+import { Box, Button, Grid } from "@mui/material";
+import { socket } from "../Game";
+import { paddleProps_left } from "../Game";
 
 export function GamePlayer_left(props: any) {
-  const [windo, setwindo] = useState(false);
 
-  const { height, width } = useWindowDimensions();
+  // Mouve the paddle left with the mouse and send the data to the server to send it to the other player
 
   function mouv_paddle_left(e: any) {
     if (props.opready === true && props.im_right === false) {
-      //  console.log("111111111PADDLE DIDNT EMIT MOUV");
       paddleProps_left.y = e.clientY - paddleProps_left.width - 220;
       var data = {
         room: props.room,
         pd: paddleProps_left,
       };
+      console.log("paddlemouvleft");
       socket.emit("paddleMouvLeft", data);
     }
   }

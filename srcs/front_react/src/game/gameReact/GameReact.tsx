@@ -1,13 +1,5 @@
-import { exit } from "process";
-import React, { createRef, useEffect, useRef, useState } from "react";
-import {
-  ballObj,
-  paddleProps_left,
-  paddleProps_right,
-  player_left,
-  player_right,
-  socket,
-} from "../Game";
+import React, { useEffect } from "react";
+import { socket } from "../Game";
 import {
   BallMouv,
   BallCol_right,
@@ -17,8 +9,11 @@ import {
   draw_line,
   draw_score,
 } from "./BallMouv";
+
 import { GamePlayer_left } from "./GamePlayerLeft";
 import { GamePlayer_right } from "./GamePlayerRight";
+import { ballObj, paddleProps_left, paddleProps_right, player_left, player_right } from "../Game";
+
 
 export function GamePlayer_Left_right(props: any) {
   let u = 0;
@@ -41,7 +36,6 @@ export function GamePlayer_Left_right(props: any) {
 
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
-      console.log("ball is sinc with server");
     });
     socket.on("mouvPaddleLeft", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_paddle_obj.x;
@@ -68,12 +62,6 @@ export function GamePlayer_Left_right(props: any) {
       props.setimready(false);
       props.setopready(false);
     });
-
-    /*     socket.on("leftbcgiveup", (theroom: any) => {
-      console.log("leftbcgiveup FRONT GAME");
-      props.deleteGameRoom();
-    });
- */
   }, [socket]);
 
   function sinc_ball(room_name: string, objball: any) {

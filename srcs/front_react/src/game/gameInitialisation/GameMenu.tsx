@@ -8,6 +8,8 @@ export default function GameMenu(props: any) {
     socket.emit("startGameRoom", rom);
   }
 
+  // If the players are ready, start the game
+
   useEffect(() => {
     socket.on("readyGame", (theroom: any) => {
       if (
@@ -45,15 +47,16 @@ export default function GameMenu(props: any) {
   }, [socket]);
 
   function lookAtAllGameRoom() {
-    console.log("LOOK AT ALL GAME ROOM !!!!");
     props.setisLookingRoom(true);
   }
 
+  // Room Game creation and join
+
   function createGameRoom() {
-    if (props.store.room === "")
-      props.store.setPP_empty("INVALID ROOM NAME");
-    else if (props.store.isinroom === false) {
-      socket.emit("createGameRoom", props.store.room);
+    if (props.room === "")
+      setPP_empty("INVALID ROOM NAME");
+    else if (props.isinroom === false) {
+      socket.emit("createGameRoom", props.room);
     }
   }
 
