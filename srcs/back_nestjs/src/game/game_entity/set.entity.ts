@@ -1,5 +1,4 @@
 import {
-  Column,
   Entity,
   JoinColumn,
   OneToOne,
@@ -12,10 +11,7 @@ import { PlayerEntity } from './players.entity';
 @Entity()
 export class SetEntity {
   @PrimaryGeneratedColumn('uuid')
-  id!: number;
-
-  @Column({ nullable: true })
-  room_name: string;
+  id?: number;
 
   @OneToOne(() => BallEntity, { eager: true, cascade: true })
   @JoinColumn()

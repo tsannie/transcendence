@@ -7,8 +7,6 @@ export default {
     first_col: false,
 
     rad: 10,
-    right: true,
-    down: true,
     is_col: false,
     is_lock: false,
 
@@ -45,16 +43,12 @@ export default {
 
   player_left: {
     name: "data_null",
-    lives: 5,
     score: 0,
-    toutch: 0,
     won: false,
   },
   player_right: {
     name: "data_null",
-    lives: 5,
     score: 0,
-    toutch: 0,
     won: false,
   },
 };

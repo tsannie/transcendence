@@ -1,23 +1,19 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  MessageBody,
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Console } from 'console';
 import { randomUUID } from 'crypto';
 import { Server } from 'http';
-import { from, throwError } from 'rxjs';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 import { BallEntity } from './game_entity/ball.entity';
 import { GameEntity } from './game_entity/game.entity';
 import { PaddleEntity } from './game_entity/paddle.entity';
 import { PlayerEntity } from './game_entity/players.entity';
-import { ResumeEntity } from './game_entity/resume.entity';
 import { SetEntity } from './game_entity/set.entity';
 
 @WebSocketGateway({
@@ -30,9 +26,7 @@ export class GameGateway implements OnGatewayInit {
   constructor(
     @InjectRepository(GameEntity)
     private all_game: Repository<GameEntity>,
-  ) /* 
-    @InjectRepository(ResumeEntity)
-    private all_resume: Repository<ResumeEntity> */
+  )
   {}
 
   @WebSocketServer() wws: Server;
@@ -47,7 +41,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  //////////////// SPECTATOR ROOM ////
+  //////////////// SPECTATOR ROOM 
   ///////////////////////////////////////////////
 
   @SubscribeMessage('LeaveGameSpectator')
@@ -70,7 +64,7 @@ export class GameGateway implements OnGatewayInit {
     if (this.roo[room]) {
       this.roo[room].spectator++;
       this.all_game.save(this.roo[room]);
-      client.emit('startGameSpec', this.roo[room]);
+      client.emit('startGame_spec', this.roo[room]);
     }
   }
 
@@ -233,7 +227,7 @@ export class GameGateway implements OnGatewayInit {
   ///////////////////////////////////////////////
 
   ///////////////////////////////////////////////
-  //////////////// PLAYER GIVE UP /
+  //////////////// PLAYER GIVE UP //
   ///////////////////////////////////////////////
 
   handleDisconnect(client: Socket) {
@@ -264,7 +258,7 @@ export class GameGateway implements OnGatewayInit {
       this.roo[room].set.set_p1.won = true;
 
     console.log('HOOO LE NULL player_give_up = ' + client.id);
-    //this.all_game.save(this.roo[room]);//
+    //this.all_game.save(this.roo[room]);///
 
     if (this.roo[room].spectator >= 1) {
       client.to(room).emit('player_give_upem_spec', this.roo[room]);
@@ -290,8 +284,8 @@ export class GameGateway implements OnGatewayInit {
     return;
   }
 
-  ///////////////////////////////////////////////
-  //////////////// PADDLE DATA ///
+  ////////////////////////////////////////////////
+  //////////////// PADDLE DATA ////
   ////////////////////////////////////////////////
 
   @SubscribeMessage('paddleMouvLeft')
@@ -332,7 +326,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ///////////////////////////////////////////////
-  ////////////////  BALL DATA //
+  ////////////////  BALL DATA //////
   ///////////////////////////////////////////////
 
   @SubscribeMessage('sincBall')
@@ -368,7 +362,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   //////////////////////////////////////////////////
-  //////////////// Player DATA //
+  //////////////// Player DATA /////
   ////////////////////////////////////////////////
 
   @SubscribeMessage('playerActyLeft')
@@ -385,7 +379,7 @@ export class GameGateway implements OnGatewayInit {
       client.to(room).emit('setDataPlayerLeft_spec', this.roo[room]);
     client.to(room).emit('setDataPlayerLeft', this.roo[room]);
     client.emit('setDataPlayerLeft', this.roo[room]);
-    //this.all_game.save(this.roo[room]);
+    ////this.all_game.save(this.roo[room]);
     return;
   }
 
@@ -393,7 +387,7 @@ export class GameGateway implements OnGatewayInit {
   Player_actu_right(client: Socket, data: any) {
     //////console.log("playerActyrIGHT BACK END");
     //console.log("data.p.score = " + data.score);
-    //console.log("data.p.won = " + data.won);
+    //console.log("data.p.won = " + data.won);///////
 
     var room = data.room;
     if (!this.roo[room])

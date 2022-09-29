@@ -1,15 +1,10 @@
 import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import { createRef, useEffect, useRef, useState } from "react";
-import { threadId } from "worker_threads";
+import { useEffect, useState } from "react";
 import {
-  ballObj,
-  paddleProps_left,
-  paddleProps_right,
-  player_left,
-  player_right,
   socket,
 } from "../Game";
+
 import {
   BallMouv,
   BallCol_right,
@@ -21,46 +16,25 @@ import {
   draw_loading,
 } from "../gameReact/BallMouv";
 
+import data from "../gameReact/data";
+export let {
+  ballObj,
+  player_left,
+  player_right,
+  paddleProps_left,
+  paddleProps_right,
+} = data;
+
 let first_sinc = false;
 let emit_to_get_room = true;
 
 export function GameSpectator(props: any) {
+
   const [p1id, setp1id] = useState("null");
   const [p2id, setp2id] = useState("null");
-
   const [ThisRoom, setThisRoom] = useState("");
 
-  //const [first_sinc, setfirst_sinc] = useState(false);
-
-  // UseEffect recupere les info des joueurs en temps reel et les stock dans les objets du jeu
-  // pour les afficher dans le canvas en mode spectateur
-
-  function sinc_all_data(theroom: any) {
-    ballObj.x = theroom.set.ball.x;
-    ballObj.y = theroom.set.ball.y;
-    ballObj.ingame_dx = theroom.set.ball.ingame_dx;
-    ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-    ballObj.init_dx = theroom.set.ball.init_dx;
-    ballObj.init_dy = theroom.set.ball.init_dy;
-    ballObj.init_first_dx = theroom.set.ball.init_first_dx;
-    ballObj.init_first_dy = theroom.set.ball.init_first_dy;
-    ballObj.first_dx = theroom.set.ball.first_dx;
-    ballObj.first_dy = theroom.set.ball.first_dy;
-    ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
-    ballObj.first_col = theroom.set.ball.first_col;
-
-    player_left.score = theroom.set.set_p1.score;
-    player_left.won = theroom.set.set_p1.won;
-    player_left.name = theroom.set.set_p1.name;
-
-    player_right.name = theroom.set.set_p2.name;
-    player_right.score = theroom.set.set_p2.score;
-    player_right.won = theroom.set.set_p2.won;
-  }
-
-  /*   UseEffect qui gere le canvas en mode spectateur afficher les info recupere dans 
-  les socker.on precedents sans pouvoir modifier les variables et objets 
-  du jeu des joueurs */
+  // UsEffect who manage the canvas in spectator mode by getting the data from the socket.on send by the players who are playing
 
   let requestAnimationFrameId: any;
   useEffect(() => {
@@ -82,11 +56,7 @@ export function GameSpectator(props: any) {
 
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
-      console.log("first_sinc", first_sinc);
-
       first_sinc = true;
-      console.log("first_sinc", first_sinc);
-      console.log("sincTheBall_spec FROM SERVER REAL GAME");
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_paddle_obj.x;
@@ -104,38 +74,24 @@ export function GameSpectator(props: any) {
       player_right.score = theroom.set.set_p2.score;
       player_right.won = theroom.set.set_p2.won;
     });
-    socket.on("startGameSpec", (theroom: any) => {
-      console.log("+*+*+*-+-startGameSpec+*++++-*+*-+");
-      sinc_all_data(theroom);
+    socket.on("startGame_spec", (theroom: any) => {
       setp1id(theroom.set.set_p1.name);
       setp2id(theroom.set.set_p2.name);
       setThisRoom(theroom.room_name);
-      console.log("\n\n------------------");
-      console.log("theroom.set.set_p1.name", theroom.set.set_p1.name);
-      console.log("theroom.set.set_p2.name", theroom.set.set_p2.name);
-      console.log("--------------------");
-      console.log("p1id = ", p1id);
-      console.log("p2id = ", p2id);
-      console.log("--------------------");
-      console.log("theroom.room_name = ", theroom.room_name);
-      //console.log("ThisRoom = ", ThisRoom);
-
-      console.log("--------------------ERRORORORORO\n\n");
     });
     socket.on("player_give_upem_spec", (theroom: any) => {
       player_right.won = theroom.set.set_p2.won;
       player_left.won = theroom.set.set_p1.won;
-      //setThisRoom(theroom.room_name);
     });
-
     if (props.Specthegame === true && emit_to_get_room === true) {
       socket.emit("Specthegame", props.Room_name_spec);
       emit_to_get_room = false;
     }
 
+    // Canvas for the spectator game mode without any interaction
+
     const render = () => {
       requestAnimationFrameId = requestAnimationFrame(render);
-
       let canvas: any = props.canvasRef.current;
       var ctx = null;
       if (canvas)
@@ -175,7 +131,6 @@ export function GameSpectator(props: any) {
           else
             draw_loading(ctx, canvas.height, canvas.width);
         } else {
-          console.log("score draw_end");
           draw_score(
             ctx,
             player_left,
@@ -195,7 +150,6 @@ export function GameSpectator(props: any) {
     emit_to_get_room = true;
     props.setSpecthegame(false);
     props.setisLookingRoom(true);
-    console.log("this room = !!!!!!!!!!!!!!!!![" + ThisRoom + "]!1");
     socket.emit("LeaveGameSpectator", ThisRoom);
   }
 
@@ -209,7 +163,6 @@ export function GameSpectator(props: any) {
       style={{ minHeight: "50vmin" }}
     >
       <h1>THE PONG SPECTATOR</h1>
-
       <Box
         sx={{
           display: "flex",
