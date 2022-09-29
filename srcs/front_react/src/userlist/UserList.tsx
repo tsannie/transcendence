@@ -31,12 +31,7 @@ export default function UserList(props: any) {
         {props.users.map((user: any) => (
           <ListItem
             sx={{
-             /*  border: "1px solid black",
-              mt: 2,
-              alignItems: "center",
-              width: "fit-content",
-              height: "fit-content",
-              borderRadius: "3px", */
+
             }}
             key={user.id}
             onClick={props.handleClick}

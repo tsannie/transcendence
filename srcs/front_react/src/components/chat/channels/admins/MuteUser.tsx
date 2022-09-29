@@ -1,14 +1,15 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../userlist/UserList';
-import { IChannel, IChannelActions } from '../types';
+import { api } from '../../../../userlist/UserList';
+import { IChannel, IChannelActions } from '../../types';
 
-export default function UnbanUser(props: any) {
+export default function MuteUser(props: any) {
+
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-unban" : undefined;
+  const id = open ? "popover-mute" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -20,30 +21,44 @@ export default function UnbanUser(props: any) {
     setAnchorEl(null);
   }
 
+  function isMuted(channel: any, user: any) {
+    if (channel !== undefined) {
+      for (let i = 0; i < channel.muted.length; i++) {
+        console.log(channel.muted[i].id);
+        console.log(props.userId);
+        if (channel.muted[i].id === user.id) {
+          return true;
+        }
+      }
+    }
+    console.log("isMuted = false");
+    return false;
+  }
+
   function createChannelActions(channel: IChannel, targetUsername: string) {
-    console.log("channel = ", channel);
     const newChannel: IChannelActions = {
       channel_name: channel.name,
       target: targetUsername,
     };
-    console.log(newChannel);
+    //console.log("newchannel = ", newChannel);
 
     return newChannel;
   }
 
-  async function unbanUser(user: any, channel: IChannel) {
-    const newChannel = createChannelActions(channel, user.username);
+  async function muteUser(user: any, channel: IChannel) {
+    const newChannel: IChannelActions = createChannelActions(channel, user.username);
 
+    //console.log("newChannel = ", newChannel);
     if (newChannel.target !== "") {
       await api
-        .post("channel/unBanUser", newChannel)
+        .post("channel/muteUser", newChannel)
         .then((res) => {
-          console.log("user unban with success");
+          console.log("user mute with success");
           console.log(channel);
           props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("invalid unban user");
+          console.log("invalid mute user");
           console.log(res);
         });
     }
@@ -60,7 +75,7 @@ export default function UnbanUser(props: any) {
           handleClick(event);
         }}
       >
-        Unban
+        Mute
       </Button>
       <Popover
         id={id}
@@ -74,11 +89,11 @@ export default function UnbanUser(props: any) {
       >
         {open === true && (
           <List
-            key={props.infosChannel.banned.id}
+            key={props.infosChannel.users.id}
           >
-            {props.infosChannel.banned.map((user: any) => (
-              <ListItemButton onClick={() => unbanUser(user, props.infosChannel)}>
-                {user.username}
+            {props.infosChannel.users.map((user: any) => (
+              <ListItemButton onClick={() => muteUser(user, props.infosChannel)}>
+                {(!isMuted(props.infosChannel, user)) ? user.username : <></>}
               </ListItemButton>
             ))}
           </List>

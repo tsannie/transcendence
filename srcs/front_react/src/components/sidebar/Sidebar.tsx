@@ -37,6 +37,7 @@ export default function Sidebar(props: any) {
       alignItems="center"
       container
       direction="column"
+      position="fixed"
       sx={{
         maxWidth: "fit-content",
         maxHeight: "fit-content",

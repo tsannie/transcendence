@@ -9,7 +9,9 @@ export default function PromptMessage(props: any) {
       sx={{
         width: "fit-content",
         mx: "auto",
-        position: "relative",
+        position: "fixed",
+        bottom: "0",
+        // mettre en bas
       }}
     >
       <TextField

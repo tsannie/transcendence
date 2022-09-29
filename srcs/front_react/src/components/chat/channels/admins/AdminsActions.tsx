@@ -1,7 +1,7 @@
-import { Button, List, ListItem, ListItemButton, Popover } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { api } from "../../../userlist/UserList";
-import { IChannel } from "../types";
+import { Button, List, ListItem, Popover } from "@mui/material";
+import React, { useState } from "react";
+import { api } from "../../../../userlist/UserList";
+import { IChannel } from "../../types";
 import BanUser from "./BanUser";
 import MakeAdmin from "./MakeAdmin";
 import MuteUser from "./MuteUser";

@@ -1,15 +1,14 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../userlist/UserList';
-import { IChannel, IChannelActions } from '../types';
+import { api } from '../../../../userlist/UserList';
+import { IChannel, IChannelActions } from '../../types';
 
-export default function UnmuteUser(props: any) {
-
+export default function MakeAdmin(props: any) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-unmute" : undefined;
+  const id = open ? "popover-makeAdmin" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -22,29 +21,29 @@ export default function UnmuteUser(props: any) {
   }
 
   function createChannelActions(channel: IChannel, targetUsername: string) {
+    //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
       channel_name: channel.name,
       target: targetUsername,
     };
-    console.log("newchannel = ", newChannel);
+    console.log(newChannel);
 
     return newChannel;
   }
 
-  async function unmuteUser(user: any, channel: IChannel) {
-    const newChannel: IChannelActions = createChannelActions(channel, user.username);
+  async function makeAdmin(user: any, channel: IChannel) {
+    const newChannel = createChannelActions(channel, user.username);
 
-    console.log("newChannel = ", newChannel);
     if (newChannel.target !== "") {
       await api
-        .post("channel/unMuteUser", newChannel)
+        .post("channel/makeAdmin", newChannel)
         .then((res) => {
-          console.log("user unmute with success");
+          console.log("user is admin now");
           console.log(channel);
           props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("invalid unmute user");
+          console.log("user can't be admin");
           console.log(res);
         });
     }
@@ -61,7 +60,7 @@ export default function UnmuteUser(props: any) {
           handleClick(event);
         }}
       >
-        Unmute
+        Make Admin
       </Button>
       <Popover
         id={id}
@@ -75,11 +74,11 @@ export default function UnmuteUser(props: any) {
       >
         {open === true && (
           <List
-            key={props.infosChannel.muted.id}
+            key={props.infosChannel.users.id}
           >
-            {props.infosChannel.muted.map((user: any) => (
-              <ListItemButton onClick={() => unmuteUser(user, props.infosChannel)}>
-                {user.username}
+            {props.infosChannel.users.map((user: any) => (
+              <ListItemButton onClick={() => makeAdmin(user, props.infosChannel)}>
+                {(!props.isAdmin(props.infosChannel, user.id)) ? user.username : <></>}
               </ListItemButton>
             ))}
           </List>

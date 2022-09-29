@@ -6,13 +6,13 @@ import AddIcon from "@mui/icons-material/Add";
 
 export default function Conv(props: any) {
 
-  function newConv() {
+  /* function newConv() {
     props.setOpenConv(true);
     props.setIsNewMessage(true);
   }
-
+ */
   return (
-    <Box>
+    <Box sx={{ bgcolor: "red"}}>
       {/* <IconButton onClick={newConv}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton> */}
