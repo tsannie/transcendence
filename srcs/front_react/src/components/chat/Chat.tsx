@@ -8,10 +8,9 @@ import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
-import { api, IUser } from "../../userlist/UserListItem";
-import { COOKIE_NAME } from "../../const";
 import { ContactSupportOutlined } from "@material-ui/icons";
 import HistoryMessages from "./messages/HistoryMessages";
+import { api, COOKIE_NAME } from "../../const/const";
 
 export const socket = io("http://localhost:4000");
 
@@ -35,7 +34,7 @@ export default function Chat() {
     }
   }
 
-  async function getUser() {
+  async function getUser() {          // TODO explain to dov
     if (document.cookie.includes(COOKIE_NAME)) {
       await api
         .get("auth/profile")

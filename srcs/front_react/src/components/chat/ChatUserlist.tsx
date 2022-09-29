@@ -1,8 +1,6 @@
 import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
-import UserList from "../../userlist/UserListItem";
-import UserInfos, { IUser } from "../../userlist/UserListItem";
 
 export default function ChatUserlist(props: any) {
 
@@ -53,7 +51,7 @@ export default function ChatUserlist(props: any) {
       </Typography>
       <Box>
         <Box onContextMenu={handleClick}>
-          <UserList />
+          {/* I have delete UserList sign tsannie */}
         </Box>
         <Menu
           open={open}
