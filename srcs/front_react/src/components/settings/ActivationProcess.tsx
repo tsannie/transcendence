@@ -43,14 +43,10 @@ export default function ActivationProcess(props: any) {
       <h3>Scan the QR token with your authenticator app</h3>
       <img src={`data:;base64,${qrCode}`}></img>
       <h3>Enter the token from your app</h3>
-
-      <TextField id="standard-basic" label="Validation code" variant="standard"
-        type="number" value={token} onChange={(e) => setToken(e.target.value)}>
-      </TextField>
-
-      <Button variant="contained" onClick={handleClick}>
-        Validate
-      </Button>
+      <div className="settings__2fa__validation">
+        <input id="code" type="number" value={token} onChange={(e) => setToken(e.target.value)}></input>
+        <button onClick={handleClick}>Validate</button>
+      </div>
     </div>
   );
 }

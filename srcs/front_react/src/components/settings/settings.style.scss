@@ -5,13 +5,38 @@
   border-style: dashed;
   padding: 2%;
 
-  .settings__title {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  input {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    &:focus {
+      outline: none !important;
+    }
+    border: dashed;
+    background: transparent;
+    width: 25%;
+    font-size: 1vw;
+  }
+
+  img {
+    width: 40%;
+    max-width: 200px;
+    filter: invert(100%);
   }
 
   h2 {
-    margin-top: 5vw;
+    margin-top: 3vh;
   }
+}
+
+.settings__title {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.settings__2fa__validation {
+  display: flex;
 }
