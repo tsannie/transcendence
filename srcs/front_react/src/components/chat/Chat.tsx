@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
@@ -71,23 +71,22 @@ export default function Chat(props: any) {
   }, [socket]); */
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          //justifyContent: "space-between",
-          alignItems: "flex-start",
-          height: "100%",
-          weight: "30%",
-        }}
-      >
-        <DmList
-          //socket={socket}
-          isNewMessage={isNewMessage}
-          setOpenConv={setOpenConv}
-        />
-        <Channels />
+    <Grid container>
+      <Grid item xs={4}>
+        <Grid item>
+          <DmList
+            //socket={socket}
+            isNewMessage={isNewMessage}
+            setOpenConv={setOpenConv}
+            getAllUsers={props.getAllUsers}
+            users={props.users}
+          />
+        </Grid>
+        <Grid item>
+          <Channels />
+        </Grid>
+      </Grid>
+      <Grid item xs={8}>
         <Conv
           openConv={openConv}
           messagesList={messagesList}
@@ -95,13 +94,7 @@ export default function Chat(props: any) {
           setCurrentMessage={setCurrentMessage}
           sendMessage={sendMessage}
         />
-        <ChatUserlist
-          setOpenConv={setOpenConv}
-          setIsNewMessage={setIsNewMessage}
-          getAllUsers={props.getAllUsers}
-          users={props.users}
-        />
-      </Box>
-    </>
+      </Grid>
+    </Grid>
   );
 }

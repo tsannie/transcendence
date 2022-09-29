@@ -18,7 +18,7 @@ import { IChannel } from "../types";
 import { display } from "@mui/system";
 import { LockIcon } from "./LockIcon";
 import InfosChannels from "./InfosChannels";
-import AdminsActions from "./AdminsActions";
+import AdminsActions from "./admins/AdminsActions";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
@@ -111,15 +111,11 @@ export default function ChannelsList(props: any) {
         return (
           <Box
             sx={{
-              width: "fit-content",
-              height: "fit-content",
               color: "black",
               textAlign: "center",
               borderRadius: "3px",
               mb: "1vh",
               border: "1px solid black",
-              display: "flex",
-              alignItems: "center",
             }}
             key={channelData.name}
           >

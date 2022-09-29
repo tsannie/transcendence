@@ -60,14 +60,7 @@ export default function ChatUserlist(props: any) {
   }
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-        border: "1px solid pink",
-      }}
-    >
+    <>
       <Typography
         sx={{
           fontWeight: "bold",
@@ -77,20 +70,17 @@ export default function ChatUserlist(props: any) {
       >
         Users
       </Typography>
-      <>
-        <>
-          <UserList handleClick={handleClick} users={props.users} getAllUsers={props.getAllUsers}/>
-        </>
-        <Menu
-          open={open}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-        >
-          <MenuItem onClick={handleProfile}>Profile</MenuItem>
-          <MenuItem onClick={handleNewMessage}>New Message</MenuItem>
-          <MenuItem onClick={handleInvite}>Invite to play</MenuItem>
-        </Menu>
-      </>
-    </Box>
+      <UserList handleClick={handleClick} users={props.users} getAllUsers={props.getAllUsers}/>
+      <Menu
+        open={open}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+      >
+        <MenuItem onClick={handleProfile}>Profile</MenuItem>
+        <MenuItem onClick={handleNewMessage}>New Message</MenuItem>
+        <MenuItem onClick={handleInvite}>Invite to play</MenuItem>
+      </Menu>
+
+    </>
   );
 }

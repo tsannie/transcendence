@@ -6,9 +6,6 @@ export default function MessagesList(props: any) {
   return (
     <Box
       sx={{
-        width: 640,
-        height: "fit-content",
-        minHeight: 724,
         border: "1px solid black",
       }}
     >

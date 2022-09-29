@@ -1,5 +1,5 @@
 import {
-  Box
+  Box, Grid
 } from "@mui/material";
 
 import React, { useEffect, useState } from "react";
@@ -70,21 +70,22 @@ export default function App() {
       </Box>
     );
   return (
-    <Box
-      // sx to create coluns for each child
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        height: "100vh",
-      }}
+    <Grid
+      container
     >
-      <Sidebar
-        inputChat={inputChat}
-        setInputChat={setInputChat}
-        isLogin={isLogin}
-        setIsLogin={setIsLogin}
-      />
-      {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
-    </Box>
+      <Grid item >
+        <Sidebar
+          inputChat={inputChat}
+          setInputChat={setInputChat}
+          isLogin={isLogin}
+          setIsLogin={setIsLogin}
+        />
+      </Grid>
+      <Grid item xs={11} sx={{
+        ml: "72px",
+      }}>
+        {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
+      </Grid>
+    </Grid>
   );
 }
