@@ -48,7 +48,7 @@ export default function Channels(props: any) {
   }, [channelCreated]);
 
   return (
-    <Box>
+    <Box sx={{ border: "1px solid black", width: "100%" }}>
       <Typography
         sx={{
           fontWeight: "bold",

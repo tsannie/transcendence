@@ -1,14 +1,14 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../userlist/UserList';
-import { IChannel, IChannelActions } from '../types';
+import { api } from '../../../../userlist/UserList';
+import { IChannel, IChannelActions } from '../../types';
 
-export default function MakeAdmin(props: any) {
+export default function BanUser(props: any) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-makeAdmin" : undefined;
+  const id = open ? "popover-ban" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -31,19 +31,19 @@ export default function MakeAdmin(props: any) {
     return newChannel;
   }
 
-  async function makeAdmin(user: any, channel: IChannel) {
+  async function banUser(user: any, channel: IChannel) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
       await api
-        .post("channel/makeAdmin", newChannel)
+        .post("channel/banUser", newChannel)
         .then((res) => {
-          console.log("user is admin now");
+          console.log("user ban with success");
           console.log(channel);
           props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("user can't be admin");
+          console.log("invalid channels");
           console.log(res);
         });
     }
@@ -60,7 +60,7 @@ export default function MakeAdmin(props: any) {
           handleClick(event);
         }}
       >
-        Make Admin
+        Ban
       </Button>
       <Popover
         id={id}
@@ -72,13 +72,13 @@ export default function MakeAdmin(props: any) {
           horizontal: "right",
         }}
       >
-        {open === true && (
+        {open && (
           <List
             key={props.infosChannel.users.id}
           >
             {props.infosChannel.users.map((user: any) => (
-              <ListItemButton onClick={() => makeAdmin(user, props.infosChannel)}>
-                {(!props.isAdmin(props.infosChannel, user.id)) ? user.username : <></>}
+              <ListItemButton onClick={() => banUser(user, props.infosChannel)}>
+                {user.username}
               </ListItemButton>
             ))}
           </List>
