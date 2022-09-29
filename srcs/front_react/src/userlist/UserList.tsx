@@ -27,12 +27,9 @@ export default function UserList(props: any) {
   // display all users connected in the database
   return (
     <>
-      <List sx={{}}>
+      <List>
         {props.users.map((user: any) => (
           <ListItem
-            sx={{
-
-            }}
             key={user.id}
             onClick={props.handleClick}
           >

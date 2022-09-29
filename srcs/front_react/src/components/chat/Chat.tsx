@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Popover, Typography } from "@mui/material";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
@@ -11,15 +11,24 @@ import { api, IUser } from "../../userlist/UserList";
 import { COOKIE_NAME } from "../../const";
 import DmList from "./messages/DmList";
 import Conv from "./messages/Conv";
+import FormChannel from "./channels/FormChannel";
+
+enum ChatContent {
+  NEW_CHANNELS,
+  NEW_DM,
+  MESSAGES,
+}
 
 export default function Chat(props: any) {
-  const [room, setRoom] = useState("");
   const [author, setAuthor] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [userId, setUserId] = useState(0);
   const [openConv, setOpenConv] = useState(false);
+
+  const [enumState, setEnumState] = useState<ChatContent>(ChatContent.NEW_CHANNELS);
+  // enum with 3 strings differentes
 
   //const socket = io("http://localhost:4000", {});
 
@@ -87,13 +96,26 @@ export default function Chat(props: any) {
         </Grid>
       </Grid>
       <Grid item xs={8}>
-        <Conv
-          openConv={openConv}
-          messagesList={messagesList}
-          author={author}
-          setCurrentMessage={setCurrentMessage}
-          sendMessage={sendMessage}
-        />
+        {enumState === ChatContent.NEW_DM && (
+          <Conv
+            openConv={openConv}
+            messagesList={messagesList}
+            author={author}
+            setCurrentMessage={setCurrentMessage}
+            sendMessage={sendMessage}
+          />
+        )}
+        {enumState === ChatContent.NEW_CHANNELS && (
+          <FormChannel />
+        )}
+
+        {enumState === ChatContent.MESSAGES && (
+          <ChatUserlist
+            setOpenConv={setOpenConv}
+            getAllUsers={props.getAllUsers}
+            users={props.users}
+          />
+        )}
       </Grid>
     </Grid>
   );
