@@ -7,8 +7,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { ChannelModule } from 'src/channel/channel.module';
-import { ChannelService } from 'src/channel/service/channel.service';
-import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { DmModule } from 'src/dm/dm.module';
 
