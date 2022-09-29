@@ -43,6 +43,9 @@ export class UserEntity {
   @OneToMany( () => ChannelEntity, (channels) => channels.owner )
   owner_of?: ChannelEntity[];
 
+  @ManyToMany( () => ChannelEntity, (channels) => channels.admins)
+  admin_of?: ChannelEntity[];
+
   @ManyToMany( () => ChannelEntity, (channels) => channels.users )
   @JoinTable()
   channels?: ChannelEntity[];

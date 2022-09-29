@@ -31,7 +31,7 @@ export class ChannelEntity {
 	@ManyToOne( () => UserEntity, (user) => user.owner_of )
 	owner: UserEntity;
 	
-	@ManyToMany( () => UserEntity )
+	@ManyToMany( () => UserEntity, (user) => user.admin_of )
 	@JoinTable()
 	admins: UserEntity[];
 	
