@@ -7,16 +7,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
-import * as dotenv from 'dotenv'; // TODO delte that ?? and module
-import { LocalStrategy } from './strategy/local.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { FortyTwoStrategy } from './strategy/fortytwo.strategy';
-
-dotenv.config();
+import { FortyTwoStrategy } from './strategy/fortyTwo.strategy';
+import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
 
 @Module({
   imports: [
-    JwtModule.register({ secret: 'secret' }), // Why dont work ??
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     PassportModule,
@@ -26,9 +22,9 @@ dotenv.config();
     AuthService,
     JwtService,
     UserService,
-    LocalStrategy,
     JwtStrategy,
     FortyTwoStrategy,
+    JwtTwoFactorStrategy
   ],
   exports: [AuthService],
 })

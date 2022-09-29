@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { isJsxAttribute, JsxElement } from "typescript";
 import Chat from "../chat/Chat";
 import LogoIcon from "../../assets/logo-project.png";
 import HomeIcon from "../../assets/home.png";
@@ -10,20 +9,38 @@ import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
-import ButtonLogout from "../../Auth/ButtonLogout";
-import { COOKIE_NAME } from "../../const";
+import { COOKIE_NAME } from "../../const/const";
 
 export default function Sidebar(props: any) {
   //const [displayGame, setDisplayGame] = useState(false);
   //const [displaySettings, setDisplaySettings] = useState(false);
   // chat icon color: #610D7E
 
-  function logout(event: any) {
-    event.preventDefault();
+  // to do: passer d'icone en icone en remettant tous les autres state a false
+
+  function logout() { // TODO route api logout
     document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
     props.setIsLogin(false);
+    props.setIs2FA(false);
     window.location.reload();
   };
+
+  function resetInput() {
+    props.setInputChat(false);
+    props.setInputSettings(false);
+  }
+
+  function selectInput(propsName: string) {
+    resetInput();
+    switch (propsName) {
+      case "Chat":
+        props.setInputChat(true);
+        break;
+      case "Settings":
+        props.setInputSettings(true);
+        break;
+    }
+  }
 
   return (
     <Grid
@@ -49,10 +66,10 @@ export default function Sidebar(props: any) {
         <img src={GameIcon}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ChatIcon} onClick={() => props.setInputChat(true)}></img>
+        <img src={ChatIcon} onClick={() => selectInput('Chat')}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={SettingsIcon}></img>
+        <img src={SettingsIcon} onClick={() => selectInput('Settings')}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ExitIcon} onClick={logout}></img>

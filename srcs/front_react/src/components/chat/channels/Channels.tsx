@@ -2,16 +2,20 @@ import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
 import Add from "../../../assets/add.png";
+import ChannelsList from "./ChannelsList";
 import FormChannel from "./FormChannel";
 
 export default function Channels(props: any) {
   const [newChannel, setNewChannel] = useState(false);
+  const [channelCreated, setChannelCreated] = useState(false);
+
   function setChannel() {
     if (!newChannel)
-      setNewChannel(true)
+      setNewChannel(true);
     else
       setNewChannel(false);
   }
+
 
   return (
     <Box
@@ -28,10 +32,13 @@ export default function Channels(props: any) {
         Channels
       </Typography>
       <img src={Add} onClick={setChannel}></img>
-      {newChannel === true &&
-      <FormChannel
-        setNewChannel={setNewChannel}
-      />}
+      {newChannel === true && (
+        <FormChannel
+          setNewChannel={setNewChannel}
+          setChannelCreated={setChannelCreated}
+        />
+      )}
+      <ChannelsList />
     </Box>
   );
 }

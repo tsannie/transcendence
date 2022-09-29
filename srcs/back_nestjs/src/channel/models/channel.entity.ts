@@ -1,6 +1,6 @@
-import { IUser } from 'src/user/models/user.interface';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToOne,
@@ -10,16 +10,19 @@ import {
 
 @Entity()
 export class ChannelEntity {
-  @PrimaryColumn({ unique: true })
-  id: string;
+
+  @Column()
+  name: string;
 
   @Column()
   status: string;
 
-  @Column()
-  time: string;
-
   @Column({nullable: true} )
   ownerid: string;
-  //@ManyToOne() user channel
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @CreateDateColumn()
+  time: string;
 }
