@@ -26,30 +26,58 @@ export class ChannelService {
 
 	private readonly userService: UserService) {}
 
+	isOwner(searched_channel: string, user: UserEntity) : boolean{
+		if (user.owner_of && user.owner_of.find( (channel) => channel.name === searched_channel))
+			return true;
+		else
+			return false;
+	}
+
+	isAdmin(searched_channel: string, user: UserEntity) {
+		if (user.admin_of && user.admin_of.find( (channel) => channel.name === searched_channel))
+			return true;
+		else
+			return false;
+	}
+	
+	isMember(searched_channel: string, user: UserEntity) : boolean {
+		if (user.channels && user.channels.find( (channel) => channel.name === searched_channel))
+			return true;
+		else
+			return false;
+	}
+
 	/* This function return all the public datas of channel */
-	async getPublicData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+	async getPublicData(query_channel: ChannelDto) : Promise<ChannelEntity> {
 		const channel = await this.getChannel(query_channel.name, {owner: true, users: true});
 		return channel;
 	}
 
 	/* This function gets all the data for a normal user. No sensitive information here */
-	async getUserData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+	async getUserData(query_channel: ChannelDto) : Promise<ChannelEntity> {
 		const channel = await this.getChannel(query_channel.name, {owner: true, users:true, admins: true, messages: true});
-
-		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
-			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
-		//ADD HERE VERIFICATION OF CREDENTIALS, VIA USER.CHANNEL or USER.OWNER_OF
 		return channel;
 	}
 
 	/* This function returns full data of channel. Sensitive information here. Should be accessed only by admin or owner */
-	async getPrivateData(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
+	async getPrivateData(query_channel: ChannelDto) : Promise<ChannelEntity> {
 		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, admins: true, banned: true, muted: true, messages: true});
-
-		if (channel.owner.username !== user.username && !channel.users.find( member => member.username === user.username))
-			throw new UnauthorizedException("You cannot access data of a Channel you're not a member of.")
-		//ADD HERE VERIFICATION OF CREDENTIALS, VIA USER.CHANNEL or USER.OWNER_OF
 		return channel;
+	}
+
+	async getDatas(query_channel: ChannelDto, user: UserEntity) : Promise<
+		{
+			status: string, 
+			data: ChannelEntity
+		}> {
+		if (this.isOwner(query_channel.name, user))
+			return {status:"owner", data: await this.getPrivateData(query_channel)};
+		else if (this.isAdmin(query_channel.name, user))
+			return {status:"admin", data: await this.getPrivateData(query_channel)};
+		else if (this.isMember(query_channel.name, user))
+			return {status:"user", data: await this.getUserData(query_channel)};
+		else
+			return {status:"public", data: await this.getPublicData(query_channel)};
 	}
 
  /*
