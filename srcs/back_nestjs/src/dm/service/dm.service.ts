@@ -17,7 +17,7 @@ export class DmService {
 
 	private readonly userService: UserService,
 	) {}
-	
+
 	async checkifBanned(user: UserEntity, target: string) : Promise<UserEntity> {
 		let user2 = await this.userService.findUser(target, {banned: true});
 
@@ -25,10 +25,10 @@ export class DmService {
 			throw new UnprocessableEntityException(`You've banned ${target}`);
 		if (user2.banned && user2.banned.find(banned_guys => banned_guys.username === user.username))
 			throw new UnprocessableEntityException(`You've been blocked by ${user2.username}`);
-		return user2;	
+		return user2;
 	}
 
-	
+
 	// get a dm by id
 	async getDmById(inputed_id: number, offset: number): Promise<DmEntity> {
 		return await this.dmRepository
@@ -46,9 +46,9 @@ export class DmService {
 		// .limit(20)
 		.getOne();
 	}
-	
+
 	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
-		let convo = user.dms.find( (dm) => 
+		let convo = user.dms.find( (dm) =>
 				(dm.users[0].username === user.username && dm.users[1].username === data.target) || (dm.users[0].username === data.target && dm.users[1].username === user.username)
 		)
 		if (!convo)
@@ -100,8 +100,8 @@ export class DmService {
 		})
 		return reloaded_datas.dms;
 	}
-	
-	/* 
+
+	/*
 	createDM is used to create a new conv between two users, checking if they can, based on their banned relationship.
 	*/
 	async createDm(data: DmDto, user: UserEntity): Promise<DmEntity> {

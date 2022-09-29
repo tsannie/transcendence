@@ -45,7 +45,7 @@ export default function Channels(props: any) {
   // get all channels
   useEffect(() => {
     getChannels();
-  }, [channelCreated]);
+  }, [newChannel]);
 
   return (
     <Box sx={{ border: "1px solid black", width: "100%" }}>
@@ -64,14 +64,6 @@ export default function Channels(props: any) {
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      {newChannel && (
-        <FormChannel
-          setNewChannel={setNewChannel}
-          setChannelCreated={setChannelCreated}
-          setChannelsList={setChannelsList}
-          getChannels={getChannels}
-        />
-      )}
       <ChannelsList channelsList={channelsList} userId={userId} getChannels={getChannels} />
     </Box>
   );
