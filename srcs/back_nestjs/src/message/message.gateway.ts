@@ -16,7 +16,6 @@ import { from, map, Observable } from 'rxjs';
 import { Socket, Server, Namespace } from 'socket.io';
 import { Repository } from 'typeorm';
 import { MessageEntity } from './models/message.entity';
-import { IMessage } from './models/message.interface';
 import { Adapter } from 'socket.io-adapter';
 import { MessageChannel } from 'worker_threads';
 import { MessageController } from './controller/message.controller';
@@ -26,6 +25,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { DmService } from 'src/dm/service/dm.service';
+import { IMessage } from './models/message.interface';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -109,7 +109,7 @@ export class MessageGateway
   @SubscribeMessage('getDM')
   getDM(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
     client.join(data);
-    this.dmService.getAllDms(data);
+    //this.dmService.getAllDms(data);
     this.logger.log(`client ${client.id} join room ${data} `);
   }
 }

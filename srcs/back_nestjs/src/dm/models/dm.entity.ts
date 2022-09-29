@@ -10,12 +10,9 @@ export class DmEntity {
 	@CreateDateColumn()
 	time: string;
 
-	@ManyToMany( () => UserEntity, (user) => user.channels )
+	@ManyToMany( () => UserEntity, (user) => user.dms, {eager: true})
 	users: UserEntity[];
 
-	@Column( { default: true } )
-	isMp: boolean;
-
-	@OneToMany( () => MessageEntity, (message) => message.dm )
+	@OneToMany( () => MessageEntity, (message) => message.dm, {onDelete: "CASCADE"} )
 	messages: MessageEntity[];
 }
