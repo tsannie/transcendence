@@ -59,7 +59,8 @@ export class UserService {
 		relations : {
 			owner_of: true, 
 			channels: true,
-			banned: true
+			banned: true,
+			admin_of: true,
 		}
 		}
 	)
