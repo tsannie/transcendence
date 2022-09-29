@@ -9,7 +9,7 @@ export class DmController {
 	constructor(
 		private readonly dmService: DmService
 	) {}
- 
+
 	// get all conversations of a user
 	@UseGuards( AuthGuard('jwt') )
 	@Get('list')
@@ -19,8 +19,8 @@ export class DmController {
 
 	@UseGuards( AuthGuard('jwt') )
 	@Post('createDm')
-	async createDm(@Body() channel: DmDto, @Request() req): Promise<DmEntity> {
-		return await this.dmService.createDm(channel, req.user);
+	async createDm(@Body() data: DmDto, @Request() req): Promise<void | DmEntity> {
+		return await this.dmService.createDm(data, req.user);
 	}
 
 

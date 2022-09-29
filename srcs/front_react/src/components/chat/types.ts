@@ -25,5 +25,5 @@ export interface IChannelActions {
 
 export interface IDm {
   id?: number;
-  targetUsername: string;
+  target: string;
 }

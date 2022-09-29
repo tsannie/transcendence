@@ -69,14 +69,7 @@ export default function FormChannel(props: any) {
         }
       }
     });
-    props.setChannelCreated(true);
-    props.setNewChannel(false);
   }
-
-  // get all channels
-  useEffect(() => {
-    props.getChannels();
-  }, []);
 
   return (
     <>
