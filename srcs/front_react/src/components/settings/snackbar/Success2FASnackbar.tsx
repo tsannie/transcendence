@@ -20,7 +20,7 @@ export default function Success2FASnackbar(props: any) {
   }
 
   return (
-  <Snackbar open={props.openSuccess} autoHideDuration={1000} onClose={handleClose}>
+  <Snackbar open={props.openSuccess} autoHideDuration={1500} onClose={handleClose}>
     <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
       2FA successfully activated !
     </Alert>
