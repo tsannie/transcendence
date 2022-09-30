@@ -71,7 +71,6 @@ export class ChannelService {
 				id: true,
 				name: true,
 				messages: {
-					uuid: true,
 					createdAt: true,
 					content: true,
 					author: {
