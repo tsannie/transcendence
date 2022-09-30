@@ -13,7 +13,6 @@ export function GamePlayer_left(props: any) {
         room: props.room,
         pd: paddleProps_left,
       };
-      console.log("paddlemouvleft");
       socket.emit("paddleMouvLeft", data);
     }
   }

@@ -33,7 +33,6 @@ export default function GameMenu(props: any) {
       props.setnbrconnect(theroom.nbr_co);
       props.setisinroom(true);
       props.setRoom(theroom.room_name);
-
       if (theroom.p2 === socket.id) {
         props.setop_id(theroom.p1);
         props.setim_right(true);
@@ -62,9 +61,8 @@ export default function GameMenu(props: any) {
 
   function createFastGameRoom() {
     props.setRoom("");
-    if (props.isinroom === false) {
+    if (props.isinroom === false)
       socket.emit("createGameRoom", props.room);
-    }
   }
 
   return (

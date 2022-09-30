@@ -24,6 +24,8 @@ export default {
 
     ingame_dx: 4,
     ingame_dy: 6,
+
+    cal_right : false,
   },
 
   paddleProps_left: {
