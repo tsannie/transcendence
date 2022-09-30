@@ -19,7 +19,7 @@ interface DmListProps {
   isNewMessage: boolean;
   setOpenConv: (conv: boolean) => void;
   setEnumState: (enumState: ChatContent) => void;
-  getAllUsers: Promise<any[]>
+  getAllUsers: () => Promise<void>;
   users: any[]
 }
 

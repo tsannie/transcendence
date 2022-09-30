@@ -66,7 +66,7 @@ export default function App() {
         >
           <img src={LogoIcon}></img>
         </Box>
-        <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} users={users} getAllUsers={getAllUsers}/>
+        <ButtonLogin />
       </Box>
     );
   return (
@@ -75,9 +75,7 @@ export default function App() {
     >
       <Grid item >
         <Sidebar
-          inputChat={inputChat}
           setInputChat={setInputChat}
-          isLogin={isLogin}
           setIsLogin={setIsLogin}
         />
       </Grid>
