@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { FindOptionsOrder, FindOptionsRelations, FindOptionsSelect, Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import * as bcrypt from 'bcrypt';
@@ -16,6 +16,7 @@ import { ChannelDto } from '../dto/channel.dto';
 import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
+import { MessageEntity } from 'src/message/models/message.entity';
 
 @Injectable()
 @Catch()
@@ -55,44 +56,56 @@ export class ChannelService {
 			return {status:"admin", data: await this.getPrivateData(query_channel)};
 		else if (this.isMember(query_channel.name, user))
 			return {status:"user", data: await this.getUserData(query_channel)};
-		else
+			else
 			return {status:"public", data: await this.getPublicData(query_channel)};
-	}
+		}
+		
+		async getChannelsList( user: UserEntity) : Promise<ChannelEntity[]> {
+			const relation_options : FindOptionsRelations<ChannelEntity> = {
+					messages: {
+						author: true,
+					}
+			}
 
-	async getListChannels(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity[]> {
-		let reloaded_user = await this.userService.findOptions({
-			where: {
-				username: user.username,
-			},
-			order: {
-				owner_of: {
-					messages: {
-						createdAt: "ASC"
+			const select_options : FindOptionsSelect<ChannelEntity> = {
+				id: true,
+				name: true,
+				messages: {
+					uuid: true,
+					createdAt: true,
+					content: true,
+					author: {
+						username: true,
 					}
-				},
-				admin_of: {
-					messages: {
-						createdAt: "ASC"
-					}
-				},
-				channels: {
-					messages: {
-						createdAt: "ASC"
-					}
-				}
-			},
-			relations:{
-				owner_of: {
-					messages: true,
-				},
-				admin_of: {
-					messages: true,
-				},
-				channels: {
-					messages: true,
 				},
 			}
-		})
+
+			const order_options : FindOptionsOrder<ChannelEntity> = {
+				messages: {
+					createdAt: "ASC"
+				}
+			}
+			
+			let reloaded_user = await this.userService.findOptions({
+				where: {
+					username: user.username,
+				},
+				relations:{
+					owner_of: relation_options,
+					admin_of: relation_options,
+					channels: relation_options,
+				},
+				select: {
+					owner_of: select_options,
+					admin_of: select_options,
+					channels: select_options,
+				},
+				order: {
+					owner_of: order_options,
+					admin_of: order_options,
+					channels: order_options,
+				},
+			})
 		return [...reloaded_user.owner_of, ...reloaded_user.admin_of, ...reloaded_user.channels];
 	}
 
