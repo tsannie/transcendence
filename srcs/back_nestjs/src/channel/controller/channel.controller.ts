@@ -25,6 +25,12 @@ export class ChannelController {
 		return await this.channelService.getDatas(query_channel, req.user);
 	}
 
+	@UseGuards( AuthGuard('jwt') )
+	@Get('list')
+	async getChannelList(@Query() query_channel : ChannelDto, @Request() req) : Promise<ChannelEntity[]> {
+		return await this.channelService.getListChannels(query_channel, req.user);
+	}
+
 	//CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)
 	@UseGuards( AuthGuard('jwt') )
 	@Post('createChannel')
