@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 //import { socket } from "../Chat";
-import { IChannel } from "../types";
+import { IChannel, ICreateChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "../../../userlist/UserList";
 //import ChannelsList from "./ChannelsList";
@@ -56,7 +56,7 @@ export default function FormChannel(props: FormChannelProps) {
       } else {
         if (username !== "") {
           console.log(newPassword);
-          const channelData: IChannel = {
+          const channelData: ICreateChannel = {
             name: username,
             status: status,
           };

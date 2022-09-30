@@ -4,7 +4,7 @@ import { api, IUser } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
 interface MuteUserProps {
-  infosChannel: any;
+  infosChannel: IChannel;
   getInfosChannel: (channel: IChannel) => void;
   userId: number;
 }
@@ -27,7 +27,7 @@ export default function MuteUser(props: MuteUserProps) {
     setAnchorEl(null);
   }
 
-  function isMuted(channel: any, user: IUser) {
+  function isMuted(channel: IChannel, user: IUser) {
     if (channel !== undefined) {
       for (let i = 0; i < channel.muted.length; i++) {
         console.log(channel.muted[i].id);
@@ -93,9 +93,7 @@ export default function MuteUser(props: MuteUserProps) {
         }}
       >
         {open === true && (
-          <List
-            key={props.infosChannel.users.id}
-          >
+          <List>
             {props.infosChannel.users.map((user: IUser) => (
               <ListItemButton onClick={() => muteUser(user, props.infosChannel)}>
                 {(!isMuted(props.infosChannel, user)) ? user.username : <></>}

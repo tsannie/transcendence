@@ -8,7 +8,7 @@ import { IChannel, IDm } from "./types";
 
 interface ChatUserListProps {
   setEnumState: (enumState: ChatContent) => void;
-  users: any[]
+  users: IUser[]
   getAllUsers: () => Promise<void>;
 }
 

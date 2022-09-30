@@ -4,7 +4,7 @@ import { api, IUser } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
 interface RevokeAdminProps {
-  infosChannel: any;
+  infosChannel: IChannel;
   getInfosChannel: (channel: IChannel) => void;
 }
 
@@ -78,9 +78,7 @@ export default function RevokeAdmin(props: RevokeAdminProps) {
         }}
       >
         {open === true && (
-          <List
-            key={props.infosChannel.admins.id}
-          >
+          <List>
             {props.infosChannel.admins.map((user: IUser) => (
               <ListItemButton onClick={() => revokeAdmin(user, props.infosChannel)}>
                 {user.username}
