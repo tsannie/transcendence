@@ -20,12 +20,19 @@
     padding: 0.8vw;
     transition: 0.3s;
     border-radius: 50%;
+    border-style: dashed;
+    border-color: transparent;
   }
 
   .selected {
-    border-radius: 50%;
     border-style: dashed;
     border-color: white;
+    animation: shake 0.5s ease;
+    @keyframes shake {
+      0%, 100% {transform: translateX(0);}
+      10%, 50%, 90% {transform: translateX(-5px);}
+      30%, 70% {transform: translateX(5px);}
+    }
   }
 
   img:hover {

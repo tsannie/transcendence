@@ -11,16 +11,16 @@
   width: 100%;
 
   h1 {
-    font-size: calc(55 * var(--res));
+    font-size: calc(60 * var(--res));
     letter-spacing: 0.3em;
   }
   h2 {
     font-size: calc(35 * var(--res));
   }
   p {
-    font-size: calc(20 * var(--res));
+    font-size: calc(22 * var(--res));
   }
   button, input {
-    font-size: calc(20 * var(--res));
+    font-size: calc(22 * var(--res));
   }
 }
