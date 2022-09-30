@@ -59,6 +59,43 @@ export class ChannelService {
 			return {status:"public", data: await this.getPublicData(query_channel)};
 	}
 
+	async getListChannels(query_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity[]> {
+		let reloaded_user = await this.userService.findOptions({
+			where: {
+				username: user.username,
+			},
+			order: {
+				owner_of: {
+					messages: {
+						createdAt: "ASC"
+					}
+				},
+				admin_of: {
+					messages: {
+						createdAt: "ASC"
+					}
+				},
+				channels: {
+					messages: {
+						createdAt: "ASC"
+					}
+				}
+			},
+			relations:{
+				owner_of: {
+					messages: true,
+				},
+				admin_of: {
+					messages: true,
+				},
+				channels: {
+					messages: true,
+				},
+			}
+		})
+		return [...reloaded_user.owner_of, ...reloaded_user.admin_of, ...reloaded_user.channels];
+	}
+
  /*
  	this function is responsible of saving a new Channel and do manage error or
   	redundancy if it happens
