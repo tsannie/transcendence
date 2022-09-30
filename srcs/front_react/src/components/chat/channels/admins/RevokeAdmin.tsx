@@ -1,9 +1,14 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../../userlist/UserList';
+import { api, IUser } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
-export default function RevokeAdmin(props: any) {
+interface RevokeAdminProps {
+  infosChannel: any;
+  getInfosChannel: (channel: IChannel) => void;
+}
+
+export default function RevokeAdmin(props: RevokeAdminProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -31,7 +36,7 @@ export default function RevokeAdmin(props: any) {
     return newChannel;
   }
 
-  async function revokeAdmin(user: any, channel: IChannel) {
+  async function revokeAdmin(user: IUser, channel: IChannel) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
@@ -76,7 +81,7 @@ export default function RevokeAdmin(props: any) {
           <List
             key={props.infosChannel.admins.id}
           >
-            {props.infosChannel.admins.map((user: any) => (
+            {props.infosChannel.admins.map((user: IUser) => (
               <ListItemButton onClick={() => revokeAdmin(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>

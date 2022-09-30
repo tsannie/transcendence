@@ -3,7 +3,12 @@ import React, { useState } from 'react'
 import { api } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
-export default function BanUser(props: any) {
+interface BanUserProps {
+  infosChannel: any;
+  getInfosChannel: (channel: IChannel) => void;
+}
+
+export default function BanUser(props: BanUserProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );

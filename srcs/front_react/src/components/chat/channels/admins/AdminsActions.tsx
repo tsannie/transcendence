@@ -9,8 +9,15 @@ import RevokeAdmin from "./RevokeAdmin";
 import UnbanUser from "./UnbanUser";
 import UnmuteUser from "./UnmuteUser";
 
-export default function AdminsActions(props: any) {
-  const [infosChannel, setInfosChannel] = useState<IChannel>();
+interface AdminsActionsProps {
+  channelData: IChannel;
+  userId: number;
+  getChannels: () => void;
+  isOwner: (channel: any) => boolean;
+}
+
+export default function AdminsActions(props: AdminsActionsProps) {
+  const [infosChannel, setInfosChannel] = useState({});
 
   // handleAdminActionsClick function to open popover
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
