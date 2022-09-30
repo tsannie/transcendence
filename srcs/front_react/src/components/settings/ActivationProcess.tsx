@@ -28,6 +28,7 @@ export default function ActivationProcess(props: any) {
       props.setEnable2FA(false);
     }).catch(err => {
       props.setOpenError(true);
+      setToken('');
     })
   }
   const handleClick = () => {
@@ -38,13 +39,25 @@ export default function ActivationProcess(props: any) {
     getQrCode();
   }, []);
 
+  const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const size_max = 6;
+
+    setToken(e.target.value.slice(0, size_max));
+  }
+
   return (
     <div>
       <h2>Scan the QR token with your auth app</h2>
       <img src={`data:;base64,${qrCode}`}></img>
       <h2>Enter the token from your app</h2>
       <div className="settings__2fa__validation">
-        <input id="code" type="number" value={token} onChange={(e) => setToken(e.target.value)}></input>
+        <input
+          id="token"
+          maxLength={6}
+          type="number"
+          value={token}
+          onChange={handleTokenChange}
+        ></input>
         <button onClick={handleClick}>Validate</button>
       </div>
     </div>
