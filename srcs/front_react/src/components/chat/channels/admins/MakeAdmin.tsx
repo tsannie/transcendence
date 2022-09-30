@@ -3,7 +3,13 @@ import React, { useState } from 'react'
 import { api } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
-export default function MakeAdmin(props: any) {
+interface MakeAdminProps {
+  infosChannel: any;
+  getInfosChannel: (channel: IChannel) => void;
+  isAdmin: (channel: any, id: number) => boolean;
+}
+
+export default function MakeAdmin(props: MakeAdminProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );

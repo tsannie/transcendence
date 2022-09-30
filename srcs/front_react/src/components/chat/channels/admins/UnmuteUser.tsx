@@ -3,7 +3,12 @@ import React, { useState } from 'react'
 import { api } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
-export default function UnmuteUser(props: any) {
+interface UnmuteUserProps {
+  infosChannel: any;
+  getInfosChannel: (channel: IChannel) => void;
+}
+
+export default function UnmuteUser(props: UnmuteUserProps) {
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
