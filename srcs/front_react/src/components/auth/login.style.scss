@@ -15,6 +15,8 @@
     letter-spacing: 0.5em;
     text-shadow: 0 0 8px #fff;
     animation: bounce 2s ease infinite;
+    // call grow animation and bounce animation
+
   }
 
   @keyframes bounce {
@@ -24,6 +26,13 @@
   }
  }
 
+ .login__fall {
+    animation: fall 2s ease;
+    @keyframes fall {
+      0% {transform: translateY(-60vh);}
+      100% {transform: translateY(0%);}
+    }
+ }
 
 .loginBox {
   display: flex;
@@ -32,8 +41,15 @@
   padding: 1%;
   border-style: dashed;
   border-color: white;
+  //transform: scale(0);
   h2 {
     font-size: 2.5vw;
+  }
+  animation: grow 3s ease;
+  @keyframes grow {
+    0% { transform: scale(0); }
+    40% { transform: scale(0); }
+    100% { transform: scale(1); }
   }
 }
 
