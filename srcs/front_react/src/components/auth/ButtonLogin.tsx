@@ -11,12 +11,16 @@ export default function ButtonLogin(props: any) {
 
 
   return (
-    <div className='listConnection'>
-      <h2>Account Sign in</h2>
-      <button onClick={linkLog}>
-        <img src={FTLogo}/>
-        <p>Continue with 42</p>
-      </button>
+    <div className='login-list'>
+      <div className="login-list__title">
+        <h2>Account Sign in</h2>
+      </div>
+      <div className="login-list__content">
+        <button onClick={linkLog}>
+          <img src={FTLogo}/>
+          <p>Continue with 42</p>
+        </button>
+      </div>
     </div>
   );
 }
