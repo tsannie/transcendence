@@ -40,9 +40,9 @@ export default function ActivationProcess(props: any) {
 
   return (
     <div>
-      <h3>Scan the QR token with your authenticator app</h3>
+      <h2>Scan the QR token with your authenticator app</h2>
       <img src={`data:;base64,${qrCode}`}></img>
-      <h3>Enter the token from your app</h3>
+      <h2>Enter the token from your app</h2>
       <div className="settings__2fa__validation">
         <input id="code" type="number" value={token} onChange={(e) => setToken(e.target.value)}></input>
         <button onClick={handleClick}>Validate</button>

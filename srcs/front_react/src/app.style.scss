@@ -1,11 +1,11 @@
 $number_ball: 11;
 
 body {
+  --res: calc(0.01 * 10vmin);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   background-color: #14151A;
-  //box-sizing: border-box;
 }
 
 .app {
@@ -19,7 +19,7 @@ body {
     color: white !important;
     -webkit-user-drag: none;
     letter-spacing: 0.1em;
-    border-width: 0.3em;
+    border-width: calc(7 * var(--res)) !important;
   }
   button {
     padding: 2%;
@@ -48,8 +48,8 @@ body {
   position: absolute;
   left: -5%;
   top: -5%;
-  width: 2vw;
-  height: 2vw;
+  width: calc(20 * var(--res));
+  height: calc(20 * var(--res));
   margin: 5px;
   //background-color: blueviolet;
   animation: 20s linear infinite;
@@ -69,7 +69,7 @@ body {
         animation-name: ballAnimationRight#{$i};
       }
       animation-duration: random(10000) + 6000ms;
-      animation-delay: random(6000) + 100ms; // less than max duration
+      animation-delay: random(6000) + 100ms;
     }
     @keyframes ballAnimationLeft#{$i} {
       $random: 1 + random(10) / 10; // TODO delete ?
