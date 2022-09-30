@@ -33,9 +33,9 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
 
-  // function to know if userId is owner of channel
-  function isOwner(channel: any) {
-    if (channel.owner.id === props.userId) {
+  // function to know if userId is owner of channel with id maybe undefined
+  function isOwner(id: number) {
+    if (id === props.userId) {
       return true;
     }
     return false;
@@ -164,7 +164,7 @@ export default function ChannelsList(props: ChannelsListProps) {
             >
               Leave
             </Button>
-            {isOwner(channelData) && (
+            {isOwner(channelData.owner.id) && (
               <Button
                 sx={{
                   color: "red",

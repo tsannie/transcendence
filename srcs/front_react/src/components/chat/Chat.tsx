@@ -27,11 +27,10 @@ interface ChatProps {
 export default function Chat(props: ChatProps) {
   const [author, setAuthor] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
-  const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
+  const [messagesList, setMessagesList] = useState<IMessage[]>([]);
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [userId, setUserId] = useState(0);
-  const [openConv, setOpenConv] = useState(false);
-  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+  const [channelsList, setChannelsList] = useState<IChannel[]>([]);
 
   const [enumState, setEnumState] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
@@ -94,7 +93,6 @@ export default function Chat(props: ChatProps) {
           <DmList
             //socket={socket}
             isNewMessage={isNewMessage}
-            setOpenConv={setOpenConv}
             setEnumState={setEnumState}
             getAllUsers={props.getAllUsers}
             users={props.users}

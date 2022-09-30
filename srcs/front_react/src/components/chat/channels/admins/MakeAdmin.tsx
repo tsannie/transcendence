@@ -1,12 +1,12 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../../userlist/UserList';
+import { api, IUser } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
 interface MakeAdminProps {
-  infosChannel: any;
+  infosChannel: IChannel;
   getInfosChannel: (channel: IChannel) => void;
-  isAdmin: (channel: any, id: number) => boolean;
+  isAdmin: (channel: IChannel, id: number) => boolean;
 }
 
 export default function MakeAdmin(props: MakeAdminProps) {
@@ -37,7 +37,7 @@ export default function MakeAdmin(props: MakeAdminProps) {
     return newChannel;
   }
 
-  async function makeAdmin(user: any, channel: IChannel) {
+  async function makeAdmin(user: IUser, channel: IChannel) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
@@ -79,10 +79,8 @@ export default function MakeAdmin(props: MakeAdminProps) {
         }}
       >
         {open === true && (
-          <List
-            key={props.infosChannel.users.id}
-          >
-            {props.infosChannel.users.map((user: any) => (
+          <List>
+            {props.infosChannel.users.map((user: IUser) => (
               <ListItemButton onClick={() => makeAdmin(user, props.infosChannel)}>
                 {(!props.isAdmin(props.infosChannel, user.id)) ? user.username : <></>}
               </ListItemButton>
