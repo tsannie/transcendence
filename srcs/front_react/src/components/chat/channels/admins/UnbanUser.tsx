@@ -1,9 +1,14 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../../userlist/UserList';
+import { api, IUser } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
-export default function UnbanUser(props: any) {
+interface UnbanUserProps {
+  infosChannel: any;
+  getInfosChannel: (channel: IChannel) => void;
+}
+
+export default function UnbanUser(props: UnbanUserProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -31,7 +36,7 @@ export default function UnbanUser(props: any) {
     return newChannel;
   }
 
-  async function unbanUser(user: any, channel: IChannel) {
+  async function unbanUser(user: IUser, channel: IChannel) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
@@ -76,7 +81,7 @@ export default function UnbanUser(props: any) {
           <List
             key={props.infosChannel.banned.id}
           >
-            {props.infosChannel.banned.map((user: any) => (
+            {props.infosChannel.banned.map((user: IUser) => (
               <ListItemButton onClick={() => unbanUser(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>

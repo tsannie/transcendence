@@ -3,7 +3,12 @@ import { Box } from "@mui/system";
 import React, { useState } from "react";
 import Paperplane from "../../../assets/paperplane.png";
 
-export default function PromptMessage(props: any) {
+interface PromptMessageProps {
+  setCurrentMessage: (message: string) => void;
+  sendMessage: () => void;
+}
+
+export default function PromptMessage(props: PromptMessageProps) {
   return (
     <Box
       sx={{

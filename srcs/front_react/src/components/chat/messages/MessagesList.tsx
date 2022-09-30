@@ -2,7 +2,12 @@ import { Box } from "@mui/system";
 import React from "react";
 import { IMessage } from "../types";
 
-export default function MessagesList(props: any) {
+interface MessagesListProps {
+  messagesList: IMessage[];
+  author: string;
+}
+
+export default function MessagesList(props: MessagesListProps) {
   return (
     <Box
       sx={{
