@@ -37,14 +37,55 @@ export default function Game() {
   const [Specthegame, setSpecthegame] = useState(false);
   const [Room_name_spec, setRoom_name_spec] = useState("");
 
+
+  //# REACT GAME
+
+  //## Testing
+  
+  
+  //1. Open two browser and go to http://localhost:3000/  then press joystick logo to see the game menu !
+ //now you can create a Room by id or join a queue with the button `[FAST GAME]`.
+  //Then the other browser can join the room by id if created or join the queue with the same button.
+  
+ //2. When the two players are in the same room they both need to be ready to start the game by pressing the button `[READY ?]`
+  //Or they can leave the room by pressing the button `[LEAVE ROOM]`
+  
+  //3. When the game start you can move your paddle with the mouse.
+  //The first player to reach 10 points win the game.
+  
+  //4. when the game is over or during the game you can press the button `[LEAVE ROOM]` to leave the room
+  
+ // ## In this pull request :
+  
+ // The whole playable game with two different players in `srcs/front_react/src/game/gameReact/`
+  
+ // The creation of the game room for Fast game or Create/Join game in specific rooms in
+ // `srcs/front_react/src/game/component/`
+  
+ // Queue system for the game,
+  //the whole connection and messages emitted between the back and the front for collecting the data of the game in front and send it to the back for the other player.
+  //everything is detailed for the back in this file `srcs/back_nestjs/src/game/game.gateway.ts`
+  
+ // ## Paths
+  
+ // http://localhost:3000/  
+ // joystick logo to see the game menu !
+  
+  //http://localhost:4000/game   display the database of all the rooms.
+  //http://localhost:4000/game/del   delete the whole database.
+
+
+
+
+
   // useEffect reinint the game when the player leave the room or the game is over or the player give up
 
   function reinit_game(){
-    player_left.name = "empty";
+    player_left.name = "null";
     player_left.score = 0;
     player_left.won = false;
 
-    player_right.name = "empty";
+    player_right.name = "null";
     player_right.score = 0;
     player_right.won = false;
 
@@ -71,10 +112,7 @@ export default function Game() {
       setop_id("");
       reinit_game();
     });
-
     setisFull("");
-    setmy_id(socket.id);
-
     socket.on("roomFull", (theroom: any) => {
       setisFull("This ROOM IS FULL MATE");
     });

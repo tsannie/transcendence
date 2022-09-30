@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { socket } from "../Game";
 import {
   BallMouv,
@@ -8,12 +8,12 @@ import {
   PaddleMouv_right,
   draw_line,
   draw_score,
+  draw_giveup,
 } from "./BallMouv";
 
 import { GamePlayer_left } from "./GamePlayerLeft";
 import { GamePlayer_right } from "./GamePlayerRight";
 import { ballObj, paddleProps_left, paddleProps_right, player_left, player_right } from "../Game";
-
 
 export function GamePlayer_Left_right(props: any) {
   let u = 0;
@@ -64,11 +64,11 @@ export function GamePlayer_Left_right(props: any) {
     });
   }, [socket]);
 
-  function sinc_ball(room_name: string, objball: any) {
+  function sinc_ball(room_name: string, ballObj: any) {
     if (player_left.won === false && player_right.won === false) {
       var data = {
         room: room_name,
-        ball: objball,
+        ball: ballObj,
       };
       socket.emit("sincBall", data);
     }
@@ -96,85 +96,57 @@ export function GamePlayer_Left_right(props: any) {
 
   let requestAnimationFrameId: any;
   useEffect(() => {
-    sinc_player_left(props.room, player_left);
-    sinc_player_right(props.room, player_right);
-    sinc_ball(props.room, ballObj);
-    const render = () => {
-      requestAnimationFrameId = requestAnimationFrame(render);
-      let canvas: any = props.canvasRef.current;
-      var ctx = null;
-      if (canvas)
-          ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (player_left.won === false && player_right.won === false) {
-          draw_line(ctx, ballObj, canvas.height, canvas.width);
-          draw_score(
-            ctx,
-            player_left,
-            player_right,
-            canvas.height,
-            canvas.width
-          );
-          BallMouv(ctx, ballObj, canvas.height, canvas.width);
-          BallCol_left(
-            ctx,
-            player_right,
-            ballObj,
-            paddleProps_left,
-            canvas.height,
-            canvas.width
-          );
+      const render = () => {
+        requestAnimationFrameId = requestAnimationFrame(render);
+        let canvas: any = props.canvasRef.current;
+        var ctx = null;
+        if (canvas)
+        ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          if (player_left.won === false && player_right.won === false) {
+            draw_line(ctx, ballObj, canvas.height, canvas.width);
+            draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
+            BallMouv(ctx, ballObj, canvas.height, canvas.width);
+            BallCol_left(ctx, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
             if (ballObj.is_col === true)
               u = 1;
-          BallCol_right(
-            ctx,
-            player_left,
-            ballObj,
-            paddleProps_right,
-            canvas.height,
-            canvas.width
-          );
+            BallCol_right(ctx, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
             if (ballObj.is_col === true || ballObj.init_ball_pos === false)
               u = 1;
             if (u > 0)
               u++;
-          if (u === 6) {
-            sinc_ball(props.room, ballObj);
+            if (u === 6){
+              if (props.im_right === true && ballObj.cal_right === true)
+                sinc_ball(props.room, ballObj);
+              else if (props.im_right === false && ballObj.cal_right === false)
+                sinc_ball(props.room, ballObj);
+
+              sinc_player_left(props.room, player_left);
+              sinc_player_right(props.room, player_right);
+              u = 0;
+            }
+            PaddleMouv_left(ctx, canvas, paddleProps_left);
+            PaddleMouv_right(ctx, canvas, paddleProps_right);
+        } else {
             sinc_player_left(props.room, player_left);
             sinc_player_right(props.room, player_right);
-            u = 0;
+            props.setimready(false);
+            props.setopready(false);
+            draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
+            cancelAnimationFrame(requestAnimationFrameId);
           }
-          PaddleMouv_left(ctx, canvas, paddleProps_left);
-          PaddleMouv_right(ctx, canvas, paddleProps_right);
-        } else {
-          sinc_player_left(props.room, player_left);
-          sinc_player_right(props.room, player_right);
-          draw_score(
-            ctx,
-            player_left,
-            player_right,
-            canvas.height,
-            canvas.width
-          );
-          cancelAnimationFrame(requestAnimationFrameId);
         }
-      }
-    };
-    render();
+      };
+      render();
   }, [props.canvasRef]);
 
   function deleteGameRoom_ingame() {
-    console.log("player_left.won ", player_left.won);
-    console.log("player_right.won ", player_right.won);
-    props.setRoom("");
-    if (player_left.won == true || player_right.won == true) {
-      console.log("end_of_game");
+    if (player_left.won === true || player_right.won === true)
       socket.emit("end_of_the_game", props.room);
-    } else {
-      console.log("player_give_up");
+    else
       socket.emit("player_give_up", props.room);
-    }
+    props.setRoom("");
   }
   ////////////////////////////////////////////////////
 
