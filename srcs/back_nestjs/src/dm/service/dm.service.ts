@@ -53,8 +53,45 @@ export class DmService {
 
 
 	// get all conversations of a user
-	async getAllDms(user: UserEntity): Promise<DmEntity[]> {
-		return user.dms;
+	async getDmsList(user: UserEntity): Promise<DmEntity[]> {
+		let reloaded_datas = await this.userService.findOptions({
+			where: {
+				username: user.username
+			},
+			relations: {
+				dms:{
+					users: true,
+					messages: {
+						author: true,
+					},
+				}
+			},
+			select: {
+				dms: {
+					id: true,
+					users: {
+						id: true,
+						username: true,
+					},
+					messages: {
+						createdAt : true,
+						author: {
+							username: true
+						},
+						content: true,
+					}
+				}
+			},
+			order: {
+				dms:{
+					messages: {
+						createdAt: "ASC",
+					}
+				}
+			},
+
+		})
+		return reloaded_datas.dms;
 	}
 	
 	/* 
