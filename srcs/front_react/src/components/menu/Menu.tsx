@@ -4,7 +4,7 @@ import Sidebar from "../sidebar/Sidebar";
 import './menu.style.scss';
 
 export default function Menu() {
-  const [selected, setSelected] = useState('home');
+  const [selected, setSelected] = useState('');
 
   return (
     <div className="menu">

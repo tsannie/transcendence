@@ -22,9 +22,16 @@
     width: calc(220 * var(--res));
     filter: invert(100%);
   }
-
   h2 {
-    margin-top: 3vh;
+    margin-bottom: 0;
+    margin-top: 2vh;
+  }
+  p {
+    margin-bottom: 0vh;
+    margin-top: 0.6vh;
+  }
+  button, input {
+    margin-top: 1.5vh;
   }
 }
 
@@ -36,4 +43,10 @@
 
 .settings__2fa__validation {
   display: flex;
+  button {
+    margin-left: 2vw;
+  }
+  input {
+    text-align: center;
+  }
 }
