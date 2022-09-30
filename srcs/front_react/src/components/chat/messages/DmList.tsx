@@ -9,12 +9,21 @@ import React, { useEffect, useState } from "react";
 import { IDm, IMessage } from "../types";
 import AddIcon from "@mui/icons-material/Add";
 import ChatUserlist from "../ChatUserlist";
+import { ChatContent } from "../Chat";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
 // en gros pour que ca affiche la conv de mec que ta cliquer et toi
 
-export default function DmList(props: any) {
+interface DmListProps {
+  isNewMessage: boolean;
+  setOpenConv: (conv: boolean) => void;
+  setEnumState: (enumState: ChatContent) => void;
+  getAllUsers: Promise<any[]>
+  users: any[]
+}
+
+export default function DmList(props: DmListProps) {
   const [dms, setDms] = useState<Array<IDm>>([]);
   const [newDm, setNewDm] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -22,6 +31,7 @@ export default function DmList(props: any) {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
     setNewDm(true);
+    props.setEnumState(ChatContent.NEW_DM);
   }
 
   function handleClose() {
@@ -45,15 +55,6 @@ export default function DmList(props: any) {
       <IconButton onClick={handleClick}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-     {/*  {newDm && (
-        <Popover open={newDm} anchorEl={anchorEl} onClose={handleClose}>
-          <ChatUserlist
-            setOpenConv={props.setOpenConv}
-            getAllUsers={props.getAllUsers}
-            users={props.users}
-          />
-        </Popover>
-      )} */}
     </Box>
   );
 }

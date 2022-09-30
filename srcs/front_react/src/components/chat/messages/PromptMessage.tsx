@@ -10,7 +10,7 @@ export default function PromptMessage(props: any) {
         width: "fit-content",
         mx: "auto",
         position: "fixed",
-        bottom: "0",
+        //bottom: "0",
         // mettre en bas
       }}
     >
