@@ -2,7 +2,7 @@ import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { REDIRECT_LINK_AUTH } from "../const";
 
-export default function ButtonLogin(props: any) {
+export default function ButtonLogin() {
   function linkLog() {
     window.location.href = REDIRECT_LINK_AUTH;
   }

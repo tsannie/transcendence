@@ -3,8 +3,16 @@ import React from "react";
 import MessagesList from "./MessagesList";
 import PromptMessage from "./PromptMessage";
 import AddIcon from "@mui/icons-material/Add";
+import { IMessage } from "../types";
 
-export default function Conv(props: any) {
+interface ConvProps {
+  messagesList: IMessage[];
+  author: string;
+  setCurrentMessage: (message: string) => void;
+  sendMessage: () => void;
+}
+
+export default function Conv(props: ConvProps) {
   /* function newConv() {
     props.setOpenConv(true);
     props.setIsNewMessage(true);
@@ -15,7 +23,6 @@ export default function Conv(props: any) {
       <MessagesList messagesList={props.messagesList} author={props.author} />
       <PromptMessage
         setCurrentMessage={props.setCurrentMessage}
-        currentMessage={props.currentMessage}
         sendMessage={props.sendMessage}
       />
     </Box>

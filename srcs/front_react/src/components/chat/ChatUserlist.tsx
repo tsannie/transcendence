@@ -9,7 +9,7 @@ import { IChannel, IDm } from "./types";
 interface ChatUserListProps {
   setEnumState: (enumState: ChatContent) => void;
   users: any[]
-  getAllUsers: Promise<any[]>
+  getAllUsers: () => Promise<void>;
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
