@@ -16,7 +16,11 @@ import { api } from "../../../userlist/UserList";
 //import ChannelsList from "./ChannelsList";
 import { COOKIE_NAME } from "../../../const";
 
-export default function FormChannel(props: any) {
+interface FormChannelProps {
+  setChannelsList: (channelsList: IChannel[]) => void;
+}
+
+export default function FormChannel(props: FormChannelProps) {
   const [username, setUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
@@ -31,6 +35,9 @@ export default function FormChannel(props: any) {
         res.data.forEach((channel: IChannel) => {
           if (channel.name === name) {
             isTaken = true;
+          }
+          else {
+            props.setChannelsList(res.data);
           }
         });
       })
