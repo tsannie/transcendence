@@ -12,37 +12,16 @@
   line-height: 0px;
 
   h1 {
-    font-size: 4vw;
+    font-size: calc(55 * var(--res));
     letter-spacing: 0.3em;
   }
   h2 {
-    font-size: 2vw;
-  }
-  h3 {
-    font-size: 1.5vw;
+    font-size: calc(35 * var(--res));
   }
   p {
-    font-size: 1.2vw;
+    font-size: calc(20 * var(--res));
   }
   button, input {
-    font-size: 1vw
-  }
-
-  @media screen and (max-width: 600px) {
-    h1 {
-      font-size: 8vw;
-    }
-    h2 {
-      font-size: 4vw;
-    }
-    h3 {
-      font-size: 3vw;
-    }
-    p {
-      font-size: 2vw;
-    }
-    button, input {
-      font-size: 2vw
-    }
+    font-size: calc(20 * var(--res));
   }
 }

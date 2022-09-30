@@ -1,7 +1,6 @@
 .settings {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   border-style: dashed;
   padding: 2%;
 
@@ -20,8 +19,7 @@
   }
 
   img {
-    width: 40%;
-    max-width: 200px;
+    width: calc(220 * var(--res));
     filter: invert(100%);
   }
 

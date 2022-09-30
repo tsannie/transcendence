@@ -10,13 +10,11 @@
   align-items: center;
   justify-content: center;
   h1 {
-    margin-bottom: 20%;
-    font-size: 5vw;
+    margin-bottom: 20vh;
+    font-size: calc(65 * var(--res));
     letter-spacing: 0.5em;
-    text-shadow: 0 0 8px #fff;
+    text-shadow: 0 0 8px #fff;    // TODO const
     animation: bounce 2s ease infinite;
-    // call grow animation and bounce animation
-
   }
 
   @keyframes bounce {
@@ -40,10 +38,10 @@
   overflow: hidden;
   padding: 1%;
   border-style: dashed;
-  border-color: white;
+  border-color: white; // TODO const color
   //transform: scale(0);
   h2 {
-    font-size: 2.5vw;
+    font-size: calc(40 * var(--res));
   }
   animation: grow 3s ease;
   @keyframes grow {
@@ -54,11 +52,27 @@
 }
 
 
-.listConnection {
+.login-list {
   display: flex;
   flex-direction: column;
   align-items: center;
   //background-color: aqua;
+}
+
+.login-list__title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1vh;
+  font-size: calc(30 * var(--res));
+  h2 {
+    margin-top: calc(10 * var(--res));;
+    margin-bottom: calc(20 * var(--res));;
+  }
+}
+
+.login-list__content {
+  display: flex;
+  //background-color: aquamarine;
   button {
     display: flex;
     justify-content: center;
@@ -66,10 +80,11 @@
   }
   p {
     margin-left: 1vw;
-    font-size: 1.5vw;
+    font-size: calc(25 * var(--res));
+    white-space: nowrap;
   }
   img {
-    width: 20%;
+    width: calc(70 * var(--res));
     max-width: 70px;
     height: auto;
     fill: white;  // TODO edit color for 42 color
