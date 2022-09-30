@@ -69,10 +69,12 @@ export function GameSpectator(props: any) {
     socket.on("setDataPlayerLeft_spec", (theroom: any) => {
       player_left.score = theroom.set.set_p1.score;
       player_left.won = theroom.set.set_p1.won;
+      player_left.name = theroom.set.set_p1.name;
     });
     socket.on("setDataPlayerRight_spec", (theroom: any) => {
       player_right.score = theroom.set.set_p2.score;
       player_right.won = theroom.set.set_p2.won;
+      player_right.name = theroom.set.set_p2.name;
     });
     socket.on("startGame_spec", (theroom: any) => {
       setp1id(theroom.set.set_p1.name);
@@ -150,6 +152,16 @@ export function GameSpectator(props: any) {
     emit_to_get_room = true;
     props.setSpecthegame(false);
     props.setisLookingRoom(true);
+    player_left.name = "null";
+    player_left.score = 0;
+    player_left.won = false;
+
+    player_right.name = "null";
+    player_right.score = 0;
+    player_right.won = false;
+
+    ballObj.init_ball_pos = false;
+    ballObj.first_col = false;
     socket.emit("LeaveGameSpectator", ThisRoom);
   }
 

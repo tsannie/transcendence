@@ -27,6 +27,18 @@ export function draw_loading(
   ctx.fillText("Loading...", canvas_width / 2, canvas_height / 2);
 }
 
+export function draw_giveup(
+  ctx: any,
+  canvas_height: number,
+  canvas_width: number
+) {
+  ctx.beginPath();
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText("Opponent GAVE UP", canvas_width / 2, canvas_height / 2);
+}
+
 export function draw_score(
   ctx: any,
   player_left: any,
@@ -115,11 +127,11 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
-  } else if (player_right.score >= 2) {
+  } else if (player_right.score >= 3) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    player_right.won += 1;
+    player_right.won = true;
   } else if (
     ballObj.x - ballObj.rad - paddleProps.width - paddleProps.x <= 0 &&
     ballObj.y >= paddleProps.y &&
@@ -135,6 +147,7 @@ export function BallCol_left(
     ballObj.ingame_dx *= -1;
 
     ballObj.is_col = true;
+    ballObj.cal_right = false;
   } else
     ballObj.is_col = false;
 }
@@ -151,11 +164,11 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
-  } else if (player_left.score >= 2) {
+  } else if (player_left.score >= 3) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    player_left.won += 1;
+    player_left.won = true;
   } else if (
     ballObj.x +
       ballObj.rad +
@@ -173,6 +186,8 @@ export function BallCol_right(
     ballObj.ingame_dy = -res;
     ballObj.ingame_dx *= -1;
     ballObj.is_col = true;
+    ballObj.cal_right = true;
+
   } else
     ballObj.is_col = false;
 }

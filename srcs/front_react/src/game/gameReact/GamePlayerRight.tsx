@@ -1,5 +1,4 @@
-import { Button, Grid } from "@mui/material";
-import { Box } from "@mui/system";
+import { Button, Grid, Box } from "@mui/material";
 import { socket } from "../Game";
 import { paddleProps_right } from "../Game";
 
@@ -14,7 +13,6 @@ export function GamePlayer_right(props: any) {
         room: props.room,
         pd: paddleProps_right,
       };
-      console.log("paddlemouvRight");
       socket.emit("paddleMouvRight", data);
     }
   }
