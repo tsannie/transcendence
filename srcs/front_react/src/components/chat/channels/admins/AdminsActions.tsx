@@ -1,5 +1,5 @@
 import { Button, List, ListItem, Popover } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api } from "../../../../userlist/UserList";
 import { IChannel } from "../../types";
 import BanUser from "./BanUser";
@@ -13,11 +13,11 @@ interface AdminsActionsProps {
   channelData: IChannel;
   userId: number;
   getChannels: () => void;
-  isOwner: (channel: any) => boolean;
+  isOwner: (id: number) => boolean;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
-  const [infosChannel, setInfosChannel] = useState({});
+  const [infosChannel, setInfosChannel] = useState<IChannel>(props.channelData);
 
   // handleAdminActionsClick function to open popover
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -35,7 +35,8 @@ export default function AdminsActions(props: AdminsActionsProps) {
   }
 
   // create a function isAdmin to check if the user is admin
-  function isAdmin(channel: any, id: number) {
+  function isAdmin(channel: IChannel, id: number) {
+    console.log(channel);
     if (channel !== undefined) {
       for (let i = 0; i < channel.admins.length; i++) {
         if (channel.admins[i].id === id) {
@@ -47,6 +48,7 @@ export default function AdminsActions(props: AdminsActionsProps) {
   }
 
   async function getInfosChannel(channel: IChannel) {
+    console.log(channel);
     await api
       .get("channel/privateData", {
         params: {
@@ -55,8 +57,8 @@ export default function AdminsActions(props: AdminsActionsProps) {
       })
       .then((res) => {
         console.log("get infos channels");
+        console.log(res.data);
         setInfosChannel(res.data);
-        //console.log(res.data);
         //setChannelId(res.data.id);
       })
       .catch((res) => {
@@ -64,56 +66,76 @@ export default function AdminsActions(props: AdminsActionsProps) {
       });
   }
 
+  /* useEffect(() => {
+    getInfosChannel(props.channelData);
+  }, []); */
+
   return (
     <>
-      {isAdmin(infosChannel, props.userId) || props.isOwner(props.channelData) ? (
-        <div>
-          <Button
-            //aria-describedby={id}
-            //variant="contained"
-            onClick={handleClick}
-          >
-            Admin Actions
-          </Button>
-          <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "center",
-            }}
-          >
-            <List>
-              <ListItem>
-                <BanUser infosChannel={infosChannel} getInfosChannel={getInfosChannel}/>
-              </ListItem>
-              <ListItem>
-                <UnbanUser infosChannel={infosChannel} getInfosChannel={getInfosChannel} />
-              </ListItem>
-              <ListItem>
-                <MuteUser infosChannel={infosChannel} getInfosChannel={getInfosChannel} userId={props.userId} />
-              </ListItem>
-              <ListItem>
-                <UnmuteUser infosChannel={infosChannel} getInfosChannel={getInfosChannel} />
-              </ListItem>
-              <ListItem>
-                <MakeAdmin infosChannel={infosChannel} getInfosChannel={getInfosChannel} isAdmin={isAdmin} />
-              </ListItem>
-              <ListItem>
-                <RevokeAdmin infosChannel={infosChannel} getInfosChannel={getInfosChannel}/>
-              </ListItem>
-            </List>
-          </Popover>
-        </div>
-      ) : (
-        <></>
-      )}
+      <div>
+        <Button
+          //aria-describedby={id}
+          //variant="contained"
+          onClick={handleClick}
+        >
+          Admin Actions
+        </Button>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <List>
+            <ListItem>
+              <BanUser
+                infosChannel={infosChannel}
+                getInfosChannel={getInfosChannel}
+              />
+            </ListItem>
+            <ListItem>
+              <UnbanUser
+                infosChannel={infosChannel}
+                getInfosChannel={getInfosChannel}
+              />
+            </ListItem>
+            <ListItem>
+              <MuteUser
+                infosChannel={infosChannel}
+                getInfosChannel={getInfosChannel}
+                userId={props.userId}
+              />
+            </ListItem>
+            <ListItem>
+              <UnmuteUser
+                infosChannel={infosChannel}
+                getInfosChannel={getInfosChannel}
+              />
+            </ListItem>
+            <ListItem>
+              <MakeAdmin
+                infosChannel={infosChannel}
+                getInfosChannel={getInfosChannel}
+                isAdmin={isAdmin}
+              />
+            </ListItem>
+            <ListItem>
+              <RevokeAdmin
+                infosChannel={infosChannel}
+                getInfosChannel={getInfosChannel}
+              />
+            </ListItem>
+          </List>
+        </Popover>
+      </div>
     </>
   );
 }

@@ -10,6 +10,7 @@ import { IDm, IMessage } from "../types";
 import AddIcon from "@mui/icons-material/Add";
 import ChatUserlist from "../ChatUserlist";
 import { ChatContent } from "../Chat";
+import { IUser } from "../../../userlist/UserList";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
@@ -17,14 +18,13 @@ import { ChatContent } from "../Chat";
 
 interface DmListProps {
   isNewMessage: boolean;
-  setOpenConv: (conv: boolean) => void;
   setEnumState: (enumState: ChatContent) => void;
   getAllUsers: () => Promise<void>;
-  users: any[]
+  users: IUser[]
 }
 
 export default function DmList(props: DmListProps) {
-  const [dms, setDms] = useState<Array<IDm>>([]);
+  const [dms, setDms] = useState<IDm[]>([]);
   const [newDm, setNewDm] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 

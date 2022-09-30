@@ -4,7 +4,7 @@ import { api, IUser } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
 interface UnbanUserProps {
-  infosChannel: any;
+  infosChannel: IChannel;
   getInfosChannel: (channel: IChannel) => void;
 }
 
@@ -78,9 +78,7 @@ export default function UnbanUser(props: UnbanUserProps) {
         }}
       >
         {open === true && (
-          <List
-            key={props.infosChannel.banned.id}
-          >
+          <List>
             {props.infosChannel.banned.map((user: IUser) => (
               <ListItemButton onClick={() => unbanUser(user, props.infosChannel)}>
                 {user.username}

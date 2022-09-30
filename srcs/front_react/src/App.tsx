@@ -14,7 +14,7 @@ import { COOKIE_NAME } from "./const";
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-  const [users, setUsers] = React.useState<Array<IUser>>([]);
+  const [users, setUsers] = React.useState<IUser[]>([]);
 
   async function getAllUsers() {
     await api

@@ -1,10 +1,10 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../../userlist/UserList';
+import { api, IUser } from '../../../../userlist/UserList';
 import { IChannel, IChannelActions } from '../../types';
 
 interface BanUserProps {
-  infosChannel: any;
+  infosChannel: IChannel;
   getInfosChannel: (channel: IChannel) => void;
 }
 
@@ -36,7 +36,7 @@ export default function BanUser(props: BanUserProps) {
     return newChannel;
   }
 
-  async function banUser(user: any, channel: IChannel) {
+  async function banUser(user: IUser, channel: IChannel) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
@@ -78,10 +78,8 @@ export default function BanUser(props: BanUserProps) {
         }}
       >
         {open && (
-          <List
-            key={props.infosChannel.users.id}
-          >
-            {props.infosChannel.users.map((user: any) => (
+          <List>
+            {props.infosChannel.users.map((user: IUser) => (
               <ListItemButton onClick={() => banUser(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>
