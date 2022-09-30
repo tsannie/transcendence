@@ -12,9 +12,9 @@ export class DmController {
  
 	// get all conversations of a user
 	@UseGuards( AuthGuard('jwt') )
-	@Get('getAllDms')
-	async getAllDms(@Request() req): Promise<void | DmEntity[]> {
-		return await this.dmService.getAllDms(req.user);
+	@Get('list')
+	async getDmsList(@Request() req): Promise<DmEntity[]> {
+		return await this.dmService.getDmsList(req.user);
 	}
 
 	@UseGuards( AuthGuard('jwt') )
