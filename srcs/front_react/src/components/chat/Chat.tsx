@@ -13,7 +13,7 @@ import DmList from "./messages/DmList";
 import Conv from "./messages/Conv";
 import FormChannel from "./channels/FormChannel";
 
-enum ChatContent {
+export enum ChatContent {
   NEW_CHANNELS,
   NEW_DM,
   MESSAGES,
@@ -26,8 +26,11 @@ export default function Chat(props: any) {
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [userId, setUserId] = useState(0);
   const [openConv, setOpenConv] = useState(false);
+  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
 
-  const [enumState, setEnumState] = useState<ChatContent>(ChatContent.NEW_CHANNELS);
+  const [enumState, setEnumState] = useState<ChatContent>(
+    ChatContent.NEW_CHANNELS
+  );
   // enum with 3 strings differentes
 
   //const socket = io("http://localhost:4000", {});
@@ -87,16 +90,21 @@ export default function Chat(props: any) {
             //socket={socket}
             isNewMessage={isNewMessage}
             setOpenConv={setOpenConv}
+            setEnumState={setEnumState}
             getAllUsers={props.getAllUsers}
             users={props.users}
           />
         </Grid>
         <Grid item>
-          <Channels />
+          <Channels
+            channelsList={channelsList}
+            setChannelsList={setChannelsList}
+            setEnumState={setEnumState}
+          />
         </Grid>
       </Grid>
       <Grid item xs={8}>
-        {enumState === ChatContent.NEW_DM && (
+        {enumState === ChatContent.MESSAGES && (
           <Conv
             openConv={openConv}
             messagesList={messagesList}
@@ -106,12 +114,12 @@ export default function Chat(props: any) {
           />
         )}
         {enumState === ChatContent.NEW_CHANNELS && (
-          <FormChannel />
+          <FormChannel setChannelsList={setChannelsList} />
         )}
 
-        {enumState === ChatContent.MESSAGES && (
+        {enumState === ChatContent.NEW_DM && (
           <ChatUserlist
-            setOpenConv={setOpenConv}
+            setEnumState={setEnumState}
             getAllUsers={props.getAllUsers}
             users={props.users}
           />

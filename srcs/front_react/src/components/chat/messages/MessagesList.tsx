@@ -7,6 +7,7 @@ export default function MessagesList(props: any) {
     <Box
       sx={{
         border: "1px solid black",
+        x: 20,
       }}
     >
       <>

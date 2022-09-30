@@ -3,21 +3,21 @@ import { Box } from "@mui/system";
 import React, { FC, useState } from "react";
 import UserList, { api } from "../../userlist/UserList";
 import { IUser } from "../../userlist/UserList";
+import { ChatContent } from "./Chat";
 import { IChannel, IDm } from "./types";
 
 interface ChatUserListProps {
-  setOpenConv: (conv: boolean) => void;
+  setEnumState: (enumState: ChatContent) => void;
   users: any[]
   getAllUsers: Promise<any[]>
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-  const [targetUsername, setTargetUsername] = useState("");
   // create enum with 3 strings differentes
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
-    setTargetUsername(event.currentTarget.innerHTML);
+    handleNewMessage(event.currentTarget.innerHTML);
   };
 
   async function createDm(targetUsername: IDm) {
@@ -33,14 +33,15 @@ export default function ChatUserlist(props: ChatUserListProps) {
       });
   }
 
-  async function handleNewMessage() {
+  function handleNewMessage(targetUsername: string) {
     let newDm: IDm = {
       target: targetUsername,
     };
 
+    console.log(newDm);
     console.log('handle new message');
-    await createDm(newDm);
-    props.setOpenConv(true);
+    createDm(newDm);
+    props.setEnumState(ChatContent.MESSAGES);
     //props.setIsNewMessage(true);
   }
 
@@ -55,7 +56,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
       >
         Users
       </Typography>
-      <UserList handleClick={handleNewMessage} users={props.users} getAllUsers={props.getAllUsers}/>
+      <UserList handleClick={handleClick} users={props.users} getAllUsers={props.getAllUsers}/>
     </>
   );
 }
