@@ -19,7 +19,12 @@ export enum ChatContent {
   MESSAGES,
 }
 
-export default function Chat(props: any) {
+interface ChatProps {
+  getAllUsers: () => Promise<void>;
+  users: IUser[];
+}
+
+export default function Chat(props: ChatProps) {
   const [author, setAuthor] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
@@ -106,7 +111,6 @@ export default function Chat(props: any) {
       <Grid item xs={8}>
         {enumState === ChatContent.MESSAGES && (
           <Conv
-            openConv={openConv}
             messagesList={messagesList}
             author={author}
             setCurrentMessage={setCurrentMessage}

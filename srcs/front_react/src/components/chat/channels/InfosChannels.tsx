@@ -3,7 +3,12 @@ import React, { useState } from "react";
 import { api } from "../../../userlist/UserList";
 import { IChannel } from "../types";
 
-export default function InfosChannels(props: any) {
+interface InfosChannelsProps {
+  channelData: IChannel;
+  userId: number;
+}
+
+export default function InfosChannels(props: InfosChannelsProps) {
   const [infosChannel, setInfosChannel] = useState({});
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null

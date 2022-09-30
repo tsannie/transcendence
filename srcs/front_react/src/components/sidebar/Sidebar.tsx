@@ -18,7 +18,12 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import MessageIcon from '@mui/icons-material/Message';
 //import {ReactComponent as LogoIcon} from "../../assets/logo.svg";
 
-export default function Sidebar(props: any) {
+interface SidebarProps {
+  setIsLogin: (isLogin: boolean) => void;
+  setInputChat: (inputChat: boolean) => void;
+}
+
+export default function Sidebar(props: SidebarProps) {
   //const [displayGame, setDisplayGame] = useState(false);
   //const [displaySettings, setDisplaySettings] = useState(false);
   // chat icon color: #610D7E

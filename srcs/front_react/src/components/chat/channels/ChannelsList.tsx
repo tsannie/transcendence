@@ -23,7 +23,13 @@ import AdminsActions from "./admins/AdminsActions";
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
-export default function ChannelsList(props: any) {
+interface ChannelsListProps {
+  channelsList: IChannel[];
+  userId: number
+  getChannels: () => void
+}
+
+export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
 
