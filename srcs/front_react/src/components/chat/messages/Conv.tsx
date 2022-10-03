@@ -7,7 +7,7 @@ import { IMessage } from "../types";
 
 interface ConvProps {
   messagesList: IMessage[];
-  author: string;
+  username: string;
   setCurrentMessage: (message: string) => void;
   sendMessage: () => void;
 }
@@ -20,7 +20,7 @@ export default function Conv(props: ConvProps) {
  */
   return (
     <Box sx={{ border: "1px solid green", minHeight: 300 }}>
-      <MessagesList messagesList={props.messagesList} author={props.author} />
+      <MessagesList messagesList={props.messagesList} username={props.username} />
       <PromptMessage
         setCurrentMessage={props.setCurrentMessage}
         sendMessage={props.sendMessage}

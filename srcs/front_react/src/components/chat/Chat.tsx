@@ -1,6 +1,6 @@
 import { Box, Grid, Popover, Typography } from "@mui/material";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { IChannel, IMessage } from "./types";
 import MessagesList from "./messages/MessagesList";
@@ -12,6 +12,7 @@ import { COOKIE_NAME } from "../../const";
 import DmList from "./messages/DmList";
 import Conv from "./messages/Conv";
 import FormChannel from "./channels/FormChannel";
+import { SocketContext, SocketProvider } from "./SocketContext";
 
 export enum ChatContent {
   NEW_CHANNELS,
@@ -25,9 +26,10 @@ interface ChatProps {
 }
 
 export default function Chat(props: ChatProps) {
-  const [author, setAuthor] = useState("");
+  const [username, setUsername] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);
+  const [targetUsername, setTargetUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [userId, setUserId] = useState(0);
   const [channelsList, setChannelsList] = useState<IChannel[]>([]);
@@ -37,14 +39,14 @@ export default function Chat(props: ChatProps) {
   );
   // enum with 3 strings differentes
 
-  //const socket = io("http://localhost:4000", {});
+  const socket = useContext(SocketContext);
 
   async function getUser() {
     console.log("get user");
     await api
       .get("auth/profile")
       .then((res) => {
-        setAuthor(res.data.username);
+        setUsername(res.data.username);
         setUserId(res.data.id);
       })
       .catch((res) => {
@@ -53,6 +55,7 @@ export default function Chat(props: ChatProps) {
   }
 
   function sendMessage() {
+    console.log("send message");
     const inputMessage = document.getElementById(
       "input-message"
     ) as HTMLInputElement;
@@ -60,14 +63,13 @@ export default function Chat(props: ChatProps) {
     inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: IMessage = {
-        author: author,
+        author: username,
         content: currentMessage,
-        time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
+        target: targetUsername,
       };
-      //socket.emit("message", messageData);
+      console.log(messageData);
+      console.log(socket);
+      socket.emit("message", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
     }
@@ -79,54 +81,58 @@ export default function Chat(props: ChatProps) {
   }, []);
 
   // listen message from backend
-  /* useEffect(() => {
+  useEffect(() => {
+    console.log("listen message");
     socket.on("message", (data) => {
       console.log(data);
       setMessagesList((list) => [...list, data]);
     });
-  }, [socket]); */
+  }, [socket]);
 
   return (
-    <Grid container>
-      <Grid item xs={4}>
-        <Grid item>
-          <DmList
-            //socket={socket}
-            isNewMessage={isNewMessage}
-            setEnumState={setEnumState}
-            getAllUsers={props.getAllUsers}
-            users={props.users}
-          />
+    <SocketProvider>
+      <Grid container>
+        <Grid item xs={4}>
+          <Grid item>
+            <DmList
+              isNewMessage={isNewMessage}
+              setEnumState={setEnumState}
+              getAllUsers={props.getAllUsers}
+              users={props.users}
+            />
+          </Grid>
+          <Grid item>
+            <Channels
+              channelsList={channelsList}
+              setChannelsList={setChannelsList}
+              setEnumState={setEnumState}
+            />
+          </Grid>
         </Grid>
-        <Grid item>
-          <Channels
-            channelsList={channelsList}
-            setChannelsList={setChannelsList}
-            setEnumState={setEnumState}
-          />
-        </Grid>
-      </Grid>
-      <Grid item xs={8}>
-        {enumState === ChatContent.MESSAGES && (
-          <Conv
-            messagesList={messagesList}
-            author={author}
-            setCurrentMessage={setCurrentMessage}
-            sendMessage={sendMessage}
-          />
-        )}
-        {enumState === ChatContent.NEW_CHANNELS && (
-          <FormChannel setChannelsList={setChannelsList} />
-        )}
+        <Grid item xs={8}>
+          {enumState === ChatContent.MESSAGES && (
+            <Conv
+              messagesList={messagesList}
+              username={username}
+              setCurrentMessage={setCurrentMessage}
+              sendMessage={sendMessage}
+            />
+          )}
+          {enumState === ChatContent.NEW_CHANNELS && (
+            <FormChannel setChannelsList={setChannelsList} />
+          )}
 
-        {enumState === ChatContent.NEW_DM && (
-          <ChatUserlist
-            setEnumState={setEnumState}
-            getAllUsers={props.getAllUsers}
-            users={props.users}
-          />
-        )}
+          {enumState === ChatContent.NEW_DM && (
+            <ChatUserlist
+              setMessagesList={setMessagesList}
+              setTargetUsername={setTargetUsername}
+              setEnumState={setEnumState}
+              getAllUsers={props.getAllUsers}
+              users={props.users}
+            />
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </SocketProvider>
   );
 }

@@ -5,12 +5,14 @@ import {
   Popover,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IDm, IMessage } from "../types";
 import AddIcon from "@mui/icons-material/Add";
 import ChatUserlist from "../ChatUserlist";
 import { ChatContent } from "../Chat";
 import { IUser } from "../../../userlist/UserList";
+import { Socket } from "socket.io-client";
+import { SocketContext } from "../SocketContext";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
@@ -27,6 +29,7 @@ export default function DmList(props: DmListProps) {
   const [dms, setDms] = useState<IDm[]>([]);
   const [newDm, setNewDm] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const socket = useContext(SocketContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
@@ -39,15 +42,15 @@ export default function DmList(props: DmListProps) {
     setNewDm(false);
   }
 
-  /* useEffect(() => {
-    props.socket.on("getDM", (data: any) => {
+  useEffect(() => {
+    socket.on("getDM", (data: any) => {
       console.log("getDM");
       console.log(data);
       setDms(data);
     });
     //getAllDms();
   }, [dms]);
- */
+
 
   return (
     <Box sx={{ border: "1px solid red" }}>
