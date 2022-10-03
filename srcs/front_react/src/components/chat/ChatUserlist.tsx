@@ -14,7 +14,7 @@ import { ChatContent } from "./Chat";
 import { IChannel, IDm, IMessage } from "./types";
 
 interface ChatUserListProps {
-  setMessagesList: (messagesList: IMessage[]) => void;
+  //setMessagesList: (messagesList: IMessage[]) => void;
   setTargetUsername: (targetUsername: string) => void;
   setEnumState: (enumState: ChatContent) => void;
   users: IUser[];
@@ -50,7 +50,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
               console.log("dm created with success");
               console.log(targetUsername);
               console.log(res.data);
-              props.setMessagesList(res.data.messages);
+              //props.setMessagesList(res.data.messages);
             })
             .catch((res) => {
               console.log("invalid create dm");
@@ -58,7 +58,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
             });
         }
         else {
-          props.setMessagesList(res.data.messages);
+          //props.setMessagesList(res.data.messages);
         }
       }
       )

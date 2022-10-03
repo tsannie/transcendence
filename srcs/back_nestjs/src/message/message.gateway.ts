@@ -64,6 +64,10 @@ export class MessageGateway
       this.messageService.addMessagetoChannel(data);
     }
 
+    // emit to all clients
+    this.server.emit('message', data);
+
+    // parcourir tous mes clients connectés et envoyer le message uniquement a l'id du target
     //this.server.to(client.id).emit('message', data);
   }
 
@@ -76,8 +80,6 @@ export class MessageGateway
     this.logger.log(`Client connected: ${client.id}`);
 
     let sockets = this.server.sockets;
-
-    console.log(sockets);
 
     //console.log(user);
     this.connectedClients.push(client);
