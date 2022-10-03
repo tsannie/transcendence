@@ -39,7 +39,7 @@ export default function Settings() {
     <div className="settings">
       {/* Display profile information */}
       <div className="settings__title">
-        <h1>Profile</h1>
+        <h1>Settings</h1>
         <SettingsPicture/>
       </div>
 
