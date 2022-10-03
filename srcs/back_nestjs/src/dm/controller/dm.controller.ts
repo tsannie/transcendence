@@ -19,7 +19,7 @@ export class DmController {
 
 	@UseGuards( AuthGuard('jwt') )
 	@Post('createDm')
-	async createDm(@Body() channel: DmDto, @Request() req): Promise<void | DmEntity> {
+	async createDm(@Body() channel: DmDto, @Request() req): Promise<DmEntity> {
 		return await this.dmService.createDm(channel, req.user);
 	}
 
@@ -27,13 +27,13 @@ export class DmController {
 	// get a dm by id
 	@UseGuards( AuthGuard('jwt') )
 	@Get('getDmById')
-	async getDmById(id: number): Promise<void | DmEntity> {
+	async getDmById(id: number): Promise<DmEntity> {
 		return await this.dmService.getDmById(id);
 	}
 
 	@UseGuards( AuthGuard('jwt') )
 	@Get('getDmByName')
-	async getDmByName( @Query() data: DmDto, @Request() req): Promise<void | DmEntity> {
+	async getDmByName( @Query() data: DmDto, @Request() req): Promise<DmEntity> {
 		return await this.dmService.getDmByName(data, req.user);
 	}
 }
