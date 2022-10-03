@@ -1,13 +1,29 @@
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { SocketContext } from "../SocketContext";
 import { IMessage } from "../types";
 
 interface MessagesListProps {
-  messagesList: IMessage[];
+  //setMessagesList: (messagesList: IMessage[]) => void;
+  //messagesList: IMessage[];
   username: string;
 }
 
 export default function MessagesList(props: MessagesListProps) {
+
+  const [messagesList, setMessagesList] = useState<IMessage[]>([]);
+  const socket = useContext(SocketContext);
+
+  console.log("messagesList");
+
+  useEffect(() => {
+    console.log("listen message");
+    socket.on("message", (data) => {
+      console.log(data);
+      setMessagesList((list) => [...list, data]);
+    });
+  }, [socket]);
+
   return (
     <Box
       sx={{
@@ -16,7 +32,8 @@ export default function MessagesList(props: MessagesListProps) {
       }}
     >
       <>
-        {props.messagesList.map((messageData: IMessage) => {
+        {messagesList.map((messageData: IMessage) => {
+          console.log("auteur du msg = ", messageData.author);
           if (props.username === messageData.author)
             return (
               <Box
