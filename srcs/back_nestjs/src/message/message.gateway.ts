@@ -26,6 +26,7 @@ import { UserService } from 'src/user/service/user.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { IMessage } from './models/message.interface';
+import { targetDto } from 'src/user/dto/target.dto';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -57,29 +58,28 @@ export class MessageGateway
     this.logger.log(client.id);
     console.log(data);
 
-    // create message
-    const message = {
-      id: uuidv4(),
-      createdAt: new Date(),
-      content: data.content,
-      author: data.author,
-    };
-    //this.server.to(uuidv4()).emit('message', message);
-    return message;
+    if (data.target !== undefined) {
+      this.messageService.addMessagetoDm(data);
+    } else {
+      this.messageService.addMessagetoChannel(data);
+    }
 
+    //this.server.to(client.id).emit('message', data);
   }
 
   afterInit() {
     this.logger.log('Init');
   }
 
+  // all clients connect to the server
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
 
-    // recuperer user id
-    //const user = this.userService.findByName(client.handshake.auth.query.username);
-    //console.log(user);
+    let sockets = this.server.sockets;
 
+    console.log(sockets);
+
+    //console.log(user);
     this.connectedClients.push(client);
     /* this.connectedClients.forEach(client => {
       console.log(client.id);
@@ -94,17 +94,6 @@ export class MessageGateway
   }
 
   // Quand tu doubles cliques sur un utilisateur, cela va cree une room pour pouvoir le dm
-
-  @SubscribeMessage('createRoom')
-  createRoom(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
-    client.join(data);
-
-    // parcourt mon tableau de client et affiche les id des clients dispo !
-    /* this.connectedClients.forEach( (connectedClient) => {
-      console.log(connectedClient.id);
-    }); */
-    this.logger.log(`client ${client.id} join room ${data} `);
-  }
 
   @SubscribeMessage('getDM')
   getDM(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
