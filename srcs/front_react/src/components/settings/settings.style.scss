@@ -36,11 +36,41 @@
 }
 
 .settings__picture {
+  position: relative;
   img {
     border-style: dashed;
     border-radius: 50%;
     width: calc(128 * var(--res));
+    height: calc(128 * var(--res));
+    object-fit: cover;
+    transition: .3s ease;
+
   }
+  input {
+    display:none;
+  }
+}
+
+.settings__picture__profile {
+  opacity: 1;
+  display: block;
+}
+
+.settings__picture__edit {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+}
+
+.settings__picture:hover .settings__picture__profile {
+  opacity: 0.20;
+}
+
+.settings__picture:hover .settings__picture__edit {
+  opacity: 1;
+  cursor: pointer;
 }
 
 .settings__title {
