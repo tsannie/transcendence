@@ -13,11 +13,9 @@
   border-color: white;
   img {
     cursor: pointer;
-    width: calc(55 * var(--res));
-    height: auto;
-    margin-bottom: 35%;
-    margin-top: 35%;
-    padding: 0.8vw;
+    width: calc(40 * var(--res));
+    margin-bottom: calc(20 * var(--res));
+    margin-top: calc(20 * var(--res));
     transition: 0.3s;
     border-radius: 50%;
     border-style: dashed;
@@ -25,7 +23,6 @@
   }
 
   .selected {
-    border-style: dashed;
     border-color: white;
     animation: shake 0.5s ease;
     @keyframes shake {
@@ -40,12 +37,5 @@
   }
   img:active {
     filter: invert(70%);
-  }
-
-  @media screen and (min-width: 800px) {
-    img {
-      width: 30px;
-      padding: 8px;
-    }
   }
 }

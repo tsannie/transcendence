@@ -44,7 +44,7 @@
     height: calc(128 * var(--res));
     object-fit: cover;
     transition: .3s ease;
-
+    z-index: 0;
   }
   input {
     display:none;
