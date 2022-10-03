@@ -19,8 +19,8 @@
   }
 
   img {
-    width: calc(220 * var(--res));
-    filter: invert(100%);
+    width: calc(220 * var(--res));    // TODO depace to qr code div
+    //filter: invert(100%);
   }
   h2 {
     margin-bottom: 0;
@@ -35,9 +35,17 @@
   }
 }
 
+.settings__picture {
+  img {
+    border-style: dashed;
+    border-radius: 50%;
+    width: calc(128 * var(--res));
+  }
+}
+
 .settings__title {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   width: 100%;
 }
 

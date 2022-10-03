@@ -5,6 +5,7 @@ import Success2FASnackbar from "./snackbar/Success2FASnackbar";
 import Error2FASnackbar from "./snackbar/Error2FASnackbar";
 import { api } from "../../const/const";
 import './settings.style.scss';
+import SettingsPicture from "./SettingsPicture";
 
 export default function Settings() {
 
@@ -39,12 +40,13 @@ export default function Settings() {
       {/* Display profile information */}
       <div className="settings__title">
         <h1>Profile</h1>
+        <SettingsPicture/>
       </div>
+
       <h2>Username</h2>
         <p>{username}</p>
       <h2>Email</h2>
         <p>{email}</p>
-
       <h2>Two Factor Authentication (2FA)</h2>
         {!enable2FA &&
           <p>{twoFactorA ? "Enabled" : "Disabled"}</p>
