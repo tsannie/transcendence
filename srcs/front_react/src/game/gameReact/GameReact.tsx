@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { socket } from "../Game";
 import {
   BallMouv,
@@ -8,7 +8,6 @@ import {
   PaddleMouv_right,
   draw_line,
   draw_score,
-  draw_giveup,
 } from "./BallMouv";
 
 import { GamePlayer_left } from "./GamePlayerLeft";
@@ -18,6 +17,9 @@ import { ballObj, paddleProps_left, paddleProps_right, player_left, player_right
 export function GamePlayer_Left_right(props: any) {
   let u = 0;
   useEffect(() => {
+
+    // This useEffect is used to get the room data from the server to set the ball position and the players position
+
     socket.on("sincTheBall", (theroom: any) => {
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
@@ -64,6 +66,8 @@ export function GamePlayer_Left_right(props: any) {
     });
   }, [socket]);
 
+  // Sincronize the ball position with the server
+
   function sinc_ball(room_name: string, ballObj: any) {
     if (player_left.won === false && player_right.won === false) {
       var data = {
@@ -73,6 +77,8 @@ export function GamePlayer_Left_right(props: any) {
       socket.emit("sincBall", data);
     }
   }
+
+  // Sinchronize the paddle position with the server
 
   function sinc_player_left(room_name: string, player_left: any) {
     var data = {
@@ -93,6 +99,8 @@ export function GamePlayer_Left_right(props: any) {
     };
     socket.emit("playerActyRight", data);
   }
+
+  // This function is used to draw the canvas
 
   let requestAnimationFrameId: any;
   useEffect(() => {

@@ -24,8 +24,10 @@ export default function GameMenu(props: any) {
         props.setopready(true);
       if (theroom.p1_ready === true && theroom.p2_ready === true) {
         props.setRoom(theroom.room_name);
-        StartGame(theroom.room_name);
         props.setgamestart(true);
+        if (theroom.p1 === socket.id) {
+          StartGame(theroom.room_name);
+        }
       }
     });
 
@@ -69,7 +71,7 @@ export default function GameMenu(props: any) {
     <div className="Game">
       <h2> you are : {props.my_id} </h2>
 
-      <h4> Invite un ami a jouer</h4>
+      <h4> Game by room</h4>
       <input
         type="text"
         placeholder="username"
@@ -78,18 +80,18 @@ export default function GameMenu(props: any) {
           props.setRoom(event.target.value);
         }}
       ></input>
-      <button onClick={createGameRoom}>PARTIE PERSONALISE</button>
+      <button onClick={createGameRoom}>CREATE</button>
       <p>{PP_empty}</p>
       <br />
-      <h4> partie classee</h4>
+      <h4> Fast Game</h4>
 
-      <button onClick={createFastGameRoom}>PARTIE RAPIDE</button>
+      <button onClick={createFastGameRoom}>FAST GAME</button>
 
       <p style={{ color: "red" }}> {props.isfull} </p>
 
       <h4>
-        REGARDER une partie :
-        <button onClick={lookAtAllGameRoom}>regarder la partie</button>
+        Watch a game :
+        <button onClick={lookAtAllGameRoom}>SPECTATOR</button>
       </h4>
     </div>
   );

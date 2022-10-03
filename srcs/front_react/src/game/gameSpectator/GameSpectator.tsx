@@ -70,11 +70,13 @@ export function GameSpectator(props: any) {
       player_left.score = theroom.set.set_p1.score;
       player_left.won = theroom.set.set_p1.won;
       player_left.name = theroom.set.set_p1.name;
+      setp1id(theroom.set.set_p1.name);
     });
     socket.on("setDataPlayerRight_spec", (theroom: any) => {
       player_right.score = theroom.set.set_p2.score;
       player_right.won = theroom.set.set_p2.won;
       player_right.name = theroom.set.set_p2.name;
+      setp2id(theroom.set.set_p2.name);
     });
     socket.on("startGame_spec", (theroom: any) => {
       setp1id(theroom.set.set_p1.name);
@@ -102,50 +104,26 @@ export function GameSpectator(props: any) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (player_left.won === false && player_right.won === false) {
           draw_line(ctx, ballObj, canvas.height, canvas.width);
-          draw_score(
-            ctx,
-            player_left,
-            player_right,
-            canvas.height,
-            canvas.width
-          );
+          draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
           if (first_sinc === true) {
             BallMouv(ctx, ballObj, canvas.height, canvas.width);
-            BallCol_left(
-              ctx,
-              player_right,
-              ballObj,
-              paddleProps_left,
-              canvas.height,
-              canvas.width
-            );
-            BallCol_right(
-              ctx,
-              player_left,
-              ballObj,
-              paddleProps_right,
-              canvas.height,
-              canvas.width
-            );
+            BallCol_left(ctx, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
+            BallCol_right(ctx, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
             PaddleMouv_left(ctx, canvas, paddleProps_left);
             PaddleMouv_right(ctx, canvas, paddleProps_right);
           }
           else
             draw_loading(ctx, canvas.height, canvas.width);
         } else {
-          draw_score(
-            ctx,
-            player_left,
-            player_right,
-            canvas.height,
-            canvas.width
-          );
+          draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
           cancelAnimationFrame(requestAnimationFrameId);
         }
       }
     };
     render();
   }, [socket]);
+
+  // reinit values for the next game spectator
 
   function leaveGameRoomSpec() {
     first_sinc = false;
