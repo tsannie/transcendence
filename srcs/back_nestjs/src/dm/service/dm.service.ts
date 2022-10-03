@@ -2,6 +2,7 @@ import {
   Injectable, UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MessageEntity } from 'src/message/models/message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -28,16 +29,25 @@ export class DmService {
 	}
 
 	
+	//code GetDMbyId with offset;
+
 	// get a dm by id
 	async getDmById(inputed_id: number): Promise<DmEntity> {
-		return await this.dmRepository.findOne({
+		return await this.dmRepository
+		.createQueryBuilder("dm")
+		.where("dm.id = :id", {id: inputed_id})
+		.leftJoinAndSelect("dm.messages", "messages")
+		.orderBy("messages.createdAt", "DESC")
+		.select("messages")
+		.getOne()
+		/* 		return await this.dmRepository.findOne({
 			where:{
 				id: inputed_id
 			},
 			relations:{
 				messages: true
-			}
-		})
+			},
+		}) */
 	}
 	
 	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
