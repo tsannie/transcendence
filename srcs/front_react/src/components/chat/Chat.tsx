@@ -81,13 +81,13 @@ export default function Chat(props: ChatProps) {
   }, []);
 
   // listen message from backend
-  useEffect(() => {
+  /* useEffect(() => {
     console.log("listen message");
     socket.on("message", (data) => {
       console.log(data);
       setMessagesList((list) => [...list, data]);
     });
-  }, [socket]);
+  }, [socket]); */
 
   return (
     <SocketProvider>
@@ -113,6 +113,7 @@ export default function Chat(props: ChatProps) {
           {enumState === ChatContent.MESSAGES && (
             <Conv
               messagesList={messagesList}
+              //setMessagesList={setMessagesList}
               username={username}
               setCurrentMessage={setCurrentMessage}
               sendMessage={sendMessage}
@@ -124,7 +125,7 @@ export default function Chat(props: ChatProps) {
 
           {enumState === ChatContent.NEW_DM && (
             <ChatUserlist
-              setMessagesList={setMessagesList}
+              //setMessagesList={setMessagesList}
               setTargetUsername={setTargetUsername}
               setEnumState={setEnumState}
               getAllUsers={props.getAllUsers}
