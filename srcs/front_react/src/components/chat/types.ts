@@ -3,9 +3,9 @@ import { IUser } from "../../userlist/UserList";
 export interface IMessage {
   id?: string;
   //room: string;
-  author?: string;
+  author: string;
   content: string;
-  time: string;
+  target: string;
 }
 
 export interface ICreateChannel {

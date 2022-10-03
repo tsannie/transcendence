@@ -4,7 +4,7 @@ import { IMessage } from "../types";
 
 interface MessagesListProps {
   messagesList: IMessage[];
-  author: string;
+  username: string;
 }
 
 export default function MessagesList(props: MessagesListProps) {
@@ -17,7 +17,7 @@ export default function MessagesList(props: MessagesListProps) {
     >
       <>
         {props.messagesList.map((messageData: IMessage) => {
-          if (props.author === messageData.author)
+          if (props.username === messageData.author)
             return (
               <Box
                 sx={{

@@ -1,6 +1,4 @@
-import {
-  Injectable, UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MessageEntity } from 'src/message/models/message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
@@ -11,22 +9,30 @@ import { DmEntity } from '../models/dm.entity';
 
 @Injectable()
 export class DmService {
-	constructor(
-	@InjectRepository(DmEntity)
-	private dmRepository: Repository<DmEntity>,
+  constructor(
+    @InjectRepository(DmEntity)
+    private dmRepository: Repository<DmEntity>,
 
-	private readonly userService: UserService,
-	) {}
+    private readonly userService: UserService,
+  ) {}
 
-	async checkifBanned(user: UserEntity, target: string) : Promise<UserEntity> {
-		let user2 = await this.userService.findUser(target, {banned: true});
+  async checkifBanned(user: UserEntity, target: string): Promise<UserEntity> {
+    let user2 = await this.userService.findUser(target, { banned: true });
 
-		if (user.banned && user.banned.find( banned_guys => banned_guys.username === target))
-			throw new UnprocessableEntityException(`You've banned ${target}`);
-		if (user2.banned && user2.banned.find(banned_guys => banned_guys.username === user.username))
-			throw new UnprocessableEntityException(`You've been blocked by ${user2.username}`);
-		return user2;
-	}
+    if (
+      user.banned &&
+      user.banned.find((banned_guys) => banned_guys.username === target)
+    )
+      throw new UnprocessableEntityException(`You've banned ${target}`);
+    if (
+      user2.banned &&
+      user2.banned.find((banned_guys) => banned_guys.username === user.username)
+    )
+      throw new UnprocessableEntityException(
+        `You've been blocked by ${user2.username}`,
+      );
+    return user2;
+  }
 
 
 	// get a dm by id
@@ -47,15 +53,20 @@ export class DmService {
 		.getOne();
 	}
 
-	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
-		let convo = user.dms.find( (dm) =>
-				(dm.users[0].username === user.username && dm.users[1].username === data.target) || (dm.users[0].username === data.target && dm.users[1].username === user.username)
-		)
-		if (!convo)
-			throw new UnprocessableEntityException(`No conversation with ${data.target}`);
-		else
-			return await this.getDmById(convo.id, data.offset);
-	}
+  async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
+    let convo = user.dms.find(
+      (dm) =>
+        (dm.users[0].username === user.username &&
+          dm.users[1].username === data.target) ||
+        (dm.users[0].username === data.target &&
+          dm.users[1].username === user.username),
+    );
+    if (!convo)
+      throw new UnprocessableEntityException(
+        `No conversation with ${data.target}`,
+      );
+    else return await this.getDmById(convo.id);
+  }
 
 
 
@@ -101,7 +112,7 @@ export class DmService {
 		return reloaded_datas.dms;
 	}
 
-	/*
+  /*
 	createDM is used to create a new conv between two users, checking if they can, based on their banned relationship.
 	*/
 	async createDm(data: DmDto, user: UserEntity): Promise<DmEntity> {
