@@ -37,7 +37,6 @@ export default function Game() {
   const [Specthegame, setSpecthegame] = useState(false);
   const [Room_name_spec, setRoom_name_spec] = useState("");
 
-
   //# REACT GAME
 
   //## Testing
@@ -54,6 +53,8 @@ export default function Game() {
   //The first player to reach 10 points win the game.
   
   //4. when the game is over or during the game you can press the button `[LEAVE ROOM]` to leave the room
+
+  //5. You can also spectate a game by pressing the button `[SPECTATOR]` and then click the room id of the game you want to spectate.
   
  // ## In this pull request :
   
@@ -66,6 +67,11 @@ export default function Game() {
   //the whole connection and messages emitted between the back and the front for collecting the data of the game in front and send it to the back for the other player.
   //everything is detailed for the back in this file `srcs/back_nestjs/src/game/game.gateway.ts`
   
+
+  //The whole spectator system in `srcs/front_react/src/game/gameSpectator/`
+  
+  //## The game is not finished yet, there is still some bugs to fix and some features to add.
+
  // ## Paths
   
  // http://localhost:3000/  
@@ -74,10 +80,7 @@ export default function Game() {
   //http://localhost:4000/game   display the database of all the rooms.
   //http://localhost:4000/game/del   delete the whole database.
 
-
-
-
-
+  
   // useEffect reinint the game when the player leave the room or the game is over or the player give up
 
   function reinit_game(){
