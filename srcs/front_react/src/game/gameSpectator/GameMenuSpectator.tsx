@@ -112,7 +112,7 @@ export function GameMenuSpectator(props: any) {
   if (listGamenotz === true) {
     return (
       <div className="look">
-        <h4> REGARDER une partie : </h4>
+        <h4> watch a game : </h4>
         <h4 style={{ color: "red" }}>{game_already_ended}</h4>
 
         <button onClick={refresh_games_spec}>refresh</button>
@@ -123,25 +123,25 @@ export function GameMenuSpectator(props: any) {
               <p>
                 partie : "{element}"{" "}
                 <button onClick={(event) => Specthegamedisplay(event, element)}>
-                  regarder la partie
+                  watch a game :
                 </button>
               </p>
             </div>
           );
         })}
-        <button onClick={leavelookingroom}>leave</button>
+        <button onClick={leavelookingroom}>LEAVE</button>
       </div>
     );
   } else {
     return (
       <div className="look">
-        <h4> REGARDER no game wet : </h4>
+        <h4> No game wet : </h4>
         <h4 style={{ color: "red" }}>{game_already_ended}</h4>
 
-        <button onClick={refresh_games_spec}>refresh</button>
+        <button onClick={refresh_games_spec}>REFRESH</button>
         <br />
         <br />
-        <button onClick={leavelookingroom}>leave</button>
+        <button onClick={leavelookingroom}>LEAVE</button>
       </div>
     );
   }

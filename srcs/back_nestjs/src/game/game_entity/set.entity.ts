@@ -10,7 +10,7 @@ import { PlayerEntity } from './players.entity';
 
 @Entity()
 export class SetEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id?: number;
 
   @OneToOne(() => BallEntity, { eager: true, cascade: true })

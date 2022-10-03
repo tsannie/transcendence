@@ -18,7 +18,7 @@ export class GameController {
 
   @Get('/del')
   detail() {
-    for (let x = -10; x < 300; x++)
+    for (let x = 0; x < 300; x++)
       this.gameService.deleteUser(x);
   }
 
