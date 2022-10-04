@@ -6,6 +6,7 @@ import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { MessageEntity } from '../models/message.entity';
 import { IMessage } from '../models/message.interface';
+import { uuid } from 'uuidv4';
 
 @Injectable()
 export class MessageService {
@@ -38,6 +39,7 @@ export class MessageService {
 		const dm = await this.dmService.getDmByName({target: data.target, id: 0, offset: 0}, user);
 
 		const message = new MessageEntity();
+		message.uuid = uuid();
 		message.content = data.content;
 		message.author = user;
 		message.dm = dm;
