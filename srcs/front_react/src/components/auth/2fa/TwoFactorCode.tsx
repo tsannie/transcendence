@@ -1,6 +1,6 @@
 import React from "react";
 import ReactCodeInput from "react-verification-code-input";
-import { api } from "../../const/const";
+import { api } from "../../../const/const";
 import InvalidSnackbar from "./InvalidSnackbar";
 import './twofactor.style.scss'
 
@@ -37,6 +37,7 @@ export default function TwoFactorCode(props: any) {
   };
 
   return (
+
     <div className="twoFactor">
       <h2>Validation Code</h2>
       <ReactCodeInput
