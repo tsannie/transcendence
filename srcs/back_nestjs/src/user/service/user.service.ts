@@ -27,7 +27,7 @@ export class UserService {
 
   // find user by id
   async findById(id: number): Promise<UserEntity> {
-    return await this.allUser.findOne(id);
+    return ;//await this.allUser.findOne(id);
   }
 
   // TODO DELETE unused routes

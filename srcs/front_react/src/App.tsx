@@ -16,11 +16,11 @@ import { api, COOKIE_NAME } from "./const/const";
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [inputSettings, setInputSettings] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [inputGame, setInputGame] = useState(false);
 
   //console.log(isLogin);
-  const [is2FA, setIs2FA] = useState(false);
+  const [is2FA, setIs2FA] = useState(true);
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
