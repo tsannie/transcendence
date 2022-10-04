@@ -32,7 +32,6 @@ export class GameGateway implements OnGatewayInit {
   @WebSocketServer() wws: Server;
   private logger: Logger = new Logger('GameGateway');
 
-  fast_room = 1;
   all_rooms = new Map<string, GameEntity>();
   rooms = new Map<string, number>();
 
@@ -91,8 +90,10 @@ export class GameGateway implements OnGatewayInit {
 
     if (!this.rooms[room] || this.rooms[room] === 0) {
       this.rooms[room] = 1;
-      if (!this.all_rooms[room]) var theroom = new GameEntity();
-      else var theroom = this.all_rooms[room];
+      if (!this.all_rooms[room])
+        var theroom = new GameEntity();
+      else
+        var theroom = this.all_rooms[room];
 
       theroom.room_name = room;
       theroom.nbr_co = 1;

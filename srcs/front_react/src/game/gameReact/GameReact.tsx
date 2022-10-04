@@ -100,7 +100,7 @@ export function GamePlayer_Left_right(props: any) {
     socket.emit("playerActyRight", data);
   }
 
-  // This function is used to draw the canvas
+  // This useEffect is used to draw the canvas
 
   let requestAnimationFrameId: any;
   useEffect(() => {
@@ -129,7 +129,6 @@ export function GamePlayer_Left_right(props: any) {
                 sinc_ball(props.room, ballObj);
               else if (props.im_right === false && ballObj.cal_right === false)
                 sinc_ball(props.room, ballObj);
-
               sinc_player_left(props.room, player_left);
               sinc_player_right(props.room, player_right);
               u = 0;
