@@ -13,7 +13,7 @@ export default function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
       api.get('auth/isTwoFactor').then(res => {
         setIs2FA(res.data.isTwoFactor);
@@ -34,7 +34,7 @@ export default function App() {
         });
       }
     }
-  });
+  });*/
 
   //<AuthProvider>
 
@@ -45,7 +45,8 @@ export default function App() {
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/2fa" element={<TwoFactorPage/>} />
       </Routes>
-
+    </div>
+  );
 
 
 
@@ -70,8 +71,6 @@ export default function App() {
         <div className="ball"></div>
         <div className="ball"></div>
       </div> */}
-    </div>
-  );
 }
 
 
