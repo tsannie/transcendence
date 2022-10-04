@@ -19,7 +19,7 @@ export class AuthController {
     private readonly authService: AuthService
   ) {}
 
-  @UseGuards(JwtTwoFactorGuard)
+  @UseGuards(JwtGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
@@ -39,7 +39,7 @@ export class AuthController {
   @UseGuards(FortyTwoGuard)
   @Get('')
   @Redirect(process.env.FRONT_URL, 301)
-  async oauthFortyTwo(@Req() req) {
+  async oauthFortyTwo(@Req() req) { // TODO Interface
     const user = req.user;
     if (!user)
       throw new UnauthorizedException('User not found');
