@@ -1,8 +1,6 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { request } from 'http';
-import { FindOptionsRelations, Repository } from 'typeorm';
-import { AvatarDto } from '../dto/avatar.dto';
+import { FindOneOptions, FindOptionsRelations, Repository } from 'typeorm';
 import { UserEntity } from '../models/user.entity';
 
 @Injectable()
@@ -14,6 +12,10 @@ export class UserService {
 
   async add(user: UserEntity): Promise<UserEntity> {
 	return await this.allUser.save(user);
+  }
+
+  async findOptions(findOptions: FindOneOptions<UserEntity>) : Promise<UserEntity> {
+	return await this.allUser.findOne( findOptions );
   }
 
   // find user by name
@@ -29,7 +31,9 @@ export class UserService {
 	else
 	{
 	  return await this.allUser.findOne({
-		where: {username: username},
+		where: {
+			username: username
+		},
 		relations: relations_ToLoad
 	  });
 	}
@@ -59,7 +63,8 @@ export class UserService {
 		relations : {
 			owner_of: true, 
 			channels: true,
-			banned: true
+			banned: true,
+			admin_of: true,
 		}
 		}
 	)

@@ -40,10 +40,13 @@ export class UserEntity {
   })
   avatar?: string;
 
-  @OneToMany( () => ChannelEntity, (channels) => channels.owner )
+  @OneToMany( () => ChannelEntity, (channels) => channels.owner, {nullable: true} )
   owner_of?: ChannelEntity[];
 
-  @ManyToMany( () => ChannelEntity, (channels) => channels.users )
+  @ManyToMany( () => ChannelEntity, (channels) => channels.admins, {nullable: true} )
+  admin_of?: ChannelEntity[];
+
+  @ManyToMany( () => ChannelEntity, (channels) => channels.users, {nullable: true} )
   @JoinTable()
   channels?: ChannelEntity[];
 
