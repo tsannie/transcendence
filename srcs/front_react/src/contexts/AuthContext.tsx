@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<IProps> = ({ children }: IProps) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLogin, user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ isLogin, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
