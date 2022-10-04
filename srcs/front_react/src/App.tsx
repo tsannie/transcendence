@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { ContextType, useEffect, useState } from "react";
 import { api, COOKIE_NAME } from "./const/const";
 import Menu from "./components/menu/Menu";
 import './app.style.scss'
 import { Route, Router, Routes } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthContext, AuthProvider } from "./contexts/AuthContext";
 import { Switch } from "@mui/material";
 import LoginPage from "./components/auth/oauth/LoginPage";
 import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
@@ -13,16 +13,19 @@ export default function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
 
-  /*useEffect(() => {
+  const { login }  = React.useContext(AuthContext) as ContextType<typeof AuthContext>;
+
+  useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
       api.get('auth/isTwoFactor').then(res => {
         setIs2FA(res.data.isTwoFactor);
       }).catch(res => {
-        console.log('invalid jwt');
+        console.log('invalid jwt'); // TODO LOGOUT FUNCTION
         document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';  // TODO call logout api
       });
 
       console.log('is2FA', is2FA);
+      console.log('login', login);
 
       if (is2FA === false) {
         setIsLogin(true);
@@ -34,7 +37,7 @@ export default function App() {
         });
       }
     }
-  });*/
+  });
 
   //<AuthProvider>
 

@@ -1,10 +1,13 @@
 import { Box } from "@mui/material";
 import React, { useEffect } from "react";
+import { COOKIE_NAME } from "../../../const/const";
 import ButtonLogin from "./ButtonLogin";
 import './login.style.scss'
 
 
 export default function LoginPage(props: any) {
+
+  /**/
 
   return (
     <div className="login">
