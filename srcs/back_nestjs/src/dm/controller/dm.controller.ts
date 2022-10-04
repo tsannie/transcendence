@@ -27,8 +27,8 @@ export class DmController {
 	// get a dm by id
 	@UseGuards( AuthGuard('jwt') )
 	@Get('getDmById')
-	async getDmById(id: number): Promise<DmEntity> {
-		return await this.dmService.getDmById(id);
+	async getDmById(@Query() data: DmDto): Promise<DmEntity> {
+		return await this.dmService.getDmById(data.id, data.offset);
 	}
 
 	@UseGuards( AuthGuard('jwt') )

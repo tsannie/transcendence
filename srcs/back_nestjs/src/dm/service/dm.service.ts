@@ -29,25 +29,22 @@ export class DmService {
 	}
 
 	
-	//code GetDMbyId with offset;
-
 	// get a dm by id
-	async getDmById(inputed_id: number): Promise<DmEntity> {
+	async getDmById(inputed_id: number, offset: number): Promise<DmEntity> {
 		return await this.dmRepository
 		.createQueryBuilder("dm")
 		.where("dm.id = :id", {id: inputed_id})
+		.leftJoin("dm.users", "users")
+		.addSelect("users.id")
+		.addSelect("users.username")
 		.leftJoinAndSelect("dm.messages", "messages")
+		.leftJoin("messages.author", "author")
+		.addSelect("author.id")
+		.addSelect("author.username")
 		.orderBy("messages.createdAt", "DESC")
-		.select("messages")
-		.getOne()
-		/* 		return await this.dmRepository.findOne({
-			where:{
-				id: inputed_id
-			},
-			relations:{
-				messages: true
-			},
-		}) */
+		// .offset(offset)
+		// .limit(20)
+		.getOne();
 	}
 	
 	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
@@ -57,7 +54,7 @@ export class DmService {
 		if (!convo)
 			throw new UnprocessableEntityException(`No conversation with ${data.target}`);
 		else
-			return await this.getDmById(convo.id);
+			return await this.getDmById(convo.id, data.offset);
 	}
 
 
