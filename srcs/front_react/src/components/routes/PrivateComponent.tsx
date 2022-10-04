@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, RouteProps, Navigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 
 interface IPrivateComponentProps {
   component: React.ComponentType;
@@ -7,10 +8,12 @@ interface IPrivateComponentProps {
 }
 
 export const PrivateRoute: React.FC<IPrivateComponentProps> = ({ component: RouteComponent }) => {
-  /* const auth = 1;
 
-  if (auth === 0)
+  const isLogin = React.useContext(AuthContext).isLogin;
+  //console.log('context', context);
+
+  if (isLogin)
     return <RouteComponent />;
-  else */
+  else
     return <Navigate to="/auth" />
 }
