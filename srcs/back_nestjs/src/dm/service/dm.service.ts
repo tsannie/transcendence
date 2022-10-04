@@ -2,6 +2,7 @@ import {
   Injectable, UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MessageEntity } from 'src/message/models/message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -29,15 +30,21 @@ export class DmService {
 
 	
 	// get a dm by id
-	async getDmById(inputed_id: number): Promise<DmEntity> {
-		return await this.dmRepository.findOne({
-			where:{
-				id: inputed_id
-			},
-			relations:{
-				messages: true
-			}
-		})
+	async getDmById(inputed_id: number, offset: number): Promise<DmEntity> {
+		return await this.dmRepository
+		.createQueryBuilder("dm")
+		.where("dm.id = :id", {id: inputed_id})
+		.leftJoin("dm.users", "users")
+		.addSelect("users.id")
+		.addSelect("users.username")
+		.leftJoinAndSelect("dm.messages", "messages")
+		.leftJoin("messages.author", "author")
+		.addSelect("author.id")
+		.addSelect("author.username")
+		.orderBy("messages.createdAt", "DESC")
+		// .offset(offset)
+		// .limit(20)
+		.getOne();
 	}
 	
 	async getDmByName(data: DmDto, user: UserEntity): Promise<DmEntity> {
@@ -47,14 +54,51 @@ export class DmService {
 		if (!convo)
 			throw new UnprocessableEntityException(`No conversation with ${data.target}`);
 		else
-			return await this.getDmById(convo.id);
+			return await this.getDmById(convo.id, data.offset);
 	}
 
 
 
 	// get all conversations of a user
-	async getAllDms(user: UserEntity): Promise<DmEntity[]> {
-		return user.dms;
+	async getDmsList(user: UserEntity): Promise<DmEntity[]> {
+		let reloaded_datas = await this.userService.findOptions({
+			where: {
+				username: user.username
+			},
+			relations: {
+				dms:{
+					users: true,
+					messages: {
+						author: true,
+					},
+				}
+			},
+			select: {
+				dms: {
+					id: true,
+					users: {
+						id: true,
+						username: true,
+					},
+					messages: {
+						createdAt : true,
+						author: {
+							username: true
+						},
+						content: true,
+					}
+				}
+			},
+			order: {
+				dms:{
+					messages: {
+						createdAt: "DESC",
+					}
+				}
+			},
+
+		})
+		return reloaded_datas.dms;
 	}
 	
 	/* 
