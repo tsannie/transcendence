@@ -90,7 +90,6 @@ export default function Chat(props: ChatProps) {
   }, [socket]); */
 
   return (
-    <SocketProvider>
       <Grid container>
         <Grid item xs={4}>
           <Grid item>
@@ -125,7 +124,7 @@ export default function Chat(props: ChatProps) {
 
           {enumState === ChatContent.NEW_DM && (
             <ChatUserlist
-              //setMessagesList={setMessagesList}
+              setMessagesList={setMessagesList}
               setTargetUsername={setTargetUsername}
               setEnumState={setEnumState}
               getAllUsers={props.getAllUsers}
@@ -134,6 +133,5 @@ export default function Chat(props: ChatProps) {
           )}
         </Grid>
       </Grid>
-    </SocketProvider>
   );
 }

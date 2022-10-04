@@ -10,6 +10,7 @@ import Sidebar from "./components/sidebar/Sidebar";
 import UserList, { api, IUser } from "./userlist/UserList";
 import LogoIcon from "./assets/logo-project.png";
 import { COOKIE_NAME } from "./const";
+import { SocketProvider } from "./components/chat/SocketContext";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
@@ -70,20 +71,22 @@ export default function App() {
       </Box>
     );
   return (
-    <Grid
-      container
-    >
-      <Grid item >
-        <Sidebar
-          setInputChat={setInputChat}
-          setIsLogin={setIsLogin}
-        />
+    <SocketProvider>
+      <Grid
+        container
+      >
+        <Grid item >
+          <Sidebar
+            setInputChat={setInputChat}
+            setIsLogin={setIsLogin}
+          />
+        </Grid>
+        <Grid item xs={11} sx={{
+          ml: "72px",
+        }}>
+          {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
+        </Grid>
       </Grid>
-      <Grid item xs={11} sx={{
-        ml: "72px",
-      }}>
-        {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
-      </Grid>
-    </Grid>
+    </SocketProvider>
   );
 }

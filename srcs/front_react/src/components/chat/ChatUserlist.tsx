@@ -7,14 +7,17 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { set } from "react-hook-form";
+import { Socket } from "socket.io-client";
 import UserList, { api } from "../../userlist/UserList";
 import { IUser } from "../../userlist/UserList";
 import { ChatContent } from "./Chat";
+import { SocketContext } from "./SocketContext";
 import { IChannel, IDm, IMessage } from "./types";
 
 interface ChatUserListProps {
-  //setMessagesList: (messagesList: IMessage[]) => void;
+  setMessagesList: (messagesList: IMessage[]) => void;
   setTargetUsername: (targetUsername: string) => void;
   setEnumState: (enumState: ChatContent) => void;
   users: IUser[];
@@ -22,66 +25,32 @@ interface ChatUserListProps {
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-  // create enum with 3 strings differentes
+
+  const socket = useContext(SocketContext);
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
-    handleNewMessage(event.currentTarget.innerHTML);
+    createNewConv(event.currentTarget.innerHTML);
   }
 
   async function createDm(targetUsername: IDm) {
-    // getDmByName to check if dm already exist
-
-    // get dm by name with query target
-
+    console.log("create dm");
     await api
-      .get("dm/getDmByName", {
-        params: {
-          target: targetUsername.target,
-        },
-      })
-      .then((res) => {
-        console.log("getDmByName");
-        console.log(res.data);
-        if (res.data === undefined) {
-          api
-            .post("dm/createDm", targetUsername)
-            .then((res) => {
-              console.log("dm created with success");
-              console.log(targetUsername);
-              console.log(res.data);
-              //props.setMessagesList(res.data.messages);
-            })
-            .catch((res) => {
-              console.log("invalid create dm");
-              console.log(res);
-            });
-        }
-        else {
-          //props.setMessagesList(res.data.messages);
-        }
-      }
-      )
-      .catch((res) => {
-        console.log("invalid get dm by name");
-        console.log(res);
-      });
-
-    /* await api
       .post("dm/createDm", targetUsername)
       .then((res) => {
         console.log("dm created with success");
         console.log(targetUsername);
-        console.log(res.data);
+        console.log(res.data.messages);
+        //socket.emit("getConv", res.data);
         props.setMessagesList(res.data.messages);
       })
       .catch((res) => {
         console.log("invalid create dm");
         console.log(res);
-      }); */
+      });
   }
 
-  function handleNewMessage(targetUsername: string) {
+  async function createNewConv(targetUsername: string) {
     let newDm: IDm = {
       target: targetUsername,
     };
