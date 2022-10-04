@@ -12,14 +12,14 @@ export class DmController {
  
 	// get all conversations of a user
 	@UseGuards( AuthGuard('jwt') )
-	@Get('getAllDms')
-	async getAllDms(@Request() req): Promise<void | DmEntity[]> {
-		return await this.dmService.getAllDms(req.user);
+	@Get('list')
+	async getDmsList(@Request() req): Promise<DmEntity[]> {
+		return await this.dmService.getDmsList(req.user);
 	}
 
 	@UseGuards( AuthGuard('jwt') )
 	@Post('createDm')
-	async createDm(@Body() channel: DmDto, @Request() req): Promise<void | DmEntity> {
+	async createDm(@Body() channel: DmDto, @Request() req): Promise<DmEntity> {
 		return await this.dmService.createDm(channel, req.user);
 	}
 
@@ -27,13 +27,13 @@ export class DmController {
 	// get a dm by id
 	@UseGuards( AuthGuard('jwt') )
 	@Get('getDmById')
-	async getDmById(id: number): Promise<void | DmEntity> {
-		return await this.dmService.getDmById(id);
+	async getDmById(@Query() data: DmDto): Promise<DmEntity> {
+		return await this.dmService.getDmById(data.id, data.offset);
 	}
 
 	@UseGuards( AuthGuard('jwt') )
 	@Get('getDmByName')
-	async getDmByName( @Query() data: DmDto, @Request() req): Promise<void | DmEntity> {
+	async getDmByName( @Query() data: DmDto, @Request() req): Promise<DmEntity> {
 		return await this.dmService.getDmByName(data, req.user);
 	}
 }
