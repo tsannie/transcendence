@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from "react";
-import Chat from "./components/chat/Chat";
-import Sidebar from "./components/sidebar/Sidebar";
-import LogoIcon from "./assets/logo-project.png";
-import Settings from "./components/settings/Settings";
-import ButtonLogin from "./components/auth/ButtonLogin";
-import TwoFactorCode from "./components/auth/TwoFactorCode";
-import LoginPage from "./components/auth/LoginPage";
 import { api, COOKIE_NAME } from "./const/const";
 import Menu from "./components/menu/Menu";
 import './app.style.scss'
+import { Route, Router, Routes } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { Switch } from "@mui/material";
+import LoginPage from "./components/auth/oauth/LoginPage";
+import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
+import { PrivateRoute } from "./components/routes/PrivateComponent";
 
 export default function App() {
-  const [inputChat, setInputChat] = useState(false);
-  const [inputSettings, setInputSettings] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
 
   useEffect(() => {
-    console.log('hello')
     if (document.cookie.includes(COOKIE_NAME)) {
       api.get('auth/isTwoFactor').then(res => {
         setIs2FA(res.data.isTwoFactor);
@@ -40,9 +36,20 @@ export default function App() {
     }
   });
 
+  //<AuthProvider>
+
   return (
     <div className="app">
-        { isLogin === false &&
+      <Routes>
+        <Route path="/" element={<PrivateRoute component={Menu} />}/>
+        <Route path="/auth" element={<LoginPage />} />
+        <Route path="/2fa" element={<TwoFactorPage/>} />
+      </Routes>
+
+
+
+
+        {/* { isLogin === false &&
           <LoginPage setIsLogin={setIsLogin}
             is2FA={is2FA}
             isLogin={isLogin}
@@ -51,8 +58,7 @@ export default function App() {
         {
           isLogin === true &&
           <Menu/>
-        }
-      <div className="bg">
+       <div className="bg">
         <div className="ball"></div>
         <div className="ball"></div>
         <div className="ball"></div>
@@ -63,7 +69,7 @@ export default function App() {
         <div className="ball"></div>
         <div className="ball"></div>
         <div className="ball"></div>
-      </div>
+      </div> */}
     </div>
   );
 }
