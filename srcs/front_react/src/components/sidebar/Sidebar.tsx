@@ -15,24 +15,12 @@ export default function Sidebar(props: any) {
 
   // to do: passer d'icone en icone en remettant tous les autres state a false
 
-  function logout() { // TODO route api logout
+/*   function logout() { // TODO route api logout
     document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
     props.setIsLogin(false);
     props.setIs2FA(false);
     window.location.reload();
-  };
-  function reinit(str: any) {
-
-      if (str !=="game")
-        props.setInputGame(false)
-      else
-        props.setInputGame(true)
-      if (str !=="chat")
-        props.setInputChat(false)
-      else
-        props.setInputChat(true)
-
-  }
+  }; */
 
   function resetInput() {
     props.setInputChat(false);
@@ -72,7 +60,7 @@ export default function Sidebar(props: any) {
         <img src={ProfileIcon}></img>
       </Grid> */}
       <Grid item sx={{}}>
-        <img src={GameIcon} onClick={() => reinit("game")}></img>
+        <img src={GameIcon} onClick={() => selectInput("game")}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ChatIcon} onClick={() => selectInput('Chat')}></img>
@@ -80,9 +68,9 @@ export default function Sidebar(props: any) {
       <Grid item sx={{}}>
         <img src={SettingsIcon} onClick={() => selectInput('Settings')}></img>
       </Grid>
-      <Grid item sx={{}}>
+{/*       <Grid item sx={{}}>
         <img src={ExitIcon} onClick={logout}></img>
-      </Grid> 
+      </Grid>  */}
     </Grid>
   );
 }
