@@ -25,6 +25,8 @@ export default function Sidebar(props: any) {
   function resetInput() {
     props.setInputChat(false);
     props.setInputSettings(false);
+    props.setInputGame(false);
+
   }
 
   function selectInput(propsName: string) {
@@ -35,6 +37,9 @@ export default function Sidebar(props: any) {
         break;
       case "Settings":
         props.setInputSettings(true);
+        break;
+      case "game":
+        props.setInputGame(true);
         break;
     }
   }
