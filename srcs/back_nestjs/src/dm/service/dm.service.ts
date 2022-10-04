@@ -92,7 +92,7 @@ export class DmService {
 			order: {
 				dms:{
 					messages: {
-						createdAt: "ASC",
+						createdAt: "DESC",
 					}
 				}
 			},

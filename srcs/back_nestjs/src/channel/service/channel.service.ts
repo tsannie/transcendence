@@ -354,11 +354,11 @@ export class ChannelService {
 		const future_admin = await this.getUser(req_channel.target, {owner_of: true, admin_of: true, channels: true});
 		
 		if (!this.isOwner(req_channel.channel_name, user))
-		throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
+			throw new UnauthorizedException(`Only owner of channel can promote ${req_channel.target} to admin`);
 		if (this.isOwner(req_channel.channel_name, future_admin))
-		throw new UnauthorizedException(`Owner ${req_channel.target} is already admin by default of the channel ${req_channel.channel_name}`);
+			throw new UnauthorizedException(`Owner ${req_channel.target} is already admin by default of the channel ${req_channel.channel_name}`);
 		if (this.isAdmin(req_channel.channel_name, future_admin))
-		throw new UnprocessableEntityException("This member is already an admin of this channel.");
+			throw new UnprocessableEntityException("This member is already an admin of this channel.");
 		this.verifyIfMember(req_channel.channel_name, future_admin);
 		
 		let channel = await this.getChannel(req_channel.channel_name, {admins: true,  muted: true, users: true});

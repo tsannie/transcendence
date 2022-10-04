@@ -13,7 +13,7 @@ export class DmDto {
   @IsNumber()
   id: number;
 
-  @IsDefined()
+  @IsOptional()
   @IsNotEmpty()
   @Type( () => Number )
   @IsNumber()
