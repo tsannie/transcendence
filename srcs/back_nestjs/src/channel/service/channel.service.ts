@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
+import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
-import { IChannel } from '../models/channel.interface';
 
 @Injectable()
 export class ChannelService {
@@ -11,16 +11,24 @@ export class ChannelService {
     @InjectRepository(ChannelEntity)
     private allChannels: Repository<ChannelEntity>,
   ) {}
-  getAllChannels() : Observable<IChannel[]> {
+  getAllChannels() : Observable<ChannelEntity[]> {
     return from(this.allChannels.find());
   }
 
-  add(channel: IChannel): Observable<IChannel> {
-    return from(this.allChannels.save(channel));
+  createChannel(channel: ChannelDto): Observable<ChannelEntity> {
+    console.log("allo");
+    console.log(channel);
+    let newChannel = new ChannelEntity();
+
+    //newChannel.name = channel.name;
+    newChannel.status = channel.status;
+    newChannel.ownerid = channel.ownerid;
+
+    return from(this.allChannels.save(newChannel));
   }
 
-  handleChannels(data: IChannel) : void {
-    this.add(data);
+  handleChannels(data: ChannelDto) : void {
+    //this.createChannel(data);
     if (data.status === 'Public') {
       this.handlePublicChannels();
     }

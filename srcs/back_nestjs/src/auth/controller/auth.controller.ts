@@ -1,68 +1,54 @@
 import {
-  Body,
   Controller,
   Get,
-  Header,
-  Post,
-  Query,
   Redirect,
   Req,
   Request,
-  Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserDto } from 'src/user/dto/user.dto';
-import { IToken } from '../auth.const';
+import FortyTwoGuard from '../guard/fortyTwo.guard';
+import JwtGuard from '../guard/jwt.guard';
+import JwtTwoFactorGuard from '../guard/jwtTwoFactor.guard';
 import { AuthService } from '../service/auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService
+  ) {}
 
-  @UseGuards(AuthGuard('local'))
-  @Post('/login')
-  async login(@Request() req): Promise<IToken> {
-    console.log('new login');
-    console.log('user');
-    return await this.authService.login(req.user);
-  }
-
-  @Post('/register')
-  async register(@Body() user: UserDto): Promise<UserDto> {
-    console.log('new register');
-    return await this.authService.register(user);
-  }
-
-  @Post('/')
-  async oauth42(@Query('code') code: string) {
-    console.log(code);
-    return await this.authService.oauth42(code);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get('/profile')
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('profile')
   getProfile(@Request() req) {
-    console.log('hello');
-    console.log(req.user);
-    console.log('================================');
     return req.user;
   }
 
-  @UseGuards(AuthGuard('42'))
-  @Get('/')
-  async nothing() {
-    return 'hello';
+  @UseGuards(JwtGuard)
+  @Get('isTwoFactor')
+  async isTwoFactor(@Request() req) {
+    const user = req.user;
+    let isTwoFactor = false;
+    if (user.enabled2FA) {
+      isTwoFactor = true;
+    }
+    return {isTwoFactor: isTwoFactor};
   }
 
-  @UseGuards(AuthGuard('42'))
-  @Get('/redirect')
-  @Redirect('http://localhost:3000/', 301) // TODO env
-  async redirect(@Req() req, @Res({ passthrough: true }) res) {
+  @UseGuards(FortyTwoGuard)
+  @Get('')
+  @Redirect(process.env.FRONT_URL, 301)
+  async oauthFortyTwo(@Req() req) {
     const user = req.user;
-    const accessToken = await this.authService.login(user);
-    res.cookie('AuthToken', accessToken);
-    console.log(accessToken);
-    return 'bye';
+    if (!user)
+      throw new UnauthorizedException('User not found');
+    const accessToken = await this.authService.getCookie(user);
+
+    req.res.cookie(process.env.COOKIE_NAME, accessToken, {
+      httpOnly: false,
+      path: '/',
+    });
+    return user;
   }
 }

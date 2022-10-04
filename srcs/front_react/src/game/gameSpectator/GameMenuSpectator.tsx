@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../userlist/UserListItem";
+import { api } from "../../const/const";
 import { socket } from "../Game";
 let game_ended = false;
 
