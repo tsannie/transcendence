@@ -11,15 +11,16 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/service/auth.service';
 import { UserService } from './user/service/user.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './auth/strategy/local.strategy';
 import { MessageEntity } from './message/models/message.entity';
 import { ChannelController } from './channel/controller/channel.controller';
 import { ChannelService } from './channel/service/channel.service';
 import { ChannelModule } from './channel/channel.module';
 import { GameModule } from './game/game.module';
+import { TwoFactorService } from './two-factor/service/two-factor.service';
+import { TwoFactorController } from './two-factor/controller/two-factor.controller';
 
 @Module({
   imports: [
@@ -27,11 +28,10 @@ import { GameModule } from './game/game.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      // TODO create class database
       type: 'postgres',
       url: process.env.POSTGRES_FORCE,
-      autoLoadEntities: true, // TODO check that
-      synchronize: true,
+      autoLoadEntities: true,
+      synchronize: true, //TODO deploiement false
     }),
     MessageModule,
     TypeOrmModule.forFeature([UserEntity]),
@@ -41,13 +41,13 @@ import { GameModule } from './game/game.module';
     //ChannelModule,
     GameModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, TwoFactorController],
   providers: [
     AppService,
     JwtService,
     AuthService,
     UserService,
-    LocalStrategy,
+    TwoFactorService,
   ], // AuthResolver
 })
 export class AppModule {}

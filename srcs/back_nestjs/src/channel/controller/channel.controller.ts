@@ -1,6 +1,7 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { IChannel } from '../models/channel.interface';
+import { ChannelDto } from '../dto/channel.dto';
+import { ChannelEntity } from '../models/channel.entity';
 import { ChannelService } from '../service/channel.service';
 
 @Controller('channel')
@@ -9,12 +10,14 @@ export class ChannelController {
     ) {}
 
   @Get('all')
-  getAllChannels(): Observable<IChannel[]> {
+  getAllChannels(): Observable<ChannelEntity[]> {
     return this.channelService.getAllChannels();
   }
 
-  @Post('add')
-  add(channel: IChannel): Observable<IChannel> {
-    return this.channelService.add(channel);
+  @Post('createChannel')
+  createChannel(@Body() channel: ChannelDto): Observable<ChannelEntity> {
+    console.log("\n\n", channel);
+    return ;
+    //return this.channelService.createChannel(channel);
   }
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { isJsxAttribute, JsxElement } from "typescript";
 import Chat from "../chat/Chat";
 import LogoIcon from "../../assets/logo-project.png";
 import HomeIcon from "../../assets/home.png";
@@ -10,15 +9,16 @@ import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
-import ButtonLogout from "../../Auth/ButtonLogout";
-import { COOKIE_NAME } from "../../const";
+import { COOKIE_NAME } from "../../const/const";
 
 export default function Sidebar(props: any) {
 
-  function logout(event: any) {
-    event.preventDefault();
+  // to do: passer d'icone en icone en remettant tous les autres state a false
+
+  function logout() { // TODO route api logout
     document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
     props.setIsLogin(false);
+    props.setIs2FA(false);
     window.location.reload();
   };
   function reinit(str: any) {
@@ -32,6 +32,23 @@ export default function Sidebar(props: any) {
       else
         props.setInputChat(true)
 
+  }
+
+  function resetInput() {
+    props.setInputChat(false);
+    props.setInputSettings(false);
+  }
+
+  function selectInput(propsName: string) {
+    resetInput();
+    switch (propsName) {
+      case "Chat":
+        props.setInputChat(true);
+        break;
+      case "Settings":
+        props.setInputSettings(true);
+        break;
+    }
   }
 
   return (
@@ -58,14 +75,14 @@ export default function Sidebar(props: any) {
         <img src={GameIcon} onClick={() => reinit("game")}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ChatIcon} onClick={() => reinit("chat")}></img>
+        <img src={ChatIcon} onClick={() => selectInput('Chat')}></img>
       </Grid>
-{/*       <Grid item sx={{}}>
-        <img src={SettingsIcon}></img>
+      <Grid item sx={{}}>
+        <img src={SettingsIcon} onClick={() => selectInput('Settings')}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ExitIcon} onClick={logout}></img>
-      </Grid> */}
+      </Grid> 
     </Grid>
   );
 }
