@@ -5,13 +5,12 @@ import { IMessage } from "../types";
 
 interface MessagesListProps {
   //setMessagesList: (messagesList: IMessage[]) => void;
-  //messagesList: IMessage[];
+  messagesList: IMessage[];
   username: string;
 }
 
 export default function MessagesList(props: MessagesListProps) {
 
-  const [messagesList, setMessagesList] = useState<IMessage[]>([]);
   const socket = useContext(SocketContext);
 
   console.log("messagesList");
@@ -20,7 +19,6 @@ export default function MessagesList(props: MessagesListProps) {
     console.log("listen message");
     socket.on("message", (data) => {
       console.log(data);
-      setMessagesList((list) => [...list, data]);
     });
   }, [socket]);
 
@@ -32,9 +30,9 @@ export default function MessagesList(props: MessagesListProps) {
       }}
     >
       <>
-        {messagesList.map((messageData: IMessage) => {
-          console.log("auteur du msg = ", messageData.author);
-          if (props.username === messageData.author)
+        {props.messagesList.map((messageData: IMessage) => {
+          //console.log("uuid du msg", messageData.uuid);
+          //if (props.username === messageData.author)
             return (
               <Box
                 sx={{
@@ -50,7 +48,7 @@ export default function MessagesList(props: MessagesListProps) {
                   mb: 1,
                   p: 1,
                 }}
-                key={messageData.id}
+                key={messageData.uuid}
               >
                 {messageData.content}
               </Box>
@@ -70,7 +68,7 @@ export default function MessagesList(props: MessagesListProps) {
                 mb: 1,
                 p: 1,
               }}
-              key={messageData.id}
+              key={messageData.uuid}
             >
               {messageData.content}
             </Box>

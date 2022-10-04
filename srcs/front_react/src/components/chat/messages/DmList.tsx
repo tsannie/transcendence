@@ -1,12 +1,6 @@
-import {
-  Box,
-  Grid,
-  IconButton,
-  Popover,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, IconButton, Popover, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import { IDm, IMessage } from "../types";
+import { IConvCreated, IDm, IMessage } from "../types";
 import AddIcon from "@mui/icons-material/Add";
 import ChatUserlist from "../ChatUserlist";
 import { ChatContent } from "../Chat";
@@ -22,11 +16,11 @@ interface DmListProps {
   isNewMessage: boolean;
   setEnumState: (enumState: ChatContent) => void;
   getAllUsers: () => Promise<void>;
-  users: IUser[]
+  users: IUser[];
 }
 
 export default function DmList(props: DmListProps) {
-  const [dms, setDms] = useState<IDm[]>([]);
+  const [dms, setDms] = useState<IConvCreated[]>([]);
   const [newDm, setNewDm] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const socket = useContext(SocketContext);
@@ -37,20 +31,16 @@ export default function DmList(props: DmListProps) {
     props.setEnumState(ChatContent.NEW_DM);
   }
 
-  function handleClose() {
-    setAnchorEl(null);
-    setNewDm(false);
-  }
-
   useEffect(() => {
-    socket.on("getDM", (data: any) => {
-      console.log("getDM");
+    socket.on("getDm", (data: IConvCreated[]) => {
+      console.log("getDm");
       console.log(data);
-      setDms(data);
-    });
-    //getAllDms();
-  }, [dms]);
 
+      // loop through all data and setDms
+      setDms(data);
+      console.log("dms = ", dms);
+    });
+  }, []);
 
   return (
     <Box sx={{ border: "1px solid red" }}>
@@ -58,6 +48,15 @@ export default function DmList(props: DmListProps) {
       <IconButton onClick={handleClick}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
+
+      {/* {dms.map((dm: IConvCreated) => {
+        return (
+          <div key={dm.id}>
+            <Typography>{dm.id}</Typography>
+          </div>
+        );
+      })} */}
+
     </Box>
   );
 }

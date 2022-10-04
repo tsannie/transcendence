@@ -117,6 +117,15 @@ export class DmService {
 	*/
 	async createDm(data: DmDto, user: UserEntity): Promise<DmEntity> {
 		let user2 = await this.checkifBanned(user, data.target);
+    let convo = user.dms.find(
+      (dm) =>
+        (dm.users[0].username === user.username &&
+          dm.users[1].username === data.target) ||
+        (dm.users[0].username === data.target &&
+          dm.users[1].username === user.username),
+    );
+    if (convo)
+      return this.getDmById(convo.id);
 		let new_dm = new DmEntity();
 
 		new_dm.users = [user, user2];

@@ -1,7 +1,7 @@
 import { IUser } from "../../userlist/UserList";
 
 export interface IMessage {
-  id?: string;
+  uuid?: string;
   //room: string;
   author: string;
   content: string;
@@ -33,5 +33,16 @@ export interface IChannelActions {
 
 export interface IDm {
   id?: number;
-  target: string;
+  time?: Date;
+  target?: string;
+  users? : IUser[];
+  messages?: IMessage[];
+}
+
+export interface IConvCreated {
+  id: number;
+  time: Date;
+  //target?: string;
+  users : IUser[];
+  //messages: IMessage[];
 }
