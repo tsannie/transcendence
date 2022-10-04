@@ -11,10 +11,10 @@ export class PaddleEntity {
   @Column({ nullable: true, type: 'float' })
   y: number;
 
-  @Column({ default: 80 })
+  @Column({ nullable: true})
   width: number;
 
-  @Column({ default: 20 })
+  @Column({ nullable: true})
   height: number;
 
   @Column({ default: 'white' })
