@@ -40,11 +40,13 @@ export default function App() {
 
   return (
     <div className="app">
+      <AuthProvider>
       <Routes>
         <Route path="/" element={<PrivateRoute component={Menu} />}/>
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/2fa" element={<TwoFactorPage/>} />
       </Routes>
+      </AuthProvider>
     </div>
   );
 
