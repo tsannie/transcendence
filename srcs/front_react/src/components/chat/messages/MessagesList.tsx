@@ -13,8 +13,6 @@ export default function MessagesList(props: MessagesListProps) {
 
   const socket = useContext(SocketContext);
 
-  console.log("messagesList");
-
   useEffect(() => {
     console.log("listen message");
     socket.on("message", (data) => {

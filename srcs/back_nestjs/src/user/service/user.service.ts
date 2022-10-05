@@ -49,19 +49,31 @@ export class UserService {
   }
 
   // find user by id
-  async findById(input_id: number): Promise<UserEntity> {
-	return await this.allUser.findOne({
-		where: {
-			id: input_id
-		}
-	});
+  async findById(input_id: number, relations_ToLoad : FindOptionsRelations<UserEntity> = undefined): Promise<UserEntity> {
+	if (!relations_ToLoad)
+	{
+		return await this.allUser.findOne({
+			where: {
+				id: input_id
+			}
+		});
+	}
+	else
+	{
+		return await this.allUser.findOne({
+			where: {
+				id: input_id
+			},
+			relations: relations_ToLoad
+		});
+	};
   }
 
   // TODO DELETE
   async getAllUser(): Promise<UserEntity[]> {
 	return await this.allUser.find({
 		relations : {
-			owner_of: true, 
+			owner_of: true,
 			channels: true,
 			banned: true,
 			admin_of: true,
