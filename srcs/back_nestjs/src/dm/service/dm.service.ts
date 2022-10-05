@@ -65,7 +65,7 @@ export class DmService {
       throw new UnprocessableEntityException(
         `No conversation with ${data.target}`,
       );
-    else return await this.getDmById(convo.id);
+    else return await this.getDmById(convo.id, data.offset);
   }
 
 
@@ -125,7 +125,7 @@ export class DmService {
           dm.users[1].username === user.username),
     );
     if (convo)
-      return this.getDmById(convo.id);
+      return this.getDmById(convo.id, data.offset);
 		let new_dm = new DmEntity();
 
 		new_dm.users = [user, user2];
