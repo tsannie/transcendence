@@ -165,7 +165,7 @@ export default function ChannelsList(props: ChannelsListProps) {
             >
               Leave
             </Button>
-            { //userStatus === UserStatus.OWNER && (
+            { userStatus === UserStatus.OWNER && (
               <Button
                 sx={{
                   color: "red",
@@ -175,11 +175,11 @@ export default function ChannelsList(props: ChannelsListProps) {
               >
                 Delete
               </Button>
-            }
+            )}
             <AdminsActions
               channelData={channelData}
               getChannels={props.getChannels}
-              setChannelStatus={setChannelStatus}
+              setUserStatus={setUserStatus}
             />
             <InfosChannels channelData={channelData} />
           </Box>
