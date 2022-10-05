@@ -16,18 +16,22 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({ component: Rout
 
 
   useEffect(() => {
-    api.get('auth/isTwoFactor').then(res => {
-      setIs2FA(res.data.isTwoFactor);
-    }).catch(res => {
-      setIsLoad(true);
-    });
+    if (document.cookie.includes(COOKIE_NAME)) {
+      api.get('auth/isTwoFactor').then(res => {
+        setIs2FA(res.data.isTwoFactor);
+      }).catch(res => {
+        setIsLoad(true);
+      });
 
-    api.get('auth/profile').then(res => {
-      login(res.data);
+      api.get('auth/profile').then(res => {
+        login(res.data);
+        setIsLoad(true);
+      }).catch(res => {
+        setIsLoad(true);
+      });
+    } else {
       setIsLoad(true);
-    }).catch(res => {
-      setIsLoad(true);
-    });
+    }
 
   }, []);
 
