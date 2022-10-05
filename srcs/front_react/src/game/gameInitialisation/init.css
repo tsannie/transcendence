@@ -1,0 +1,12 @@
+.map:focus {
+  border: 5px solid black;
+}
+
+
+.power:focus {
+  border: 5px solid blue;
+}
+
+input[type="image"], textarea, select { 
+  outline: none;
+}

@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   JoinColumn,
   OneToOne,

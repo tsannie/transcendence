@@ -122,6 +122,18 @@ export class GameGateway implements OnGatewayInit {
   ////////  READY AND START GAME 
   //////////////////////////////////////////////
 
+  @SubscribeMessage('readyGameMapPower')
+   Ready_map_power(client: Socket, data: any) {
+    const room = data.room;
+
+    this.all_rooms[room].power = data.power;
+    this.all_rooms[room].map = data.map;
+
+    this.all_game.save(this.all_rooms[room]);
+    client.to(room).emit('Get_map_power', this.all_rooms[room]);
+  }
+
+
   @SubscribeMessage('readyGameRoom')
   async ReadyGame(client: Socket, room: string) {
     if (this.all_rooms[room].p1 === client.id)
@@ -131,7 +143,8 @@ export class GameGateway implements OnGatewayInit {
     if (this.all_rooms[room].p2_ready === true && this.all_rooms[room].p1_ready === true) {
       this.all_rooms[room].game_started = true;
       this.all_rooms[room].thedate = new Date();
-
+      //send withc power and witch map before the second player 
+      //can touth ready and if player ready cant change power and map 
       client.emit('readyGame', this.all_rooms[room]);
       client.to(room).emit('readyGame', this.all_rooms[room]);
     } else
