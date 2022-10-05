@@ -5,7 +5,13 @@ import { Buffer } from 'buffer';
 import { api } from "../../const/const";
 
 
-export default function ActivationProcess(props: any) {
+interface IProps {
+  setEnable2FA: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenError: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function ActivationProcess(props: IProps) {
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
 
@@ -24,7 +30,6 @@ export default function ActivationProcess(props: any) {
       token: token,
     }).then(res => {
       props.setOpenSuccess(true);
-      props.setTwoFactorA(true);
       props.setEnable2FA(false);
     }).catch(err => {
       props.setOpenError(true);
