@@ -5,6 +5,7 @@ import { targetDto } from '../dto/target.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AvatarDto } from '../dto/avatar.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 
 @Controller('user')
 export class UserController {
@@ -25,19 +26,19 @@ export class UserController {
     return await this.userService.editUser();
   }
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
   @Post("banUser")
   async banUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
     return await this.userService.banUser(body.target, req.user);
   }
 
-  @UseGuards( AuthGuard('jwt') )
+  @UseGuards( JwtTwoFactorGuard )
   @Post("unBanUser")
   async unBanUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
     return await this.userService.unBanUser(body.target, req.user);
   }
 
-  @UseGuards( AuthGuard('jwt') )
+  @UseGuards( JwtTwoFactorGuard )
   @Post("addAvatar")
   @UseInterceptors(FileInterceptor('image'))
   async addAvatar( @UploadedFile() file: any, @Request() req) : Promise<void|UserEntity> {
@@ -45,7 +46,7 @@ export class UserController {
   }
 
   //DELETE OR INTEGRATE IN USER GETTER
-  @UseGuards( AuthGuard('jwt') )
+  @UseGuards( JwtTwoFactorGuard )
   @Get("getAvatar")
   async getAvatar (@Request() req) {//: Promise<string> {
     // return await this.userService.getAvatar(req.user);

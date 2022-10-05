@@ -9,13 +9,14 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { channel } from 'diagnostics_channel';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
+import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 
 @Controller('channel')
 export class ChannelController {
 	constructor(private channelService: ChannelService,
 	) {}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Get("datas")
 	async getDatas(@Query() query_channel : ChannelDto, @Request() req) : Promise<
 	{
@@ -25,88 +26,88 @@ export class ChannelController {
 		return await this.channelService.getDatas(query_channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Get('list')
 	async getChannelsList(@Request() req) : Promise<ChannelEntity[]> {
 		return await this.channelService.getChannelsList(req.user);
 	}
 
 	//CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('createChannel')
 	async createChannel(@Body() channel: CreateChannelDto, @Request() req): Promise<void | ChannelEntity> {
 		return await this.channelService.createChannel(channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('banUser')
 	async banUser(@Body() ban_request: ChannelActionsDto, @Request() req) : Promise<ChannelEntity> {
 		return await this.channelService.banUser(ban_request, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('unBanUser')
 	async unBanUser(@Body() ban_request: ChannelActionsDto, @Request() req) : Promise<ChannelEntity> {
 		return await this.channelService.unBanUser(ban_request, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('makeAdmin')
 	async makeAdmin(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
 		return await this.channelService.makeAdmin(channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('muteUser')
 	async muteUser(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
 		return await this.channelService.muteUser(channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('unmuteUser')
 	async unMuteUser(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
 		return await this.channelService.unMuteUser(channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('revokeAdmin')
 	async revokeAdmin(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
 		return await this.channelService.revokeAdmin(channel, req.user);
 	}
 
 	//ENTER IN A PUBLIC ROOM,
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post( 'joinChannel' )
 	async joinChannel( @Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.joinChannel(query_channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post( 'leaveChannel' )
 	async leaveChannel( @Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.leaveChannel(query_channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post( 'deleteChannel' )
 	async deleteChannel(@Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.deleteChannel(query_channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('addPassword')
 	async addPassword( @Body() channel: ChannelPasswordDto, @Request() req) {
 		return await this.channelService.addPassword(channel, req.user);
 	}
 
 	//USE SAME FUNCTION THAN ADDPASSWORD
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('modifyPassword')
 	async modifyPassword( @Body() channel: ChannelPasswordDto, @Request() req) {
 		return await this.channelService.addPassword(channel, req.user);
 	}
 
-	@UseGuards( AuthGuard('jwt') )
+	@UseGuards( JwtTwoFactorGuard )
 	@Post('deletePassword')
 	async deletePassword( @Body() channel: ChannelDto, @Request() req) {
 		return await this.channelService.deletePassword(channel, req.user);

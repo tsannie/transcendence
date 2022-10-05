@@ -12,8 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { api } from "../../../userlist/UserList";
-//import { socket } from "../Chat";
+import { api } from "../../../const/const";
 import { IChannel } from "../types";
 import { display } from "@mui/system";
 import { LockIcon } from "./LockIcon";
