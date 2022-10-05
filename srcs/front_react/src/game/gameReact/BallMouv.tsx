@@ -108,36 +108,50 @@ export function BallMouv(
   let data = new Ball(ballObj.x, ballObj.y, ballObj.rad);
   data.draw(ctx);
 
+  if (ballObj.first_set === true) {
+      console.log("REALY REALY FIRST SET");
+      ballObj.ball_way_x = 1;
+      ballObj.ball_way_y = 1;
+      ballObj.first_set = false;
+  }
   if (ballObj.init_ball_pos === false) {
-    ballObj.init_dx *= -1;
-    ballObj.init_first_dx *= -1;
-
+     /*      ballObj.init_dx *= -1;
+     ballObj.init_first_dx *= -1;
+     
     ballObj.ingame_dx = ballObj.init_dx;
     ballObj.ingame_dy = ballObj.init_dy;
 
-    ballObj.x = ballObj.init_x;
-    ballObj.y = ballObj.init_y;
-
     ballObj.first_dx = ballObj.init_first_dx;
-    ballObj.first_dy = ballObj.init_first_dy;
+    ballObj.first_dy = ballObj.init_first_dy; */
+    
+    //ballObj.ball_way_x *= -1;
+    ballObj.ball_way_y = 1;
+
+    ballObj.x = ballObj.init_pos_x;
+    ballObj.y = ballObj.init_pos_y;
+
+    ballObj.ingame_dy = 6;
+    //ballObj.first_dy = 2;
 
     ballObj.init_ball_pos = true;
   }
+  //console.log("ballObj.ingame_dx", ballObj.ingame_dx);
+  //console.log("ballObj.ingame_dy", ballObj.ingame_dy);
+
 
   if (ballObj.first_col === false) {
-    ballObj.x += ballObj.first_dx;
-    ballObj.y += ballObj.first_dy;
+    //console.log("first col");
+    ballObj.x += ballObj.first_dx * ballObj.ball_way_x;
+    ballObj.y += ballObj.first_dy * ballObj.ball_way_y;
   } else {
-    ballObj.x += ballObj.ingame_dx;
-    ballObj.y += ballObj.ingame_dy;
+    //console.log("not first col");
+    ballObj.x += ballObj.ingame_dx * ballObj.ball_way_x;
+    ballObj.y += ballObj.ingame_dy * ballObj.ball_way_y;
   }
 
-  if (
-    ballObj.y - ballObj.rad <= 2 ||
-    ballObj.y + ballObj.rad >= canvas_height - 2
-  ) {
-    ballObj.first_dy *= -1;
-    ballObj.ingame_dy *= -1;
+  if (ballObj.y - ballObj.rad <= 2 || ballObj.y + ballObj.rad >= canvas_height - 2) {
+    ballObj.ball_way_y *= -1;
+
   }
 }
 
@@ -153,6 +167,7 @@ export function BallCol_left(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_right.score += 1;
+    ballObj.ball_way_x = -1;
   } else if (player_right.score >= 3) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
@@ -165,11 +180,14 @@ export function BallCol_left(
     ballObj.x >= paddleProps.x
   ) {
     ballObj.first_col = true;
-
+    console.log("col left");
+      
     var res = paddleProps.y + paddleProps.height - ballObj.y;
     res = res / 10 - paddleProps.height / 20;
 
     ballObj.ingame_dy = -res;
+    ballObj.ball_way_y = 1;
+
     ballObj.ingame_dx *= -1;
 
     ballObj.is_col = true;
@@ -190,6 +208,7 @@ export function BallCol_right(
     ballObj.first_col = false;
     ballObj.init_ball_pos = false;
     player_left.score += 1;
+    ballObj.ball_way_x = 1;
   } else if (player_left.score >= 3) {
     ctx.font = "30px Comic Sans MS";
     ctx.fillStyle = "white";
@@ -205,12 +224,16 @@ export function BallCol_right(
     ballObj.y <= paddleProps.y + paddleProps.height &&
     ballObj.x <= paddleProps.x + paddleProps.width
   ) {
+    console.log("col right");
     ballObj.first_col = true;
     var res = paddleProps.y + paddleProps.height - ballObj.y;
     res = res / 10 - paddleProps.height / 20;
 
     ballObj.ingame_dy = -res;
-    ballObj.ingame_dx *= -1;
+    ballObj.ball_way_y = 1;
+
+    ballObj.ball_way_x *= -1;
+    
     ballObj.is_col = true;
     ballObj.cal_right = true;
 
