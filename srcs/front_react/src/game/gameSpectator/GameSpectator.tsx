@@ -44,12 +44,12 @@ export function GameSpectator(props: any) {
 
       ballObj.ingame_dx = theroom.set.ball.ingame_dx;
       ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-
+/* 
       ballObj.init_dx = theroom.set.ball.init_dx;
       ballObj.init_dy = theroom.set.ball.init_dy;
 
       ballObj.init_first_dx = theroom.set.ball.init_first_dx;
-      ballObj.init_first_dy = theroom.set.ball.init_first_dy;
+      ballObj.init_first_dy = theroom.set.ball.init_first_dy; */
 
       ballObj.first_dx = theroom.set.ball.first_dx;
       ballObj.first_dy = theroom.set.ball.first_dy;

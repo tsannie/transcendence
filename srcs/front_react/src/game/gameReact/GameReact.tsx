@@ -23,17 +23,11 @@ export function GamePlayer_Left_right(props: any) {
     // This useEffect is used to get the room data from the server to set the ball position and the players position
 
     socket.on("sincTheBall", (theroom: any) => {
-      console.log("INGAME_power = ", theroom.power);
-      if (theroom.power === 1) {
-        
+      if (theroom.power === 2) {
+        console.log("INGAME_power = ", theroom.power);
+
         ballObj.ingame_dx = theroom.set.ball.power_ingame_dx;
         ballObj.ingame_dy = theroom.set.ball.power_ingame_dy;
-  
-        ballObj.init_dx = theroom.set.ball.power_init_dx;
-        ballObj.init_dy = theroom.set.ball.power_init_dy;
-  
-        ballObj.init_first_dx = theroom.set.ball.power_init_first_dx;
-        ballObj.init_first_dy = theroom.set.ball.power_init_first_dy;
   
         ballObj.first_dx = theroom.set.ball.power_first_dx;
         ballObj.first_dy = theroom.set.ball.power_first_dy;
@@ -41,12 +35,6 @@ export function GamePlayer_Left_right(props: any) {
       else {
         ballObj.ingame_dx = theroom.set.ball.ingame_dx;
         ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-  
-        ballObj.init_dx = theroom.set.ball.init_dx;
-        ballObj.init_dy = theroom.set.ball.init_dy;
-  
-        ballObj.init_first_dx = theroom.set.ball.init_first_dx;
-        ballObj.init_first_dy = theroom.set.ball.init_first_dy;
   
         ballObj.first_dx = theroom.set.ball.first_dx;
         ballObj.first_dy = theroom.set.ball.first_dy;
@@ -87,11 +75,12 @@ export function GamePlayer_Left_right(props: any) {
 
   // Sincronize the ball position with the server
 
-  function sinc_ball(room_name: string, ballObj: any) {
+  function sinc_ball(room_name: string, ballObj: any, first: boolean) {
     if (player_left.won === false && player_right.won === false) {
       var data = {
         room: room_name,
         ball: ballObj,
+        first: first,
       };
       socket.emit("sincBall", data);
     }
@@ -123,6 +112,8 @@ export function GamePlayer_Left_right(props: any) {
 
   let requestAnimationFrameId: any;
   useEffect(() => {
+      sinc_ball(props.room, ballObj, true);
+      ballObj.first_set = true;
       const render = () => {
         requestAnimationFrameId = requestAnimationFrame(render);
         let canvas: any = props.canvasRef.current;
@@ -145,9 +136,9 @@ export function GamePlayer_Left_right(props: any) {
               u++;
             if (u === 6){
               if (props.im_right === true && ballObj.cal_right === true)
-                sinc_ball(props.room, ballObj);
+                sinc_ball(props.room, ballObj, false);
               else if (props.im_right === false && ballObj.cal_right === false)
-                sinc_ball(props.room, ballObj);
+                sinc_ball(props.room, ballObj, false);
               sinc_player_left(props.room, player_left);
               sinc_player_right(props.room, player_right);
               u = 0;

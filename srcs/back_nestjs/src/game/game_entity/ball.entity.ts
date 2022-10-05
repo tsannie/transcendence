@@ -6,34 +6,10 @@ export class BallEntity {
   id?: number;
 
   @Column({ nullable: true, type: 'float' })
-  x: number;
+  x: number = 500;
 
   @Column({ nullable: true, type: 'float' })
-  y: number;
-
-  @Column({ nullable: true, type: 'float' })
-  ingame_dx: number;
-
-  @Column({ nullable: true, type: 'float' })
-  ingame_dy: number;
-
-  @Column({ nullable: true, type: 'float' })
-  init_dx: number;
-
-  @Column({ nullable: true, type: 'float' })
-  init_dy: number;
-
-  @Column({ nullable: true, type: 'float' })
-  init_first_dx: number;
-
-  @Column({ nullable: true, type: 'float' })
-  init_first_dy: number;
-
-  @Column({ nullable: true, type: 'float' })
-  first_dx: number;
-
-  @Column({ nullable: true, type: 'float' })
-  first_dy: number;
+  y: number = 250;
 
   @Column({ default: false })
   init_ball_pos: boolean = false;
@@ -47,34 +23,34 @@ export class BallEntity {
   @Column({ default: true })
   right: boolean = true;
 
+  // BALL SPEED MOUV
+
+  @Column({ nullable: true, type: 'float' })
+  ingame_dx: number = 4;
+
+  @Column({ nullable: true, type: 'float' })
+  ingame_dy: number = 6;
 
 
+  @Column({ nullable: true, type: 'float' })
+  first_dx: number = 1;
 
+  @Column({ nullable: true, type: 'float' })
+  first_dy: number = 2;
+
+
+  // POWER UP SPEED
+
+  @Column({ nullable: true, type: 'float' })
+  power_first_dx: number = 2;
   
-  
   @Column({ nullable: true, type: 'float' })
-  power_init_first_dx: number = 4;
-  
-  @Column({ nullable: true, type: 'float' })
-  power_init_first_dy: number = 8;
-  
-  @Column({ nullable: true, type: 'float' })
-  power_first_dx: number = 4;
-  
-  @Column({ nullable: true, type: 'float' })
-  power_first_dy: number = 8;
+  power_first_dy: number = 4;
 
 
-  
   @Column({ nullable: true, type: 'float' })
-  power_init_dx: number = 8;
+  power_ingame_dx: number = 6;
 
   @Column({ nullable: true, type: 'float' })
-  power_init_dy: number = 10;
-
-  @Column({ nullable: true, type: 'float' })
-  power_ingame_dx: number = 8;
-
-  @Column({ nullable: true, type: 'float' })
-  power_ingame_dy: number = 10;
+  power_ingame_dy: number = 8;
 }
