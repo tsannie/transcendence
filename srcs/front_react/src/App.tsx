@@ -11,13 +11,14 @@ import LogoIcon from "./assets/logo-project.png";
 import Settings from "./components/settings/Settings";
 import TwoFactorCode from "./Auth/TwoFactorCode";
 import { api, COOKIE_NAME } from "./const/const";
+import { SocketProvider } from "./components/chat/SocketContext";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [inputSettings, setInputSettings] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
-  const [users, setUsers] = React.useState<IUser[]>([]);
+  const [users, setUsers] = React.useState<any[]>([]);
 
   async function getAllUsers() {
     await api
@@ -79,20 +80,26 @@ export default function App() {
     );
   } else {
     return (
-      <Box
-        sx={{
-          display: "flex",
-        }}
-      >
-        <Sidebar
-          setInputChat={setInputChat}
-          setInputSettings={setInputSettings}
-          setIsLogin={setIsLogin}
-          setIs2FA={setIs2FA}
-        />
-        {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
-        {inputSettings && <Settings />}
-      </Box>
+      <SocketProvider>
+        <Grid
+          container
+        >
+          <Grid item >
+          <Sidebar
+            setInputChat={setInputChat}
+            setInputSettings={setInputSettings}
+            setIsLogin={setIsLogin}
+            setIs2FA={setIs2FA}
+          />
+          </Grid>
+          <Grid item xs={11} sx={{
+            ml: "72px",
+          }}>
+            {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
+            {inputSettings && <Settings />}
+          </Grid>
+        </Grid>
+    </SocketProvider>
     );
   }
 }

@@ -4,7 +4,6 @@ import { IConvCreated, IDm, IMessage } from "../types";
 import AddIcon from "@mui/icons-material/Add";
 import ChatUserlist from "../ChatUserlist";
 import { ChatContent } from "../Chat";
-import { IUser } from "../../../userlist/UserList";
 import { Socket } from "socket.io-client";
 import { SocketContext } from "../SocketContext";
 
@@ -16,7 +15,7 @@ interface DmListProps {
   isNewMessage: boolean;
   setEnumState: (enumState: ChatContent) => void;
   getAllUsers: () => Promise<void>;
-  users: IUser[];
+  users: any[];
 }
 
 export default function DmList(props: DmListProps) {

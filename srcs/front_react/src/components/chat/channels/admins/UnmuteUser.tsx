@@ -1,6 +1,6 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api, IUser } from '../../../../userlist/UserList';
+import { api } from '../../../../const/const';
 import { IChannel, IChannelActions } from '../../types';
 
 interface UnmuteUserProps {
@@ -36,7 +36,7 @@ export default function UnmuteUser(props: UnmuteUserProps) {
     return newChannel;
   }
 
-  async function unmuteUser(user: IUser, channel: IChannel) {
+  async function unmuteUser(user: any, channel: IChannel) {
     const newChannel: IChannelActions = createChannelActions(channel, user.username);
 
     console.log("newChannel = ", newChannel);
@@ -80,7 +80,7 @@ export default function UnmuteUser(props: UnmuteUserProps) {
       >
         {open === true && (
           <List>
-            {props.infosChannel.muted.map((user: IUser) => (
+            {props.infosChannel.muted.map((user: any) => (
               <ListItemButton onClick={() => unmuteUser(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>

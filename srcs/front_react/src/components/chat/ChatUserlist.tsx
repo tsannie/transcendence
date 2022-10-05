@@ -10,8 +10,7 @@ import { Box } from "@mui/system";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { set } from "react-hook-form";
 import { Socket } from "socket.io-client";
-import UserList, { api } from "../../userlist/UserList";
-import { IUser } from "../../userlist/UserList";
+import { api } from "../../const/const";
 import { ChatContent } from "./Chat";
 import { SocketContext } from "./SocketContext";
 import { IChannel, IDm, IMessage } from "./types";
@@ -20,7 +19,7 @@ interface ChatUserListProps {
   setMessagesList: (messagesList: IMessage[]) => void;
   setTargetUsername: (targetUsername: string) => void;
   setEnumState: (enumState: ChatContent) => void;
-  users: IUser[];
+  users: any[];
   getAllUsers: () => Promise<void>;
 }
 
@@ -73,11 +72,11 @@ export default function ChatUserlist(props: ChatUserListProps) {
       >
         Users
       </Typography>
-      <UserList
+      {/* <UserList
         handleClick={handleClick}
         users={props.users}
         getAllUsers={props.getAllUsers}
-      />
+      /> */}
     </>
   );
 }

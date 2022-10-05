@@ -1,6 +1,6 @@
 import { Button, List, ListItem, ListItemText, Popover } from "@mui/material";
 import React, { useState } from "react";
-import { api, IUser } from "../../../userlist/UserList";
+import { api } from "../../../const/const";
 import { IChannel } from "../types";
 
 interface InfosChannelsProps {
@@ -95,16 +95,16 @@ export default function InfosChannels(props: InfosChannelsProps) {
               <ListItemText primary="Owner" secondary={infosChannel.owner.username} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Users" secondary={infosChannel.users.map((user: IUser) => user.username)} />
+              <ListItemText primary="Users" secondary={infosChannel.users.map((user: any) => user.username)} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Admins" secondary={infosChannel.admins.map((user: IUser) => user.username)} />
+              <ListItemText primary="Admins" secondary={infosChannel.admins.map((user: any) => user.username)} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Banned" secondary={infosChannel.banned.map((user: IUser) => user.username)} />
+              <ListItemText primary="Banned" secondary={infosChannel.banned.map((user: any) => user.username)} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Muted" secondary={infosChannel.muted.map((user: IUser) => user.username)} />
+              <ListItemText primary="Muted" secondary={infosChannel.muted.map((user: any) => user.username)} />
             </ListItem>
           </List>
         )}
