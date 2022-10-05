@@ -5,7 +5,6 @@ import { IChannel } from "../types";
 
 interface InfosChannelsProps {
   channelData: IChannel;
-  userId: number;
 }
 
 export default function InfosChannels(props: InfosChannelsProps) {

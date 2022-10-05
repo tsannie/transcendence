@@ -6,6 +6,8 @@ import ChatUserlist from "../ChatUserlist";
 import { ChatContent } from "../Chat";
 import { Socket } from "socket.io-client";
 import { SocketContext } from "../SocketContext";
+import { api } from "../../../const/const";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
@@ -13,32 +15,37 @@ import { SocketContext } from "../SocketContext";
 
 interface DmListProps {
   isNewMessage: boolean;
-  setEnumState: (enumState: ChatContent) => void;
-  getAllUsers: () => Promise<void>;
-  users: any[];
+  setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function DmList(props: DmListProps) {
-  const [dms, setDms] = useState<IConvCreated[]>([]);
+  const [dmsList, setDmsList] = useState<IConvCreated[]>([]);
   const [newDm, setNewDm] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const socket = useContext(SocketContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
     setNewDm(true);
-    props.setEnumState(ChatContent.NEW_DM);
+    props.setChatContent(ChatContent.NEW_DM);
+  }
+
+  // get all dmks
+  async function getDms() {
+
+    console.log("get dms");
+    await api
+      .get("dm/list")
+      .then((res) => {
+        setDmsList(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid dms");
+        console.log(res);
+      });
   }
 
   useEffect(() => {
-    socket.on("getDm", (data: IConvCreated[]) => {
-      console.log("getDm");
-      console.log(data);
-
-      // loop through all data and setDms
-      setDms(data);
-      console.log("dms = ", dms);
-    });
+    getDms();
   }, []);
 
   return (
@@ -47,7 +54,9 @@ export default function DmList(props: DmListProps) {
       <IconButton onClick={handleClick}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-
+      <IconButton onClick={() => getDms()}>
+        <RefreshIcon />
+      </IconButton>
       {/* {dms.map((dm: IConvCreated) => {
         return (
           <div key={dm.id}>

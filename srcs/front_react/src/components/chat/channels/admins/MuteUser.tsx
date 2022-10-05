@@ -6,7 +6,6 @@ import { IChannel, IChannelActions } from '../../types';
 interface MuteUserProps {
   infosChannel: IChannel;
   getInfosChannel: (channel: IChannel) => void;
-  userId: number;
 }
 
 export default function MuteUser(props: MuteUserProps) {

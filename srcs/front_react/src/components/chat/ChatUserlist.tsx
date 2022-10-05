@@ -1,6 +1,8 @@
 import {
   Button,
   Grid,
+  List,
+  ListItem,
   Menu,
   MenuItem,
   Popover,
@@ -18,18 +20,29 @@ import { IChannel, IDm, IMessage } from "./types";
 interface ChatUserListProps {
   setMessagesList: (messagesList: IMessage[]) => void;
   setTargetUsername: (targetUsername: string) => void;
-  setEnumState: (enumState: ChatContent) => void;
-  users: any[];
-  getAllUsers: () => Promise<void>;
+  setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-
   const socket = useContext(SocketContext);
+  const [users, setUsers] = React.useState<any[]>([]);
+
+  async function getAllUsers() {
+    await api
+      .get("user")
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+        console.log(res);
+      });
+  }
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
     createNewConv(event.currentTarget.innerHTML);
+    console.log(event.currentTarget.innerHTML);
   }
 
   async function createDm(targetUsername: IDm) {
@@ -45,7 +58,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
       })
       .catch((res) => {
         console.log("invalid create dm");
-        console.log(res);
+        console.log(res.response.data.message);
       });
   }
 
@@ -57,9 +70,14 @@ export default function ChatUserlist(props: ChatUserListProps) {
     console.log(newDm);
     console.log("handle new message");
     createDm(newDm);
-    props.setEnumState(ChatContent.MESSAGES);
+    props.setChatContent(ChatContent.MESSAGES);
     props.setTargetUsername(targetUsername);
   }
+
+  useEffect(() => {
+    console.log("get all users");
+    getAllUsers();
+  }, []);
 
   return (
     <>
@@ -72,11 +90,13 @@ export default function ChatUserlist(props: ChatUserListProps) {
       >
         Users
       </Typography>
-      {/* <UserList
-        handleClick={handleClick}
-        users={props.users}
-        getAllUsers={props.getAllUsers}
-      /> */}
+      <List>
+        {users.map((user) => (
+          <ListItem key={user.id} onClick={handleClick}>
+            {user.username}
+          </ListItem>
+        ))}
+      </List>
     </>
   );
 }
