@@ -18,19 +18,6 @@ export default function App() {
   const [inputSettings, setInputSettings] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
-  const [users, setUsers] = React.useState<any[]>([]);
-
-  async function getAllUsers() {
-    await api
-      .get("user")
-      .then((res) => {
-        setUsers(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-        console.log(res);
-      });
-  }
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
@@ -95,7 +82,7 @@ export default function App() {
           <Grid item xs={11} sx={{
             ml: "72px",
           }}>
-            {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
+            {inputChat && <Chat />}
             {inputSettings && <Settings />}
           </Grid>
         </Grid>

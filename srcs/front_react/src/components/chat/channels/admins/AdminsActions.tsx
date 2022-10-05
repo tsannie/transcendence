@@ -11,15 +11,12 @@ import UnmuteUser from "./UnmuteUser";
 
 interface AdminsActionsProps {
   channelData: IChannel;
-  userId: number;
   getChannels: () => void;
-  isOwner: (id: number) => boolean;
+  setChannelStatus: (status: string) => void;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
   const [infosChannel, setInfosChannel] = useState<IChannel>(props.channelData);
-
-  // handleAdminActionsClick function to open popover
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -50,7 +47,7 @@ export default function AdminsActions(props: AdminsActionsProps) {
   async function getInfosChannel(channel: IChannel) {
     console.log(channel);
     await api
-      .get("channel/privateData", {
+      .get("channel/datas", {
         params: {
           name: channel.name,
         },
@@ -59,6 +56,8 @@ export default function AdminsActions(props: AdminsActionsProps) {
         console.log("get infos channels");
         console.log(res.data);
         setInfosChannel(res.data);
+        props.setChannelStatus(res.data.status);
+        //props.setUserStatus(res.data.userStatus);
         //setChannelId(res.data.id);
       })
       .catch((res) => {
@@ -111,7 +110,6 @@ export default function AdminsActions(props: AdminsActionsProps) {
               <MuteUser
                 infosChannel={infosChannel}
                 getInfosChannel={getInfosChannel}
-                userId={props.userId}
               />
             </ListItem>
             <ListItem>

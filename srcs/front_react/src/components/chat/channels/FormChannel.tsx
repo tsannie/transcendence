@@ -15,66 +15,33 @@ import { v4 as uuidv4 } from "uuid";
 import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
 
-interface FormChannelProps {
-  setChannelsList: (channelsList: IChannel[]) => void;
-}
+interface FormChannelProps {}
 
 export default function FormChannel(props: FormChannelProps) {
-  const [username, setUsername] = useState("");
+  const [nameChannel, setNameChannel] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
 
-  // check if channel name is already taken in db
-  async function checkChannelName(name: string) {
-    let isTaken = false;
-    await api
-      .get("channel/all")
-      .then((res) => {
-        res.data.forEach((channel: IChannel) => {
-          if (channel.name === name) {
-            isTaken = true;
-          }
-          else {
-            props.setChannelsList(res.data);
-          }
-        });
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-        console.log(res);
-      });
-    return isTaken;
-  }
-
   // create channel in db
   async function createChannels() {
-    await checkChannelName(username).then((isTaken) => {
-      if (isTaken) {
-        alert("Channel name already taken");
-      } else {
-        if (username !== "") {
-          console.log(newPassword);
-          const channelData: ICreateChannel = {
-            name: username,
-            status: status,
-          };
-          if (status === "Protected") {
-            channelData.password = newPassword;
-          }
-          api
-            .post("channel/createChannel", channelData)
-            .then((res) => {
-              console.log("channel created with success");
-              console.log(channelData);
-            })
-            .catch((res) => {
-              console.log("error");
-              console.log(res);
-            });
-        }
-      }
-    });
+    const channelData: ICreateChannel = {
+      name: nameChannel,
+      status: status,
+    };
+    if (status === "Protected") {
+      channelData.password = newPassword;
+    }
+    api
+      .post("channel/createChannel", channelData)
+      .then((res) => {
+        console.log("channel created with success");
+        console.log(channelData);
+      })
+      .catch((res) => {
+        console.log("error");
+        console.log(res.response.data.message);
+      });
   }
 
   return (
@@ -84,7 +51,7 @@ export default function FormChannel(props: FormChannelProps) {
         variant="outlined"
         placeholder="name"
         onChange={(event) => {
-          setUsername(event.target.value);
+          setNameChannel(event.target.value);
         }}
       />
       <FormControl>

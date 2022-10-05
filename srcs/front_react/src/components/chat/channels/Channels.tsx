@@ -11,33 +11,24 @@ import { ChatContent } from "../Chat";
 import { api } from "../../../const/const";
 
 interface ChannelProps {
-  setEnumState: (enumState: ChatContent) => void;
-  channelsList: IChannel[];
-  setChannelsList: (channelsList: IChannel[]) => void;
+  setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function Channels(props: ChannelProps) {
-  const [userId, setUserId] = useState(0);
+  const [channelsList, setChannelsList] = useState<IChannel[]>([]);
 
   function setChannel() {
-    props.setEnumState(ChatContent.NEW_CHANNELS);
+    props.setChatContent(ChatContent.NEW_CHANNELS);
   }
 
   // get all channels
   async function getChannels() {
-    // get auth profile and put it in user variable
-    await api.get("auth/profile").then((res) => {
-      //console.log(res.data);
-      //console.log(res.data.id);
-      setUserId(res.data.id);
-    });
 
-    //console.log(channelCreated);
     console.log("get channels");
     await api
       .get("channel/all")
       .then((res) => {
-        props.setChannelsList(res.data);
+        setChannelsList(res.data);
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -67,7 +58,7 @@ export default function Channels(props: ChannelProps) {
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <ChannelsList channelsList={props.channelsList} userId={userId} getChannels={getChannels} />
+      <ChannelsList channelsList={channelsList} getChannels={getChannels} />
     </Box>
   );
 }
