@@ -11,7 +11,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/service/auth.service';
 import { UserService } from './user/service/user.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/strategy/local.strategy';
@@ -32,11 +32,10 @@ import { DmEntity } from './dm/models/dm.entity';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      // TODO create class database
       type: 'postgres',
       url: process.env.POSTGRES_FORCE,
-      autoLoadEntities: true, // TODO check that
-      synchronize: true,
+      autoLoadEntities: true,
+      synchronize: true, //TODO deploiement false
     }),
     TypeOrmModule.forFeature([UserEntity, DmEntity]),
     UserModule,
