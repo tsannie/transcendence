@@ -1,5 +1,5 @@
 import {
-  Box
+  Box, Grid
 } from "@mui/material";
 
 import React, { useEffect, useState } from "react";
@@ -10,11 +10,12 @@ import Sidebar from "./components/sidebar/Sidebar";
 import UserList, { api, IUser } from "./userlist/UserList";
 import LogoIcon from "./assets/logo-project.png";
 import { COOKIE_NAME } from "./const";
+import { SocketProvider } from "./components/chat/SocketContext";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-  const [users, setUsers] = React.useState<Array<IUser>>([]);
+  const [users, setUsers] = React.useState<IUser[]>([]);
 
   async function getAllUsers() {
     await api
@@ -66,25 +67,26 @@ export default function App() {
         >
           <img src={LogoIcon}></img>
         </Box>
-        <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} users={users} getAllUsers={getAllUsers}/>
+        <ButtonLogin />
       </Box>
     );
   return (
-    <Box
-      // sx to create coluns for each child
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        height: "100vh",
-      }}
-    >
-      <Sidebar
-        inputChat={inputChat}
-        setInputChat={setInputChat}
-        isLogin={isLogin}
-        setIsLogin={setIsLogin}
-      />
-      {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
-    </Box>
+    <SocketProvider>
+      <Grid
+        container
+      >
+        <Grid item >
+          <Sidebar
+            setInputChat={setInputChat}
+            setIsLogin={setIsLogin}
+          />
+        </Grid>
+        <Grid item xs={11} sx={{
+          ml: "72px",
+        }}>
+          {inputChat && <Chat getAllUsers={getAllUsers} users={users}/>}
+        </Grid>
+      </Grid>
+    </SocketProvider>
   );
 }

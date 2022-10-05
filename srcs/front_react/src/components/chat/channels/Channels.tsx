@@ -8,16 +8,19 @@ import ChannelsList from "./ChannelsList";
 import FormChannel from "./FormChannel";
 import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { ChatContent } from "../Chat";
 
-export default function Channels(props: any) {
-  const [newChannel, setNewChannel] = useState(false);
-  const [channelCreated, setChannelCreated] = useState(false);
-  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+interface ChannelProps {
+  setEnumState: (enumState: ChatContent) => void;
+  channelsList: IChannel[];
+  setChannelsList: (channelsList: IChannel[]) => void;
+}
+
+export default function Channels(props: ChannelProps) {
   const [userId, setUserId] = useState(0);
 
   function setChannel() {
-    if (!newChannel) setNewChannel(true);
-    else setNewChannel(false);
+    props.setEnumState(ChatContent.NEW_CHANNELS);
   }
 
   // get all channels
@@ -34,7 +37,7 @@ export default function Channels(props: any) {
     await api
       .get("channel/all")
       .then((res) => {
-        setChannelsList(res.data);
+        props.setChannelsList(res.data);
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -45,10 +48,10 @@ export default function Channels(props: any) {
   // get all channels
   useEffect(() => {
     getChannels();
-  }, [channelCreated]);
+  }, []);
 
   return (
-    <Box>
+    <Box sx={{ border: "1px solid black", width: "100%" }}>
       <Typography
         sx={{
           fontWeight: "bold",
@@ -64,15 +67,7 @@ export default function Channels(props: any) {
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      {newChannel && (
-        <FormChannel
-          setNewChannel={setNewChannel}
-          setChannelCreated={setChannelCreated}
-          setChannelsList={setChannelsList}
-          getChannels={getChannels}
-        />
-      )}
-      <ChannelsList channelsList={channelsList} userId={userId} getChannels={getChannels} />
+      <ChannelsList channelsList={props.channelsList} userId={userId} getChannels={getChannels} />
     </Box>
   );
 }

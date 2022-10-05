@@ -1,9 +1,17 @@
+import { IUser } from "../../userlist/UserList";
+
 export interface IMessage {
-  id?: string;
+  uuid?: string;
   //room: string;
-  author?: string;
+  author: string;
   content: string;
-  time: string;
+  target: string;
+}
+
+export interface ICreateChannel {
+  name: string;
+  password?: string;
+  status: string;
 }
 
 // TODO: add id
@@ -11,11 +19,11 @@ export interface IChannel {
   name: string;
   password?: string;
   status: string;
-  owner?: string;
-  users?: string[];
-  admins?: string[];
-  muted?: string[];
-  banned?: string[];
+  owner: IUser;
+  users: IUser[];
+  admins: IUser[];
+  muted: IUser[];
+  banned: IUser[];
 }
 
 export interface IChannelActions {
@@ -25,5 +33,16 @@ export interface IChannelActions {
 
 export interface IDm {
   id?: number;
-  targetUsername: string;
+  time?: Date;
+  target?: string;
+  users? : IUser[];
+  messages?: IMessage[];
+}
+
+export interface IConvCreated {
+  id: number;
+  time: Date;
+  //target?: string;
+  users : IUser[];
+  //messages: IMessage[];
 }
