@@ -1,6 +1,6 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MessageEntity } from 'src/message/models/message.entity';
+import { MessageService } from 'src/message/service/message.service';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -13,6 +13,9 @@ export class DmService {
     @InjectRepository(DmEntity)
     private dmRepository: Repository<DmEntity>,
 
+	@Inject(forwardRef( () => MessageService))
+	private readonly messageService: MessageService,
+	
     private readonly userService: UserService,
   ) {}
 
@@ -37,20 +40,17 @@ export class DmService {
 
 	// get a dm by id
 	async getDmById(inputed_id: number, offset: number): Promise<DmEntity> {
-		return await this.dmRepository
+		let ret = await this.dmRepository
 		.createQueryBuilder("dm")
 		.where("dm.id = :id", {id: inputed_id})
 		.leftJoin("dm.users", "users")
 		.addSelect("users.id")
 		.addSelect("users.username")
-		.leftJoinAndSelect("dm.messages", "messages")
-		.leftJoin("messages.author", "author")
-		.addSelect("author.id")
-		.addSelect("author.username")
-		.orderBy("messages.createdAt", "DESC")
-		// .offset(offset)
-		// .limit(20)
+		.leftJoin("dm.messages", "messages")
 		.getOne();
+
+		ret.messages = await this.messageService.loadMessages(ret.id, offset);
+		return ret;
 	}
 
   async getDmByName(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
