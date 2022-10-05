@@ -3,30 +3,29 @@ import React from "react";
 import MessagesList from "./MessagesList";
 import PromptMessage from "./PromptMessage";
 import AddIcon from "@mui/icons-material/Add";
+import { IMessage } from "../types";
 
-export default function Conv(props: any) {
+interface ConvProps {
+  messagesList: IMessage[];
+  username: string;
+  setCurrentMessage: (message: string) => void;
+  //setMessagesList: (list: IMessage[]) => void;
+  sendMessage: () => void;
+}
 
-  function newConv() {
+export default function Conv(props: ConvProps) {
+  /* function newConv() {
     props.setOpenConv(true);
     props.setIsNewMessage(true);
   }
-
+ */
   return (
-    <Box>
-      {/* <IconButton onClick={newConv}>
-        <AddIcon sx={{ color: "blue" }} />
-      </IconButton> */}
-      {props.openConv && (
-        <MessagesList messagesList={props.messagesList} author={props.author} />
-      )}
-
-      {props.openConv && (
-        <PromptMessage
-          setCurrentMessage={props.setCurrentMessage}
-          currentMessage={props.currentMessage}
-          sendMessage={props.sendMessage}
-        />
-      )}
+    <Box sx={{ border: "1px solid green", minHeight: 300 }}>
+      <MessagesList messagesList={props.messagesList} username={props.username} /* setMessagesList={props.setMessagesList} */ />
+      <PromptMessage
+        setCurrentMessage={props.setCurrentMessage}
+        sendMessage={props.sendMessage}
+      />
     </Box>
   );
 }

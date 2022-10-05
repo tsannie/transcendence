@@ -18,18 +18,24 @@ import { IChannel } from "../types";
 import { display } from "@mui/system";
 import { LockIcon } from "./LockIcon";
 import InfosChannels from "./InfosChannels";
-import AdminsActions from "./AdminsActions";
+import AdminsActions from "./admins/AdminsActions";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
-export default function ChannelsList(props: any) {
+interface ChannelsListProps {
+  channelsList: IChannel[];
+  userId: number
+  getChannels: () => void
+}
+
+export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
 
-  // function to know if userId is owner of channel
-  function isOwner(channel: any) {
-    if (channel.owner.id === props.userId) {
+  // function to know if userId is owner of channel with id maybe undefined
+  function isOwner(id: number) {
+    if (id === props.userId) {
       return true;
     }
     return false;
@@ -111,15 +117,11 @@ export default function ChannelsList(props: any) {
         return (
           <Box
             sx={{
-              width: "fit-content",
-              height: "fit-content",
               color: "black",
               textAlign: "center",
               borderRadius: "3px",
               mb: "1vh",
               border: "1px solid black",
-              display: "flex",
-              alignItems: "center",
             }}
             key={channelData.name}
           >
@@ -162,7 +164,7 @@ export default function ChannelsList(props: any) {
             >
               Leave
             </Button>
-            {isOwner(channelData) && (
+            {isOwner(channelData.owner.id) && (
               <Button
                 sx={{
                   color: "red",

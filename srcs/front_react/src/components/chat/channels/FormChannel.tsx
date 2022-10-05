@@ -10,13 +10,17 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 //import { socket } from "../Chat";
-import { IChannel } from "../types";
+import { IChannel, ICreateChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "../../../userlist/UserList";
 //import ChannelsList from "./ChannelsList";
 import { COOKIE_NAME } from "../../../const";
 
-export default function FormChannel(props: any) {
+interface FormChannelProps {
+  setChannelsList: (channelsList: IChannel[]) => void;
+}
+
+export default function FormChannel(props: FormChannelProps) {
   const [username, setUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
@@ -31,6 +35,9 @@ export default function FormChannel(props: any) {
         res.data.forEach((channel: IChannel) => {
           if (channel.name === name) {
             isTaken = true;
+          }
+          else {
+            props.setChannelsList(res.data);
           }
         });
       })
@@ -49,7 +56,7 @@ export default function FormChannel(props: any) {
       } else {
         if (username !== "") {
           console.log(newPassword);
-          const channelData: IChannel = {
+          const channelData: ICreateChannel = {
             name: username,
             status: status,
           };
@@ -69,14 +76,7 @@ export default function FormChannel(props: any) {
         }
       }
     });
-    props.setChannelCreated(true);
-    props.setNewChannel(false);
   }
-
-  // get all channels
-  useEffect(() => {
-    props.getChannels();
-  }, []);
 
   return (
     <>
