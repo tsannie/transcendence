@@ -1,6 +1,6 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api, IUser } from '../../../../userlist/UserList';
+import { api } from '../../../../const/const';
 import { IChannel, IChannelActions } from '../../types';
 
 interface MakeAdminProps {
@@ -37,7 +37,7 @@ export default function MakeAdmin(props: MakeAdminProps) {
     return newChannel;
   }
 
-  async function makeAdmin(user: IUser, channel: IChannel) {
+  async function makeAdmin(user: any, channel: IChannel) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
@@ -80,7 +80,7 @@ export default function MakeAdmin(props: MakeAdminProps) {
       >
         {open === true && (
           <List>
-            {props.infosChannel.users.map((user: IUser) => (
+            {props.infosChannel.users.map((user: any) => (
               <ListItemButton onClick={() => makeAdmin(user, props.infosChannel)}>
                 {(!props.isAdmin(props.infosChannel, user.id)) ? user.username : <></>}
               </ListItemButton>

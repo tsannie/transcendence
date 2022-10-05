@@ -5,11 +5,16 @@ import LogoIcon from "../../assets/logo-project.png";
 //import ProfileIcon from "../../assets/profile.png";
 //import GameIcon from "../../assets/game.png";
 import ChatIcon from "../../assets/chat.png";
-//import SettingsIcon from "../../assets/settings.png";
+import SettingsIcon from "../../assets/settings.png";
 import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
-import { Grid } from "@mui/material";
+import { Grid, IconButton } from "@mui/material";
 import { COOKIE_NAME } from "../../const/const";
+import HomeIcon from '@mui/icons-material/Home';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import LogoutIcon from '@mui/icons-material/Logout';
+import MessageIcon from '@mui/icons-material/Message';
 
 interface SidebarProps {
   setIsLogin: (isLogin: boolean) => void;

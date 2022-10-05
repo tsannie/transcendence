@@ -14,7 +14,6 @@ import { UserService } from './user/service/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './auth/strategy/local.strategy';
 import { MessageEntity } from './message/models/message.entity';
 import { ChannelController } from './channel/controller/channel.controller';
 import { ChannelService } from './channel/service/channel.service';
@@ -51,7 +50,6 @@ import { DmEntity } from './dm/models/dm.entity';
     JwtService,
     AuthService,
     UserService,
-    LocalStrategy,
     TwoFactorService,
     DmService,
   ], // AuthResolver
