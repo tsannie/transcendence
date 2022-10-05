@@ -184,7 +184,7 @@ export class GameGateway implements OnGatewayInit {
   //////////////// INGAME ROOM
   ///////////////////////////////////////////////
 
-   ///////////////////////////////////////////////
+  ///////////////////////////////////////////////
   //////////////// LEAVE ROOM 
   ///////////////////////////////////////////////
 
@@ -324,7 +324,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   ////////////////////////////////////////////////
-  ////////////////  BALL DATA 
+  ////////////////  BALL DATA ///
   ////////////////////////////////////////////////
 
   @SubscribeMessage('sincBall')
@@ -332,28 +332,42 @@ export class GameGateway implements OnGatewayInit {
     var room = data.room;
     if (!this.all_rooms[room])
       return ;
-    this.all_rooms[room].set.ball.x = data.ball.x;
-    this.all_rooms[room].set.ball.y = data.ball.y;
 
-    this.all_rooms[room].set.ball.ingame_dx = data.ball.ingame_dx;
-    this.all_rooms[room].set.ball.ingame_dy = data.ball.ingame_dy;
+    if (data.first === false) {
+        console.log("first sinc normalement")
 
-    this.all_rooms[room].set.ball.init_dx = data.ball.init_dx;
-    this.all_rooms[room].set.ball.init_dy = data.ball.init_dy;
+      this.all_rooms[room].set.ball.x = data.ball.x;
+      this.all_rooms[room].set.ball.y = data.ball.y;
+      
+      this.all_rooms[room].set.ball.ingame_dx = data.ball.ingame_dx;
+      this.all_rooms[room].set.ball.ingame_dy = data.ball.ingame_dy;
+/* 
+      this.all_rooms[room].set.ball.init_dx = data.ball.init_dx;
+      this.all_rooms[room].set.ball.init_dy = data.ball.init_dy;
+      
+      this.all_rooms[room].set.ball.init_first_dx = data.ball.init_first_dx;
+      this.all_rooms[room].set.ball.init_first_dy = data.ball.init_first_dy; */
 
-    this.all_rooms[room].set.ball.init_first_dx = data.ball.init_first_dx;
-    this.all_rooms[room].set.ball.init_first_dy = data.ball.init_first_dy;
+      this.all_rooms[room].set.ball.first_dx = data.ball.first_dx;
+      this.all_rooms[room].set.ball.first_dy = data.ball.first_dy;
+      
+      this.all_rooms[room].set.ball.init_ball_pos = data.ball.init_ball_pos;
+      this.all_rooms[room].set.ball.first_col = data.ball.first_col;
 
-    this.all_rooms[room].set.ball.first_dx = data.ball.first_dx;
-    this.all_rooms[room].set.ball.first_dy = data.ball.first_dy;
+      // POWER UP SPEED
+      this.all_rooms[room].set.ball.power_ingame_dx = data.ball.ingame_dx;
+      this.all_rooms[room].set.ball.power_ingame_dy = data.ball.ingame_dy;
 
-    this.all_rooms[room].set.ball.init_ball_pos = data.ball.init_ball_pos;
-    this.all_rooms[room].set.ball.first_col = data.ball.first_col;
-
-    await this.all_game.save(this.all_rooms[room]);
-    if (this.all_rooms[room].spectator >= 1) {
-      client.to(room).emit('sincTheBall_spec', this.all_rooms[room]);
+      this.all_rooms[room].set.ball.power_first_dx = data.ball.first_dx;
+      this.all_rooms[room].set.ball.power_first_dy = data.ball.first_dy;
     }
+    else {
+        
+    }
+    await this.all_game.save(this.all_rooms[room]);
+    if (this.all_rooms[room].spectator >= 1)
+      client.to(room).emit('sincTheBall_spec', this.all_rooms[room]);
+    client.emit('sincTheBall', this.all_rooms[room]);
     client.to(room).emit('sincTheBall', this.all_rooms[room]);
   }
 
