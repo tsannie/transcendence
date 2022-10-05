@@ -163,7 +163,7 @@ export default function ChannelsList(props: ChannelsListProps) {
             >
               Leave
             </Button>
-            {isOwner(channelData.owner.id) && (
+            {/* {isOwner(channelData.owner.id) && (
               <Button
                 sx={{
                   color: "red",
@@ -180,7 +180,7 @@ export default function ChannelsList(props: ChannelsListProps) {
               isOwner={isOwner}
               getChannels={props.getChannels}
             />
-            <InfosChannels channelData={channelData} userId={props.userId} />
+            <InfosChannels channelData={channelData} userId={props.userId} /> */}
           </Box>
         );
       })}

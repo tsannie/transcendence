@@ -92,12 +92,12 @@ export default function Chat(props: ChatProps) {
       <Grid container>
         <Grid item xs={4}>
           <Grid item>
-            <DmList
+            {/* <DmList
               isNewMessage={isNewMessage}
               setEnumState={setEnumState}
               getAllUsers={props.getAllUsers}
               users={props.users}
-            />
+            /> */}
           </Grid>
           <Grid item>
             <Channels
