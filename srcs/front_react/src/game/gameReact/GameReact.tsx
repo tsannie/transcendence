@@ -8,11 +8,13 @@ import {
   PaddleMouv_right,
   draw_line,
   draw_score,
+  draw_game_ended,
 } from "./BallMouv";
 
 import { GamePlayer_left } from "./GamePlayerLeft";
 import { GamePlayer_right } from "./GamePlayerRight";
 import { ballObj, paddleProps_left, paddleProps_right, player_left, player_right } from "../Game";
+import { ContactSupport } from "@material-ui/icons";
 
 export function GamePlayer_Left_right(props: any) {
   let u = 0;
@@ -21,20 +23,37 @@ export function GamePlayer_Left_right(props: any) {
     // This useEffect is used to get the room data from the server to set the ball position and the players position
 
     socket.on("sincTheBall", (theroom: any) => {
+      console.log("INGAME_power = ", theroom.power);
+      if (theroom.power === 1) {
+        
+        ballObj.ingame_dx = theroom.set.ball.power_ingame_dx;
+        ballObj.ingame_dy = theroom.set.ball.power_ingame_dy;
+  
+        ballObj.init_dx = theroom.set.ball.power_init_dx;
+        ballObj.init_dy = theroom.set.ball.power_init_dy;
+  
+        ballObj.init_first_dx = theroom.set.ball.power_init_first_dx;
+        ballObj.init_first_dy = theroom.set.ball.power_init_first_dy;
+  
+        ballObj.first_dx = theroom.set.ball.power_first_dx;
+        ballObj.first_dy = theroom.set.ball.power_first_dy;
+      }
+      else {
+        ballObj.ingame_dx = theroom.set.ball.ingame_dx;
+        ballObj.ingame_dy = theroom.set.ball.ingame_dy;
+  
+        ballObj.init_dx = theroom.set.ball.init_dx;
+        ballObj.init_dy = theroom.set.ball.init_dy;
+  
+        ballObj.init_first_dx = theroom.set.ball.init_first_dx;
+        ballObj.init_first_dy = theroom.set.ball.init_first_dy;
+  
+        ballObj.first_dx = theroom.set.ball.first_dx;
+        ballObj.first_dy = theroom.set.ball.first_dy;
+      }
+
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
-
-      ballObj.ingame_dx = theroom.set.ball.ingame_dx;
-      ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-
-      ballObj.init_dx = theroom.set.ball.init_dx;
-      ballObj.init_dy = theroom.set.ball.init_dy;
-
-      ballObj.init_first_dx = theroom.set.ball.init_first_dx;
-      ballObj.init_first_dy = theroom.set.ball.init_first_dy;
-
-      ballObj.first_dx = theroom.set.ball.first_dx;
-      ballObj.first_dy = theroom.set.ball.first_dy;
 
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
@@ -140,6 +159,7 @@ export function GamePlayer_Left_right(props: any) {
             sinc_player_right(props.room, player_right);
             props.setimready(false);
             props.setopready(false);
+            draw_game_ended(props.im_right, ctx, player_left, player_right, canvas.height, canvas.width);
             draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
             cancelAnimationFrame(requestAnimationFrameId);
           }

@@ -22,6 +22,16 @@ socket.on("connect_error", (err) => {
   console.log(`|||||||||||connect_error due to ${err.message}`);
 });
 
+  /*   
+  TODOP LINK USER TO GAMES
+  TODOP FIX GAME
+  TODOP EGALISER PADDLE SOURIS
+  TODOP NEW MAP IN GAME
+  TODOP RESPONSIVE GAME
+  TODOP FONT GAME STYLE
+  */
+
+
 export default function Game() {
   const [nbrconnect, setnbrconnect] = useState(0);
   const [room, setRoom] = useState("");
@@ -119,6 +129,7 @@ export default function Game() {
       <GameWaitPlayerReady
         my_id={my_id}
         room={room}
+        im_right={im_right}
         deleteGameRoom={deleteGameRoom}
         opready={opready}
         imready={imready}

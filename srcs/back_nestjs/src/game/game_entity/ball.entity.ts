@@ -46,4 +46,35 @@ export class BallEntity {
 
   @Column({ default: true })
   right: boolean = true;
+
+
+
+
+  
+  
+  @Column({ nullable: true, type: 'float' })
+  power_init_first_dx: number = 4;
+  
+  @Column({ nullable: true, type: 'float' })
+  power_init_first_dy: number = 8;
+  
+  @Column({ nullable: true, type: 'float' })
+  power_first_dx: number = 4;
+  
+  @Column({ nullable: true, type: 'float' })
+  power_first_dy: number = 8;
+
+
+  
+  @Column({ nullable: true, type: 'float' })
+  power_init_dx: number = 8;
+
+  @Column({ nullable: true, type: 'float' })
+  power_init_dy: number = 10;
+
+  @Column({ nullable: true, type: 'float' })
+  power_ingame_dx: number = 8;
+
+  @Column({ nullable: true, type: 'float' })
+  power_ingame_dy: number = 10;
 }
