@@ -36,7 +36,7 @@ export class MessageService {
 
 	async addMessagetoDm(data: IMessage) : Promise<MessageEntity> {
 		const user = await this.userService.findByName(data.author, {dms: true});
-		const dm = await this.dmService.getDmByName({target: data.target, id: 0, offset: 0}, user);
+		const dm = await this.dmService.getDmByName({target: data.target, offset: 0}, user);
 
 		const message = new MessageEntity();
 		message.uuid = uuid();
