@@ -24,21 +24,23 @@ import AdminsActions from "./admins/AdminsActions";
 
 interface ChannelsListProps {
   channelsList: IChannel[];
-  userId: number
   getChannels: () => void
+}
+
+export enum UserStatus {
+  OWNER = "owner",
+  ADMIN = "admin",
+  USER = "user",
+  PUBLICUSER = "publicUser",
 }
 
 export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
-
-  // function to know if userId is owner of channel with id maybe undefined
-  function isOwner(id: number) {
-    if (id === props.userId) {
-      return true;
-    }
-    return false;
-  }
+  const [channelStatus, setChannelStatus] = useState("");
+  const [userStatus, setUserStatus] = useState<UserStatus>(
+    UserStatus.USER
+  );
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -163,7 +165,7 @@ export default function ChannelsList(props: ChannelsListProps) {
             >
               Leave
             </Button>
-            {/* {isOwner(channelData.owner.id) && (
+            { //userStatus === UserStatus.OWNER && (
               <Button
                 sx={{
                   color: "red",
@@ -173,14 +175,13 @@ export default function ChannelsList(props: ChannelsListProps) {
               >
                 Delete
               </Button>
-            )}
+            }
             <AdminsActions
               channelData={channelData}
-              userId={props.userId}
-              isOwner={isOwner}
               getChannels={props.getChannels}
+              setChannelStatus={setChannelStatus}
             />
-            <InfosChannels channelData={channelData} userId={props.userId} /> */}
+            <InfosChannels channelData={channelData} />
           </Box>
         );
       })}

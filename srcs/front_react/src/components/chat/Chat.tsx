@@ -19,10 +19,7 @@ export enum ChatContent {
   MESSAGES,
 }
 
-interface ChatProps {
-  getAllUsers: () => Promise<void>;
-  users: any[];
-}
+interface ChatProps {}
 
 export default function Chat(props: ChatProps) {
   const [username, setUsername] = useState("");
@@ -31,9 +28,8 @@ export default function Chat(props: ChatProps) {
   const [targetUsername, setTargetUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [userId, setUserId] = useState(0);
-  const [channelsList, setChannelsList] = useState<IChannel[]>([]);
 
-  const [enumState, setEnumState] = useState<ChatContent>(
+  const [chatContent, setChatContent] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
   );
   // enum with 3 strings differentes
@@ -92,23 +88,19 @@ export default function Chat(props: ChatProps) {
       <Grid container>
         <Grid item xs={4}>
           <Grid item>
-            {/* <DmList
+            <DmList
               isNewMessage={isNewMessage}
-              setEnumState={setEnumState}
-              getAllUsers={props.getAllUsers}
-              users={props.users}
-            /> */}
+              setChatContent={setChatContent}
+            />
           </Grid>
           <Grid item>
             <Channels
-              channelsList={channelsList}
-              setChannelsList={setChannelsList}
-              setEnumState={setEnumState}
+              setChatContent={setChatContent}
             />
           </Grid>
         </Grid>
         <Grid item xs={8}>
-          {enumState === ChatContent.MESSAGES && (
+          {chatContent === ChatContent.MESSAGES && (
             <Conv
               messagesList={messagesList}
               //setMessagesList={setMessagesList}
@@ -117,17 +109,15 @@ export default function Chat(props: ChatProps) {
               sendMessage={sendMessage}
             />
           )}
-          {enumState === ChatContent.NEW_CHANNELS && (
-            <FormChannel setChannelsList={setChannelsList} />
+          {chatContent === ChatContent.NEW_CHANNELS && (
+            <FormChannel />
           )}
 
-          {enumState === ChatContent.NEW_DM && (
+          {chatContent === ChatContent.NEW_DM && (
             <ChatUserlist
               setMessagesList={setMessagesList}
               setTargetUsername={setTargetUsername}
-              setEnumState={setEnumState}
-              getAllUsers={props.getAllUsers}
-              users={props.users}
+              setChatContent={setChatContent}
             />
           )}
         </Grid>
