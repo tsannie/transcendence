@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: IProps) => {
 
 
   const login = (user: User) => {
-    console.log('hello');
+    console.log('IM LOG IN CONTEXT');
     setIsLogin(true);
     setUser(user);
   }

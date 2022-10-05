@@ -6,34 +6,21 @@ import Error2FASnackbar from "./snackbar/Error2FASnackbar";
 import { api } from "../../const/const";
 import './settings.style.scss';
 import SettingsPicture from "./SettingsPicture";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
 export default function Settings() {
 
   // request api on profile to set new state
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [twoFactorA, setTwoFactorA] = useState(false);
   const [enable2FA, setEnable2FA] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
 
+  const { user } = React.useContext(AuthContext) as AuthContextType;
 
-  async function getProfile() {
-    await api.get('auth/profile').then(res => {
-      console.log(res.data);
-      setUsername(res.data.username);
-      setEmail(res.data.email);
-      setTwoFactorA(res.data.enabled2FA);
-    })
-  }
 
   async function activate2fa() {
     setEnable2FA(true);
   }
-
-  useEffect(() => {
-    getProfile();
-  }, []);
 
   return (
     <div className="settings">
@@ -44,14 +31,14 @@ export default function Settings() {
       </div>
 
       <h2>Username</h2>
-        <p>{username}</p>
+        <p>{user?.username}</p>
       <h2>Email</h2>
-        <p>{email}</p>
+        <p>{user?.email}</p>
       <h2>Two Factor Authentication (2FA)</h2>
         {!enable2FA &&
-          <p>{twoFactorA ? "Enabled" : "Disabled"}</p>
+          <p>{user?.enabled2FA ? "Enabled" : "Disabled"}</p>
         }
-        {!twoFactorA && !enable2FA &&
+        {!user?.enabled2FA && !enable2FA &&
           <button onClick={activate2fa}>
             Activate 2FA
           </button>
@@ -59,7 +46,6 @@ export default function Settings() {
         {/* 2FA activatione process */}
         {enable2FA &&
           <ActivationProcess
-            setTwoFactorA={setTwoFactorA}
             setEnable2FA={setEnable2FA}
             setOpenSuccess={setOpenSuccess}
             setOpenError={setOpenError}
