@@ -1,10 +1,15 @@
 import { Button, List, ListItem, ListItemText, Popover } from "@mui/material";
 import React, { useState } from "react";
-import { api } from "../../../userlist/UserList";
+import { api, IUser } from "../../../userlist/UserList";
 import { IChannel } from "../types";
 
-export default function InfosChannels(props: any) {
-  const [infosChannel, setInfosChannel] = useState({});
+interface InfosChannelsProps {
+  channelData: IChannel;
+  userId: number;
+}
+
+export default function InfosChannels(props: InfosChannelsProps) {
+  const [infosChannel, setInfosChannel] = useState<IChannel>(props.channelData);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -14,9 +19,8 @@ export default function InfosChannels(props: any) {
   const id = open ? "simple-popover" : undefined;
 
   // check if user is admin of the channel in infosChannel
-  function isAdmin(channel: any, id: number) {
-    if (infosChannel === undefined)
-      getInfosChannel(channel);
+  function isAdmin(channel: IChannel, id: number) {
+    if (infosChannel === undefined) getInfosChannel(channel);
     if (channel !== undefined) {
       for (let i = 0; i < channel.admins.length; i++) {
         if (channel.admins[i].id === id) {
@@ -83,35 +87,25 @@ export default function InfosChannels(props: any) {
         }}
       >
         {open === true && (
-          <List
-            key={channelId}
-          >
-            {Object.entries(infosChannel).map(([key, value]) => {
-              if (typeof value === "string" && key !== "password") {
-                return (
-                  <ListItem key={key}>
-                    <ListItemText primary={key} secondary={value} />
-                  </ListItem>
-                );
-              } else if (typeof value === "object" && value !== null) {
-                if ((key === "banned" && isAdmin(infosChannel, props.userId)) || key !== "banned") {
-                  return (
-                    <ListItem key={key}>
-                      {Object.entries(value).map(([childKey, childValue]) => {
-                        if (childKey === "username") {
-                          return (
-                            <ListItemText
-                              primary={key}
-                              secondary={childValue}
-                            />
-                          );
-                        }
-                      })}
-                    </ListItem>
-                  );
-                }
-              }
-            })}
+          <List key={channelId}>
+            <ListItem>
+              <ListItemText primary="Name" secondary={infosChannel.name} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Owner" secondary={infosChannel.owner.username} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Users" secondary={infosChannel.users.map((user: IUser) => user.username)} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Admins" secondary={infosChannel.admins.map((user: IUser) => user.username)} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Banned" secondary={infosChannel.banned.map((user: IUser) => user.username)} />
+            </ListItem>
+            <ListItem>
+              <ListItemText primary="Muted" secondary={infosChannel.muted.map((user: IUser) => user.username)} />
+            </ListItem>
           </List>
         )}
       </Popover>

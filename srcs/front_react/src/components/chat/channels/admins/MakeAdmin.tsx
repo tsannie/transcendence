@@ -1,15 +1,20 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../userlist/UserList';
-import { IChannel, IChannelActions } from '../types';
+import { api, IUser } from '../../../../userlist/UserList';
+import { IChannel, IChannelActions } from '../../types';
 
-export default function MuteUser(props: any) {
+interface MakeAdminProps {
+  infosChannel: IChannel;
+  getInfosChannel: (channel: IChannel) => void;
+  isAdmin: (channel: IChannel, id: number) => boolean;
+}
 
+export default function MakeAdmin(props: MakeAdminProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-mute" : undefined;
+  const id = open ? "popover-makeAdmin" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -21,44 +26,30 @@ export default function MuteUser(props: any) {
     setAnchorEl(null);
   }
 
-  function isMuted(channel: any, user: any) {
-    if (channel !== undefined) {
-      for (let i = 0; i < channel.muted.length; i++) {
-        console.log(channel.muted[i].id);
-        console.log(props.userId);
-        if (channel.muted[i].id === user.id) {
-          return true;
-        }
-      }
-    }
-    console.log("isMuted = false");
-    return false;
-  }
-
   function createChannelActions(channel: IChannel, targetUsername: string) {
+    //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
       channel_name: channel.name,
       target: targetUsername,
     };
-    //console.log("newchannel = ", newChannel);
+    console.log(newChannel);
 
     return newChannel;
   }
 
-  async function muteUser(user: any, channel: IChannel) {
-    const newChannel: IChannelActions = createChannelActions(channel, user.username);
+  async function makeAdmin(user: IUser, channel: IChannel) {
+    const newChannel = createChannelActions(channel, user.username);
 
-    //console.log("newChannel = ", newChannel);
     if (newChannel.target !== "") {
       await api
-        .post("channel/muteUser", newChannel)
+        .post("channel/makeAdmin", newChannel)
         .then((res) => {
-          console.log("user mute with success");
+          console.log("user is admin now");
           console.log(channel);
           props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("invalid mute user");
+          console.log("user can't be admin");
           console.log(res);
         });
     }
@@ -75,7 +66,7 @@ export default function MuteUser(props: any) {
           handleClick(event);
         }}
       >
-        Mute
+        Make Admin
       </Button>
       <Popover
         id={id}
@@ -88,12 +79,10 @@ export default function MuteUser(props: any) {
         }}
       >
         {open === true && (
-          <List
-            key={props.infosChannel.users.id}
-          >
-            {props.infosChannel.users.map((user: any) => (
-              <ListItemButton onClick={() => muteUser(user, props.infosChannel)}>
-                {(!isMuted(props.infosChannel, user)) ? user.username : <></>}
+          <List>
+            {props.infosChannel.users.map((user: IUser) => (
+              <ListItemButton onClick={() => makeAdmin(user, props.infosChannel)}>
+                {(!props.isAdmin(props.infosChannel, user.id)) ? user.username : <></>}
               </ListItemButton>
             ))}
           </List>

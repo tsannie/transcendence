@@ -1,14 +1,19 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
 import React, { useState } from 'react'
-import { api } from '../../../userlist/UserList';
-import { IChannel, IChannelActions } from '../types';
+import { api, IUser } from '../../../../userlist/UserList';
+import { IChannel, IChannelActions } from '../../types';
 
-export default function UnbanUser(props: any) {
+interface BanUserProps {
+  infosChannel: IChannel;
+  getInfosChannel: (channel: IChannel) => void;
+}
+
+export default function BanUser(props: BanUserProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
   const open = Boolean(anchorEl);
-  const id = open ? "popover-unban" : undefined;
+  const id = open ? "popover-ban" : undefined;
 
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
@@ -21,7 +26,7 @@ export default function UnbanUser(props: any) {
   }
 
   function createChannelActions(channel: IChannel, targetUsername: string) {
-    console.log("channel = ", channel);
+    //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
       channel_name: channel.name,
       target: targetUsername,
@@ -31,19 +36,19 @@ export default function UnbanUser(props: any) {
     return newChannel;
   }
 
-  async function unbanUser(user: any, channel: IChannel) {
+  async function banUser(user: IUser, channel: IChannel) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
       await api
-        .post("channel/unBanUser", newChannel)
+        .post("channel/banUser", newChannel)
         .then((res) => {
-          console.log("user unban with success");
+          console.log("user ban with success");
           console.log(channel);
           props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("invalid unban user");
+          console.log("invalid channels");
           console.log(res);
         });
     }
@@ -60,7 +65,7 @@ export default function UnbanUser(props: any) {
           handleClick(event);
         }}
       >
-        Unban
+        Ban
       </Button>
       <Popover
         id={id}
@@ -72,12 +77,10 @@ export default function UnbanUser(props: any) {
           horizontal: "right",
         }}
       >
-        {open === true && (
-          <List
-            key={props.infosChannel.banned.id}
-          >
-            {props.infosChannel.banned.map((user: any) => (
-              <ListItemButton onClick={() => unbanUser(user, props.infosChannel)}>
+        {open && (
+          <List>
+            {props.infosChannel.users.map((user: IUser) => (
+              <ListItemButton onClick={() => banUser(user, props.infosChannel)}>
                 {user.username}
               </ListItemButton>
             ))}

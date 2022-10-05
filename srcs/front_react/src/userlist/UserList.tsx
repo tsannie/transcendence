@@ -10,11 +10,17 @@ export const api = axios.create({
 });
 
 export interface IUser {
-  id?: number;
-  username?: string;
+  id: number;
+  username: string;
 }
 
-export default function UserList(props: any) {
+interface UserListProps {
+  users: IUser[];
+  getAllUsers: () => Promise<void>;
+  handleClick: (event: React.MouseEvent<HTMLElement>) => void;
+}
+
+export default function UserList(props: UserListProps) {
   // Declare a new state variable
 
   //TODO: create socket to get new users and update the list
@@ -27,17 +33,9 @@ export default function UserList(props: any) {
   // display all users connected in the database
   return (
     <>
-      <List sx={{}}>
-        {props.users.map((user: any) => (
+      <List>
+        {props.users.map((user: IUser) => (
           <ListItem
-            sx={{
-             /*  border: "1px solid black",
-              mt: 2,
-              alignItems: "center",
-              width: "fit-content",
-              height: "fit-content",
-              borderRadius: "3px", */
-            }}
             key={user.id}
             onClick={props.handleClick}
           >
