@@ -7,7 +7,7 @@ import { AuthContext, AuthContextType, AuthProvider, User,  } from "./contexts/A
 import { Switch } from "@mui/material";
 import LoginPage from "./components/auth/oauth/LoginPage";
 import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
-import { PrivateRoute } from "./components/routes/PrivateComponent";
+import { PrivateRoute } from "./components/routes/PrivateRoute";
 
 export default function App() {
     //<AuthProvider>

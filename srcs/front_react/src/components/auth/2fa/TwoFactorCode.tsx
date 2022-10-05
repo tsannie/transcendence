@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import ReactCodeInput from "react-verification-code-input";
 import { api } from "../../../const/const";
@@ -11,7 +11,7 @@ export default function TwoFactorCode() {
   const [check, setCheck] = useState(false);
   const [openError, setOpenError] = useState(false);
 
-  const { login, isLogin } = useContext(AuthContext) as AuthContextType;
+  const { login } = useContext(AuthContext) as AuthContextType;
 
   const inputRef = useRef<ReactCodeInput>(null);
 
@@ -34,18 +34,13 @@ export default function TwoFactorCode() {
     api.post("/2fa/auth2fa", { token: up }).then((res) => {
       login(res.data);
     }).catch((res) => {
-      console.log('invalid token');
       clearInput();
       setCheck(false);
       setOpenError(true);
     });
   };
 
-  if (isLogin === true)
-    return <Navigate to="/" />
-
   return (
-
     <div className="twoFactor">
       <h2>Validation Code</h2>
       <ReactCodeInput
