@@ -15,6 +15,28 @@ export function draw_line(
   ctx.fill();
 }
 
+////////////////////////
+//// DRAW
+////////////////////////
+
+export function draw_game_ended(im_right: boolean, ctx: any, player_left: any, player_right: any, canvas_height: number, canvas_width: number)
+{
+  ctx.beginPath();
+  ctx.rect(0, 0, canvas_width, canvas_height);
+  ctx.fillStyle = "black";
+  ctx.fill();
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText("Game Ended", canvas_width / 2, canvas_height / 2);
+  if (player_left.won === true && im_right === false)
+    ctx.fillText("YOU Won !", canvas_width / 2, canvas_height / 2 + 50);
+  else if (player_right.won === true && im_right === true)
+    ctx.fillText("YOU Won !!", canvas_width / 2, canvas_height / 2 + 50);
+  else
+    ctx.fillText("YOU Lost", canvas_width / 2, canvas_height / 2 + 50);
+}
+
 export function draw_loading(
   ctx: any,
   canvas_height: number,
@@ -72,6 +94,10 @@ export function draw_score(
     );
   ctx.fill();
 }
+
+////////////////////////
+//// BALL FUNCTIONS
+////////////////////////
 
 export function BallMouv(
   ctx: any,
@@ -212,6 +238,10 @@ class Ball {
     ctx.stroke();
   }
 }
+
+////////////////////////
+//// PADDLE FUNCTIONS
+////////////////////////
 
 export function PaddleMouv_left(ctx: any, canvas: any, paddleProps: any) {
   class Paddle {

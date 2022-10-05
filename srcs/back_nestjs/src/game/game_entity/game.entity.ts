@@ -51,4 +51,10 @@ export class GameEntity {
   @OneToOne(() => SetEntity, { eager: true, cascade: true })
   @JoinColumn()
   set: SetEntity;
+
+  @Column({ nullable: true , default: -1})
+  map: number;
+
+  @Column({ nullable: true , default: -1})
+  power: number;
 }
