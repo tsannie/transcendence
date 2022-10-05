@@ -7,8 +7,7 @@ import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
-import { api, IUser } from "../../userlist/UserList";
-import { COOKIE_NAME } from "../../const";
+import { api, COOKIE_NAME } from "../../const/const";
 import DmList from "./messages/DmList";
 import Conv from "./messages/Conv";
 import FormChannel from "./channels/FormChannel";
@@ -22,7 +21,7 @@ export enum ChatContent {
 
 interface ChatProps {
   getAllUsers: () => Promise<void>;
-  users: IUser[];
+  users: any[];
 }
 
 export default function Chat(props: ChatProps) {

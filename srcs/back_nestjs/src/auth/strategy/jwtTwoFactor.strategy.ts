@@ -6,14 +6,12 @@ import { UserService } from 'src/user/service/user.service';
 import { IPayload } from "../models/payload.interface";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
   constructor(private userService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([ //TODO add baerer ?
+      jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          console.log('hello')
           const cookie = request?.cookies['AuthToken'];
-          console.log('cookie', cookie)
           return cookie ? cookie.access_token : null;
         },
       ]),
@@ -22,15 +20,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {  // TODO all check for validate jeton
-    //console.log(payload)
-    //console.log( await this.userService.findByName(payload.username));
-    return await this.userService.findByName(payload.username, {  // TODO add check for user
-		owner_of: true,
-		admin_of: true,
-		channels: true,
-		banned: true,
-		dms: true
-	});
+  async validate(payload: IPayload) {
+    const user = await this.userService.findById(payload.sub);
+    if (!user.enabled2FA) {
+      return user;
+    }
+    if (payload.isSecondFactor) {
+      return user;
+    }
   }
 }

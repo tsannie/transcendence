@@ -12,9 +12,8 @@ import React, { useEffect, useState } from "react";
 //import { socket } from "../Chat";
 import { IChannel, ICreateChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
-import { api } from "../../../userlist/UserList";
-//import ChannelsList from "./ChannelsList";
-import { COOKIE_NAME } from "../../../const";
+import ChannelsList from "./ChannelsList";
+import { api, COOKIE_NAME } from "../../../const/const";
 
 interface FormChannelProps {
   setChannelsList: (channelsList: IChannel[]) => void;
