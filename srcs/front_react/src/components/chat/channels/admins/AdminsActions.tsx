@@ -1,6 +1,6 @@
 import { Button, List, ListItem, Popover } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { api } from "../../../../userlist/UserList";
+import { api } from "../../../../const/const";
 import { IChannel } from "../../types";
 import BanUser from "./BanUser";
 import MakeAdmin from "./MakeAdmin";

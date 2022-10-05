@@ -1,5 +1,3 @@
-import { IUser } from "../../userlist/UserList";
-
 export interface IMessage {
   uuid?: string;
   //room: string;
@@ -19,11 +17,11 @@ export interface IChannel {
   name: string;
   password?: string;
   status: string;
-  owner: IUser;
-  users: IUser[];
-  admins: IUser[];
-  muted: IUser[];
-  banned: IUser[];
+  owner: any;
+  users: any[];
+  admins: any[];
+  muted: any[];
+  banned: any[];
 }
 
 export interface IChannelActions {
@@ -35,7 +33,7 @@ export interface IDm {
   id?: number;
   time?: Date;
   target?: string;
-  users? : IUser[];
+  users? : any[];
   messages?: IMessage[];
 }
 
@@ -43,6 +41,6 @@ export interface IConvCreated {
   id: number;
   time: Date;
   //target?: string;
-  users : IUser[];
+  users : any[];
   //messages: IMessage[];
 }

@@ -2,13 +2,13 @@ import { Button, IconButton, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import Add from "../../../assets/add.png";
-import { api } from "../../../userlist/UserList";
 import { IChannel } from "../types";
 import ChannelsList from "./ChannelsList";
 import FormChannel from "./FormChannel";
 import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { ChatContent } from "../Chat";
+import { api } from "../../../const/const";
 
 interface ChannelProps {
   setEnumState: (enumState: ChatContent) => void;
