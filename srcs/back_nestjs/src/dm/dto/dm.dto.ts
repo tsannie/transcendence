@@ -11,7 +11,6 @@ export class DmNameDto {
   @IsNotEmpty()
   @Type( () => Number )
   @Min(0)
-  @IsDivisibleBy(20)
   offset: number
 }
 
@@ -26,6 +25,5 @@ export class DmIdDto {
   @IsNotEmpty()
   @Type( () => Number )
   @Min(0)
-  @IsDivisibleBy(20)
   offset: number
 }
