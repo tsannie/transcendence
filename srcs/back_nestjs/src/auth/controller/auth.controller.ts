@@ -19,7 +19,7 @@ export class AuthController {
     private readonly authService: AuthService
   ) {}
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtTwoFactorGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;

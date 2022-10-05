@@ -13,7 +13,7 @@ export default function TwoFactorPage(props: any) {
         <h1>transcendence</h1>
       </div>
       <div className="loginBox">
-        <TwoFactorCode isLogin={props.isLogin} setIsLogin={props.setIsLogin} />
+        <TwoFactorCode/>
       </div>
     </div>
 
