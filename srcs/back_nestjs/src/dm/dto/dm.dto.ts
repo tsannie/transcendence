@@ -27,3 +27,11 @@ export class DmIdDto {
   @Min(0)
   offset: number
 }
+
+export class DmListDto {
+  @IsDefined()
+  @IsNotEmpty()
+  @Type( () => Number )
+  @Min(0)
+  offset: number
+}
