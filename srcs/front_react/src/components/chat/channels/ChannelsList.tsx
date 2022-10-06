@@ -5,6 +5,7 @@ import {
   Grid,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   Popover,
   SvgIcon,
@@ -18,30 +19,22 @@ import { display } from "@mui/system";
 import { LockIcon } from "./LockIcon";
 import InfosChannels from "./InfosChannels";
 import AdminsActions from "./admins/AdminsActions";
+import { ChatContent } from "../Chat";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
 interface ChannelsListProps {
   channelsList: IChannel[];
-  getChannels: () => void
-}
-
-export enum UserStatus {
-  OWNER = "owner",
-  ADMIN = "admin",
-  USER = "user",
-  PUBLICUSER = "publicUser",
+  getChannels: () => void;
+  setChatContent: (chatContent: ChatContent) => void;
+  setCurrentChannel: (currentChannel: IChannel) => void;
 }
 
 export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
-  const [channelStatus, setChannelStatus] = useState("");
-  const [userStatus, setUserStatus] = useState<UserStatus>(
-    UserStatus.USER
-  );
-
+  const [userStatus, setUserStatus] = useState("");
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
       channel.password = channelPassword;
@@ -112,11 +105,17 @@ export default function ChannelsList(props: ChannelsListProps) {
       });
   }
 
+  function handleClick(channel: IChannel) {
+    props.setChatContent(ChatContent.CHANNEL_CONTENT);
+    props.setCurrentChannel(channel);
+    console.log("channel clicked", channel);
+  }
+
   return (
-    <>
+    <List>
       {props.channelsList.map((channelData: IChannel) => {
         return (
-          <Box
+          <ListItemButton
             sx={{
               color: "black",
               textAlign: "center",
@@ -124,11 +123,13 @@ export default function ChannelsList(props: ChannelsListProps) {
               mb: "1vh",
               border: "1px solid black",
             }}
+
             key={channelData.name}
+            onClick={() => handleClick(channelData)}
           >
-            <Box sx={{ml: "1vw"}}>
+            <ListItemText sx={{ml: "1vw"}}>
               {channelData.name}
-            </Box>
+            </ListItemText>
             <>{channelData.status === "Protected" ? <LockIcon /> : <></>}</>
             <TextField
               sx={{
@@ -142,7 +143,7 @@ export default function ChannelsList(props: ChannelsListProps) {
               }}
             ></TextField>
 
-            <Button
+           {/*  <Button
               sx={{
                 ml: "1vh",
               }}
@@ -164,8 +165,8 @@ export default function ChannelsList(props: ChannelsListProps) {
               onClick={() => leaveChannel(channelData)}
             >
               Leave
-            </Button>
-            { userStatus === UserStatus.OWNER && (
+            </Button> */}
+            {/* { userStatus === "owner" && (
               <Button
                 sx={{
                   color: "red",
@@ -175,16 +176,16 @@ export default function ChannelsList(props: ChannelsListProps) {
               >
                 Delete
               </Button>
-            )}
-            <AdminsActions
+            )} */}
+           {/*  <AdminsActions
               channelData={channelData}
               getChannels={props.getChannels}
               setUserStatus={setUserStatus}
             />
-            <InfosChannels channelData={channelData} />
-          </Box>
+            <InfosChannels channelData={channelData} /> */}
+          </ListItemButton>
         );
       })}
-    </>
+    </List>
   );
 }
