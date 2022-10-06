@@ -12,34 +12,16 @@ import { api } from "../../../const/const";
 
 interface ChannelProps {
   setChatContent: (chatContent: ChatContent) => void;
+  setCurrentChannel: (currentChannel: IChannel) => void;
+  getChannels: () => void;
+  channelsList: IChannel[];
 }
 
 export default function Channels(props: ChannelProps) {
-  const [channelsList, setChannelsList] = useState<IChannel[]>([]);
 
   function setChannel() {
     props.setChatContent(ChatContent.NEW_CHANNELS);
   }
-
-  // get all channels
-  async function getChannels() {
-
-    console.log("get channels");
-    await api
-      .get("channel/all")
-      .then((res) => {
-        setChannelsList(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-        console.log(res);
-      });
-  }
-
-  // get all channels
-  useEffect(() => {
-    getChannels();
-  }, []);
 
   return (
     <Box sx={{ border: "1px solid black", width: "100%" }}>
@@ -51,14 +33,19 @@ export default function Channels(props: ChannelProps) {
       >
         Channels
       </Typography>
-      <IconButton onClick={() => getChannels()}>
+      <IconButton onClick={() => props.getChannels()}>
         <RefreshIcon />
       </IconButton>
 
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <ChannelsList channelsList={channelsList} getChannels={getChannels} />
+      <ChannelsList
+        setChatContent={props.setChatContent}
+        setCurrentChannel={props.setCurrentChannel}
+        channelsList={props.channelsList}
+        getChannels={props.getChannels}
+      />
     </Box>
   );
 }
