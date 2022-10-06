@@ -32,7 +32,7 @@ export default function Chat(props: ChatProps) {
   const [targetUsername, setTargetUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [userId, setUserId] = useState(0);
-  const [currentChannel, setCurrentChannel] = useState<IChannel>();
+  const [currentChannel, setCurrentChannel] = useState<any>();
   const [chatContent, setChatContent] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
   );
