@@ -2,7 +2,6 @@ import { Button, List, ListItem, Popover } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../../const/const";
 import { IChannel } from "../../types";
-import { UserStatus } from "../ChannelsList";
 import BanUser from "./BanUser";
 import MakeAdmin from "./MakeAdmin";
 import MuteUser from "./MuteUser";
@@ -13,7 +12,7 @@ import UnmuteUser from "./UnmuteUser";
 interface AdminsActionsProps {
   channelData: IChannel;
   getChannels: () => void;
-  setUserStatus: (status: UserStatus) => void;
+  setUserStatus: (userStatus: string) => void;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
@@ -24,7 +23,6 @@ export default function AdminsActions(props: AdminsActionsProps) {
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
-    getInfosChannel(props.channelData);
     props.getChannels();
   }
 
@@ -58,6 +56,7 @@ export default function AdminsActions(props: AdminsActionsProps) {
         console.log(res.data);
         setInfosChannel(res.data);
         props.setUserStatus(res.data.status);
+        console.log(res.data.status);
         //setChannelId(res.data.id);
       })
       .catch((res) => {
@@ -65,9 +64,9 @@ export default function AdminsActions(props: AdminsActionsProps) {
       });
   }
 
-  /* useEffect(() => {
+  useEffect(() => {
     getInfosChannel(props.channelData);
-  }, []); */
+  }, []);
 
   return (
     <>

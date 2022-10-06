@@ -18,6 +18,7 @@ import { SocketContext } from "./SocketContext";
 import { IChannel, IDm, IMessage } from "./types";
 
 interface ChatUserListProps {
+  userId: number;
   setMessagesList: (messagesList: IMessage[]) => void;
   setTargetUsername: (targetUsername: string) => void;
   setChatContent: (chatContent: ChatContent) => void;
@@ -92,7 +93,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
       </Typography>
       <List>
         {users.map((user) => (
-          <ListItem key={user.id} onClick={handleClick}>
+          (user.id !== props.userId) && <ListItem key={user.id} onClick={handleClick}>
             {user.username}
           </ListItem>
         ))}
