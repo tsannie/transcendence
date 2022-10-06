@@ -49,7 +49,7 @@ export class DmService {
 		.leftJoin("dm.messages", "messages")
 		.getOne();
 
-		ret.messages = await this.messageService.loadMessages(ret.id, offset);
+		ret.messages = await this.messageService.loadMessages("dm", ret.id, offset);
 		return ret;
 	}
 

@@ -24,7 +24,7 @@ export class MessageService {
 	private userService: UserService,
   ) {}
 
-	async loadMessages(inputed_id: number, offset: number) : Promise<MessageEntity[]> {
+	async loadMessages(type: string, inputed_id: number, offset: number) : Promise<MessageEntity[]> {
 		return await this.allMessages
 		.createQueryBuilder("message")
 		.select("message.uuid")
@@ -32,9 +32,9 @@ export class MessageService {
 		.addSelect("message.content")
 		.leftJoin("message.author", "author")
 		.addSelect("author.username")
-		.leftJoin("message.dm", "dm")
-		.addSelect("dm.id")
-		.where("message.dm.id = :id", {id: inputed_id})
+		.leftJoin(`message.${type}`, `${type}`)
+		.addSelect(`${type}.id`)
+		.where(`message.${type}.id = :id`, {id: inputed_id})
 		.orderBy("message.createdAt", "DESC")
 		.skip(offset * LOADED_MESSAGES)
 		.take(LOADED_MESSAGES)
