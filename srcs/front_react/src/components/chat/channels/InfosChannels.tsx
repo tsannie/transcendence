@@ -12,39 +12,15 @@ import { api } from "../../../const/const";
 import { IChannel } from "../types";
 
 interface InfosChannelsProps {
-  channelData: IChannel;
+  channelData: any;
 }
 
 export default function InfosChannels(props: InfosChannelsProps) {
-  const [infosChannel, setInfosChannel] = useState<IChannel>(props.channelData);
   const [channelId, setChannelId] = useState(0);
 
   function handleClick() {
     console.log("click on user who i wnat to ban, mute etc");
   }
-
-  async function getInfosChannel(channel: IChannel) {
-    await api
-      .get("channel/datas", {
-        params: {
-          name: channel.name,
-        },
-      })
-      .then((res) => {
-        console.log("get infos channels");
-        setInfosChannel(res.data);
-        setChannelId(res.data.id);
-        console.log(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid channels private data");
-      });
-    console.log("bbbbb");
-  }
-
-  useEffect(() => {
-    getInfosChannel(props.channelData);
-  }, []);
 
   return (
     <Grid container>
@@ -62,7 +38,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
 
       {/* <Grid item>
         <List>
-          {infosChannel.admins.map((user) => (
+          {props.channelData.data.admins.map((user) => (
             <ListItem>
               <ListItemText primary={user.username} />
             </ListItem>
@@ -72,7 +48,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
 
       <Grid item>
         <List>
-          {infosChannel.users.map((user) => (
+          {props.channelData.data.users.map((user) => (
             <ListItem>
               <ListItemText primary={user.username} />
             </ListItem>
