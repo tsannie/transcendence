@@ -55,11 +55,11 @@ export default function Chat(props: ChatProps) {
   }
 
   // get all channels
-  async function getChannels() {
+  async function getChannelsUserlist() {
 
     console.log("get channels");
     await api
-      .get("channel/all")
+      .get("channel/userlist")
       .then((res) => {
         setChannelsList(res.data);
         console.log(res.data);
@@ -97,7 +97,7 @@ export default function Chat(props: ChatProps) {
 
   // get all channels
   useEffect(() => {
-    getChannels();
+    getChannelsUserlist();
   }, []);
 
   // listen message from backend
@@ -121,7 +121,7 @@ export default function Chat(props: ChatProps) {
             setChatContent={setChatContent}
             setCurrentChannel={setCurrentChannel}
             channelsList={channelsList}
-            getChannels={getChannels}
+            getChannelsUserlist={getChannelsUserlist}
           />
         </Grid>
       </Grid>
@@ -141,7 +141,7 @@ export default function Chat(props: ChatProps) {
               <FormChannel />
             </Grid>
             <Grid item xs={4}>
-              <AvailableChannels />
+              <AvailableChannels getChannelsUserlist={getChannelsUserlist}/>
             </Grid>
           </Grid>
         )}

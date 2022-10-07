@@ -14,7 +14,7 @@ interface ChannelProps {
   setIsOpenInfos: (isOpenInfos: boolean) => void;
   setChatContent: (chatContent: ChatContent) => void;
   setCurrentChannel: (currentChannel: IChannel) => void;
-  getChannels: () => void;
+  getChannelsUserlist: () => void;
   channelsList: IChannel[];
 }
 
@@ -34,10 +34,9 @@ export default function Channels(props: ChannelProps) {
       >
         Channels
       </Typography>
-      <IconButton onClick={() => props.getChannels()}>
+      <IconButton onClick={() => props.getChannelsUserlist()}>
         <RefreshIcon />
       </IconButton>
-
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
@@ -46,7 +45,7 @@ export default function Channels(props: ChannelProps) {
         setChatContent={props.setChatContent}
         setCurrentChannel={props.setCurrentChannel}
         channelsList={props.channelsList}
-        getChannels={props.getChannels}
+        getChannelsUserlist={props.getChannelsUserlist}
       />
     </Box>
   );
