@@ -10,6 +10,7 @@ import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { channel } from 'diagnostics_channel';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
+import { ListDto } from 'src/dm/dto/dm.dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -27,9 +28,15 @@ export class ChannelController {
 	}
 
 	@UseGuards( JwtTwoFactorGuard )
-	@Get('list')
-	async getChannelsList(@Request() req) : Promise<ChannelEntity[]> {
-		return await this.channelService.getChannelsList(req.user);
+	@Get('userList')
+	async getChannelsUserList(@Request() req) : Promise<ChannelEntity[]> {
+		return await this.channelService.getChannelsUserList(req.user);
+	}
+
+	@UseGuards( JwtTwoFactorGuard )
+	@Get("list")
+	async getChannelsList(@Query() listDto : ListDto) : Promise<ChannelEntity[]> {
+		return await this.channelService.getChannelsList(listDto.offset);
 	}
 
 	//CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)

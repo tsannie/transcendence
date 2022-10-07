@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { DmService } from 'src/dm/service/dm.service';
@@ -8,6 +8,8 @@ import { MessageEntity } from '../models/message.entity';
 import { IMessage } from '../models/message.interface';
 import { uuid } from 'uuidv4';
 
+const LOADED_MESSAGES = 20;
+
 @Injectable()
 export class MessageService {
   constructor(
@@ -15,9 +17,29 @@ export class MessageService {
     private allMessages: Repository<MessageEntity>,
 
 	private channelService: ChannelService,
+	
+	@Inject(forwardRef( () => DmService))
 	private dmService: DmService,
+
 	private userService: UserService,
   ) {}
+
+	async loadMessages(type: string, inputed_id: number, offset: number) : Promise<MessageEntity[]> {
+		return await this.allMessages
+		.createQueryBuilder("message")
+		.select("message.uuid")
+		.addSelect("message.createdAt")
+		.addSelect("message.content")
+		.leftJoin("message.author", "author")
+		.addSelect("author.username")
+		.leftJoin(`message.${type}`, `${type}`)
+		.addSelect(`${type}.id`)
+		.where(`message.${type}.id = :id`, {id: inputed_id})
+		.orderBy("message.createdAt", "DESC")
+		.skip(offset * LOADED_MESSAGES)
+		.take(LOADED_MESSAGES)
+		.getMany();
+	}
 
 	async addMessagetoChannel(data: IMessage) : Promise<MessageEntity> {
 		const user = await this.userService.findByName(data.author, {channels: true, owner_of: true})
@@ -36,7 +58,7 @@ export class MessageService {
 
 	async addMessagetoDm(data: IMessage) : Promise<MessageEntity> {
 		const user = await this.userService.findByName(data.author, {dms: true});
-		const dm = await this.dmService.getDmByName({target: data.target, id: 0, offset: 0}, user);
+		const dm = await this.dmService.getDmByName({target: data.target, offset: 0}, user);
 
 		const message = new MessageEntity();
 		message.uuid = uuid();
