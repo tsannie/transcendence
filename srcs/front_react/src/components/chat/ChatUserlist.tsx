@@ -3,6 +3,7 @@ import {
   Grid,
   List,
   ListItem,
+  ListItemButton,
   Menu,
   MenuItem,
   Popover,
@@ -40,10 +41,10 @@ export default function ChatUserlist(props: ChatUserListProps) {
       });
   }
 
-  function handleClick(event: React.MouseEvent<HTMLElement>) {
-    event.preventDefault();
-    createNewConv(event.currentTarget.innerHTML);
-    console.log(event.currentTarget.innerHTML);
+  function handleClick(username: string) {
+    //event.preventDefault();
+    createNewConv(username);
+    //console.log(event.currentTarget.innerHTML);
   }
 
   async function createDm(targetUsername: IDm) {
@@ -92,11 +93,16 @@ export default function ChatUserlist(props: ChatUserListProps) {
         Users
       </Typography>
       <List>
-        {users.map((user) => (
-          (user.id !== props.userId) && <ListItem key={user.id} onClick={handleClick}>
-            {user.username}
-          </ListItem>
-        ))}
+        {users.map(
+          (user) =>
+            user.id !== props.userId && (
+              <ListItemButton key={user.id} onClick={() => handleClick(user.username)} sx={{
+                width: "fit-content",
+              }}>
+                {user.username}
+              </ListItemButton>
+            )
+        )}
       </List>
     </>
   );

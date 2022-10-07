@@ -10,6 +10,7 @@ import InfosChannels from "./InfosChannels";
 interface ChannelContentProps {
   isOpenInfos: boolean;
   messagesList: any[];
+  setMessagesList: (messagesList: any[]) => void;
   username: string;
   setCurrentMessage: (message: string) => void;
   sendMessage: () => void;
@@ -22,15 +23,17 @@ export default function ChannelContent(props: ChannelContentProps) {
   console.log("isopeninfos", props.isOpenInfos);
   return (
     <Grid container>
+      {props.channelData.status !== "publicUser" && (
       <Grid item xs={9}>
         <Conv
           messagesList={props.messagesList}
-          //setMessagesList={setMessagesList}
+          setMessagesList={props.setMessagesList}
           username={props.username}
           setCurrentMessage={props.setCurrentMessage}
           sendMessage={props.sendMessage}
         />
       </Grid>
+      )}
       <Grid item xs={3}>
         <InfosChannels channelData={props.channelData} username={props.username}/>
       </Grid>
