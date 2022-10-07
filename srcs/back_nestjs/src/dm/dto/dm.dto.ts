@@ -28,7 +28,7 @@ export class DmIdDto {
   offset: number
 }
 
-export class DmListDto {
+export class ListDto {
   @IsDefined()
   @IsNotEmpty()
   @Type( () => Number )
