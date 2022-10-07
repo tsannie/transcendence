@@ -26,7 +26,7 @@ import { ChatContent } from "../Chat";
 
 interface ChannelsListProps {
   channelsList: IChannel[];
-  getChannels: () => void;
+  getChannelsUserlist: () => void;
   setChatContent: (chatContent: ChatContent) => void;
   setCurrentChannel: (currentChannel: IChannel) => void;
   setIsOpenInfos: (isOpenInfos: boolean) => void;
@@ -60,7 +60,7 @@ export default function ChannelsList(props: ChannelsListProps) {
       .then((res) => {
         console.log("channel joined with success");
         console.log(channel);
-        props.getChannels();
+        props.getChannelsUserlist();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -83,7 +83,7 @@ export default function ChannelsList(props: ChannelsListProps) {
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
-        props.getChannels();
+        props.getChannelsUserlist();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -99,7 +99,7 @@ export default function ChannelsList(props: ChannelsListProps) {
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
-        props.getChannels();
+        props.getChannelsUserlist();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -200,7 +200,7 @@ export default function ChannelsList(props: ChannelsListProps) {
             )} */}
            {/*  <AdminsActions
               channelData={channelData}
-              getChannels={props.getChannels}
+              getChannelsUserlist={props.getChannelsUserlist}
               setUserStatus={setUserStatus}
             />
             <InfosChannels channelData={channelData} /> */}
