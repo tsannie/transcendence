@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
-import { DmIdDto, DmListDto, DmNameDto } from '../dto/dm.dto';
+import { DmIdDto, ListDto, DmNameDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 import { DmService } from '../service/dm.service';
 
@@ -14,7 +14,7 @@ export class DmController {
 	// get all conversations of a user
 	@UseGuards( JwtTwoFactorGuard )
 	@Get('list')
-	async getDmsList(@Query() data: DmListDto, @Request() req): Promise<DmEntity[]> {
+	async getDmsList(@Query() data: ListDto, @Request() req): Promise<DmEntity[]> {
 		return await this.dmService.getDmsList(data, req.user);
 	}
 
