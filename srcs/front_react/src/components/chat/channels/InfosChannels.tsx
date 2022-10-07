@@ -29,7 +29,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
     console.log("click on user who i wnat to ban, mute etc");
     console.log("channel", props.channelData);
     setDisplayAdminActions(true);
-    //props.getChannels();
+    //props.getChannelsUserlist();
     setOpen(!open);
   }
 

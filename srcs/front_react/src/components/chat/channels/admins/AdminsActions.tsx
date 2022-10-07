@@ -12,7 +12,7 @@ import UnmuteUser from "./UnmuteUser";
 interface AdminsActionsProps {
   userTargeted: any;
   channelData: any;
-  //getChannels: () => void;
+  //getChannelsUserlist: () => void;
   //setUserStatus: (userStatus: string) => void;
 }
 
@@ -23,7 +23,7 @@ export default function AdminsActions(props: AdminsActionsProps) {
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
-    //props.getChannels();
+    //props.getChannelsUserlist();
   }
 
   function handleClose() {
