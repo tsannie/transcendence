@@ -18,6 +18,8 @@ import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import { MessageEntity } from 'src/message/models/message.entity';
 
+const CHANNEL_LIST_NUMBER = 10;
+
 @Injectable()
 @Catch()
 export class ChannelService {
@@ -60,7 +62,27 @@ export class ChannelService {
 			return {status:"public", data: await this.getPublicData(query_channel)};
 		}
 		
-		async getChannelsList( user: UserEntity) : Promise<ChannelEntity[]> {
+		async getChannelsList(offset: number) : Promise<ChannelEntity[]> {
+			return await this.channelRepository.find({
+				where:[
+					{status: "Public"},
+					{status: "Protected"}
+				],
+				order: {
+					createdAt: "ASC",
+				},
+				select: {
+					id: true,
+					name: true,
+					status: true,
+					createdAt: true,
+				},
+				skip: offset * CHANNEL_LIST_NUMBER,
+				take: CHANNEL_LIST_NUMBER,
+			});
+		}
+
+		async getChannelsUserList( user: UserEntity) : Promise<ChannelEntity[]> {
 			const relation_options : FindOptionsRelations<ChannelEntity> = {
 					messages: {
 						author: true,
@@ -80,9 +102,7 @@ export class ChannelService {
 			}
 
 			const order_options : FindOptionsOrder<ChannelEntity> = {
-				messages: {
-					createdAt: "ASC"
-				}
+				name: "ASC",
 			}
 			
 			let reloaded_user = await this.userService.findOptions({
