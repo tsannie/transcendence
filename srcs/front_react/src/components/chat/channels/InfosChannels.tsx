@@ -93,7 +93,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
                 <ListItemText primary={user.username}></ListItemText>
                 {open ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-              <Collapse in={open} timeout="auto" unmountOnExit>
+              <Collapse in={!open} timeout="auto" unmountOnExit>
                 <AdminsActions userTargeted={user}  channelData={props.channelData} />
               </Collapse>
             </ListItem>

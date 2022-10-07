@@ -1,4 +1,5 @@
-import { Grid } from "@mui/material";
+import { Button, Grid, IconButton, TextField, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import Conv from "../messages/Conv";
@@ -6,8 +7,10 @@ import MessagesList from "../messages/MessagesList";
 import { IChannel } from "../types";
 import AdminsActions from "./admins/AdminsActions";
 import InfosChannels from "./InfosChannels";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 interface ChannelContentProps {
+  getChannelsUserlist: () => void;
   isOpenInfos: boolean;
   messagesList: any[];
   setMessagesList: (messagesList: any[]) => void;
@@ -18,6 +21,38 @@ interface ChannelContentProps {
 }
 
 export default function ChannelContent(props: ChannelContentProps) {
+  const [openMoreInfos, setOpenMoreInfos] = useState(false);
+
+  function handleClick(event: any) {
+    console.log("more infos");
+    setOpenMoreInfos(true);
+  }
+
+  function joinNewChannelWithoutStatus(channel: any) {
+    const newChannel = {
+      name: channel.data.name,
+    };
+    console.log(newChannel);
+
+    return newChannel;
+  }
+
+  async function deleteChannel(channel: any) {
+    const newChannel = joinNewChannelWithoutStatus(channel);
+
+    console.log(channel);
+    await api
+      .post("channel/deleteChannel", newChannel)
+      .then((res) => {
+        console.log("channel left with success");
+        console.log(channel);
+        props.getChannelsUserlist();
+      })
+      .catch((res) => {
+        console.log("invalid channels");
+        console.log(res);
+      });
+  }
 
   console.log("channel data", props.channelData);
   console.log("isopeninfos", props.isOpenInfos);
@@ -25,6 +60,30 @@ export default function ChannelContent(props: ChannelContentProps) {
     <Grid container>
       {props.channelData.status !== "publicUser" && (
       <Grid item xs={9}>
+        <Box sx={{ border: "3px solid red"}}>
+          <Grid item>
+            <Typography variant={"h4"}>{props.channelData.name}</Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant={"h6"}>{props.channelData.data.createdAt}</Typography>
+          </Grid>
+          <Grid item>
+            <IconButton onClick={handleClick}>
+              <MoreHorizIcon />
+            </IconButton>
+            { openMoreInfos && props.channelData.status === "owner" && (
+              <Button
+                sx={{
+                  color: "red",
+                  ml: "1vh",
+                }}
+                onClick={() => deleteChannel(props.channelData)}
+              >
+                Delete
+              </Button>
+            )}
+          </Grid>
+        </Box>
         <Conv
           messagesList={props.messagesList}
           setMessagesList={props.setMessagesList}

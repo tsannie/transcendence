@@ -1,4 +1,4 @@
-import { Box, IconButton } from "@mui/material";
+import { Box, Grid, IconButton } from "@mui/material";
 import React from "react";
 import MessagesList from "./MessagesList";
 import PromptMessage from "./PromptMessage";
@@ -20,12 +20,12 @@ export default function Conv(props: ConvProps) {
   }
  */
   return (
-    <Box sx={{ border: "1px solid green", minHeight: 300 }}>
+    <Grid sx={{ border: "1px solid green", minHeight: 300 }}>
       <MessagesList messagesList={props.messagesList} username={props.username} setMessagesList={props.setMessagesList} />
       <PromptMessage
         setCurrentMessage={props.setCurrentMessage}
         sendMessage={props.sendMessage}
       />
-    </Box>
+    </Grid>
   );
 }

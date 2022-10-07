@@ -15,7 +15,9 @@ import { v4 as uuidv4 } from "uuid";
 import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
 
-interface FormChannelProps {}
+interface FormChannelProps {
+  getChannelsUserlist: () => void;
+}
 
 export default function FormChannel(props: FormChannelProps) {
   const [nameChannel, setNameChannel] = useState("");
@@ -37,6 +39,8 @@ export default function FormChannel(props: FormChannelProps) {
       .then((res) => {
         console.log("channel created with success");
         console.log(channelData);
+        props.getChannelsUserlist();
+        //props.getAvailableChannels();
       })
       .catch((res) => {
         console.log("error");
