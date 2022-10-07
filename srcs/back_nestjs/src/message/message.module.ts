@@ -15,7 +15,7 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     TypeOrmModule.forFeature([MessageEntity, DmEntity, UserEntity]),
     UserModule,
-    ChannelModule,
+    forwardRef(() => ChannelModule),
     forwardRef(() => DmModule),
     AuthModule,
   ],

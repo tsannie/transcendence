@@ -1,4 +1,5 @@
-import { IsDefined, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDefined, IsNotEmpty, IsOptional, IsString, Min } from "class-validator";
 
 export class ChannelDto {
 
@@ -11,4 +12,10 @@ export class ChannelDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @Type(() => Number)
+  @Min(0)
+  offset: number;
 }

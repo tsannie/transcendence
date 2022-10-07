@@ -1,6 +1,8 @@
 import {
   Catch,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -17,6 +19,9 @@ import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import { MessageEntity } from 'src/message/models/message.entity';
+import { MessageService } from 'src/message/service/message.service';
+import { response } from 'express';
+import { IChannelReturn } from '../models/channel_return.interface';
 
 const CHANNEL_LIST_NUMBER = 10;
 
@@ -27,6 +32,8 @@ export class ChannelService {
 	@InjectRepository(ChannelEntity)
 	private channelRepository: Repository<ChannelEntity>,
 
+	@Inject(forwardRef(() => MessageService))
+	private	readonly messageService : MessageService,
 	private readonly userService: UserService) {}
 
 	/* This function return all the public datas of channel */
@@ -37,29 +44,47 @@ export class ChannelService {
 
 	/* This function gets all the data for a normal user. No sensitive information here */
 	async getUserData(query_channel: ChannelDto) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, {owner: true, users:true, admins: true, messages: true});
+		const channel = await this.getChannel(query_channel.name, {owner: true, users:true, admins: true});
 		return channel;
 	}
 
 	/* This function returns full data of channel. Sensitive information here. Should be accessed only by admin or owner */
 	async getPrivateData(query_channel: ChannelDto) : Promise<ChannelEntity> {
-		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, admins: true, banned: true, muted: true, messages: true});
+		const channel = await this.getChannel(query_channel.name, {owner: true, users: true, admins: true, banned: true, muted: true});
 		return channel;
 	}
 
-	async getDatas(query_channel: ChannelDto, user: UserEntity) : Promise<
+	async getDatas(query_channel: ChannelDto, user: UserEntity) : Promise<IChannelReturn>
 		{
-			status: string, 
-			data: ChannelEntity
-		}> {
-		if (this.isOwner(query_channel.name, user))
-			return {status:"owner", data: await this.getPrivateData(query_channel)};
-		else if (this.isAdmin(query_channel.name, user))
-			return {status:"admin", data: await this.getPrivateData(query_channel)};
-		else if (this.isMember(query_channel.name, user))
-			return {status:"user", data: await this.getUserData(query_channel)};
+			let isOwner : boolean = this.isOwner(query_channel.name, user); 
+			let isAdmin : boolean = this.isAdmin(query_channel.name, user);
+			let isUser : boolean = this.isMember(query_channel.name, user);
+			let response : IChannelReturn = {status: "", data: null};
+			if (!isOwner && !isAdmin && !isUser)
+			{
+				return {
+					status:"public",
+					data: await this.getPublicData(query_channel)
+				};
+			}
 			else
-			return {status:"public", data: await this.getPublicData(query_channel)};
+			{
+				if (isUser)
+				{
+					response.status = "user";
+					response.data = await this.getPublicData(query_channel);
+				}
+				else
+				{
+					if (isOwner)
+						response.status = "owner";
+				 	if (isAdmin)
+						response.status = "admin";
+					response.data = await this.getPrivateData(query_channel);
+				}
+				response.data.messages = await this.messageService.loadMessages("channel", response.data.id, query_channel.offset);
+			}
+			return response;
 		}
 		
 		async getChannelsList(offset: number) : Promise<ChannelEntity[]> {
