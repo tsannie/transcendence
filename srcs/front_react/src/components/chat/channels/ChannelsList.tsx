@@ -116,9 +116,9 @@ export default function ChannelsList(props: ChannelsListProps) {
       })
       .then((res) => {
         console.log("get infos of channel clicked by user");
+        console.log("status = ", res.data.status);
         props.setCurrentChannel(res.data);
         props.setIsOpenInfos(true);
-        console.log(res.data);
       })
       .catch((res) => {
         console.log("invalid channels private data");

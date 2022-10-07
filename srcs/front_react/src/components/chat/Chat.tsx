@@ -84,9 +84,8 @@ export default function Chat(props: ChatProps) {
         target: targetUsername,
       };
       console.log(messageData);
-      console.log(socket);
       socket.emit("message", messageData);
-      //setMessagesList((list) => [...list, messageData]);
+      setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
     }
   }
@@ -130,7 +129,7 @@ export default function Chat(props: ChatProps) {
         {chatContent === ChatContent.MESSAGES && (
           <Conv
             messagesList={messagesList}
-            //setMessagesList={setMessagesList}
+            setMessagesList={setMessagesList}
             username={username}
             setCurrentMessage={setCurrentMessage}
             sendMessage={sendMessage}
@@ -158,6 +157,7 @@ export default function Chat(props: ChatProps) {
           <ChannelContent
             isOpenInfos={isOpenInfos}
             messagesList={messagesList}
+            setMessagesList={setMessagesList}
             username={username}
             setCurrentMessage={setCurrentMessage}
             sendMessage={sendMessage}
