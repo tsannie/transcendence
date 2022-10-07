@@ -4,89 +4,56 @@ import { api } from '../../../../const/const';
 import { IChannel, IChannelActions } from '../../types';
 
 interface UnbanUserProps {
-  infosChannel: IChannel;
-  getInfosChannel: (channel: IChannel) => void;
+  userTargeted: any;
+  channelData: any;
 }
 
 export default function UnbanUser(props: UnbanUserProps) {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-  const open = Boolean(anchorEl);
-  const id = open ? "popover-unban" : undefined;
-
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
   ) {
-    setAnchorEl(event.currentTarget);
+    console.log("unban user", props.channelData);
+    unbanUser(props.userTargeted, props.channelData);
   }
 
-  function handleClose() {
-    setAnchorEl(null);
-  }
-
-  function createChannelActions(channel: IChannel, targetUsername: string) {
-    console.log("channel = ", channel);
+  function createChannelActions(channel: any, targetUsername: string) {
+    //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
-      channel_name: channel.name,
+      channel_name: channel.data.name,
       target: targetUsername,
     };
     console.log(newChannel);
-
     return newChannel;
   }
 
-  async function unbanUser(user: any, channel: IChannel) {
+  async function unbanUser(user: any, channel: any) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
       await api
         .post("channel/unBanUser", newChannel)
         .then((res) => {
-          console.log("user unban with success");
+          console.log("user ban with success");
           console.log(channel);
-          props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("invalid unban user");
+          console.log("invalid channels");
           console.log(res);
         });
     }
   }
 
   return (
-    <>
-      <Button
-        sx={{
-          color: "black",
-          ml: "1vh",
-        }}
-        onClick={(event) => {
-          handleClick(event);
-        }}
-      >
-        Unban
-      </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-      >
-        {open === true && (
-          <List>
-            {props.infosChannel.banned.map((user: any) => (
-              <ListItemButton onClick={() => unbanUser(user, props.infosChannel)}>
-                {user.username}
-              </ListItemButton>
-            ))}
-          </List>
-        )}
-      </Popover>
-    </>
+    <Button
+      sx={{
+        color: "black",
+        ml: "1vh",
+      }}
+      onClick={(event) => {
+        handleClick(event);
+      }}
+    >
+      Unban
+    </Button>
   )
 }

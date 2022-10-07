@@ -10,80 +10,65 @@ import UnbanUser from "./UnbanUser";
 import UnmuteUser from "./UnmuteUser";
 
 interface AdminsActionsProps {
-  id: string | undefined;
-  open: boolean;
-  anchorEl: any;
-  handleClose: any;
-  channelData: IChannel;
+  userTargeted: any;
+  channelData: any;
   //getChannels: () => void;
   //setUserStatus: (userStatus: string) => void;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
-  /* const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
-    props.getChannels();
+    //props.getChannels();
   }
 
   function handleClose() {
     setAnchorEl(null);
-  } */
+  }
+  console.log("admin actions)");
 
   return (
-    <>
-      <div>
-        <Popover
-          id={props.id}
-          open={props.open}
-          anchorEl={props.anchorEl}
-          onClose={props.handleClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-        >
-          <List>
-            <ListItem>
-              <BanUser
-                channelData={props.channelData}
-              />
-            </ListItem>
-            {/* <ListItem>
-              <UnbanUser
-                channelData={props.channelData}
-              />
-            </ListItem>
-            <ListItem>
-              <MuteUser
-                channelData={props.channelData}
-              />
-            </ListItem>
-            <ListItem>
-              <UnmuteUser
-                channelData={props.channelData}
-              />
-            </ListItem>
-            <ListItem>
-              <MakeAdmin
-                channelData={props.channelData}
-              />
-            </ListItem>
-            <ListItem>
-              <RevokeAdmin
-                channelData={props.channelData}
-              />
-            </ListItem> */}
-          </List>
-        </Popover>
-      </div>
-    </>
+    <List>
+      <ListItem>
+        <BanUser
+          userTargeted={props.userTargeted}
+          channelData={props.channelData}
+        />
+      </ListItem>
+      <ListItem>
+        <UnbanUser
+          userTargeted={props.userTargeted}
+          channelData={props.channelData}
+        />
+      </ListItem>
+      <ListItem>
+        <MuteUser
+          userTargeted={props.userTargeted}
+          channelData={props.channelData}
+        />
+      </ListItem>
+      <ListItem>
+        <UnmuteUser
+          userTargeted={props.userTargeted}
+          channelData={props.channelData}
+        />
+      </ListItem>
+      <ListItem>
+        <MakeAdmin
+          userTargeted={props.userTargeted}
+          channelData={props.channelData}
+        />
+      </ListItem>
+      <ListItem>
+        <RevokeAdmin
+          userTargeted={props.userTargeted}
+          channelData={props.channelData}
+        />
+      </ListItem>
+    </List>
   );
 }
