@@ -50,7 +50,7 @@ export class UserEntity {
   @JoinTable()
   channels?: ChannelEntity[];
 
-  @ManyToMany( () => DmEntity, (dms) => dms.users )
+  @ManyToMany( () => DmEntity, (dms) => dms.users, {nullable: true} )
   @JoinTable()
   dms?: DmEntity[];
 
