@@ -16,7 +16,6 @@ interface AdminsActionsProps {
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
-  const [infosChannel, setInfosChannel] = useState<IChannel>(props.channelData);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
@@ -29,44 +28,6 @@ export default function AdminsActions(props: AdminsActionsProps) {
   function handleClose() {
     setAnchorEl(null);
   }
-
-  // create a function isAdmin to check if the user is admin
-  function isAdmin(channel: IChannel, id: number) {
-    console.log(channel);
-    if (channel !== undefined) {
-      for (let i = 0; i < channel.admins.length; i++) {
-        if (channel.admins[i].id === id) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  async function getInfosChannel(channel: IChannel) {
-    console.log(channel);
-    await api
-      .get("channel/datas", {
-        params: {
-          name: channel.name,
-        },
-      })
-      .then((res) => {
-        console.log("get infos channels");
-        console.log(res.data);
-        setInfosChannel(res.data);
-        props.setUserStatus(res.data.status);
-        console.log(res.data.status);
-        //setChannelId(res.data.id);
-      })
-      .catch((res) => {
-        console.log("invalid channels private data");
-      });
-  }
-
-  useEffect(() => {
-    getInfosChannel(props.channelData);
-  }, []);
 
   return (
     <>
@@ -95,41 +56,34 @@ export default function AdminsActions(props: AdminsActionsProps) {
           <List>
             <ListItem>
               <BanUser
-                infosChannel={infosChannel}
-                getInfosChannel={getInfosChannel}
+                channelData={props.channelData}
               />
             </ListItem>
-            <ListItem>
+            {/* <ListItem>
               <UnbanUser
-                infosChannel={infosChannel}
-                getInfosChannel={getInfosChannel}
+                channelData={props.channelData}
               />
             </ListItem>
             <ListItem>
               <MuteUser
-                infosChannel={infosChannel}
-                getInfosChannel={getInfosChannel}
+                channelData={props.channelData}
               />
             </ListItem>
             <ListItem>
               <UnmuteUser
-                infosChannel={infosChannel}
-                getInfosChannel={getInfosChannel}
+                channelData={props.channelData}
               />
             </ListItem>
             <ListItem>
               <MakeAdmin
-                infosChannel={infosChannel}
-                getInfosChannel={getInfosChannel}
-                isAdmin={isAdmin}
+                channelData={props.channelData}
               />
             </ListItem>
             <ListItem>
               <RevokeAdmin
-                infosChannel={infosChannel}
-                getInfosChannel={getInfosChannel}
+                channelData={props.channelData}
               />
-            </ListItem>
+            </ListItem> */}
           </List>
         </Popover>
       </div>

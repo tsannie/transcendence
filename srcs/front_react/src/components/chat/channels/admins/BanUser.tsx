@@ -4,8 +4,7 @@ import { api } from '../../../../const/const';
 import { IChannel, IChannelActions } from '../../types';
 
 interface BanUserProps {
-  infosChannel: IChannel;
-  getInfosChannel: (channel: IChannel) => void;
+  channelData: any;
 }
 
 export default function BanUser(props: BanUserProps) {
@@ -45,7 +44,6 @@ export default function BanUser(props: BanUserProps) {
         .then((res) => {
           console.log("user ban with success");
           console.log(channel);
-          props.getInfosChannel(channel);
         })
         .catch((res) => {
           console.log("invalid channels");
@@ -79,8 +77,8 @@ export default function BanUser(props: BanUserProps) {
       >
         {open && (
           <List>
-            {props.infosChannel.users.map((user: any) => (
-              <ListItemButton onClick={() => banUser(user, props.infosChannel)}>
+            {props.channelData.users.map((user: any) => (
+              <ListItemButton onClick={() => banUser(user, props.channelData)}>
                 {user.username}
               </ListItemButton>
             ))}
