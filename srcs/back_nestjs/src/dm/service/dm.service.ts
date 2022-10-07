@@ -4,7 +4,7 @@ import { MessageService } from 'src/message/service/message.service';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
-import { DmNameDto, DmIdDto, DmListDto } from '../dto/dm.dto';
+import { DmNameDto, DmIdDto, ListDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 
 @Injectable()
@@ -72,7 +72,7 @@ export class DmService {
 
 
 	// get all conversations of a user
-	async getDmsList(data: DmListDto, user: UserEntity): Promise<DmEntity[]> {
+	async getDmsList(data: ListDto, user: UserEntity): Promise<DmEntity[]> {
 		return await this.dmRepository
 		.createQueryBuilder("dm")
 		.leftJoin("dm.users", "users")
