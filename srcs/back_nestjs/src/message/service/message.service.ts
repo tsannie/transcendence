@@ -16,6 +16,7 @@ export class MessageService {
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
 
+	@Inject(forwardRef(() => ChannelService))
 	private channelService: ChannelService,
 	
 	@Inject(forwardRef( () => DmService))
