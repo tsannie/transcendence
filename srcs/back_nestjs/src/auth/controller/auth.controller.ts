@@ -51,4 +51,11 @@ export class AuthController {
     });
     return user;
   }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('logout')
+  async logout(@Request() req) {
+    req.res.clearCookie(process.env.COOKIE_NAME);
+    return {message: 'Logout'};
+  }
 }

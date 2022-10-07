@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Route, RouteProps, Navigate } from "react-router-dom";
 import { api, COOKIE_NAME } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
+import Sidebar from "../sidebar/Sidebar";
 
 interface IPrivateComponentProps {
   component: React.ComponentType;
@@ -36,15 +37,19 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({ component: Rout
   }, []);
 
   if (isLoad === true) {
-    console.log('isLogin', isLogin);
-    console.log('is2FA', is2FA);
-    if (isLogin)
-      return <RouteComponent />;
-    else if (is2FA === true)
+    if (isLogin) {
+      return (
+        <div className="menu">
+        <Sidebar/>
+          <div className="content">
+            <RouteComponent />
+        </div>
+        </div>);
+    } else if (is2FA === true)
       return <Navigate to="/2fa" />
     else
       return <Navigate to="/auth" />
   } else {
-    return <>loading...</>;
+    return <>loading</>;
   }
 }
