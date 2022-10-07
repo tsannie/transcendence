@@ -61,6 +61,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
         console.log("channel joined with success");
         console.log(channel);
         props.getChannelsUserlist();
+        getAvailableChannels();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -82,6 +83,8 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
         console.log("channel left with success");
         console.log(channel);
         props.getChannelsUserlist();
+        getAvailableChannels();
+        //props.getChannelsList();
       })
       .catch((res) => {
         console.log("invalid channels");
