@@ -12,6 +12,7 @@
   border-style: dashed;
   border-color: white;
   img {
+    border-width: calc(3 * var(--res)) !important;
     cursor: pointer;
     width: calc(40 * var(--res));
     margin-bottom: calc(20 * var(--res));
