@@ -3,7 +3,7 @@ import { api, COOKIE_NAME } from "./const/const";
 import Menu from "./components/menu/Menu";
 import './app.style.scss'
 import './components/menu/menu.style.scss';
-import { Navigate, Route, Router, Routes } from "react-router-dom";
+import { Navigate, Route, Router, Routes, useLocation } from "react-router-dom";
 import { AuthContext, AuthContextType, AuthProvider, User,  } from "./contexts/AuthContext";
 import { Switch } from "@mui/material";
 import LoginPage from "./components/auth/oauth/LoginPage";
@@ -14,14 +14,17 @@ import Sidebar from "./components/sidebar/Sidebar";
 import Home from "./components/home/Home";
 import Chat from "./components/chat/Chat";
 import Profile from "./components/profile/Profile";
+import { AnimatePresence } from "framer-motion";  // TODO delete ?
 
 
 export default function App() {
     //<AuthProvider>
+    const location = useLocation();
+
 
   return (
     <div className="app">
-      <Routes>
+      <Routes key={location.pathname} location={location}>
         {/* Auth Routes (public) */}
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/2fa" element={<TwoFactorPage/>} />
@@ -33,7 +36,6 @@ export default function App() {
         <Route path="/game" element={<PrivateRoute component={Profile} />}/>
         <Route path="/settings" element={<PrivateRoute component={Settings} />}/>
       </Routes>
-
     </div>
   );
 }
