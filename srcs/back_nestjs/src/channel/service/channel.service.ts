@@ -18,6 +18,8 @@ import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import { MessageEntity } from 'src/message/models/message.entity';
 
+const CHANNEL_LIST_NUMBER = 10;
+
 @Injectable()
 @Catch()
 export class ChannelService {
@@ -61,7 +63,27 @@ export class ChannelService {
 			return {status:"publicUser", data: await this.getPublicData(query_channel)};
 		}
 
-		async getChannelsList( user: UserEntity) : Promise<ChannelEntity[]> {
+		async getChannelsList(offset: number) : Promise<ChannelEntity[]> {
+			return await this.channelRepository.find({
+				where:[
+					{status: "Public"},
+					{status: "Protected"}
+				],
+				order: {
+					createdAt: "ASC",
+				},
+				select: {
+					id: true,
+					name: true,
+					status: true,
+					createdAt: true,
+				},
+				skip: offset * CHANNEL_LIST_NUMBER,
+				take: CHANNEL_LIST_NUMBER,
+			});
+		}
+
+		async getChannelsUserList( user: UserEntity) : Promise<ChannelEntity[]> {
 			const relation_options : FindOptionsRelations<ChannelEntity> = {
 					messages: {
 						author: true,
@@ -81,8 +103,9 @@ export class ChannelService {
 			}
 
 			const order_options : FindOptionsOrder<ChannelEntity> = {
+				name: "ASC",
 				messages: {
-					createdAt: "ASC"
+					createdAt: "DESC",
 				}
 			}
 
@@ -180,8 +203,11 @@ export class ChannelService {
 		newChannel.name = channel.name;
 		newChannel.status = channel.status;
 		newChannel.owner = user;
-		if (channel.status === "Protected" && channel.password) {
-			newChannel.password = await this.hashPassword(channel.password);
+		if (channel.status === "Protected") {
+			if (!channel.password)
+				throw new UnprocessableEntityException("Password is required for protected channel");
+			else
+				newChannel.password = await this.hashPassword(channel.password);
 		}
 		return await this.saveChannel(newChannel);
 	}

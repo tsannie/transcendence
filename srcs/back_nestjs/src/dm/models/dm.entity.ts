@@ -8,7 +8,7 @@ export class DmEntity {
 	id: number;
 
 	@CreateDateColumn()
-	time: string;
+	createdAt: string;
 
 	@ManyToMany( () => UserEntity, (user) => user.dms, {eager: true})
 	users: UserEntity[];

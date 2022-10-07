@@ -17,7 +17,7 @@ export class ChannelEntity {
 	id: number;
 
 	@CreateDateColumn()
-	time: string;
+	createdAt: string;
 	
 	@Column( {nullable: false, unique: true} )
 	name: string;
