@@ -1,3 +1,4 @@
+import { List, ListItem } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../SocketContext";
@@ -21,12 +22,12 @@ export default function MessagesList(props: MessagesListProps) {
   }, []);
 
   return (
-    <>
+    <List>
       {props.messagesList.map((messageData: IMessage) => {
         //console.log("uuid du msg", messageData.uuid);
         //if (props.username === messageData.author)
         return (
-          <Box
+          <ListItem
             sx={{
               width: "fit-content",
               height: "fit-content",
@@ -43,7 +44,7 @@ export default function MessagesList(props: MessagesListProps) {
             key={messageData.uuid}
           >
             {messageData.content}
-          </Box>
+          </ListItem>
         );
         return (
           <Box
@@ -66,6 +67,6 @@ export default function MessagesList(props: MessagesListProps) {
           </Box>
         );
       })}
-    </>
+    </List>
   );
 }
