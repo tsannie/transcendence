@@ -11,6 +11,7 @@ import { ChatContent } from "../Chat";
 import { api } from "../../../const/const";
 
 interface ChannelProps {
+  setIsOpenInfos: (isOpenInfos: boolean) => void;
   setChatContent: (chatContent: ChatContent) => void;
   setCurrentChannel: (currentChannel: IChannel) => void;
   getChannels: () => void;
@@ -41,6 +42,7 @@ export default function Channels(props: ChannelProps) {
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
       <ChannelsList
+        setIsOpenInfos={props.setIsOpenInfos}
         setChatContent={props.setChatContent}
         setCurrentChannel={props.setCurrentChannel}
         channelsList={props.channelsList}

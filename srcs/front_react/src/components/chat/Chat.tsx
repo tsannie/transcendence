@@ -31,6 +31,7 @@ export default function Chat(props: ChatProps) {
   const [channelsList, setChannelsList] = useState<IChannel[]>([]);
   const [targetUsername, setTargetUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
+  const [isOpenInfos, setIsOpenInfos] = useState(false);
   const [userId, setUserId] = useState(0);
   const [currentChannel, setCurrentChannel] = useState<any>();
   const [chatContent, setChatContent] = useState<ChatContent>(
@@ -117,6 +118,7 @@ export default function Chat(props: ChatProps) {
         </Grid>
         <Grid item>
           <Channels
+            setIsOpenInfos={setIsOpenInfos}
             setChatContent={setChatContent}
             setCurrentChannel={setCurrentChannel}
             channelsList={channelsList}
@@ -152,8 +154,9 @@ export default function Chat(props: ChatProps) {
             setChatContent={setChatContent}
           />
         )}
-        {chatContent === ChatContent.CHANNEL_CONTENT && (
+        {chatContent === ChatContent.CHANNEL_CONTENT && isOpenInfos && (
           <ChannelContent
+            isOpenInfos={isOpenInfos}
             messagesList={messagesList}
             username={username}
             setCurrentMessage={setCurrentMessage}

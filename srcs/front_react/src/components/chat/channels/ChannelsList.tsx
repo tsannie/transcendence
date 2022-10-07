@@ -29,12 +29,14 @@ interface ChannelsListProps {
   getChannels: () => void;
   setChatContent: (chatContent: ChatContent) => void;
   setCurrentChannel: (currentChannel: IChannel) => void;
+  setIsOpenInfos: (isOpenInfos: boolean) => void;
 }
 
 export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
   const [userStatus, setUserStatus] = useState("");
+
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
       channel.password = channelPassword;
@@ -105,9 +107,28 @@ export default function ChannelsList(props: ChannelsListProps) {
       });
   }
 
+  async function getInfosChannel(channel: any) {
+    await api
+      .get("channel/datas", {
+        params: {
+          name: channel.name,
+        },
+      })
+      .then((res) => {
+        console.log("get infos of channel clicked by user");
+        props.setCurrentChannel(res.data);
+        props.setIsOpenInfos(true);
+        console.log(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid channels private data");
+      });
+    console.log("bbbbb");
+  }
+
   function handleClick(channel: IChannel) {
     props.setChatContent(ChatContent.CHANNEL_CONTENT);
-    props.setCurrentChannel(channel);
+    getInfosChannel(channel);
     console.log("channel clicked", channel);
   }
 
