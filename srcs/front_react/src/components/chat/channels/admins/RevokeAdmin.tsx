@@ -4,89 +4,56 @@ import { api } from '../../../../const/const';
 import { IChannel, IChannelActions } from '../../types';
 
 interface RevokeAdminProps {
-  infosChannel: IChannel;
-  getInfosChannel: (channel: IChannel) => void;
+  userTargeted: any;
+  channelData: any;
 }
 
 export default function RevokeAdmin(props: RevokeAdminProps) {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-  const open = Boolean(anchorEl);
-  const id = open ? "popover-revokeAdmin" : undefined;
-
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
   ) {
-    setAnchorEl(event.currentTarget);
+    console.log("makeAdmin", props.channelData);
+    revokeAdmin(props.userTargeted, props.channelData);
   }
 
-  function handleClose() {
-    setAnchorEl(null);
-  }
-
-  function createChannelActions(channel: IChannel, targetUsername: string) {
+  function createChannelActions(channel: any, targetUsername: string) {
     //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
-      channel_name: channel.name,
+      channel_name: channel.data.name,
       target: targetUsername,
     };
     console.log(newChannel);
-
     return newChannel;
   }
 
-  async function revokeAdmin(user: any, channel: IChannel) {
+  async function revokeAdmin(user: any, channel: any) {
     const newChannel = createChannelActions(channel, user.username);
 
     if (newChannel.target !== "") {
       await api
         .post("channel/revokeAdmin", newChannel)
         .then((res) => {
-          console.log("user is not admin anymore");
+          console.log("user in not admin anymore");
           console.log(channel);
-          props.getInfosChannel(channel);
         })
         .catch((res) => {
-          console.log("user can't be remove to admin");
+          console.log("invalid channels");
           console.log(res);
         });
     }
   }
 
   return (
-    <>
-      <Button
-        sx={{
-          color: "black",
-          ml: "1vh",
-        }}
-        onClick={(event) => {
-          handleClick(event);
-        }}
-      >
-        Revoke Admin
-      </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-      >
-        {open === true && (
-          <List>
-            {props.infosChannel.admins.map((user: any) => (
-              <ListItemButton onClick={() => revokeAdmin(user, props.infosChannel)}>
-                {user.username}
-              </ListItemButton>
-            ))}
-          </List>
-        )}
-      </Popover>
-    </>
+    <Button
+      sx={{
+        color: "black",
+        ml: "1vh",
+      }}
+      onClick={(event) => {
+        handleClick(event);
+      }}
+    >
+      RevokeAdmin
+    </Button>
   )
 }
