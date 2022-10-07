@@ -10,13 +10,17 @@ import UnbanUser from "./UnbanUser";
 import UnmuteUser from "./UnmuteUser";
 
 interface AdminsActionsProps {
+  id: string | undefined;
+  open: boolean;
+  anchorEl: any;
+  handleClose: any;
   channelData: IChannel;
-  getChannels: () => void;
-  setUserStatus: (userStatus: string) => void;
+  //getChannels: () => void;
+  //setUserStatus: (userStatus: string) => void;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  /* const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
@@ -27,23 +31,16 @@ export default function AdminsActions(props: AdminsActionsProps) {
 
   function handleClose() {
     setAnchorEl(null);
-  }
+  } */
 
   return (
     <>
       <div>
-        <Button
-          //aria-describedby={id}
-          //variant="contained"
-          onClick={handleClick}
-        >
-          Admin Actions
-        </Button>
         <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
+          id={props.id}
+          open={props.open}
+          anchorEl={props.anchorEl}
+          onClose={props.handleClose}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "center",

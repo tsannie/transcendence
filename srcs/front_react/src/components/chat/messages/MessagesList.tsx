@@ -4,7 +4,7 @@ import { SocketContext } from "../SocketContext";
 import { IMessage } from "../types";
 
 interface MessagesListProps {
-  //setMessagesList: (messagesList: IMessage[]) => void;
+  setMessagesList: any;
   messagesList: IMessage[];
   username: string;
 }
@@ -16,6 +16,7 @@ export default function MessagesList(props: MessagesListProps) {
     console.log("listen message");
     socket.on("message", (data) => {
       console.log(data);
+      props.setMessagesList.push(data);
     });
   }, []);
 
