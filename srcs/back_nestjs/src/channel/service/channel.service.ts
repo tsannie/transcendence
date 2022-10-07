@@ -103,6 +103,9 @@ export class ChannelService {
 
 			const order_options : FindOptionsOrder<ChannelEntity> = {
 				name: "ASC",
+				messages: {
+					createdAt: "DESC",
+				}
 			}
 			
 			let reloaded_user = await this.userService.findOptions({
