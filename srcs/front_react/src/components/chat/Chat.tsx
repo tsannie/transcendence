@@ -138,7 +138,7 @@ export default function Chat(props: ChatProps) {
         {chatContent === ChatContent.NEW_CHANNELS && (
           <Grid item xs={8}>
             <Grid item xs={4}>
-              <FormChannel />
+              <FormChannel getChannelsUserlist={getChannelsUserlist}/>
             </Grid>
             <Grid item xs={4}>
               <AvailableChannels getChannelsUserlist={getChannelsUserlist}/>
@@ -155,6 +155,7 @@ export default function Chat(props: ChatProps) {
         )}
         {chatContent === ChatContent.CHANNEL_CONTENT && isOpenInfos && (
           <ChannelContent
+            getChannelsUserlist={getChannelsUserlist}
             isOpenInfos={isOpenInfos}
             messagesList={messagesList}
             setMessagesList={setMessagesList}
