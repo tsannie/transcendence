@@ -179,8 +179,11 @@ export class ChannelService {
 		newChannel.name = channel.name;
 		newChannel.status = channel.status;
 		newChannel.owner = user;
-		if (channel.status === "Protected" && channel.password) {
-			newChannel.password = await this.hashPassword(channel.password);
+		if (channel.status === "Protected") {
+			if (!channel.password)
+				throw new UnprocessableEntityException("Password is required for protected channel");
+			else
+				newChannel.password = await this.hashPassword(channel.password);
 		}
 		return await this.saveChannel(newChannel);
 	}
