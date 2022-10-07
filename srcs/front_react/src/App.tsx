@@ -14,7 +14,6 @@ import Sidebar from "./components/sidebar/Sidebar";
 import Home from "./components/home/Home";
 import Chat from "./components/chat/Chat";
 import Profile from "./components/profile/Profile";
-import Logout from "./components/auth/logout/Logout";
 
 
 export default function App() {
@@ -33,7 +32,6 @@ export default function App() {
         <Route path="/chat" element={<PrivateRoute component={Chat} />}/>
         <Route path="/game" element={<PrivateRoute component={Profile} />}/>
         <Route path="/settings" element={<PrivateRoute component={Settings} />}/>
-        <Route path="/logout" element={<PrivateRoute component={Logout} />}/>
       </Routes>
 
     </div>
