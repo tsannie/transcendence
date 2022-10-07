@@ -11,7 +11,10 @@ import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
 import Settings from "./components/settings/Settings";
 import Sidebar from "./components/sidebar/Sidebar";
-import { Home } from "@material-ui/icons";
+import Home from "./components/home/Home";
+import Chat from "./components/chat/Chat";
+import Profile from "./components/profile/Profile";
+import Logout from "./components/auth/logout/Logout";
 
 
 export default function App() {
@@ -19,23 +22,20 @@ export default function App() {
 
   return (
     <div className="app">
-
-      {/* Auth Routes (public) */}
       <Routes>
+        {/* Auth Routes (public) */}
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/2fa" element={<TwoFactorPage/>} />
+
+        {/* Main Routes (private) */}
+        <Route path="/" element={<PrivateRoute component={Home} />}/>
+        <Route path="/profile" element={<PrivateRoute component={Profile} />}/>
+        <Route path="/chat" element={<PrivateRoute component={Chat} />}/>
+        <Route path="/game" element={<PrivateRoute component={Profile} />}/>
+        <Route path="/settings" element={<PrivateRoute component={Settings} />}/>
+        <Route path="/logout" element={<PrivateRoute component={Logout} />}/>
       </Routes>
 
-      {/* Main Routes (private) */}
-      <div className="menu">
-      <Sidebar/>
-        <div className="content">
-        <Routes>
-          <Route path="/" element={<PrivateRoute component={Home} />}/>
-          <Route path="/settings" element={<PrivateRoute component={Settings} />}/>
-        </Routes>
-        </div>
-      </div>
     </div>
   );
 }
