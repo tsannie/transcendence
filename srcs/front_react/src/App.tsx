@@ -11,7 +11,8 @@ import LogoIcon from "./assets/logo-project.png";
 import Settings from "./components/settings/Settings";
 import TwoFactorCode from "./Auth/TwoFactorCode";
 import { api, COOKIE_NAME } from "./const/const";
-import { SocketProvider } from "./components/chat/SocketContext";
+import { SocketProvider } from "./contexts/SocketContext";
+import { ChannelsProvider } from "./contexts/ChannelsContext";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
@@ -79,12 +80,12 @@ export default function App() {
             setIs2FA={setIs2FA}
           />
           </Grid>
-          <Grid item xs={11} sx={{
-            ml: "72px",
-          }}>
-            {inputChat && <Chat />}
-            {inputSettings && <Settings />}
-          </Grid>
+            <Grid item xs={11} sx={{
+              ml: "72px",
+            }}>
+              {inputChat && <Chat />}
+              {inputSettings && <Settings />}
+            </Grid>
         </Grid>
     </SocketProvider>
     );
