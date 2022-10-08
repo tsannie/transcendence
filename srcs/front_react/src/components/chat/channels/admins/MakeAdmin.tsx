@@ -1,19 +1,22 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { api } from '../../../../const/const';
+import { ChannelsContext } from '../../../../contexts/ChannelsContext';
 import { IChannel, IChannelActions } from '../../types';
 
 interface MakeAdminProps {
   userTargeted: any;
-  channelData: any;
 }
 
 export default function MakeAdmin(props: MakeAdminProps) {
+
+  const { channelData } = useContext(ChannelsContext);
+
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
   ) {
-    console.log("makeAdmin", props.channelData);
-    makeAdmin(props.userTargeted, props.channelData);
+    console.log("makeAdmin", channelData);
+    makeAdmin(props.userTargeted, channelData);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

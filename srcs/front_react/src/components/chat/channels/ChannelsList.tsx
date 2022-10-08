@@ -29,7 +29,7 @@ interface ChannelsListProps {
   //channelsList: IChannel[];
   //getChannelsUserlist: () => void;
   setChatContent: (chatContent: ChatContent) => void;
-  setCurrentChannel: (currentChannel: IChannel) => void;
+  //setChannelData: (channelData: IChannel) => void;
   setIsOpenInfos: (isOpenInfos: boolean) => void;
 }
 
@@ -37,7 +37,7 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
   const [userStatus, setUserStatus] = useState("");
-  const { channelsList, getChannelsUserlist } = useContext(ChannelsContext);
+  const { channelsList, setChannelData } = useContext(ChannelsContext);
 
   async function getInfosChannel(channel: any) {
     await api
@@ -49,7 +49,7 @@ export default function ChannelsList(props: ChannelsListProps) {
       .then((res) => {
         console.log("get infos of channel clicked by user");
         console.log("status = ", res.data.status);
-        props.setCurrentChannel(res.data);
+        setChannelData(res.data);
         props.setIsOpenInfos(true);
       })
       .catch((res) => {

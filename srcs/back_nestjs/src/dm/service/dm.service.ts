@@ -53,6 +53,7 @@ export class DmService {
 	}
 
   async getDmByName(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+		console.log(user);
     if (user.dms)
 	{
 		let convo = user.dms.find(

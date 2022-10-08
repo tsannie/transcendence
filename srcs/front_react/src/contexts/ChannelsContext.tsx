@@ -1,33 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { api } from "../const/const";
+import React, { createContext, useEffect, useState } from "react";
 import { IChannel } from "../components/chat/types";
+import { api } from "../const/const";
 
 export type ChannelsContextType = {
   channelsList: IChannel[];
   setChannelsList: (channelsList: IChannel[]) => void;
   getChannelsUserlist: () => void;
-  availableChannels: IChannel[];
-  setAvailableChannels: (availableChannels: IChannel[]) => void;
-  getAvailableChannels: () => void;
+  channelData: any;
+  setChannelData: (channelData: any) => void;
 };
 
-export const ChannelsContext = React.createContext<ChannelsContextType>({
+export const ChannelsContext = createContext<ChannelsContextType>({
   channelsList: [],
   setChannelsList: () => {},
   getChannelsUserlist: () => {},
-  availableChannels: [],
-  setAvailableChannels: () => {},
-  getAvailableChannels: () => {},
+  channelData: {},
+  setChannelData: () => {},
 });
 
-interface ChannelContextProps {
+interface ChannelsContextProps {
   children: JSX.Element | JSX.Element[];
 }
 
-export const ChannelsProvider = ({ children }: ChannelContextProps) => {
+export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
   const [channelsList, setChannelsList] = useState<IChannel[]>([]);
-  const [availableChannels, setAvailableChannels] = useState<any[]>([]);
-
+  const [channelData, setChannelData] = useState<IChannel>();
 
   // get all channels
   async function getChannelsUserlist() {
@@ -44,23 +41,6 @@ export const ChannelsProvider = ({ children }: ChannelContextProps) => {
       });
   }
 
-  async function getAvailableChannels() {
-    console.log("get available channels");
-    await api
-      .get("channel/list", {
-        params: {
-          offset: 0,
-        },
-      })
-      .then((res) => {
-        setAvailableChannels(res.data);
-        console.log(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-      });
-  }
-
   // get all channels
   useEffect(() => {
     getChannelsUserlist();
@@ -72,9 +52,8 @@ export const ChannelsProvider = ({ children }: ChannelContextProps) => {
         channelsList,
         setChannelsList,
         getChannelsUserlist,
-        availableChannels,
-        setAvailableChannels,
-        getAvailableChannels,
+        channelData,
+        setChannelData,
       }}
     >
       {children}
