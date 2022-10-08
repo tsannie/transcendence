@@ -17,19 +17,21 @@ import { api } from "../../const/const";
 import { ChatContent } from "./Chat";
 import { SocketContext } from "../../contexts/SocketContext";
 import { IChannel, IDm, IMessage } from "./types";
+import { MessagesContext } from "../../contexts/MessagesContext";
+import { UserContext } from "../../contexts/UserContext";
 
 interface ChatUserListProps {
   getDmsList: () => void;
   dmsList: any[];
-  userId: number;
-  setMessagesList: (messagesList: IMessage[]) => void;
-  setTargetUsername: (targetUsername: string) => void;
   setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-  const socket = useContext(SocketContext);
+  //const socket = useContext(SocketContext);
+  const { setMessagesList } = useContext(MessagesContext);
   const [users, setUsers] = React.useState<any[]>([]);
+  const { userid } = useContext(UserContext);
+  const { setTargetUsername } = useContext(MessagesContext);
 
   async function getAllUsers() {
     await api
@@ -57,8 +59,8 @@ export default function ChatUserlist(props: ChatUserListProps) {
         console.log("dm created with success");
         console.log(targetUsername);
         console.log(res.data.messages);
-        props.getDmsList();
-        props.setMessagesList(res.data.messages);
+        //props.getDmsList();
+        setMessagesList(res.data.messages);
       })
       .catch((res) => {
         console.log("invalid create dm");
@@ -76,7 +78,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
     console.log("handle new message");
     createDm(newDm);
     props.setChatContent(ChatContent.MESSAGES);
-    props.setTargetUsername(targetUsername);
+    setTargetUsername(targetUsername);
   }
 
   useEffect(() => {
@@ -98,10 +100,14 @@ export default function ChatUserlist(props: ChatUserListProps) {
       <List>
         {users.map(
           (user) =>
-            user.id !== props.userId && (
-              <ListItemButton key={user.id} onClick={() => handleClick(user.username)} sx={{
-                width: "fit-content",
-              }}>
+            user.id !== userid && (
+              <ListItemButton
+                key={user.id}
+                onClick={() => handleClick(user.username)}
+                sx={{
+                  width: "fit-content",
+                }}
+              >
                 {user.username}
               </ListItemButton>
             )

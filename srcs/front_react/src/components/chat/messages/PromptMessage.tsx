@@ -1,14 +1,15 @@
 import { TextField } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Paperplane from "../../../assets/paperplane.png";
+import { MessagesContext } from "../../../contexts/MessagesContext";
 
-interface PromptMessageProps {
-  setCurrentMessage: (message: string) => void;
-  sendMessage: () => void;
-}
+interface PromptMessageProps {}
 
 export default function PromptMessage(props: PromptMessageProps) {
+
+  const { setCurrentMessage, sendMessage } = useContext(MessagesContext);
+
   return (
     <Box
       sx={{
@@ -24,14 +25,14 @@ export default function PromptMessage(props: PromptMessageProps) {
         variant="outlined"
         placeholder="Enter a message"
         onChange={(event) => {
-          props.setCurrentMessage(event.target.value);
+          setCurrentMessage(event.target.value);
         }}
       />
       <Box
         component="img"
         alt="send message img"
         src={Paperplane}
-        onClick={props.sendMessage}
+        onClick={sendMessage}
         sx={{
           width: 18,
           height: 18,

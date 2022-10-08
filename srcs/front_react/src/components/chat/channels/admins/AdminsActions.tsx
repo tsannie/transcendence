@@ -11,7 +11,7 @@ import UnmuteUser from "./UnmuteUser";
 
 interface AdminsActionsProps {
   userTargeted: any;
-  channelData: any;
+  //channelData: any;
   //getChannelsUserlist: () => void;
   //setUserStatus: (userStatus: string) => void;
 }
@@ -34,40 +34,22 @@ export default function AdminsActions(props: AdminsActionsProps) {
   return (
     <List>
       <ListItem>
-        <BanUser
-          userTargeted={props.userTargeted}
-          channelData={props.channelData}
-        />
+        <BanUser userTargeted={props.userTargeted} />
       </ListItem>
       <ListItem>
-        <UnbanUser
-          userTargeted={props.userTargeted}
-          channelData={props.channelData}
-        />
+        <UnbanUser userTargeted={props.userTargeted} />
       </ListItem>
       <ListItem>
-        <MuteUser
-          userTargeted={props.userTargeted}
-          channelData={props.channelData}
-        />
+        <MuteUser userTargeted={props.userTargeted} />
       </ListItem>
       <ListItem>
-        <UnmuteUser
-          userTargeted={props.userTargeted}
-          channelData={props.channelData}
-        />
+        <UnmuteUser userTargeted={props.userTargeted} />
       </ListItem>
       <ListItem>
-        <MakeAdmin
-          userTargeted={props.userTargeted}
-          channelData={props.channelData}
-        />
+        <MakeAdmin userTargeted={props.userTargeted} />
       </ListItem>
       <ListItem>
-        <RevokeAdmin
-          userTargeted={props.userTargeted}
-          channelData={props.channelData}
-        />
+        <RevokeAdmin userTargeted={props.userTargeted} />
       </ListItem>
     </List>
   );

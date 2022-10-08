@@ -7,13 +7,13 @@ const socket = io('http://localhost:4000', {
     }
   });
 
-const SocketContext = createContext<Socket>(socket);
+export const SocketContext = createContext<Socket>(socket);
 
 interface SocketProviderProps {
-  children: React.ReactNode;
+  children: JSX.Element | JSX.Element[];
 }
 
-const SocketProvider = (props: SocketProviderProps) => {
+export const SocketProvider = ({ children }: SocketProviderProps) => {
 
   useEffect(() => {
     console.log('socket provider');
@@ -22,8 +22,7 @@ const SocketProvider = (props: SocketProviderProps) => {
 
   return (
     <SocketContext.Provider value={socket}>
-      {props.children}
+      {children}
     </SocketContext.Provider>
   );
 };
-export { SocketContext, SocketProvider };

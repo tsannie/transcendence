@@ -15,9 +15,6 @@ import { ChannelsContext } from "../../../contexts/ChannelsContext";
 interface ChannelProps {
   setIsOpenInfos: (isOpenInfos: boolean) => void;
   setChatContent: (chatContent: ChatContent) => void;
-  setCurrentChannel: (currentChannel: IChannel) => void;
-  //getChannelsUserlist: () => void;
-  //channelsList: IChannel[];
 }
 
 export default function Channels(props: ChannelProps) {
@@ -47,9 +44,6 @@ export default function Channels(props: ChannelProps) {
       <ChannelsList
         setIsOpenInfos={props.setIsOpenInfos}
         setChatContent={props.setChatContent}
-        setCurrentChannel={props.setCurrentChannel}
-        //channelsList={props.channelsList}
-        //getChannelsUserlist={props.getChannelsUserlist}
       />
     </Box>
   );
