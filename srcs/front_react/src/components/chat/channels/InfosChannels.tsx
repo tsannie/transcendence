@@ -18,8 +18,6 @@ import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { UserContext } from "../../../contexts/UserContext";
 
 interface InfosChannelsProps {
-  //username: string;
-  //channelData: any;
 }
 
 export default function InfosChannels(props: InfosChannelsProps) {

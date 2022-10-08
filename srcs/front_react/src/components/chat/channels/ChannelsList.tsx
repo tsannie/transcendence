@@ -26,17 +26,13 @@ import { ChannelsContext } from "../../../contexts/ChannelsContext";
 // faire un call api to channel/all pour afficher les channels
 
 interface ChannelsListProps {
-  //channelsList: IChannel[];
-  //getChannelsUserlist: () => void;
   setChatContent: (chatContent: ChatContent) => void;
-  //setChannelData: (channelData: IChannel) => void;
   setIsOpenInfos: (isOpenInfos: boolean) => void;
 }
 
 export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
-  const [userStatus, setUserStatus] = useState("");
   const { channelsList, setChannelData } = useContext(ChannelsContext);
 
   async function getInfosChannel(channel: any) {
@@ -55,7 +51,6 @@ export default function ChannelsList(props: ChannelsListProps) {
       .catch((res) => {
         console.log("invalid channels private data");
       });
-    console.log("bbbbb");
   }
 
   function handleClick(channel: IChannel) {
