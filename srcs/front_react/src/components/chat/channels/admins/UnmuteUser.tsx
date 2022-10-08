@@ -1,20 +1,22 @@
 import { Button, List, ListItemButton, Popover } from '@mui/material';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { api } from '../../../../const/const';
+import { ChannelsContext } from '../../../../contexts/ChannelsContext';
 import { IChannel, IChannelActions } from '../../types';
 
 interface UnmuteUserProps {
   userTargeted: any;
-  channelData: any;
 }
 
 export default function UnmuteUser(props: UnmuteUserProps) {
 
+  const { channelData } = useContext(ChannelsContext);
+
   function handleClick(
     event: React.MouseEvent<HTMLButtonElement>
   ) {
-    console.log("ban user", props.channelData);
-    unmuteUser(props.userTargeted, props.channelData);
+    console.log("ban user", channelData);
+    unmuteUser(props.userTargeted, channelData);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

@@ -7,27 +7,31 @@ import {
   ListItemText,
   Popover,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { IChannel } from "../types";
 import AdminsActions from "./admins/AdminsActions";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
+import { UserContext } from "../../../contexts/UserContext";
 
 interface InfosChannelsProps {
-  username: string;
-  channelData: any;
+  //username: string;
+  //channelData: any;
 }
 
 export default function InfosChannels(props: InfosChannelsProps) {
   const [channelId, setChannelId] = useState(0);
   const [displayAdminActions, setDisplayAdminActions] = useState(false);
   const [open, setOpen] = React.useState(true);
+  const { channelData } = useContext(ChannelsContext);
+  const { username } = useContext(UserContext);
 
   function handleClick(event: any) {
     console.log("click on user who i wnat to ban, mute etc");
-    console.log("channel", props.channelData);
+    //console.log("channel", channelData);
     setDisplayAdminActions(true);
     //props.getChannelsUserlist();
     setOpen(!open);
@@ -40,13 +44,13 @@ export default function InfosChannels(props: InfosChannelsProps) {
           Owner
           <ListItem>
             <ListItemButton
-              key={props.channelData.data.name}
+              key={channelData.data.name}
               onClick={handleClick}
-              disabled={props.username !== props.channelData.data.owner}
+              disabled={username !== channelData.data.owner}
             >
               {
                 <ListItemText>
-                  {props.channelData.data.owner.username}
+                  {channelData.data.owner.username}
                 </ListItemText>
               }
             </ListItemButton>
@@ -54,22 +58,22 @@ export default function InfosChannels(props: InfosChannelsProps) {
         </List>
       </Grid>
 
-      {props.channelData.status !== "publicUser" && (
+      {channelData.status !== "publicUser" && (
         <Grid item>
           <List>
             Admins
-            {props.channelData.data.admins.map((user: any) => (
+            {channelData.data.admins.map((user: any) => (
               <ListItem>
                 <ListItemButton
                   key={user.username}
                   onClick={handleClick}
-                  disabled={props.channelData.status !== "owner"}
+                  disabled={channelData.status !== "owner"}
                 >
                   <ListItemText primary={user.username}></ListItemText>
                   {open ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
                 <Collapse in={open} timeout="auto" unmountOnExit>
-                  <AdminsActions userTargeted={user} channelData={props.channelData} />
+                  <AdminsActions userTargeted={user} />
                 </Collapse>
               </ListItem>
             ))}
@@ -80,21 +84,21 @@ export default function InfosChannels(props: InfosChannelsProps) {
       <Grid item>
         <List>
           Users
-          {props.channelData.data.users.map((user: any) => (
+          {channelData.data.users.map((user: any) => (
             <ListItem>
               <ListItemButton
                 key={user.username}
                 onClick={handleClick}
                 disabled={
-                  props.channelData.status !== "owner" &&
-                  props.channelData.status !== "admin"
+                  channelData.status !== "owner" &&
+                  channelData.status !== "admin"
                 }
               >
                 <ListItemText primary={user.username}></ListItemText>
                 {open ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse in={!open} timeout="auto" unmountOnExit>
-                <AdminsActions userTargeted={user}  channelData={props.channelData} />
+                <AdminsActions userTargeted={user} />
               </Collapse>
             </ListItem>
           ))}

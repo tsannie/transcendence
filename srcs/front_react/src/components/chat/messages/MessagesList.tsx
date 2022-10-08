@@ -1,29 +1,33 @@
 import { List, ListItem } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
+import { MessagesContext } from "../../../contexts/MessagesContext";
 import { SocketContext } from "../../../contexts/SocketContext";
 import { IMessage } from "../types";
 
 interface MessagesListProps {
-  setMessagesList: any;
-  messagesList: IMessage[];
+  //setMessagesList: any;
+  //messagesList: IMessage[];
   username: string;
 }
 
 export default function MessagesList(props: MessagesListProps) {
   const socket = useContext(SocketContext);
+  const messages = useContext(MessagesContext);
 
   useEffect(() => {
     console.log("listen message");
     socket.on("message", (data) => {
       console.log(data);
-      props.setMessagesList.push(data);
+      let newMessagesList = [...messages.messagesList, data];
+
+      messages.setMessagesList(newMessagesList);
     });
   }, []);
 
   return (
     <List>
-      {props.messagesList.map((messageData: IMessage) => {
+      {messages.messagesList.map((messageData: IMessage) => {
         //console.log("uuid du msg", messageData.uuid);
         //if (props.username === messageData.author)
         return (

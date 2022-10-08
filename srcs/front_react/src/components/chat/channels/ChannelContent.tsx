@@ -9,21 +9,21 @@ import AdminsActions from "./admins/AdminsActions";
 import InfosChannels from "./InfosChannels";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
+import { MessagesContext } from "../../../contexts/MessagesContext";
+import { UserContext } from "../../../contexts/UserContext";
 
 interface ChannelContentProps {
-  //getChannelsUserlist: () => void;
   isOpenInfos: boolean;
-  messagesList: any[];
-  setMessagesList: (messagesList: any[]) => void;
-  username: string;
-  setCurrentMessage: (message: string) => void;
-  sendMessage: () => void;
-  channelData: any;
+  //messagesList: any[];
+  //setMessagesList: (messagesList: any[]) => void;
+ // username: string;
+  //setCurrentMessage: (message: string) => void;
+  //sendMessage: () => void;
 }
 
 export default function ChannelContent(props: ChannelContentProps) {
   const [openMoreInfos, setOpenMoreInfos] = useState(false);
-  const { getChannelsUserlist } = useContext(ChannelsContext);
+  const { getChannelsUserlist, channelData } = useContext(ChannelsContext);
 
   function handleClick(event: any) {
     console.log("more infos");
@@ -56,22 +56,22 @@ export default function ChannelContent(props: ChannelContentProps) {
       });
   }
 
-  console.log("channel data", props.channelData);
+  console.log("channel data", channelData);
   console.log("isopeninfos", props.isOpenInfos);
   return (
     <Grid container>
-      {props.channelData.status !== "publicUser" && (
+      {channelData.status !== "publicUser" && (
         <Grid item xs={9}>
           <Box sx={{ border: "3px solid red" }}>
             <Grid item>
-              <Typography variant={"h4"}>{props.channelData.name}</Typography>
+              <Typography variant={"h4"}>{channelData.name}</Typography>
             </Grid>
             <Grid item>
               <Typography variant={"h6"}>
-                {props.channelData.data.createdAt}
+                {channelData.data.createdAt}
               </Typography>
             </Grid>
-            {props.channelData.status === "owner" && (
+            {channelData.status === "owner" && (
               <Grid item>
                 <IconButton onClick={handleClick}>
                   <MoreHorizIcon />
@@ -82,7 +82,7 @@ export default function ChannelContent(props: ChannelContentProps) {
                     color: "red",
                     ml: "1vh",
                   }}
-                  onClick={() => deleteChannel(props.channelData)}
+                  onClick={() => deleteChannel(channelData)}
                 >
                   Delete
                 </Button>
@@ -91,18 +91,18 @@ export default function ChannelContent(props: ChannelContentProps) {
             )}
           </Box>
           <Conv
-            messagesList={props.messagesList}
-            setMessagesList={props.setMessagesList}
-            username={props.username}
-            setCurrentMessage={props.setCurrentMessage}
-            sendMessage={props.sendMessage}
+            //messagesList={props.messagesList}
+            //setMessagesList={props.setMessagesList}
+            //username={props.username}
+            //setCurrentMessage={props.setCurrentMessage}
+            //sendMessage={props.sendMessage}
           />
         </Grid>
       )}
       <Grid item xs={3}>
         <InfosChannels
-          channelData={props.channelData}
-          username={props.username}
+          //channelData={channelData}
+          //username={props.username}
         />
       </Grid>
     </Grid>
