@@ -15,10 +15,12 @@ import { set } from "react-hook-form";
 import { Socket } from "socket.io-client";
 import { api } from "../../const/const";
 import { ChatContent } from "./Chat";
-import { SocketContext } from "./SocketContext";
+import { SocketContext } from "../../contexts/SocketContext";
 import { IChannel, IDm, IMessage } from "./types";
 
 interface ChatUserListProps {
+  getDmsList: () => void;
+  dmsList: any[];
   userId: number;
   setMessagesList: (messagesList: IMessage[]) => void;
   setTargetUsername: (targetUsername: string) => void;
@@ -55,7 +57,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
         console.log("dm created with success");
         console.log(targetUsername);
         console.log(res.data.messages);
-        //socket.emit("getConv", res.data);
+        props.getDmsList();
         props.setMessagesList(res.data.messages);
       })
       .catch((res) => {
@@ -67,6 +69,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
   async function createNewConv(targetUsername: string) {
     let newDm: IDm = {
       target: targetUsername,
+      offset: 1,
     };
 
     console.log(newDm);

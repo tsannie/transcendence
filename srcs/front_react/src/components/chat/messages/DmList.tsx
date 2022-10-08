@@ -5,7 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatUserlist from "../ChatUserlist";
 import { ChatContent } from "../Chat";
 import { Socket } from "socket.io-client";
-import { SocketContext } from "../SocketContext";
+import { SocketContext } from "../../../contexts/SocketContext";
 import { api } from "../../../const/const";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
@@ -14,12 +14,13 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 // en gros pour que ca affiche la conv de mec que ta cliquer et toi
 
 interface DmListProps {
+  getDmsList: () => void;
+  dmsList: any[];
   isNewMessage: boolean;
   setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function DmList(props: DmListProps) {
-  const [dmsList, setDmsList] = useState<IConvCreated[]>([]);
   const [newDm, setNewDm] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -29,23 +30,8 @@ export default function DmList(props: DmListProps) {
     props.setChatContent(ChatContent.NEW_DM);
   }
 
-  // get all dmks
-  async function getDms() {
-
-    console.log("get dms");
-    await api
-      .get("dm/list")
-      .then((res) => {
-        setDmsList(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid dms");
-        console.log(res);
-      });
-  }
-
   useEffect(() => {
-    getDms();
+    props.getDmsList();
   }, []);
 
   return (
@@ -54,16 +40,16 @@ export default function DmList(props: DmListProps) {
       <IconButton onClick={handleClick}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <IconButton onClick={() => getDms()}>
+      <IconButton onClick={() => props.getDmsList()}>
         <RefreshIcon />
       </IconButton>
-      {/* {dms.map((dm: IConvCreated) => {
+      {props.dmsList.map((dm: any) => {
         return (
           <div key={dm.id}>
             <Typography>{dm.id}</Typography>
           </div>
         );
-      })} */}
+      })}
 
     </Box>
   );

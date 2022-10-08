@@ -8,15 +8,15 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 //import { socket } from "../Chat";
 import { IChannel, ICreateChannel } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
 
 interface FormChannelProps {
-  getChannelsUserlist: () => void;
 }
 
 export default function FormChannel(props: FormChannelProps) {
@@ -24,6 +24,8 @@ export default function FormChannel(props: FormChannelProps) {
   const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
+
+  const { getChannelsUserlist } = useContext(ChannelsContext);
 
   // create channel in db
   async function createChannels() {
@@ -39,7 +41,7 @@ export default function FormChannel(props: FormChannelProps) {
       .then((res) => {
         console.log("channel created with success");
         console.log(channelData);
-        props.getChannelsUserlist();
+        getChannelsUserlist();
         //props.getAvailableChannels();
       })
       .catch((res) => {
