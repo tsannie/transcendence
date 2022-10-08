@@ -18,8 +18,12 @@ import {
   ChannelsContext,
   ChannelsProvider,
 } from "../../contexts/ChannelsContext";
-import { MessagesContext, MessagesProvider } from "../../contexts/MessagesContext";
+import {
+  MessagesContext,
+  MessagesProvider,
+} from "../../contexts/MessagesContext";
 import { UserContext, UserProvider } from "../../contexts/UserContext";
+import { ChatProvider } from "../../contexts/ChatContext";
 
 export enum ChatContent {
   NEW_CHANNELS,
@@ -34,15 +38,10 @@ export default function Chat(props: ChatProps) {
   const [dmsList, setDmsList] = useState<IConvCreated[]>([]);
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [isOpenInfos, setIsOpenInfos] = useState(false);
-  const [userId, setUserId] = useState(0);
   const [chatContent, setChatContent] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
   );
   // enum with 3 strings differentes
-
-  const socket = useContext(SocketContext);
-  const messages = useContext(MessagesContext);
-  const user = useContext(UserContext);
 
   // get all dms
   async function getDmsList() {
@@ -62,63 +61,49 @@ export default function Chat(props: ChatProps) {
       });
   }
 
-
   return (
-    <ChannelsProvider>
-      <MessagesProvider>
-        <UserProvider>
-        <Grid container>
-          <Grid item xs={4}>
-            <Grid item>
-              <DmList
-                isNewMessage={isNewMessage}
-                setChatContent={setChatContent}
-                getDmsList={getDmsList}
-                dmsList={dmsList}
-              />
-            </Grid>
-            <Grid item>
-              <Channels
-                setIsOpenInfos={setIsOpenInfos}
-                setChatContent={setChatContent}
-              />
-            </Grid>
+    <ChatProvider>
+      <Grid container>
+        <Grid item xs={4}>
+          <Grid item>
+            <DmList
+              isNewMessage={isNewMessage}
+              setChatContent={setChatContent}
+              getDmsList={getDmsList}
+              dmsList={dmsList}
+            />
           </Grid>
-          <Grid item xs={8}>
-            {chatContent === ChatContent.MESSAGES && (
-              <Conv
-                //username={user.username}
-                //sendMessage={messages.sendMessage}
-              />
-            )}
-            {chatContent === ChatContent.NEW_CHANNELS && (
-              <Grid item xs={8}>
-                <Grid item xs={4}>
-                  <FormChannel />
-                </Grid>
-                <Grid item xs={4}>
-                  <AvailableChannels />
-                </Grid>
-              </Grid>
-            )}
-            {chatContent === ChatContent.NEW_DM && (
-              <ChatUserlist
-                getDmsList={getDmsList}
-                dmsList={dmsList}
-                setChatContent={setChatContent}
-              />
-            )}
-            {chatContent === ChatContent.CHANNEL_CONTENT && isOpenInfos && (
-              <ChannelContent
-                isOpenInfos={isOpenInfos}
-                //username={username}
-                //sendMessage={messages.sendMessage}
-              />
-            )}
+          <Grid item>
+            <Channels
+              setIsOpenInfos={setIsOpenInfos}
+              setChatContent={setChatContent}
+            />
           </Grid>
         </Grid>
-        </UserProvider>
-      </MessagesProvider>
-    </ChannelsProvider>
+        <Grid item xs={8}>
+          {chatContent === ChatContent.MESSAGES && <Conv />}
+          {chatContent === ChatContent.NEW_CHANNELS && (
+            <Grid item xs={8}>
+              <Grid item xs={4}>
+                <FormChannel />
+              </Grid>
+              <Grid item xs={4}>
+                <AvailableChannels />
+              </Grid>
+            </Grid>
+          )}
+          {chatContent === ChatContent.NEW_DM && (
+            <ChatUserlist
+              getDmsList={getDmsList}
+              dmsList={dmsList}
+              setChatContent={setChatContent}
+            />
+          )}
+          {chatContent === ChatContent.CHANNEL_CONTENT && isOpenInfos && (
+            <ChannelContent isOpenInfos={isOpenInfos} />
+          )}
+        </Grid>
+      </Grid>
+    </ChatProvider>
   );
 }
