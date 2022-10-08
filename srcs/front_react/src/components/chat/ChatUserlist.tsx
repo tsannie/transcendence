@@ -28,10 +28,9 @@ interface ChatUserListProps {
 
 export default function ChatUserlist(props: ChatUserListProps) {
   //const socket = useContext(SocketContext);
-  const { setMessagesList } = useContext(MessagesContext);
+  const { setMessagesList, setTargetUsername } = useContext(MessagesContext);
   const [users, setUsers] = React.useState<any[]>([]);
   const { userid } = useContext(UserContext);
-  const { setTargetUsername } = useContext(MessagesContext);
 
   async function getAllUsers() {
     await api
@@ -46,9 +45,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
   }
 
   function handleClick(username: string) {
-    //event.preventDefault();
     createNewConv(username);
-    //console.log(event.currentTarget.innerHTML);
   }
 
   async function createDm(targetUsername: IDm) {
