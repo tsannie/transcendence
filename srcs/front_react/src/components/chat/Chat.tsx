@@ -2,7 +2,7 @@ import { Box, Grid, Popover, Typography } from "@mui/material";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { IChannel, IMessage } from "./types";
+import { IChannel, IConvCreated, IMessage } from "./types";
 import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
@@ -11,9 +11,10 @@ import { api, COOKIE_NAME } from "../../const/const";
 import DmList from "./messages/DmList";
 import Conv from "./messages/Conv";
 import FormChannel from "./channels/FormChannel";
-import { SocketContext, SocketProvider } from "./SocketContext";
+import { SocketContext, SocketProvider } from "../../contexts/SocketContext";
 import AvailableChannels from "./channels/AvailableChannels";
 import ChannelContent from "./channels/ChannelContent";
+import { ChannelsContext, ChannelsProvider } from "../../contexts/ChannelsContext";
 
 export enum ChatContent {
   NEW_CHANNELS,
@@ -28,7 +29,7 @@ export default function Chat(props: ChatProps) {
   const [username, setUsername] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);
-  const [channelsList, setChannelsList] = useState<IChannel[]>([]);
+  const [dmsList, setDmsList] = useState<IConvCreated[]>([]);
   const [targetUsername, setTargetUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [isOpenInfos, setIsOpenInfos] = useState(false);
@@ -40,6 +41,7 @@ export default function Chat(props: ChatProps) {
   // enum with 3 strings differentes
 
   const socket = useContext(SocketContext);
+  const channels = useContext(ChannelsContext);
 
   async function getUser() {
     console.log("get user");
@@ -54,18 +56,20 @@ export default function Chat(props: ChatProps) {
       });
   }
 
-  // get all channels
-  async function getChannelsUserlist() {
-
-    console.log("get channels");
+  // get all dms
+  async function getDmsList() {
+    console.log("get dms");
     await api
-      .get("channel/userlist")
+      .get("dm/list", {
+        params: {
+          offset: 1,
+        },
+      })
       .then((res) => {
-        setChannelsList(res.data);
-        console.log(res.data);
+        setDmsList(res.data);
       })
       .catch((res) => {
-        console.log("invalid channels");
+        console.log("invalid dms");
         console.log(res);
       });
   }
@@ -95,77 +99,69 @@ export default function Chat(props: ChatProps) {
     getUser();
   }, []);
 
-  // get all channels
-  useEffect(() => {
-    getChannelsUserlist();
-  }, []);
-
-  // listen message from backend
-  /* useEffect(() => {
-    console.log("listen message");
-    socket.on("message", (data) => {
-      console.log(data);
-      setMessagesList((list) => [...list, data]);
-    });
-  }, [socket]); */
-
   return (
-    <Grid container>
-      <Grid item xs={4}>
-        <Grid item>
-          <DmList isNewMessage={isNewMessage} setChatContent={setChatContent} />
-        </Grid>
-        <Grid item>
-          <Channels
-            setIsOpenInfos={setIsOpenInfos}
-            setChatContent={setChatContent}
-            setCurrentChannel={setCurrentChannel}
-            channelsList={channelsList}
-            getChannelsUserlist={getChannelsUserlist}
-          />
-        </Grid>
-      </Grid>
-      <Grid item xs={8}>
-        {chatContent === ChatContent.MESSAGES && (
-          <Conv
-            messagesList={messagesList}
-            setMessagesList={setMessagesList}
-            username={username}
-            setCurrentMessage={setCurrentMessage}
-            sendMessage={sendMessage}
-          />
-        )}
-        {chatContent === ChatContent.NEW_CHANNELS && (
-          <Grid item xs={8}>
-            <Grid item xs={4}>
-              <FormChannel getChannelsUserlist={getChannelsUserlist}/>
-            </Grid>
-            <Grid item xs={4}>
-              <AvailableChannels getChannelsUserlist={getChannelsUserlist}/>
-            </Grid>
+    <ChannelsProvider>
+      <Grid container>
+        <Grid item xs={4}>
+          <Grid item>
+            <DmList
+              isNewMessage={isNewMessage}
+              setChatContent={setChatContent}
+              getDmsList={getDmsList}
+              dmsList={dmsList}
+            />
           </Grid>
-        )}
-        {chatContent === ChatContent.NEW_DM && (
-          <ChatUserlist
-            userId={userId}
-            setMessagesList={setMessagesList}
-            setTargetUsername={setTargetUsername}
-            setChatContent={setChatContent}
-          />
-        )}
-        {chatContent === ChatContent.CHANNEL_CONTENT && isOpenInfos && (
-          <ChannelContent
-            getChannelsUserlist={getChannelsUserlist}
-            isOpenInfos={isOpenInfos}
-            messagesList={messagesList}
-            setMessagesList={setMessagesList}
-            username={username}
-            setCurrentMessage={setCurrentMessage}
-            sendMessage={sendMessage}
-            channelData={currentChannel} // a changer pour mettre les data du channel
-          />
-        )}
+          <Grid item>
+            <Channels
+              setIsOpenInfos={setIsOpenInfos}
+              setChatContent={setChatContent}
+              setCurrentChannel={setCurrentChannel}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={8}>
+          {chatContent === ChatContent.MESSAGES && (
+            <Conv
+              messagesList={messagesList}
+              setMessagesList={setMessagesList}
+              username={username}
+              setCurrentMessage={setCurrentMessage}
+              sendMessage={sendMessage}
+            />
+          )}
+          {chatContent === ChatContent.NEW_CHANNELS && (
+            <Grid item xs={8}>
+              <Grid item xs={4}>
+                <FormChannel />
+              </Grid>
+              <Grid item xs={4}>
+                <AvailableChannels />
+              </Grid>
+            </Grid>
+          )}
+          {chatContent === ChatContent.NEW_DM && (
+            <ChatUserlist
+              getDmsList={getDmsList}
+              dmsList={dmsList}
+              userId={userId}
+              setMessagesList={setMessagesList}
+              setTargetUsername={setTargetUsername}
+              setChatContent={setChatContent}
+            />
+          )}
+          {chatContent === ChatContent.CHANNEL_CONTENT && isOpenInfos && (
+            <ChannelContent
+              isOpenInfos={isOpenInfos}
+              messagesList={messagesList}
+              setMessagesList={setMessagesList}
+              username={username}
+              setCurrentMessage={setCurrentMessage}
+              sendMessage={sendMessage}
+              channelData={currentChannel} // a changer pour mettre les data du channel
+            />
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </ChannelsProvider>
   );
 }

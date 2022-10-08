@@ -1,16 +1,17 @@
 import { Button, Grid, IconButton, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import Conv from "../messages/Conv";
 import MessagesList from "../messages/MessagesList";
 import { IChannel } from "../types";
 import AdminsActions from "./admins/AdminsActions";
 import InfosChannels from "./InfosChannels";
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
 
 interface ChannelContentProps {
-  getChannelsUserlist: () => void;
+  //getChannelsUserlist: () => void;
   isOpenInfos: boolean;
   messagesList: any[];
   setMessagesList: (messagesList: any[]) => void;
@@ -22,10 +23,11 @@ interface ChannelContentProps {
 
 export default function ChannelContent(props: ChannelContentProps) {
   const [openMoreInfos, setOpenMoreInfos] = useState(false);
+  const { getChannelsUserlist } = useContext(ChannelsContext);
 
   function handleClick(event: any) {
     console.log("more infos");
-    setOpenMoreInfos(true);
+    setOpenMoreInfos(!openMoreInfos);
   }
 
   function joinNewChannelWithoutStatus(channel: any) {
@@ -46,7 +48,7 @@ export default function ChannelContent(props: ChannelContentProps) {
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
-        props.getChannelsUserlist();
+        getChannelsUserlist();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -59,42 +61,49 @@ export default function ChannelContent(props: ChannelContentProps) {
   return (
     <Grid container>
       {props.channelData.status !== "publicUser" && (
-      <Grid item xs={9}>
-        <Box sx={{ border: "3px solid red"}}>
-          <Grid item>
-            <Typography variant={"h4"}>{props.channelData.name}</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant={"h6"}>{props.channelData.data.createdAt}</Typography>
-          </Grid>
-          <Grid item>
-            <IconButton onClick={handleClick}>
-              <MoreHorizIcon />
-            </IconButton>
-            { openMoreInfos && props.channelData.status === "owner" && (
-              <Button
-                sx={{
-                  color: "red",
-                  ml: "1vh",
-                }}
-                onClick={() => deleteChannel(props.channelData)}
-              >
-                Delete
-              </Button>
+        <Grid item xs={9}>
+          <Box sx={{ border: "3px solid red" }}>
+            <Grid item>
+              <Typography variant={"h4"}>{props.channelData.name}</Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant={"h6"}>
+                {props.channelData.data.createdAt}
+              </Typography>
+            </Grid>
+            {props.channelData.status === "owner" && (
+              <Grid item>
+                <IconButton onClick={handleClick}>
+                  <MoreHorizIcon />
+                </IconButton>
+                {openMoreInfos && (
+                <Button
+                  sx={{
+                    color: "red",
+                    ml: "1vh",
+                  }}
+                  onClick={() => deleteChannel(props.channelData)}
+                >
+                  Delete
+                </Button>
+                )}
+              </Grid>
             )}
-          </Grid>
-        </Box>
-        <Conv
-          messagesList={props.messagesList}
-          setMessagesList={props.setMessagesList}
-          username={props.username}
-          setCurrentMessage={props.setCurrentMessage}
-          sendMessage={props.sendMessage}
-        />
-      </Grid>
+          </Box>
+          <Conv
+            messagesList={props.messagesList}
+            setMessagesList={props.setMessagesList}
+            username={props.username}
+            setCurrentMessage={props.setCurrentMessage}
+            sendMessage={props.sendMessage}
+          />
+        </Grid>
       )}
       <Grid item xs={3}>
-        <InfosChannels channelData={props.channelData} username={props.username}/>
+        <InfosChannels
+          channelData={props.channelData}
+          username={props.username}
+        />
       </Grid>
     </Grid>
   );

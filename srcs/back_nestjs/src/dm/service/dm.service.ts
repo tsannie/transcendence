@@ -15,7 +15,7 @@ export class DmService {
 
 	@Inject(forwardRef( () => MessageService))
 	private readonly messageService: MessageService,
-	
+
     private readonly userService: UserService,
   ) {}
 
@@ -65,7 +65,7 @@ export class DmService {
     	if (convo)
 			return await this.getDmById(convo.id, data.offset);
 	}
-	else 
+	else
 		throw new UnprocessableEntityException(`No conversation with ${data.target}`);
   }
 
@@ -129,7 +129,7 @@ export class DmService {
 	async createDm(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
 		let user2 = await this.checkifBanned(user, data.target);
 		if (user.dms)
-		{	
+		{
 			const convo = user.dms.find(
 			(dm) =>
 				(dm.users[0].username === user.username &&

@@ -1,6 +1,6 @@
 import { Button, IconButton, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Add from "../../../assets/add.png";
 import { IChannel } from "../types";
 import ChannelsList from "./ChannelsList";
@@ -9,16 +9,20 @@ import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { ChatContent } from "../Chat";
 import { api } from "../../../const/const";
+import { Channel } from "diagnostics_channel";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
 
 interface ChannelProps {
   setIsOpenInfos: (isOpenInfos: boolean) => void;
   setChatContent: (chatContent: ChatContent) => void;
   setCurrentChannel: (currentChannel: IChannel) => void;
-  getChannelsUserlist: () => void;
-  channelsList: IChannel[];
+  //getChannelsUserlist: () => void;
+  //channelsList: IChannel[];
 }
 
 export default function Channels(props: ChannelProps) {
+
+  const { getChannelsUserlist } = useContext(ChannelsContext);
 
   function setChannel() {
     props.setChatContent(ChatContent.NEW_CHANNELS);
@@ -34,7 +38,7 @@ export default function Channels(props: ChannelProps) {
       >
         Channels
       </Typography>
-      <IconButton onClick={() => props.getChannelsUserlist()}>
+      <IconButton onClick={() => getChannelsUserlist()}>
         <RefreshIcon />
       </IconButton>
       <IconButton onClick={setChannel}>
@@ -44,8 +48,8 @@ export default function Channels(props: ChannelProps) {
         setIsOpenInfos={props.setIsOpenInfos}
         setChatContent={props.setChatContent}
         setCurrentChannel={props.setCurrentChannel}
-        channelsList={props.channelsList}
-        getChannelsUserlist={props.getChannelsUserlist}
+        //channelsList={props.channelsList}
+        //getChannelsUserlist={props.getChannelsUserlist}
       />
     </Box>
   );

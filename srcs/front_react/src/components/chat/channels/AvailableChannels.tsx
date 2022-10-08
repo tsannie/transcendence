@@ -7,18 +7,19 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { IChannel } from "../types";
 import { LockIcon } from "./LockIcon";
 
-interface AvailableChannelsProps {
-  getChannelsUserlist: () => void;
-}
+interface AvailableChannelsProps {}
 
 export default function AvailableChannels(props: AvailableChannelsProps) {
   const [availableChannels, setAvailableChannels] = useState<any[]>([]);
   const [channelPassword, setChannelPassword] = useState("");
+
+  const { getChannelsUserlist } = useContext(ChannelsContext);
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -60,7 +61,8 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
       .then((res) => {
         console.log("channel joined with success");
         console.log(channel);
-        props.getChannelsUserlist();
+        //console.log("list channels =", channelsList);
+        getChannelsUserlist();
         getAvailableChannels();
       })
       .catch((res) => {
@@ -82,9 +84,8 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
-        props.getChannelsUserlist();
+        getChannelsUserlist();
         getAvailableChannels();
-        //props.getChannelsList();
       })
       .catch((res) => {
         console.log("invalid channels");

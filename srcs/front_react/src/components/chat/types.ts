@@ -33,6 +33,7 @@ export interface IDm {
   id?: number;
   time?: Date;
   target?: string;
+  offset?: number;
   users? : any[];
   messages?: IMessage[];
 }
@@ -43,4 +44,12 @@ export interface IConvCreated {
   //target?: string;
   users : any[];
   //messages: IMessage[];
+}
+
+export interface IGetters {
+  getAvailableChannels: any[];
+  getDms: IDm[];
+  getChannelsUsers: any[];
+  getUsers: any[];
+  getAllUsers: any[];
 }

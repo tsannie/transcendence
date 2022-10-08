@@ -1,7 +1,7 @@
 import { List, ListItem } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
-import { SocketContext } from "../SocketContext";
+import { SocketContext } from "../../../contexts/SocketContext";
 import { IMessage } from "../types";
 
 interface MessagesListProps {
