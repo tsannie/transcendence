@@ -8,11 +8,6 @@ import { MessagesContext } from "../../../contexts/MessagesContext";
 import { UserContext } from "../../../contexts/UserContext";
 
 interface ConvProps {
-  //messagesList: IMessage[];
-  //username: string;
-  //setCurrentMessage: (message: string) => void;
-  //setMessagesList: (list: IMessage[]) => void;
-  //sendMessage: () => void;
 }
 
 export default function Conv(props: ConvProps) {

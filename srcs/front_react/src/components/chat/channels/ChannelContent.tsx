@@ -14,11 +14,6 @@ import { UserContext } from "../../../contexts/UserContext";
 
 interface ChannelContentProps {
   isOpenInfos: boolean;
-  //messagesList: any[];
-  //setMessagesList: (messagesList: any[]) => void;
- // username: string;
-  //setCurrentMessage: (message: string) => void;
-  //sendMessage: () => void;
 }
 
 export default function ChannelContent(props: ChannelContentProps) {

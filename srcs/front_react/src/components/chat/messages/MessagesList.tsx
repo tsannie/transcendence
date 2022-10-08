@@ -6,8 +6,6 @@ import { SocketContext } from "../../../contexts/SocketContext";
 import { IMessage } from "../types";
 
 interface MessagesListProps {
-  //setMessagesList: any;
-  //messagesList: IMessage[];
   username: string;
 }
 

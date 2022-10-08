@@ -11,9 +11,6 @@ import UnmuteUser from "./UnmuteUser";
 
 interface AdminsActionsProps {
   userTargeted: any;
-  //channelData: any;
-  //getChannelsUserlist: () => void;
-  //setUserStatus: (userStatus: string) => void;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
