@@ -414,7 +414,6 @@ export class ChannelService {
 	}
 
 	isOwner(searched_channel: string, user: UserEntity) : boolean{
-		console.log("owner = ", user.owner_of);
 		if (user.owner_of && user.owner_of.find( (channel) => channel.name === searched_channel))
 			return true;
 		else
