@@ -12,8 +12,6 @@ function Background() {
       setHideBall(true)
   }
 
-  console.log(hideBall);
-
   if (hideBall) {
   return (
     <div>
