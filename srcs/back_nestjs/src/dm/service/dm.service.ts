@@ -2,7 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DmNameDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 
@@ -46,75 +46,34 @@ export class DmService {
 		return ret;
 	}
 
-  async getDmByTarget(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
-    if (user.dms)
-	{
-		let convo = user.dms.find(
-    	  (dm) =>
-    	    (dm.users[0].username === user.username &&
-    	      dm.users[1].username === data.target) ||
-    	    (dm.users[0].username === data.target &&
-    	      dm.users[1].username === user.username),
-    	);
-    	if (convo)
-			return await this.getDmById(convo.id);
+	/* This function loads the Dm based on name of target*/
+	async getDmByTarget(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+		if (user.dms)
+		{
+			let convo = user.dms.find(
+			(dm) =>
+				(dm.users[0].username === user.username &&
+				dm.users[1].username === data.target) ||
+				(dm.users[0].username === data.target &&
+				dm.users[1].username === user.username),
+			);
+			if (convo)
+				return await this.getDmById(convo.id);
+		}
+		else 
+			throw new UnprocessableEntityException(`No conversation with ${data.target}`);
 	}
-	else 
-		throw new UnprocessableEntityException(`No conversation with ${data.target}`);
-  }
 
 
 
 	// get all conversations of a user
-	async getDmsList( user: UserEntity ): Promise<DmEntity[]> {
+	async getDmsList( user: UserEntity ): Promise<DmEntity[]> {		
 		return await this.dmRepository
 		.createQueryBuilder("dm")
 		.leftJoin("dm.users", "users")
-		.addSelect("users.id")
-		.where('dm.users.id = :id', {id: user.id})
-		.getMany();
-
-
-
-
-		let reloaded_datas = await this.userService.findOptions({
-			where: {
-				username: user.username
-			},
-			relations: {
-				dms:{
-					users: true,
-					messages: {
-						author: true,
-					},
-				}
-			},
-			select: {
-				dms: {
-					id: true,
-					users: {
-						id: true,
-						username: true,
-					},
-					messages: {
-						createdAt : true,
-						author: {
-							username: true
-						},
-						content: true,
-					}
-				}
-			},
-			order: {
-				dms:{
-					messages: {
-						createdAt: "DESC",
-					}
-				}
-			},
-
-		})
-		return reloaded_datas.dms;
+		.addSelect("users.username")
+		.where("dm.id IN (:...ids)", {ids: user.dms.map( elem => elem.id)})
+		.getMany()
 	}
 
   /*
