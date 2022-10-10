@@ -8,6 +8,9 @@ export type ChannelsContextType = {
   getChannelsUserlist: () => void;
   channelData: any;
   setChannelData: (channelData: any) => void;
+  availableChannels: IChannel[];
+  setAvailableChannels: (availableChannels: IChannel[]) => void;
+  getAvailableChannels: () => void;
 };
 
 export const ChannelsContext = createContext<ChannelsContextType>({
@@ -16,6 +19,9 @@ export const ChannelsContext = createContext<ChannelsContextType>({
   getChannelsUserlist: () => {},
   channelData: {},
   setChannelData: () => {},
+  availableChannels: [],
+  setAvailableChannels: () => {},
+  getAvailableChannels: () => {},
 });
 
 interface ChannelsContextProps {
@@ -25,6 +31,25 @@ interface ChannelsContextProps {
 export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
   const [channelsList, setChannelsList] = useState<IChannel[]>([]);
   const [channelData, setChannelData] = useState<IChannel>();
+  const [availableChannels, setAvailableChannels] = useState<any[]>([]);
+
+  // get all available channels
+  async function getAvailableChannels() {
+    console.log("get available channels");
+    await api
+      .get("channel/list", {
+        params: {
+          offset: 0,
+        },
+      })
+      .then((res) => {
+        setAvailableChannels(res.data);
+        console.log(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid channels");
+      });
+  }
 
   // get all channels
   async function getChannelsUserlist() {
@@ -44,6 +69,7 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
   // get all channels
   useEffect(() => {
     getChannelsUserlist();
+    getAvailableChannels();
   }, []);
 
   return (
@@ -54,6 +80,9 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
         getChannelsUserlist,
         channelData,
         setChannelData,
+        availableChannels,
+        setAvailableChannels,
+        getAvailableChannels,
       }}
     >
       {children}
