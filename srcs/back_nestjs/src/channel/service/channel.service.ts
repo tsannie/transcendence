@@ -54,11 +54,14 @@ export class ChannelService {
 		return channel;
 	}
 
+	/* This function returns the data form a selected channel, based on hierarchy in the channel. Message
+	needs to be loaded separately */
 	async getDatas(query_channel: ChannelDto, user: UserEntity) : Promise<IChannelReturn>
 		{
 			let isOwner : boolean = this.isOwner(query_channel.name, user); 
 			let isAdmin : boolean = this.isAdmin(query_channel.name, user);
 			let isUser : boolean = this.isMember(query_channel.name, user);
+			
 			let response : IChannelReturn = {status: "", data: null};
 			if (!isOwner && !isAdmin && !isUser)
 			{
@@ -82,11 +85,11 @@ export class ChannelService {
 						response.status = "admin";
 					response.data = await this.getPrivateData(query_channel);
 				}
-				response.data.messages = await this.messageService.loadMessages("channel", response.data.id, query_channel.offset);
 			}
 			return response;
 		}
 		
+		/* GetChannelsList returns the list of available channels for a user to connect to */
 		async getChannelsList(offset: number) : Promise<ChannelEntity[]> {
 			return await this.channelRepository.find({
 				where:[
@@ -108,52 +111,12 @@ export class ChannelService {
 		}
 
 		async getChannelsUserList( user: UserEntity) : Promise<ChannelEntity[]> {
-			const relation_options : FindOptionsRelations<ChannelEntity> = {
-					messages: {
-						author: true,
-					}
-			}
-
-			const select_options : FindOptionsSelect<ChannelEntity> = {
-				id: true,
-				name: true,
-				messages: {
-					createdAt: true,
-					content: true,
-					author: {
-						username: true,
-					}
-				},
-			}
-
-			const order_options : FindOptionsOrder<ChannelEntity> = {
-				name: "ASC",
-				messages: {
-					createdAt: "DESC",
-				}
-			}
-			
-			let reloaded_user = await this.userService.findOptions({
-				where: {
-					username: user.username,
-				},
-				relations:{
-					owner_of: relation_options,
-					admin_of: relation_options,
-					channels: relation_options,
-				},
-				select: {
-					owner_of: select_options,
-					admin_of: select_options,
-					channels: select_options,
-				},
-				order: {
-					owner_of: order_options,
-					admin_of: order_options,
-					channels: order_options,
-				},
-			})
-		return [...reloaded_user.owner_of, ...reloaded_user.admin_of, ...reloaded_user.channels];
+			return [...user.owner_of, ...user.admin_of, ...user.channels].sort((a , b) => {
+				if (a.name < b.name)
+					return -1;
+				else
+					return 1;
+			});
 	}
 
  /*
