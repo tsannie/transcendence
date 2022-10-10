@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsDefined, IsDivisibleBy, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from "class-validator";
+import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export class DmNameDto {
   @IsDefined()
