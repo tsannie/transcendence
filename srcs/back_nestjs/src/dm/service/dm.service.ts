@@ -1,6 +1,5 @@
-import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MessageService } from 'src/message/service/message.service';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -12,10 +11,6 @@ export class DmService {
   constructor(
     @InjectRepository(DmEntity)
     private dmRepository: Repository<DmEntity>,
-
-	@Inject(forwardRef( () => MessageService))
-	private readonly messageService: MessageService,
-	
     private readonly userService: UserService,
   ) {}
 

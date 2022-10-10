@@ -12,7 +12,6 @@ import { ChannelService } from './service/channel.service';
 @Module({
   imports: [
     UserModule,
-    forwardRef(() => MessageModule),
     TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity]),
   ],
   controllers: [ChannelController],
