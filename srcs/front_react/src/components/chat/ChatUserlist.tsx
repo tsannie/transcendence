@@ -21,8 +21,6 @@ import { MessagesContext } from "../../contexts/MessagesContext";
 import { UserContext } from "../../contexts/UserContext";
 
 interface ChatUserListProps {
-  getDmsList: () => void;
-  dmsList: any[];
   setChatContent: (chatContent: ChatContent) => void;
 }
 
