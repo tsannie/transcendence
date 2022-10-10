@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { IChannel } from "../components/chat/types";
 import { api } from "../const/const";
 import { ChannelsProvider } from "./ChannelsContext";
+import { DmsProvider } from "./DmsContext";
 import { MessagesProvider } from "./MessagesContext";
 import { UserProvider } from "./UserContext";
 
@@ -18,7 +19,9 @@ export const ChatProvider = ({ children }: ChatContextProps) => {
     <ChatContext.Provider value={children}>
       <UserProvider>
         <ChannelsProvider>
-          <MessagesProvider>{children}</MessagesProvider>
+          <DmsProvider>
+            <MessagesProvider>{children}</MessagesProvider>
+          </DmsProvider>
         </ChannelsProvider>
       </UserProvider>
     </ChatContext.Provider>

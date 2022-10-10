@@ -115,6 +115,9 @@ export class MessageGateway
       console.log("value = ", value);
       console.log("data.target = ", data.target);
       if (value.username === data.target) {
+        // get all message between the 2 users
+        //this.messageService.loadMessages()
+        //this.dmService.
         this.server.to(key).emit('message', data);
       }
     });
