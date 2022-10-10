@@ -9,12 +9,13 @@ export class MessageController {
     ) {}
 
 
-	//DELETE THIS TEST ROUTE
+	//TODO DELETE THIS ROUTE LATER, USED FOR DEBUGGING
 	@Post("addToChannel")
 	async addMessageChannel(@Body() data) {
 		return await this.messageService.addMessagetoChannel(data);
 	}
 
+	//TODO DELETE THIS ROUTE LATER, USED FOR DEBUGGING
 	@Post("addToDm")
 	async addDm(@Body() data) {
 		return await this.messageService.addMessagetoDm(data);
