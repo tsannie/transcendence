@@ -10,12 +10,12 @@ export class MessageController {
 
 
 	//DELETE THIS TEST ROUTE
-	@Post("addChannel")
+	@Post("addToChannel")
 	async addMessageChannel(@Body() data) {
 		return await this.messageService.addMessagetoChannel(data);
 	}
 
-	@Post("addDm")
+	@Post("addToDm")
 	async addDm(@Body() data) {
 		return await this.messageService.addMessagetoDm(data);
 	}

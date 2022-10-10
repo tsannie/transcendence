@@ -82,7 +82,7 @@ export class ChannelService {
 		}
 		
 		/* This getter returns the list of available channels (public and protected) that a user can join */
-		async getChannelsList(offset: number) : Promise<ChannelEntity[]> {
+		async getChannelsList( offset: number ) : Promise<ChannelEntity[]> {
 			return await this.channelRepository.find({
 				where:[
 					{status: "Public"},
@@ -103,7 +103,7 @@ export class ChannelService {
 		}
 
 		/* This getter returns list of channels the user is part of, as an Owner, an admin, or a simple user */
-		async getChannelsUserList( user: UserEntity) : Promise<ChannelEntity[]> {
+		async getChannelsUserList( user: UserEntity ) : Promise<ChannelEntity[]> {
 			return [...user.owner_of, ...user.admin_of, ...user.channels].sort((a , b) => {
 				if (a.name < b.name)
 					return -1;
