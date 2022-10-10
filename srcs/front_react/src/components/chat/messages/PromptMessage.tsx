@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useState } from "react";
 import Paperplane from "../../../assets/paperplane.png";
@@ -11,15 +11,7 @@ export default function PromptMessage(props: PromptMessageProps) {
   const { setCurrentMessage, sendMessage } = useContext(MessagesContext);
 
   return (
-    <Box
-      sx={{
-        width: "fit-content",
-        mx: "auto",
-        position: "fixed",
-       // bottom: "0",
-        // mettre en bas
-      }}
-    >
+    <>
       <TextField
         id="input-message"
         variant="outlined"
@@ -40,6 +32,6 @@ export default function PromptMessage(props: PromptMessageProps) {
           bottom: 0,
         }}
       ></Box>
-    </Box>
+    </>
   );
 }
