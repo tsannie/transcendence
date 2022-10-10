@@ -6,12 +6,6 @@ export class DmNameDto {
   @IsNotEmpty()
   @IsString()
   target: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @Type( () => Number )
-  @Min(0)
-  offset: number
 }
 
 export class DmIdDto {
@@ -20,18 +14,4 @@ export class DmIdDto {
   @Type( () => Number )
   @IsNumber()
   id: number;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @Type( () => Number )
-  @Min(0)
-  offset: number
-}
-
-export class ListDto {
-  @IsDefined()
-  @IsNotEmpty()
-  @Type( () => Number )
-  @Min(0)
-  offset: number
 }

@@ -12,10 +12,4 @@ export class ChannelDto {
   @IsNotEmpty()
   @IsString()
   password: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @Type(() => Number)
-  @Min(0)
-  offset: number;
 }

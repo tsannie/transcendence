@@ -34,6 +34,7 @@ export class MessageService {
 			let owner_of = user.owner_of.find( elem => elem.id === inputed_id);
 			let admin_of = user.admin_of.find( elem => elem.id === inputed_id);
 			let user_of = user.channels.find( elem => elem.id === inputed_id);
+			console.log(owner_of, admin_of, user_of);
 			if (!owner_of && !admin_of && !user_of)
 				throw new UnprocessableEntityException("User is not part of the channel.");
 			else
@@ -67,7 +68,8 @@ export class MessageService {
 	/* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
 	async addMessagetoChannel(data: IMessage) : Promise<MessageEntity> {
-		const user = await this.userService.findByName(data.author, {channels: true, owner_of: true})
+		//TODO change input type(DTO over interface) and load less from user
+		const user = await this.userService.findByName(data.author, {dms: true, channels: true, admin_of: true, owner_of: true})
 		const channel = this.checkUserValidity("channel", Number(data.id), user) as ChannelEntity;
 
 		const message = new MessageEntity();
@@ -79,7 +81,8 @@ export class MessageService {
 
 	/* TODO modify input */
 	async addMessagetoDm(data: IMessage) : Promise<MessageEntity> {
-		const user = await this.userService.findByName(data.author, {dms: true});
+		//TODO change input type(DTO over interface) and load less from user
+		const user = await this.userService.findByName(data.author, {dms: true, channels: true, admin_of: true, owner_of: true});
 		const dm = this.checkUserValidity("dm", Number(data.id), user) as DmEntity;
 
 		const message = new MessageEntity();
