@@ -48,7 +48,6 @@ export class DmService {
 		.addSelect("users.username")
 		.getOne();
 
-		ret.messages = await this.messageService.loadMessages("dm", ret.id, offset);
 		return ret;
 	}
 
