@@ -4,13 +4,10 @@ import Menu from "./components/menu/Menu";
 import './app.style.scss'
 import './components/menu/menu.style.scss';
 import { Navigate, Route, Router, Routes, useLocation } from "react-router-dom";
-import { AuthContext, AuthContextType, AuthProvider, User,  } from "./contexts/AuthContext";
-import { Switch } from "@mui/material";
 import LoginPage from "./components/auth/oauth/LoginPage";
 import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
 import Settings from "./components/settings/Settings";
-import Sidebar from "./components/sidebar/Sidebar";
 import Home from "./components/home/Home";
 import Chat from "./components/chat/Chat";
 import Profile from "./components/profile/Profile";
@@ -23,7 +20,6 @@ export default function App() {
 
 
   return (
-    <div className="app">
       <div className="bg">
         <div className="ball"></div>
         <div className="ball"></div>
@@ -35,7 +31,7 @@ export default function App() {
         <div className="ball"></div>
         <div className="ball"></div>
         <div className="ball"></div>
-      </div>
+        <div className="app">
       <Routes key={location.pathname} location={location}>
         {/* Auth Routes (public) */}
         <Route path="/auth" element={<LoginPage />} />
@@ -48,6 +44,7 @@ export default function App() {
         <Route path="/game" element={<PrivateRoute component={Profile} />}/>
         <Route path="/settings" element={<PrivateRoute component={Settings} />}/>
       </Routes>
+      </div>
     </div>
   );
 }
