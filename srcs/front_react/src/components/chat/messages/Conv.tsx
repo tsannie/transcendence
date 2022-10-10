@@ -7,8 +7,7 @@ import { IMessage } from "../types";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-interface ConvProps {
-}
+interface ConvProps {}
 
 export default function Conv(props: ConvProps) {
   /* function newConv() {
@@ -19,9 +18,11 @@ export default function Conv(props: ConvProps) {
   const { username } = useContext(UserContext);
 
   return (
-    <Grid sx={{ border: "1px solid green", minHeight: 300 }}>
+    <Grid container sx={{ border: "1px solid green", minHeight: 300 }}>
       <MessagesList username={username} />
-      <PromptMessage />
+      <Grid item sx={{ position: "absolute", bottom: "0" }}>
+        <PromptMessage />
+      </Grid>
     </Grid>
   );
 }

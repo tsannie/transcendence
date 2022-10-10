@@ -16,7 +16,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { IChannel } from "../types";
 import { display } from "@mui/system";
-import { LockIcon } from "./LockIcon";
 import InfosChannels from "./InfosChannels";
 import AdminsActions from "./admins/AdminsActions";
 import { ChatContent } from "../Chat";
@@ -35,7 +34,7 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelExistsError, setChannelExistsError] = useState("");
   const { channelsList, setChannelData } = useContext(ChannelsContext);
 
-  async function getInfosChannel(channel: any) {
+  async function getChannelDatas(channel: any) {
     await api
       .get("channel/datas", {
         params: {
@@ -55,7 +54,7 @@ export default function ChannelsList(props: ChannelsListProps) {
 
   function handleClick(channel: IChannel) {
     props.setChatContent(ChatContent.CHANNEL_CONTENT);
-    getInfosChannel(channel);
+    getChannelDatas(channel);
     console.log("channel clicked", channel);
   }
 
@@ -78,7 +77,6 @@ export default function ChannelsList(props: ChannelsListProps) {
             <ListItemText sx={{ml: "1vw"}}>
               {channelData.name}
             </ListItemText>
-            <>{channelData.status === "Protected" ? <LockIcon /> : <></>}</>
             <TextField
               sx={{
                 minWidth: "15vw",

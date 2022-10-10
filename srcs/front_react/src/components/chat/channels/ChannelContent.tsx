@@ -59,11 +59,11 @@ export default function ChannelContent(props: ChannelContentProps) {
         <Grid item xs={9}>
           <Box sx={{ border: "3px solid red" }}>
             <Grid item>
-              <Typography variant={"h4"}>{channelData.name}</Typography>
-            </Grid>
-            <Grid item>
+            <Typography variant={"h6"}>
+                {"Channel " + channelData.data.name}
+              </Typography>
               <Typography variant={"h6"}>
-                {channelData.data.createdAt}
+                {"Created the " + channelData.data.createdAt}
               </Typography>
             </Grid>
             {channelData.status === "owner" && (
@@ -85,19 +85,11 @@ export default function ChannelContent(props: ChannelContentProps) {
               </Grid>
             )}
           </Box>
-          <Conv
-            //messagesList={props.messagesList}
-            //setMessagesList={props.setMessagesList}
-            //username={props.username}
-            //setCurrentMessage={props.setCurrentMessage}
-            //sendMessage={props.sendMessage}
-          />
+          <Conv />
         </Grid>
       )}
       <Grid item xs={3}>
         <InfosChannels
-          //channelData={channelData}
-          //username={props.username}
         />
       </Grid>
     </Grid>
