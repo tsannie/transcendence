@@ -12,7 +12,7 @@ function Background() {
       setHideBall(true)
   }
 
-  if (hideBall) {
+  if (!hideBall) {
   return (
     <div>
         <div className="ball"></div>
