@@ -1,8 +1,6 @@
 import {
   Catch,
   ForbiddenException,
-  forwardRef,
-  Inject,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -10,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
-import { FindOptionsOrder, FindOptionsRelations, FindOptionsSelect, Repository } from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import * as bcrypt from 'bcrypt';
@@ -18,9 +16,6 @@ import { ChannelDto } from '../dto/channel.dto';
 import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
-import { MessageEntity } from 'src/message/models/message.entity';
-import { MessageService } from 'src/message/service/message.service';
-import { response } from 'express';
 import { IChannelReturn } from '../models/channel_return.interface';
 
 const CHANNEL_LIST_NUMBER = 10;
@@ -31,9 +26,6 @@ export class ChannelService {
 	constructor(
 	@InjectRepository(ChannelEntity)
 	private channelRepository: Repository<ChannelEntity>,
-
-	@Inject(forwardRef(() => MessageService))
-	private	readonly messageService : MessageService,
 	private readonly userService: UserService) {}
 
 	/* This function return all the public datas of channel */
@@ -89,7 +81,7 @@ export class ChannelService {
 			return response;
 		}
 		
-		/* GetChannelsList returns the list of available channels for a user to connect to */
+		/* This getter returns the list of available channels (public and protected) that a user can join */
 		async getChannelsList(offset: number) : Promise<ChannelEntity[]> {
 			return await this.channelRepository.find({
 				where:[
@@ -110,6 +102,7 @@ export class ChannelService {
 			});
 		}
 
+		/* This getter returns list of channels the user is part of, as an Owner, an admin, or a simple user */
 		async getChannelsUserList( user: UserEntity) : Promise<ChannelEntity[]> {
 			return [...user.owner_of, ...user.admin_of, ...user.channels].sort((a , b) => {
 				if (a.name < b.name)
@@ -119,10 +112,9 @@ export class ChannelService {
 			});
 	}
 
- /*
- 	this function is responsible of saving a new Channel and do manage error or
-  	redundancy if it happens
- */
+ 
+	/* This function is responsible of saving a new Channel and do manage error or
+  	redundancy if it happens */
 	async saveChannel(newChannelEntity : ChannelEntity) : Promise<void | ChannelEntity>{
 		return await this.channelRepository.save(newChannelEntity).catch( e => {
 			if (e.code === "23505")
@@ -133,6 +125,7 @@ export class ChannelService {
 			});
 	}
 
+	/* This function is mainly used to load a targeted-User, which profile hasn't been loaded yet */
 	async getUser(username : string, inputed_relations : FindOptionsRelations<UserEntity> = undefined) : Promise<UserEntity> {
 		const user = await this.userService.findByName(username, inputed_relations);
 
@@ -168,7 +161,7 @@ export class ChannelService {
 			return returned_channel;
 	}
 
-	//THIS FUNCTION COMPARE INPUTED PASSWORD WITH THE ONE STORED IN DATABASE
+	/* This function compares hashed password in db, with the one the user just typed */
 	async checkPassword(inputed_password : string, channel_password: string)
 	{
 		if (!inputed_password)
@@ -180,10 +173,13 @@ export class ChannelService {
 			throw new UnauthorizedException("Wrong Password.");
 	}
 
+	/* This function hashed password with bcrypt and returns it */
 	async hashPassword(inputed_password: string) : Promise<any> {
 		return await bcrypt.hash(inputed_password, await bcrypt.genSalt())
 	}
 
+	/* This function generate new channel, and if protected add the password to the DB, if not, throw an
+	error. Then channel is saved and returned */
 	async createChannel(channel: CreateChannelDto, user : UserEntity) : Promise<void | ChannelEntity> {
 		let newChannel = new ChannelEntity();
 
@@ -199,7 +195,11 @@ export class ChannelService {
 		return await this.saveChannel(newChannel);
 	}
 
-  async leaveChannel(requested_channel: ChannelDto, user: UserEntity) {
+	/* This function allows the user to leave the channel.
+	If the leaver is an owner : 
+	Admin[0] becomes the new owner, if there is no admin[0], user[0] becomes the owner.
+	If there are no users, no admins --> the channel is destroyed */
+  	async leaveChannel(requested_channel: ChannelDto, user: UserEntity) {
 		let channel = await this.getChannel(requested_channel.name, {owner: true, admins: true, users: true});
 
 		if (this.isOwner(requested_channel.name, user))
@@ -224,6 +224,8 @@ export class ChannelService {
 		await this.channelRepository.save(channel);
 	}
 
+
+	/* This function delete channel, only if the requester is owner of this channel */
 	async deleteChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		if (this.isOwner(requested_channel.name, user))
 		{
@@ -234,6 +236,8 @@ export class ChannelService {
 			throw new ForbiddenException("Only the owner of the channel can delete the channel.");	
 	}
 
+	/* This function add a user to the channel, only if the requester is not banned of this channel.
+	Also it checks password inputed if the channel is protected */
 	async joinChannel(requested_channel: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		if (this.isOwner(requested_channel.name, user) || this.isAdmin(requested_channel.name, user) || this.isMember(requested_channel.name, user))
 			throw new UnprocessableEntityException("User is already member or owner of the channel.")
@@ -248,6 +252,8 @@ export class ChannelService {
 			return await this.joinPublicChannels(user, channel);
 	}
 
+	/* This function allows the owner to add or modify the password of a channel, therefore changing its
+	status to 'Protected' if it wasn't already the case */
 	async addPassword(channel_requested: ChannelPasswordDto, user: UserEntity) : Promise<ChannelEntity> {
 		if (this.isOwner(channel_requested.name, user))
 			throw new ForbiddenException("Only the owner of the channel can add a password");
@@ -261,6 +267,7 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
+	/* This function delete the password, therefore changing this channel status to 'Public' */
 	async deletePassword(channel_requested: ChannelDto, user: UserEntity) : Promise<ChannelEntity> {
 		if (this.isOwner(channel_requested.name, user))
 			throw new ForbiddenException("Only the owner of the channel can delete a password");
@@ -277,6 +284,8 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
+	/* This function unban a User that has been banned earlier on. It verifies that the caller
+	has enough clearance for this action */
 	async unBanUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
 		let target = await this.getUser(request.target, {owner_of: true, admin_of: true, channels: true});
 		this.verifyHierarchy(request.channel_name, requester, target);
@@ -295,6 +304,8 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
+	/* This function allows to ban a user, based on level of clearance of caller.
+	Owner can ban anyone in the server. Admins can ban users, but not owner. Users cannot ban.*/
 	async banUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity>{
 		let userToBan = await this.getUser(request.target, {owner_of: true, admin_of: true, channels: true});
 		this.verifyHierarchy(request.channel_name, requester, userToBan);
@@ -316,6 +327,7 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
+	/* This function allows to Unmute a user that has been muted earlier on. */
 	async unMuteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
 		const userToUnMute = await this.getUser(request.target, {owner_of: true, admin_of: true, channels: true});
 		this.verifyHierarchy(request.channel_name, requester, userToUnMute);
@@ -335,6 +347,7 @@ export class ChannelService {
 		return await this.channelRepository.save(channel);
 	}
 
+	/* This function allows to muteUser with the same hierarchy rules of BanUser. */
 	async muteUser(request: ChannelActionsDto, requester: UserEntity) : Promise<ChannelEntity> {
 		const userToMute = await this.getUser(request.target, {owner_of: true, admin_of: true, channels: true});
 		this.verifyHierarchy(request.channel_name, requester, userToMute);
@@ -353,6 +366,7 @@ export class ChannelService {
 		channel.admins = channel.admins.filter( elem => elem.username !== request.target);
 		return await this.channelRepository.save(channel);
 	}
+
 
 	async joinPublicChannels(user : UserEntity, channel : ChannelEntity): Promise<ChannelEntity> {
 		this.addToUsers(channel, user);
