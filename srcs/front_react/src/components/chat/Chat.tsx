@@ -35,31 +35,11 @@ export enum ChatContent {
 interface ChatProps {}
 
 export default function Chat(props: ChatProps) {
-  const [dmsList, setDmsList] = useState<IConvCreated[]>([]);
-  const [isNewMessage, setIsNewMessage] = useState(false);
   const [isOpenInfos, setIsOpenInfos] = useState(false);
   const [chatContent, setChatContent] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
   );
   // enum with 3 strings differentes
-
-  // get all dms
-  async function getDmsList() {
-    console.log("get dms");
-    await api
-      .get("dm/list", {
-        params: {
-          offset: 1,
-        },
-      })
-      .then((res) => {
-        setDmsList(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid dms");
-        console.log(res);
-      });
-  }
 
   return (
     <ChatProvider>
@@ -67,10 +47,7 @@ export default function Chat(props: ChatProps) {
         <Grid item xs={4}>
           <Grid item>
             <DmList
-              isNewMessage={isNewMessage}
               setChatContent={setChatContent}
-              getDmsList={getDmsList}
-              dmsList={dmsList}
             />
           </Grid>
           <Grid item>
@@ -94,8 +71,6 @@ export default function Chat(props: ChatProps) {
           )}
           {chatContent === ChatContent.NEW_DM && (
             <ChatUserlist
-              getDmsList={getDmsList}
-              dmsList={dmsList}
               setChatContent={setChatContent}
             />
           )}

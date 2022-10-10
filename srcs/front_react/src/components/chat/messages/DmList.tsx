@@ -8,21 +8,20 @@ import { Socket } from "socket.io-client";
 import { SocketContext } from "../../../contexts/SocketContext";
 import { api } from "../../../const/const";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { DmsContext } from "../../../contexts/DmsContext";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
 // en gros pour que ca affiche la conv de mec que ta cliquer et toi
 
 interface DmListProps {
-  getDmsList: () => void;
-  dmsList: any[];
-  isNewMessage: boolean;
   setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function DmList(props: DmListProps) {
   const [newDm, setNewDm] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const { dmsList, getDmsList } = useContext(DmsContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
@@ -31,7 +30,7 @@ export default function DmList(props: DmListProps) {
   }
 
   useEffect(() => {
-    props.getDmsList();
+    getDmsList();
   }, []);
 
   return (
@@ -40,10 +39,10 @@ export default function DmList(props: DmListProps) {
       <IconButton onClick={handleClick}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <IconButton onClick={() => props.getDmsList()}>
+      <IconButton onClick={() => getDmsList()}>
         <RefreshIcon />
       </IconButton>
-      {props.dmsList.map((dm: any) => {
+      {dmsList.map((dm: any) => {
         return (
           <div key={dm.id}>
             <Typography>{dm.id}</Typography>
