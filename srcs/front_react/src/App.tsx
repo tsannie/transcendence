@@ -24,6 +24,18 @@ export default function App() {
 
   return (
     <div className="app">
+      <div className="bg">
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+        <div className="ball"></div>
+      </div>
       <Routes key={location.pathname} location={location}>
         {/* Auth Routes (public) */}
         <Route path="/auth" element={<LoginPage />} />
