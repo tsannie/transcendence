@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { MessageEntity } from '../models/message.entity';
 import { IMessage } from '../models/message.interface';
 import { uuid } from 'uuidv4';
+import { UserEntity } from 'src/user/models/user.entity';
 
 const LOADED_MESSAGES = 20;
 
@@ -25,7 +26,22 @@ export class MessageService {
 	private userService: UserService,
   ) {}
 
-	async loadMessages(type: string, inputed_id: number, offset: number) : Promise<MessageEntity[]> {
+	/* This fonction exists so it checks first if user requesting messages is allowed to load them */
+	async checkUserValidity(type: string, inputed_id: number, user: UserEntity) {
+		if (type == "dm" && !user.dms.find( elem => elem.id === inputed_id))
+			throw new UnprocessableEntityException("User is not part of the dm.");
+		/* Is User part of the channel ? let's check it in every field of the entity.
+		If Not, we throw a 422 */
+		if (type == "channel" && 
+			!user.channels.find( elem => elem.id === inputed_id) &&
+			!user.owner_of.find( elem => elem.id === inputed_id) && 
+			!user.admin_of.find( elem => elem.id === inputed_id))
+			throw new UnprocessableEntityException("User is not part of the channel.");
+	}
+
+	async loadMessages(type: string, inputed_id: number, offset: number, user: UserEntity) : Promise<MessageEntity[]> {
+		this.checkUserValidity(type, inputed_id, user);
+
 		return await this.allMessages
 		.createQueryBuilder("message")
 		.select("message.uuid")
