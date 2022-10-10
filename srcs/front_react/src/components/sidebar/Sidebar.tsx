@@ -35,6 +35,7 @@ export default function Sidebar(props: any) {
       })
   }
 
+
   return (
     <div className="sidebar">
       <nav className="sidebar__icon">

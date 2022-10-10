@@ -12,6 +12,7 @@ import Home from "./components/home/Home";
 import Chat from "./components/chat/Chat";
 import Profile from "./components/profile/Profile";
 import { AnimatePresence } from "framer-motion";  // TODO delete ?
+import Background from "./components/background/Background";
 
 
 export default function App() {
@@ -21,16 +22,7 @@ export default function App() {
 
   return (
       <div className="bg">
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
-        <div className="ball"></div>
+        <Background/>
         <div className="app">
       <Routes key={location.pathname} location={location}>
         {/* Auth Routes (public) */}
