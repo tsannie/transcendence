@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
-import { DmNameDto, DmIdDto, ListDto } from '../dto/dm.dto';
+import { DmNameDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class DmService {
 
 
 	// get a dm by id
-	async getDmById(inputed_id: number, offset: number): Promise<DmEntity> {
+	async getDmById(inputed_id: number): Promise<DmEntity> {
 		let ret = await this.dmRepository
 		.createQueryBuilder("dm")
 		.where("dm.id = :id", {id: inputed_id})
@@ -46,7 +46,7 @@ export class DmService {
 		return ret;
 	}
 
-  async getDmByName(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+  async getDmByTarget(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
     if (user.dms)
 	{
 		let convo = user.dms.find(
@@ -57,7 +57,7 @@ export class DmService {
     	      dm.users[1].username === user.username),
     	);
     	if (convo)
-			return await this.getDmById(convo.id, data.offset);
+			return await this.getDmById(convo.id);
 	}
 	else 
 		throw new UnprocessableEntityException(`No conversation with ${data.target}`);
@@ -66,7 +66,7 @@ export class DmService {
 
 
 	// get all conversations of a user
-	async getDmsList(data: ListDto, user: UserEntity): Promise<DmEntity[]> {
+	async getDmsList( user: UserEntity ): Promise<DmEntity[]> {
 		return await this.dmRepository
 		.createQueryBuilder("dm")
 		.leftJoin("dm.users", "users")
@@ -132,9 +132,8 @@ export class DmService {
 				dm.users[1].username === user.username),
 			);
 			if (convo)
-				return await this.getDmById(convo.id, data.offset);
+				return await this.getDmById(convo.id);
 		}
-		console.log(user);
 		let new_dm = new DmEntity();
 
 		new_dm.users = [user, user2];

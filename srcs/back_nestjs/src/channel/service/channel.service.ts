@@ -18,8 +18,6 @@ import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import { IChannelReturn } from '../models/channel_return.interface';
 
-const CHANNEL_LIST_NUMBER = 10;
-
 @Injectable()
 @Catch()
 export class ChannelService {
@@ -82,7 +80,7 @@ export class ChannelService {
 		}
 		
 		/* This getter returns the list of available channels (public and protected) that a user can join */
-		async getChannelsList( offset: number ) : Promise<ChannelEntity[]> {
+		async getList() : Promise<ChannelEntity[]> {
 			return await this.channelRepository.find({
 				where:[
 					{status: "Public"},
@@ -97,13 +95,11 @@ export class ChannelService {
 					status: true,
 					createdAt: true,
 				},
-				skip: offset * CHANNEL_LIST_NUMBER,
-				take: CHANNEL_LIST_NUMBER,
 			});
 		}
 
 		/* This getter returns list of channels the user is part of, as an Owner, an admin, or a simple user */
-		async getChannelsUserList( user: UserEntity ) : Promise<ChannelEntity[]> {
+		async getUserList( user: UserEntity ) : Promise<ChannelEntity[]> {
 			return [...user.owner_of, ...user.admin_of, ...user.channels].sort((a , b) => {
 				if (a.name < b.name)
 					return -1;
