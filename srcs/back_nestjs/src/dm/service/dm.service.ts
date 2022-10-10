@@ -74,12 +74,12 @@ export class DmService {
 
 	// get all conversations of a user
 	async getDmsList(data: ListDto, user: UserEntity): Promise<DmEntity[]> {
-		return await this.dmRepository
+		/* return await this.dmRepository
 		.createQueryBuilder("dm")
 		.leftJoin("dm.users", "users")
 		.addSelect("users.id")
 		.where('dm.users.id = :id', {id: user.id})
-		.getMany();
+		.getMany(); */
 
 
 

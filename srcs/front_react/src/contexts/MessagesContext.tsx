@@ -11,6 +11,7 @@ export type MessagesContextType = {
   currentMessage: string;
   setCurrentMessage: (currentMessage: string) => void;
   sendMessage: () => void;
+  targetUsername: string;
   setTargetUsername: (targetUsername: string) => void;
 };
 
@@ -20,7 +21,9 @@ export const MessagesContext = createContext<MessagesContextType>({
   currentMessage: "",
   setCurrentMessage: () => {},
   sendMessage: () => {},
+  targetUsername: "",
   setTargetUsername: () => {},
+
 });
 
 interface MessagesContextProps {
@@ -65,6 +68,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
         currentMessage,
         setCurrentMessage,
         sendMessage,
+        targetUsername,
         setTargetUsername,
       }}
     >

@@ -8,7 +8,7 @@ import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
 import { api, COOKIE_NAME } from "../../const/const";
-import DmList from "./messages/DmList";
+import DmList from "./messages/DmsList";
 import Conv from "./messages/Conv";
 import FormChannel from "./channels/FormChannel";
 import { SocketContext, SocketProvider } from "../../contexts/SocketContext";
@@ -24,6 +24,7 @@ import {
 } from "../../contexts/MessagesContext";
 import { UserContext, UserProvider } from "../../contexts/UserContext";
 import { ChatProvider } from "../../contexts/ChatContext";
+import Dms from "./messages/Dms";
 
 export enum ChatContent {
   NEW_CHANNELS,
@@ -46,7 +47,7 @@ export default function Chat(props: ChatProps) {
       <Grid container>
         <Grid item xs={4}>
           <Grid item>
-            <DmList
+            <Dms
               setChatContent={setChatContent}
             />
           </Grid>

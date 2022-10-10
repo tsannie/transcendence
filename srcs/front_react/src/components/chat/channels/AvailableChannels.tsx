@@ -1,5 +1,6 @@
 import {
   Button,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -12,14 +13,14 @@ import { api } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { IChannel } from "../types";
 import { LockIcon } from "./LockIcon";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 interface AvailableChannelsProps {}
 
 export default function AvailableChannels(props: AvailableChannelsProps) {
-  const [availableChannels, setAvailableChannels] = useState<any[]>([]);
   const [channelPassword, setChannelPassword] = useState("");
 
-  const { getChannelsUserlist } = useContext(ChannelsContext);
+  const { getChannelsUserlist, getAvailableChannels, availableChannels } = useContext(ChannelsContext);
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -34,23 +35,6 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
     console.log(newChannel);
 
     return newChannel;
-  }
-
-  async function getAvailableChannels() {
-    console.log("get available channels");
-    await api
-      .get("channel/list", {
-        params: {
-          offset: 0,
-        },
-      })
-      .then((res) => {
-        setAvailableChannels(res.data);
-        console.log(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-      });
   }
 
   async function joinChannel(channel: IChannel) {
@@ -100,13 +84,15 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
   return (
     <List sx={{ border: "1px solid black"}}>
       Available Channels
+      <IconButton onClick={() => getAvailableChannels()}>
+        <RefreshIcon />
+      </IconButton>
       {availableChannels.map((channel) => (
         <ListItem key={channel.name}>
           <ListItemText primary={channel.name} />
           <ListItemIcon>
             {channel.status === "Protected" ? <LockIcon /> : <></>}
           </ListItemIcon>
-          <ListItem>
             <TextField
               sx={{
                 minWidth: "15vw",
@@ -126,8 +112,6 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
             >
               Join
             </ListItemButton>
-          </ListItem>
-          <ListItem>
             <ListItemButton
               onClick={() => {
                 leaveChannel(channel);
@@ -136,7 +120,6 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
             >
               Leave
             </ListItemButton>
-          </ListItem>
         </ListItem>
       ))}
     </List>

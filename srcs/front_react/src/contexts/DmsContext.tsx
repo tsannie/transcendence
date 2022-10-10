@@ -28,7 +28,7 @@ export const DmsProvider = ({ children }: DmsContextProps) => {
     await api
       .get("dm/list", {
         params: {
-          offset: 1,
+          offset: 0,
         },
       })
       .then((res) => {

@@ -25,7 +25,7 @@ export default function FormChannel(props: FormChannelProps) {
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
 
-  const { getChannelsUserlist } = useContext(ChannelsContext);
+  const { getChannelsUserlist, getAvailableChannels } = useContext(ChannelsContext);
 
   // create channel in db
   async function createChannels() {
@@ -42,7 +42,7 @@ export default function FormChannel(props: FormChannelProps) {
         console.log("channel created with success");
         console.log(channelData);
         getChannelsUserlist();
-        //props.getAvailableChannels();
+        getAvailableChannels();
       })
       .catch((res) => {
         console.log("error");

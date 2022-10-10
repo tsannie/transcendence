@@ -19,16 +19,17 @@ import { SocketContext } from "../../contexts/SocketContext";
 import { IChannel, IDm, IMessage } from "./types";
 import { MessagesContext } from "../../contexts/MessagesContext";
 import { UserContext } from "../../contexts/UserContext";
+import { DmsContext } from "../../contexts/DmsContext";
 
 interface ChatUserListProps {
   setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-  //const socket = useContext(SocketContext);
   const { setMessagesList, setTargetUsername } = useContext(MessagesContext);
   const [users, setUsers] = React.useState<any[]>([]);
   const { userid } = useContext(UserContext);
+  const { getDmsList } = useContext(DmsContext);
 
   async function getAllUsers() {
     await api
@@ -54,7 +55,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
         console.log("dm created with success");
         console.log(targetUsername);
         console.log(res.data.messages);
-        //props.getDmsList();
+        getDmsList();
         setMessagesList(res.data.messages);
       })
       .catch((res) => {
