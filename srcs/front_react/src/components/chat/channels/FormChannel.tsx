@@ -1,9 +1,12 @@
 import {
+  Alert,
   Box,
   Button,
   FormControl,
   Grid,
   InputLabel,
+  List,
+  ListItem,
   MenuItem,
   Select,
   TextField,
@@ -24,6 +27,7 @@ export default function FormChannel(props: FormChannelProps) {
   const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
+  const [error, setError] = useState("");
 
   const { getChannelsUserlist, getAvailableChannels } = useContext(ChannelsContext);
 
@@ -47,53 +51,54 @@ export default function FormChannel(props: FormChannelProps) {
       .catch((res) => {
         console.log("error");
         console.log(res.response.data.message);
+        setError(res.response.data.message[1]);
       });
+      setError("");
   }
 
   return (
     <>
       <TextField
-        sx={{}}
         variant="outlined"
         placeholder="name"
         onChange={(event) => {
           setNameChannel(event.target.value);
         }}
-      />
-      <FormControl>
-        <InputLabel id="channel-status">Status</InputLabel>
-        <Select
-          sx={{
-            width: "fit-content",
-          }}
-          labelId="channel-status"
-          id="channel-status-select"
-          value={status}
-          label="Status"
-          onChange={(event) => {
-            setStatus(event.target.value);
-            if (event.target.value === "Protected") {
-              setEnablePassword(true);
-            } else {
-              setEnablePassword(false);
-            }
-          }}
         >
-          <MenuItem value={"Public"}>Public</MenuItem>
-          <MenuItem value={"Private"}>Private</MenuItem>
-          <MenuItem value={"Protected"}>Protected</MenuItem>
-        </Select>
-      </FormControl>
-      {enablePassword && (
-        <TextField
-          variant="outlined"
-          placeholder="password"
-          onChange={(event) => {
-            setNewPassword(event.target.value);
-          }}
-        />
-      )}
-      <Button sx={{}} variant="contained" onClick={createChannels}>
+        </TextField>
+        {error !== "" && <Alert severity="error"> {error} </Alert> }
+        <FormControl>
+          <InputLabel id="channel-status">Status</InputLabel>
+          <Select
+            labelId="channel-status"
+            id="channel-status-select"
+            value={status}
+            label="Status"
+            onChange={(event) => {
+              setStatus(event.target.value);
+              if (event.target.value === "Protected") {
+                setEnablePassword(true);
+              } else {
+                setEnablePassword(false);
+              }
+            }}
+          >
+            <MenuItem value={"Public"}>Public</MenuItem>
+            <MenuItem value={"Private"}>Private</MenuItem>
+            <MenuItem value={"Protected"}>Protected</MenuItem>
+          </Select>
+        </FormControl>
+        {enablePassword && (
+          <TextField
+            variant="outlined"
+            placeholder="password"
+            onChange={(event) => {
+              setNewPassword(event.target.value);
+            }}
+          />
+        )}
+
+      <Button variant="contained" onClick={createChannels}>
         Create channel
       </Button>
     </>

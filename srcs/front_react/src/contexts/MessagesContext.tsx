@@ -52,11 +52,43 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
       };
       console.log(messageData);
       socket.emit("message", messageData);
-      //messages.setMessagesList((list) => [...list, messageData]);
-      let newMessagesList = [...messagesList, messageData];
+      /* let newMessagesList = [...messagesList, messageData];
 
-      setMessagesList(newMessagesList);
+      setMessagesList(newMessagesList); */ // msg list s'actualise que dans le on
       setCurrentMessage("");
+    }
+  }
+
+  async function loadMessages(id: number, isDm: boolean) {
+    console.log("load messages");
+    if (isDm) {
+      await api
+        .get("dm/getById", {
+          params: {
+            id: id,
+          },
+      })
+      .then((res) => {
+        setMessagesList(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid messages");
+        console.log(res);
+      });
+    }
+    else {
+      await api.get("channel/getById", {
+        params: {
+          id: id,
+        },
+      })
+      .then((res) => {
+        setMessagesList(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid messages");
+        console.log(res);
+      });
     }
   }
 

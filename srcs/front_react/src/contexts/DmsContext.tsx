@@ -6,12 +6,16 @@ export type DmsContextType = {
   dmsList: IConvCreated[];
   setDmsList: (dmsList: IConvCreated[]) => void;
   getDmsList: () => void;
+  dmData: any;
+  setDmData: (dmData: any) => void;
 };
 
 export const DmsContext = createContext<DmsContextType>({
   dmsList: [],
   setDmsList: () => {},
   getDmsList: () => {},
+  dmData: {},
+  setDmData: () => {},
 });
 
 interface DmsContextProps {
@@ -21,6 +25,7 @@ interface DmsContextProps {
 export const DmsProvider = ({ children }: DmsContextProps) => {
 
   const [dmsList, setDmsList] = useState<IConvCreated[]>([]);
+  const [dmData, setDmData] = useState<any>();
 
   // get all dms
   async function getDmsList() {
@@ -51,6 +56,8 @@ export const DmsProvider = ({ children }: DmsContextProps) => {
         dmsList,
         setDmsList,
         getDmsList,
+        dmData,
+        setDmData,
       }}
     >
       {children}

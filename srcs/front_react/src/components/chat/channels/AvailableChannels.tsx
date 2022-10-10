@@ -12,7 +12,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { IChannel } from "../types";
-import { LockIcon } from "./LockIcon";
+import LockIcon from '@mui/icons-material/Lock';
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 interface AvailableChannelsProps {}

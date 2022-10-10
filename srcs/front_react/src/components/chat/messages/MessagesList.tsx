@@ -17,6 +17,7 @@ export default function MessagesList(props: MessagesListProps) {
     console.log("listen message");
     socket.on("message", (data) => {
       console.log(data);
+
       let newMessagesList = [...messages.messagesList, data];
 
       messages.setMessagesList(newMessagesList);
