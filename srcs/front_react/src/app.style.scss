@@ -43,6 +43,14 @@ body {
   overflow: hidden;
 }
 
+.bg__hideball {
+  img {
+    width: calc(60 * var(--res));
+  }
+  position: absolute;
+  bottom: 0;
+};
+
 .ball {
   z-index: 2;
   position: absolute;
