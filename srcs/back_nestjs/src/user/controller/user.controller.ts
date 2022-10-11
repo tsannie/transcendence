@@ -1,9 +1,7 @@
-import { Body, Controller, Delete, Get, Header, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
 import { targetDto } from '../dto/target.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { AvatarDto } from '../dto/avatar.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 
