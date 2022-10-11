@@ -11,22 +11,11 @@ import {
   OnGatewayInit,
   WsResponse,
 } from '@nestjs/websockets';
-import { v4 as uuidv4 } from 'uuid';
-import { from, map, Observable } from 'rxjs';
 import { Socket, Server, Namespace } from 'socket.io';
-import { Repository } from 'typeorm';
-import { MessageEntity } from './models/message.entity';
-import { Adapter } from 'socket.io-adapter';
-import { MessageChannel } from 'worker_threads';
-import { MessageController } from './controller/message.controller';
 import { MessageService } from './service/message.service';
-import { uuid } from 'uuidv4';
 import { UserService } from 'src/user/service/user.service';
-import { ChannelService } from 'src/channel/service/channel.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { IMessage } from './models/message.interface';
-import { targetDto } from 'src/user/dto/target.dto';
-import { AuthService } from 'src/auth/service/auth.service';
 import { UserEntity } from 'src/user/models/user.entity';
 
 
@@ -41,9 +30,7 @@ export class MessageGateway
 {
   constructor(
     private messageService: MessageService,
-    private channelService: ChannelService,
     private userService: UserService,
-    private dmService: DmService,
   ) {}
 
   connectedClients: Map<string, UserEntity> = new Map();
