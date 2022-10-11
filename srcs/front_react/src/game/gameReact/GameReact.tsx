@@ -14,7 +14,7 @@ import {
 
 import { GamePlayer_left } from "./GamePlayerLeft";
 import { GamePlayer_right } from "./GamePlayerRight";
-import { ballObj, paddleProps_left, paddleProps_right, player_left, player_right } from "../Game";
+import { ballObj, gameSpecs, paddleProps_left, paddleProps_right, player_left, player_right } from "../Game";
 import { ContactSupport } from "@material-ui/icons";
 
 export function GamePlayer_Left_right(props: any) {
@@ -58,6 +58,7 @@ export function GamePlayer_Left_right(props: any) {
       
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
+      gameSpecs.power = theroom.power;
       setpower(theroom.power);
       //console.log("INGAME_power = ", theroom.power);
     });
@@ -91,12 +92,13 @@ export function GamePlayer_Left_right(props: any) {
   // Sincronize the ball position with the server
 
   function sinc_ball(room_name: string, ballObj: any, first: boolean) {
+    console.log("!!! SINC BALL !!!!")
     if (player_left.won === false && player_right.won === false) {
       var data = {
         room: room_name,
         ball: ballObj,
         first: first,
-        power: power,
+        power: gameSpecs.power,
       };
       socket.emit("sincBall", data);
     }
@@ -128,7 +130,7 @@ export function GamePlayer_Left_right(props: any) {
   let requestAnimationFrameId: any;
   useEffect(() => {
       sinc_ball(props.room, ballObj, true);
-      ballObj.first_set = true;
+      gameSpecs.first_set = true;
       const render = () => {
         requestAnimationFrameId = requestAnimationFrame(render);
         let canvas: any = props.canvasRef.current;
@@ -140,17 +142,15 @@ export function GamePlayer_Left_right(props: any) {
           if (player_left.won === false && player_right.won === false) {
             draw_line(ctx, ballObj, canvas.height, canvas.width);
             draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
-
-            if (power === 4 || power === 5
-            || power === 6 || power === 7) {
-              //console.log("DRAWWWWWW POWEEEERRRR = ", power);
-              draw_smasher(ctx, ballObj, canvas.height, canvas.width);
+            //console.log("power = ", gameSpecs.power);
+            if (gameSpecs.power === 4 || gameSpecs.power === 5
+            || gameSpecs.power === 6 || gameSpecs.power === 7) {
+              draw_smasher(ctx, gameSpecs, ballObj, canvas.height, canvas.width);
             }
-            BallMouv(ctx, ballObj, canvas.height, canvas.width, power);
-            BallCol_left(ctx, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
-
-            BallCol_right(ctx, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
-            if (ballObj.col_now_paddle === true || u === 50) {
+            BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, gameSpecs.power);
+            BallCol_left(ctx, gameSpecs, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
+            BallCol_right(ctx, gameSpecs, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
+            if (ballObj.col_now_paddle === true /* || u === 50 */) {
               sinc_ball(props.room, ballObj, false);
               ballObj.col_now_paddle = false;
               u = 0;

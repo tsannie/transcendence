@@ -10,6 +10,7 @@ import data from "./gameReact/data";
 
 export let {
   ballObj,
+  gameSpecs,
   player_left,
   player_right,
   paddleProps_left,

@@ -20,6 +20,7 @@ import {
 import data from "../gameReact/data";
 export let {
   ballObj,
+  gameSpecs,
   player_left,
   player_right,
   paddleProps_left,
@@ -114,9 +115,9 @@ export function GameSpectator(props: any) {
                 //console.log("DRAWWWWWW POWEEEERRRR = ", power);
                 draw_smasher(ctx, ballObj, canvas.height, canvas.width);
             } */
-            BallMouv(ctx, ballObj, canvas.height, canvas.width, power);
-            BallCol_left(ctx, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
-            BallCol_right(ctx, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
+            BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, power);
+            BallCol_left(ctx, gameSpecs, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
+            BallCol_right(ctx, gameSpecs, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
             PaddleMouv_left(ctx, canvas, paddleProps_left);
             PaddleMouv_right(ctx, canvas, paddleProps_right);
           }
