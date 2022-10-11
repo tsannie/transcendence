@@ -7,6 +7,7 @@ import { api } from "../../const/const";
 import './settings.style.scss';
 import SettingsPicture from "./SettingsPicture";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
+import EditIcon from "../../assets/img/icon/edit.png";
 
 export default function Settings() {
 
@@ -29,14 +30,16 @@ export default function Settings() {
         <h1>Settings</h1>
         <SettingsPicture/>
       </div>
-
+      <div className="settings__editable">
       <h2>Username</h2>
-        <p>{user?.username}</p>
+        <span>{user?.username}</span>
+        <img src={EditIcon}></img>
+        </div>
       <h2>Email</h2>
-        <p>{user?.email}</p>
+        <span>{user?.email}</span>
       <h2>Two Factor Authentication (2FA)</h2>
         {!enable2FA &&
-          <p>{user?.enabled2FA ? "Enabled" : "Disabled"}</p>
+          <span>{user?.enabled2FA ? "Enabled" : "Disabled"}</span>
         }
         {!user?.enabled2FA && !enable2FA &&
           <button onClick={activate2fa}>

@@ -24,6 +24,13 @@
     border-style: dashed;
     border-color: transparent;
   }
+  img:hover {
+    filter: invert(40%);
+  }
+
+  img:active {
+    filter: invert(70%);
+  }
 
   .selected {
     border-color: white;
@@ -34,12 +41,5 @@
       50% { transform: scale(1.1, 0.9); }
       75% { transform: scale(0.95, 1.05); }
   };
-
-  img:hover {
-    filter: invert(40%);
-  }
-  img:active {
-    filter: invert(70%);
-  }
 }
 }
