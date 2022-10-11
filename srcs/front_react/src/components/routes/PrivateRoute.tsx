@@ -13,7 +13,7 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({ component: Rout
 
   const [isLoad, setIsLoad] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
-  const { isLogin, login, user }  = useContext(AuthContext) as AuthContextType;
+  const { isLogin, login }  = useContext(AuthContext) as AuthContextType;
 
 
   useEffect(() => {
@@ -33,8 +33,8 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({ component: Rout
     } else {
       setIsLoad(true);
     }
-
   }, []);
+
 
   if (isLoad === true) {
     if (isLogin) {

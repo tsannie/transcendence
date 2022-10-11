@@ -35,6 +35,12 @@
   }
 }
 
+.settings__editable {
+  img {
+    width: calc(30 * var(--res));
+  }
+}
+
 .settings__picture {
   position: relative;
   img {
