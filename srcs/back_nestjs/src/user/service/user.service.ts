@@ -49,12 +49,24 @@ export class UserService {
   }
 
   // find user by id
-  async findById(input_id: number): Promise<UserEntity> {
-	return await this.allUser.findOne({
-		where: {
-			id: input_id
-		}
-	});
+  async findById(input_id: number, relations_ToLoad : FindOptionsRelations<UserEntity> = undefined): Promise<UserEntity> {
+	if (!relations_ToLoad)
+	{
+		return await this.allUser.findOne({
+			where: {
+				id: input_id
+			}
+		});
+	}
+	else
+	{
+		return await this.allUser.findOne({
+			where: {
+				id: input_id
+			},
+			relations: relations_ToLoad
+		});
+	};
   }
 
   // TODO DELETE

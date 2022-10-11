@@ -36,7 +36,7 @@ import { DmEntity } from './dm/models/dm.entity';
       autoLoadEntities: true,
       synchronize: true, //TODO deploiement false
     }),
-    TypeOrmModule.forFeature([UserEntity, DmEntity]),
+    TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity]),
     UserModule,
     AuthModule,
     PassportModule,
@@ -52,6 +52,7 @@ import { DmEntity } from './dm/models/dm.entity';
     UserService,
     TwoFactorService,
     DmService,
+    MessageService
   ], // AuthResolver
 })
 export class AppModule {}
