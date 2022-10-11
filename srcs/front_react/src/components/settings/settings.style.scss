@@ -31,13 +31,24 @@
     margin-top: 0.6vh;
   }
   button, input {
-    margin-top: 1.5vh;
+    margin-top: 0vh;
   }
 }
 
 .settings__editable {
+  display: flex;
+  align-items: center;
   img {
+    margin-left: calc(5 * var(--res));
+    cursor: pointer;
     width: calc(30 * var(--res));
+  }
+  img:hover {
+    filter: invert(40%);
+  }
+
+  img:active {
+    filter: invert(70%);
   }
 }
 
