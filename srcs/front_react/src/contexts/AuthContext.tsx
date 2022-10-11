@@ -13,6 +13,7 @@ export type AuthContextType = {
   setUser: (user: User) => void;
   login: (user: User) => void;
   logout: () => void;
+  //monitoringSocket: WebSocket | null;
 }
 
 export const AuthContext = React.createContext<Partial<AuthContextType>>({});
@@ -28,9 +29,9 @@ export const AuthProvider = ({ children }: IProps) => {
 
 
   const login = (user: User) => {
-    console.log('IM LOG IN CONTEXT');
     setIsLogin(true);
-    setUser(user);
+    if (!user)
+      setUser(user);
   }
 
   const logout = () => {
