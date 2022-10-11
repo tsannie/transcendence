@@ -1,5 +1,6 @@
-import React, { createContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { MessagesContext } from './MessagesContext';
 
 const socket = io('http://localhost:4000', {
   query: {

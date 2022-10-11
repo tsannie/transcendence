@@ -85,54 +85,29 @@ export class MessageGateway
   addMessage(@MessageBody() data: IMessage, @ConnectedSocket() client: Socket) {
     //): Observable<IMessage> {
     this.logger.log(client.id);
-    console.log(data.target);
 
-    console.log("data = ", data);
     if (data.isDm === true) {
       this.messageService.addMessagetoDm(data);
     } else {
       this.messageService.addMessagetoChannel(data);
     }
+    console.log("data message = ", data);
 
     // emit to all clients
     //this.server.emit('message', data);
 
     // parcourir tous mes clients connectés et envoyer le message uniquement a l'id du target
     this.connectedClients.forEach((value, key) => {
-      console.log("key = ", key);
-      console.log("value = ", value);
       console.log("data.target = ", data.target);
-      if (value.username === data.target) {
+      if (value.username === data.target || value.username === data.author) {
         // get all message between the 2 users
         //this.messageService.loadMessages()
         //this.dmService.
         this.server.to(key).emit('message', data);
       }
     });
+    //this.server.emit('message', data);
+    console.log("BEFORE SEND TO CLIENT");
     //this.server.to(client.id).emit('message', data);
   }
-
-  // emit all dms of a user
-  /* @SubscribeMessage('getDmList')
-  getDmList(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
-
-    console.log("data = ", data);
-
-    let allDms = this.dmService.getAllDms(this.connectedClients.get(client.id));
-    this.logger.log(`client ${client.id} get all dm ${allDms} `);
-    console.log("allDms = ", allDms);
-    this.server.emit('getDmList', allDms);
-  }
-
-  @SubscribeMessage('getConv')
-  getConv(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
-
-    console.log("data = ", data);
-
-    // get id of the dm in data
-
-    // return all messages of a dm with his id
-    //let allMessages = this.dmService.getDmById();
-    this.server.emit('getConv', data);
-  } */
 }
