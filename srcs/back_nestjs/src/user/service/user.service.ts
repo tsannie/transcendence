@@ -2,7 +2,7 @@ import { Catch, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userInfo } from 'os';
 import { from, Observable } from 'rxjs';
-import { Repository, TypeORMError } from 'typeorm';
+import { Repository, TypeORMError, UpdateResult } from 'typeorm';
 import { UserEntity } from '../models/user.entity';
 
 @Injectable()
@@ -21,6 +21,18 @@ export class UserService {
     return await this.allUser.findOne({
       username: username,
     });
+  }
+
+  // find user by mail
+  async findByMail(email: string): Promise<UserEntity> {
+    return await this.allUser.findOne({
+      email: email,
+    });
+  }
+
+  // edit username for user
+  async editUsername(userId: number, newUsername: string): Promise<UpdateResult> {
+    return await this.allUser.update(userId, { username: newUsername });
   }
 
   // find user by id
