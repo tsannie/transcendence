@@ -31,27 +31,27 @@ export class BallEntity {
   @Column({ nullable: true, type: 'float' })
   way_x: number = 1;
 
-  // BALL SPEED MOUV
+  /// BALL SPEED MOUV
 
   @Column({ nullable: true, type: 'float' })
-  first_dx: number = 1;
+  first_dx: number = 2;
 
   @Column({ nullable: true, type: 'float' })
-  first_dy: number = 2;
+  first_dy: number = 3;
 
   @Column({ nullable: true, type: 'float' })
   ingame_dx: number = 4;
 
   @Column({ nullable: true, type: 'float' })
-  ingame_dy: number = 6;
+  ingame_dy: number = 5;
 
-  // POWER UP SPEED MOUV/
+  // POWER UP SPEED MOUV
 
   @Column({ nullable: true, type: 'float' })
-  power_first_dx: number = 2;
+  power_first_dx: number = 3;
   
   @Column({ nullable: true, type: 'float' })
-  power_first_dy: number = 3;
+  power_first_dy: number = 4;
   
   @Column({ nullable: true, type: 'float' })
   power_ingame_dx: number = 5;
