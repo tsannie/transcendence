@@ -1,35 +1,33 @@
 export default {
+  gameSpecs: {
+    smash: 1,
+    power: 0,
+    first_set: true,
+  },
+  
   ballObj: {
     x: 500,
     y: 250,
     
-    init_pos_x: 500,
-    init_pos_y: 250,
-
     ball_way_x : 0,
     ball_way_y : 0,
-  
+    
     init_ball_pos: false,
     first_col: false,
 
     rad: 10,
     is_col: false,
-
+    
     ingame_dx: 0,
     ingame_dy: 0,
-
+    
     first_dx: 0,
     first_dy: 0,
-
-    smash: 1,
-
-    first_set: true,
-    cal_right : false,
 
     col_paddle: false,
     col_now_paddle: false,
   },
-
+  
   paddleProps_left: {
     height: 100,
     width: 20,

@@ -216,6 +216,10 @@ export function GameWaitPlayerReady(props: any) {
         )}
       </b>
           <h1>{wichpower}</h1> 
+    <button style={{ color: color_ready }} onClick={ReadyGame}>
+      {" "}
+      READY ?
+    </button>
       <h2> Select map </h2>
 
       <input onClick={() => select_map(1)} style={{border:map1}} type="image" id="image" alt="Login" src={img_map1}></input>
@@ -228,10 +232,6 @@ export function GameWaitPlayerReady(props: any) {
       <input onClick={() => select_power(2)} style={{border:power2}} type="image" id="image" alt="Login" src={img_power2}></input>
       <input onClick={() => select_power(3)} style={{border:power3}} type="image" id="image" alt="Login" src={img_power3}></input>
     <br />
-    <button style={{ color: color_ready }} onClick={ReadyGame}>
-      {" "}
-      READY ?
-    </button>
     </div>
   );
   } else if (color_ready === "green") {
