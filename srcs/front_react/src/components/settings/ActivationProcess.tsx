@@ -1,19 +1,20 @@
 import { Button, TextField } from "@mui/material";
 import Snackbar from '@mui/material/Snackbar';
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Buffer } from 'buffer';
 import { api } from "../../const/const";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
 
 interface IProps {
   setEnable2FA: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenSuccess: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenError: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ActivationProcess(props: IProps) {
+  const { setReason, setOpenSuccess, setOpenError } = useContext(AuthContext) as AuthContextType;
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
+
 
   async function getQrCode() {
     await api.get('2fa/generate' , {
@@ -29,10 +30,12 @@ export default function ActivationProcess(props: IProps) {
     await api.post('2fa/check-token', {
       token: token,
     }).then(res => {
-      props.setOpenSuccess(true);
+      setOpenSuccess(true);
+      setReason('2FA activated');
       props.setEnable2FA(false);
     }).catch(err => {
-      props.setOpenError(true);
+      setReason('Invalid token');
+      setOpenError(true);
       setToken('');
     })
   }
