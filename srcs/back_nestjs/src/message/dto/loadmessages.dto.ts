@@ -7,7 +7,7 @@ export class LoadMessagesDto{
     @Type( () => Number )
     @Min(0)
     id: number;
-    
+
     @IsDefined()
     @IsNotEmpty()
     @Type( () => Number )

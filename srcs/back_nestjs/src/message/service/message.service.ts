@@ -23,7 +23,7 @@ export class MessageService {
 
 	/* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
 	checkUserValidity(type: string, inputed_id: number, user: UserEntity) : DmEntity | ChannelEntity {
-		if (type == "dm")
+		if (type === "dm")
 		{
 			let dm = user.dms.find( elem => elem.id === inputed_id);
 			if (!dm)
@@ -31,12 +31,17 @@ export class MessageService {
 			else
 				return dm;
 		}
-		if (type == "channel")
+		else if (type === "channel")
 		{
-			let owner_of = user.owner_of.find( elem => elem.id === inputed_id);
-			let admin_of = user.admin_of.find( elem => elem.id === inputed_id);
-			let user_of = user.channels.find( elem => elem.id === inputed_id);
-			console.log(owner_of, admin_of, user_of);
+			console.log("type of i_id = ", typeof inputed_id);
+			console.log("user = ", user);
+			let owner_of = user.owner_of.find( elem => elem.id == inputed_id);
+			let admin_of = user.admin_of.find( elem => elem.id == inputed_id);
+			let user_of = user.channels.find( elem => elem.id == inputed_id);
+			console.log("owner of = ", owner_of);
+			console.log("admin of = ", admin_of);
+			console.log("user of = ", user_of);
+			//console.log(owner_of, admin_of, user_of);
 			if (!owner_of && !admin_of && !user_of)
 				throw new UnprocessableEntityException("User is not part of the channel.");
 			else

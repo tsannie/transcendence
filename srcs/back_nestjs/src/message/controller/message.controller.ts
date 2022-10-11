@@ -30,6 +30,6 @@ export class MessageController {
 	@UseGuards( JwtTwoFactorGuard )
 	@Get("channel")
 	async loadChannelMessages(@Query() data: LoadMessagesDto, @Request() req) {
-		return await this.messageService.loadMessages("channel", data.id, data.offset, req.User);
+		return await this.messageService.loadMessages("channel", data.id, data.offset, req.user);
 	}
 }

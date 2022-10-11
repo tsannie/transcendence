@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { IConvCreated } from "../components/chat/types";
+import { IConvCreated, IDm } from "../components/chat/types";
 import { api } from "../const/const";
 
 export type DmsContextType = {
