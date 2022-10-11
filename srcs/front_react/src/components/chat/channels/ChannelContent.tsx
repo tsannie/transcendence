@@ -39,7 +39,7 @@ export default function ChannelContent(props: ChannelContentProps) {
 
     console.log(channel);
     await api
-      .post("channel/deleteChannel", newChannel)
+      .post("channel/delete", newChannel)
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);

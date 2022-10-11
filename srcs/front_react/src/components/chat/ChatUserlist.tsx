@@ -27,21 +27,8 @@ interface ChatUserListProps {
 
 export default function ChatUserlist(props: ChatUserListProps) {
   const { setMessagesList, setTargetUsername } = useContext(MessagesContext);
-  const [users, setUsers] = React.useState<any[]>([]);
-  const { userid } = useContext(UserContext);
+  const { userid, users } = useContext(UserContext);
   const { getDmsList } = useContext(DmsContext);
-
-  async function getAllUsers() {
-    await api
-      .get("user")
-      .then((res) => {
-        setUsers(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-        console.log(res);
-      });
-  }
 
   function handleClick(username: string) {
     createNewConv(username);
@@ -50,7 +37,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
   async function createDm(targetUsername: Partial<IDm>) {
     console.log("create dm");
     await api
-      .post("dm/createDm", targetUsername)
+      .post("dm/create", targetUsername)
       .then((res) => {
         console.log("dm created with success");
         console.log(targetUsername);
@@ -67,7 +54,6 @@ export default function ChatUserlist(props: ChatUserListProps) {
   async function createNewConv(targetUsername: string) {
     let newDm: Partial<IDm> = {
       target: targetUsername,
-      offset: 1,
     };
 
     console.log(newDm);
@@ -76,11 +62,6 @@ export default function ChatUserlist(props: ChatUserListProps) {
     props.setChatContent(ChatContent.MESSAGES);
     setTargetUsername(targetUsername);
   }
-
-  useEffect(() => {
-    console.log("get all users");
-    getAllUsers();
-  }, []);
 
   return (
     <>

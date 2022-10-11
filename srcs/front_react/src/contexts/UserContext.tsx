@@ -6,12 +6,14 @@ export type UserContextType = {
   username: string;
   userid: number;
   setUsername: (username: string) => void;
+  users: any[]
 };
 
 export const UserContext = createContext<UserContextType>({
   username: "",
   userid: 0,
   setUsername: () => {},
+  users: [],
 });
 
 interface UserContextProps {
@@ -21,6 +23,7 @@ interface UserContextProps {
 export const UserProvider = ({ children }: UserContextProps) => {
   const [username, setUsername] = useState("");
   const [userid, setUserid] = useState(0);
+  const [users, setUsers] = useState<any[]>([]);
 
   async function getUser() {
     console.log("get user");
@@ -35,9 +38,22 @@ export const UserProvider = ({ children }: UserContextProps) => {
       });
   }
 
+  async function getAllUsers() {
+    await api
+      .get("user")
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+        console.log(res);
+      });
+  }
+
   // get all User
   useEffect(() => {
     getUser();
+    getAllUsers();
   }, []);
 
   return (
@@ -46,6 +62,7 @@ export const UserProvider = ({ children }: UserContextProps) => {
         username,
         setUsername,
         userid,
+        users,
       }}
     >
       {children}
