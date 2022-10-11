@@ -21,9 +21,8 @@ export default function App() {
 
 
   return (
-      <div className="bg">
-        <Background/>
-        <div className="app">
+    <div className="app">
+      <Background/>
       <Routes key={location.pathname} location={location}>
         {/* Auth Routes (public) */}
         <Route path="/auth" element={<LoginPage />} />
@@ -36,7 +35,6 @@ export default function App() {
         <Route path="/game" element={<PrivateRoute component={Profile} />}/>
         <Route path="/settings" element={<PrivateRoute component={Settings} />}/>
       </Routes>
-      </div>
     </div>
   );
 }
