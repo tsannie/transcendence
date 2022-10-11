@@ -30,8 +30,7 @@ export const AuthProvider = ({ children }: IProps) => {
 
   const login = (user: User) => {
     setIsLogin(true);
-    if (!user)
-      setUser(user);
+    setUser(user);
   }
 
   const logout = () => {
