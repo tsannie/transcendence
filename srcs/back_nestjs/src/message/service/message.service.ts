@@ -33,14 +33,9 @@ export class MessageService {
 		}
 		else if (type === "channel")
 		{
-			console.log("type of i_id = ", typeof inputed_id);
-			console.log("user = ", user);
-			let owner_of = user.owner_of.find( elem => elem.id == inputed_id);
+			let owner_of = user.owner_of.find( elem => elem.id == inputed_id); // TODO check if == is ok
 			let admin_of = user.admin_of.find( elem => elem.id == inputed_id);
 			let user_of = user.channels.find( elem => elem.id == inputed_id);
-			console.log("owner of = ", owner_of);
-			console.log("admin of = ", admin_of);
-			console.log("user of = ", user_of);
 			//console.log(owner_of, admin_of, user_of);
 			if (!owner_of && !admin_of && !user_of)
 				throw new UnprocessableEntityException("User is not part of the channel.");

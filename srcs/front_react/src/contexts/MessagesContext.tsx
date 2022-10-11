@@ -41,6 +41,7 @@ interface MessagesContextProps {
 
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);
+  const [isNewMessage, setIsNewMessage] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
   const [targetUsername, setTargetUsername] = useState("");
   const [isDm, setIsDm] = useState(false);
@@ -65,9 +66,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
       };
       console.log(messageData);
       socket.emit("message", messageData);
-      /* let newMessagesList = [...messagesList, messageData];
-
-      setMessagesList(newMessagesList); */ // msg list s'actualise que dans le on
+      setIsNewMessage(true);
       setCurrentMessage("");
     }
   }
@@ -81,33 +80,43 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
             id: id, // id du dm
             offset: 0,
           },
-      })
-      .then((res) => {
-        console.log("msg data = ", res.data);
-        setMessagesList(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid messages");
-        console.log(res);
-      });
-    }
-    else {
-      await api.get("message/channel", {
-        params: {
-          id: id, // id du channel
-          offset: 0,
-        },
-      })
-      .then((res) => {
-        console.log("channel data = ", res.data);
-        setMessagesList(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid messages");
-        console.log(res);
-      });
+        })
+        .then((res) => {
+          console.log("msg data = ", res.data);
+          setMessagesList(res.data);
+        })
+        .catch((res) => {
+          console.log("invalid messages");
+          console.log(res);
+        });
+    } else {
+      await api
+        .get("message/channel", {
+          params: {
+            id: id, // id du channel
+            offset: 0,
+          },
+        })
+        .then((res) => {
+          console.log("channel data = ", res.data);
+          setMessagesList(res.data);
+        })
+        .catch((res) => {
+          console.log("invalid messages");
+          console.log(res);
+        });
     }
   }
+
+  useEffect(() => {
+    socket.on("message", (data) => {
+      console.log(data);
+      if (isNewMessage === true) {
+        loadMessages(data.id, data.isDm);
+        setIsNewMessage(false);
+      }
+    });
+  }, [socket]);
 
   return (
     <MessagesContext.Provider
