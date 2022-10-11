@@ -612,15 +612,14 @@
     webpack "5.71.0"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^8.0.0":
-  version "8.4.4"
-  resolved "https://registry.npmjs.org/@nestjs/common/-/common-8.4.4.tgz"
-  integrity sha512-QHi7QcgH/5Jinz+SCfIZJkFHc6Cch1YsAEGFEhi6wSp6MILb0sJMQ1CX06e9tCOAjSlBwaJj4PH0eFCVau5v9Q==
+"@nestjs/common@^9.1.4":
+  version "9.1.4"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-9.1.4.tgz#83ed4f5627db12c0e0aaf1438becba8927fb97e2"
+  integrity sha512-hmGTZ8ShKFDqqlU02uU8e/8PNE4bnES4pcFa6s/T1pLDYWjyf/75Klunro1W4aQPHcxnnohBmB27WxMqFTPEfw==
   dependencies:
-    axios "0.26.1"
     iterare "1.2.1"
-    tslib "2.3.1"
-    uuid "8.3.2"
+    tslib "2.4.0"
+    uuid "9.0.0"
 
 "@nestjs/config@^2.0.0":
   version "2.0.0"
@@ -1576,13 +1575,6 @@ asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz"
   integrity sha1-x57Zf380y48robyXkLzDZkdLS3k=
-
-axios@0.26.1:
-  version "0.26.1"
-  resolved "https://registry.npmjs.org/axios/-/axios-0.26.1.tgz"
-  integrity sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==
-  dependencies:
-    follow-redirects "^1.14.8"
 
 babel-jest@^27.5.1:
   version "27.5.1"
@@ -2850,11 +2842,6 @@ flatted@^3.1.0:
   version "3.2.5"
   resolved "https://registry.npmjs.org/flatted/-/flatted-3.2.5.tgz"
   integrity sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==
-
-follow-redirects@^1.14.8:
-  version "1.14.9"
-  resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.14.9.tgz"
-  integrity sha512-MQDfihBQYMcyy5dhRDJUHcw7lb2Pv/TuE6xP1vyraLukNDHKbDxDNaOE3NbCAdKQApno+GPRyo1YAp89yCjK4w==
 
 fork-ts-checker-webpack-plugin@7.2.3:
   version "7.2.3"
@@ -5968,6 +5955,11 @@ uuid@8.3.2, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uuid@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
+  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 uuidv4@^6.2.13:
   version "6.2.13"
