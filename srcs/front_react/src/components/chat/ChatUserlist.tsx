@@ -47,7 +47,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
     createNewConv(username);
   }
 
-  async function createDm(targetUsername: IDm) {
+  async function createDm(targetUsername: Partial<IDm>) {
     console.log("create dm");
     await api
       .post("dm/createDm", targetUsername)
@@ -65,7 +65,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
   }
 
   async function createNewConv(targetUsername: string) {
-    let newDm: IDm = {
+    let newDm: Partial<IDm> = {
       target: targetUsername,
       offset: 1,
     };

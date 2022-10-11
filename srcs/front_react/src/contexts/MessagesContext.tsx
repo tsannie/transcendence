@@ -45,7 +45,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
     inputMessage.value = "";
     if (currentMessage !== "") {
-      const messageData: IMessage = {
+      const messageData: Partial<IMessage> = {
         author: user.username,
         content: currentMessage,
         target: targetUsername,

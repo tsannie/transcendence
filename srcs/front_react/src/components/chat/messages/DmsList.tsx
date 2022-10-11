@@ -1,4 +1,4 @@
-import { Box, Grid, IconButton, List, ListItemButton, Popover, Typography } from "@mui/material";
+import { Box, Grid, IconButton, List, ListItemButton, ListItemText, Popover, Typography } from "@mui/material";
 import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { IConvCreated, IDm, IMessage } from "../types";
 import AddIcon from "@mui/icons-material/Add";
@@ -24,6 +24,7 @@ export default function DmsList(props: DmsListProps) {
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
   const { targetUsername } = useContext(MessagesContext);
 
+  console.log(dmsList); // check why dmsList is not empty at the beginning
   async function getDmDatas(channel: any) {
     await api
       .get("dm/", {
@@ -56,7 +57,9 @@ export default function DmsList(props: DmsListProps) {
           key={dm.id}
           onClick={() => handleClick(dm)}
         >
-          <Typography>{targetUsername}</Typography>
+          <ListItemText>
+            {targetUsername}
+          </ListItemText>
         </ListItemButton>
       );
     })}
