@@ -10,9 +10,14 @@ export type MessagesContextType = {
   setMessagesList: (messagesList: IMessage[]) => void;
   currentMessage: string;
   setCurrentMessage: (currentMessage: string) => void;
-  sendMessage: () => void;
+  sendMessage: (id: number) => void;
   targetUsername: string;
   setTargetUsername: (targetUsername: string) => void;
+  loadMessages: (targetId: number, isDm: boolean) => void;
+  isDm: boolean;
+  setIsDm: (isDm: boolean) => void;
+  convId: number;
+  setConvId: (convId: number) => void;
 };
 
 export const MessagesContext = createContext<MessagesContextType>({
@@ -23,7 +28,11 @@ export const MessagesContext = createContext<MessagesContextType>({
   sendMessage: () => {},
   targetUsername: "",
   setTargetUsername: () => {},
-
+  loadMessages: () => {},
+  isDm: false,
+  setIsDm: () => {},
+  convId: 0,
+  setConvId: () => {},
 });
 
 interface MessagesContextProps {
@@ -34,10 +43,12 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [targetUsername, setTargetUsername] = useState("");
+  const [isDm, setIsDm] = useState(false);
+  const [convId, setConvId] = useState(0);
   const socket = useContext(SocketContext);
   const user = useContext(UserContext);
 
-  function sendMessage() {
+  function sendMessage(id: number) {
     console.log("send message");
     const inputMessage = document.getElementById(
       "input-message"
@@ -46,9 +57,11 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
     inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: Partial<IMessage> = {
+        id: id,
         author: user.username,
         content: currentMessage,
         target: targetUsername,
+        isDm: isDm,
       };
       console.log(messageData);
       socket.emit("message", messageData);
@@ -61,14 +74,16 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   async function loadMessages(id: number, isDm: boolean) {
     console.log("load messages");
-    if (isDm) {
+    if (isDm === true) {
       await api
-        .get("dm/getById", {
+        .get("message/dm", {
           params: {
-            id: id,
+            id: id, // id du dm
+            offset: 0,
           },
       })
       .then((res) => {
+        console.log("msg data = ", res.data);
         setMessagesList(res.data);
       })
       .catch((res) => {
@@ -77,12 +92,14 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
       });
     }
     else {
-      await api.get("channel/getById", {
+      await api.get("message/channel", {
         params: {
-          id: id,
+          id: id, // id du channel
+          offset: 0,
         },
       })
       .then((res) => {
+        console.log("channel data = ", res.data);
         setMessagesList(res.data);
       })
       .catch((res) => {
@@ -102,6 +119,11 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
         sendMessage,
         targetUsername,
         setTargetUsername,
+        loadMessages,
+        isDm,
+        setIsDm,
+        convId,
+        setConvId,
       }}
     >
       {children}

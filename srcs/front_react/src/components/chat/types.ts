@@ -1,8 +1,10 @@
 export interface IMessage {
+  id: number; // id du dm ou du channel
   uuid: string;
   author: string;
   content: string;
   target: string;
+  isDm: boolean;
 }
 
 export interface ICreateChannel {
@@ -13,6 +15,7 @@ export interface ICreateChannel {
 
 // TODO: add id
 export interface IChannel {
+  id: number;
   name: string;
   password: string;
   status: string;

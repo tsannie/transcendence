@@ -22,7 +22,7 @@ interface DmsListProps {
 export default function DmsList(props: DmsListProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
-  const { targetUsername } = useContext(MessagesContext);
+  const { targetUsername, loadMessages, isDm, setIsDm, setConvId } = useContext(MessagesContext);
 
   console.log(dmsList); // check why dmsList is not empty at the beginning
   async function getDmDatas(dm: any) {
@@ -46,6 +46,10 @@ export default function DmsList(props: DmsListProps) {
   function handleClick(dm: any) {
     props.setChatContent(ChatContent.MESSAGES);
     getDmDatas(dm);
+    console.log("dm id clicked", dm.id);
+    setIsDm(true);
+    setConvId(dm.id);
+    loadMessages(dm.id, isDm);
     console.log("click on user dms list");
   }
 

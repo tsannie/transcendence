@@ -1,7 +1,9 @@
+//changer ca en dto
+
 export interface IMessage {
-	id: string;
+	id: number; // id du dm
 	author: string;
 	content: string;
-	channel: string;
 	target: string;
+	isDm: boolean;
 }
