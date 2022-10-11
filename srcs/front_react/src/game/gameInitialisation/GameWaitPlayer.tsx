@@ -1,27 +1,28 @@
 import { useEffect, useState } from "react";
 import { socket } from "../Game";
 import img_map1 from "../../assets/game_assets/map1.png";
-import img_map2 from "../../assets/game_assets/map1.png";
-import img_map3 from "../../assets/game_assets/map1.png";
-import img_power1 from "../../assets/game_assets/map1.png";
-import img_power2 from "../../assets/game_assets/map1.png";
-import img_power3 from "../../assets/game_assets/map1.png";
+import img_map2 from "../../assets/game_assets/map2.png";
+import img_map3 from "../../assets/game_assets/map3.png";
+import img_power1 from "../../assets/game_assets/power1.png";
+import img_power2 from "../../assets/game_assets/power2.png";
+import img_power3 from "../../assets/game_assets/power3.png";
 import "./init.css"
 export function GameWaitPlayerReady(props: any) {
   const [color_ready, setColor_ready] = useState("");
   const [im_ready, setim_ready] = useState(false);
 
-  const [map1, setmap] = useState("5px solid green");
+  const [map1, setmap1] = useState("5px solid green");
   const [map2, setmap2] = useState("5px solid white");
   const [map3, setmap3] = useState("5px solid white");
 
-  const [power1, setpower] = useState("5px solid green");
+  const [power1, setpower1] = useState("5px solid white");
   const [power2, setpower2] = useState("5px solid white");
   const [power3, setpower3] = useState("5px solid white");
 
   const [witchmap, setwitchmap] = useState(1);
-  const [wichpower, setwichpower] = useState(1);
-
+  const [wichpower, setwichpower] = useState(0);
+  // tableau de string withc power 
+  
   // Set both players ready before game start
 
   function ReadyGame() {
@@ -54,11 +55,11 @@ export function GameWaitPlayerReady(props: any) {
   function select_map(map: number) {
   
     if (color_ready === "") {
-      setmap("5px solid white");
+      setmap1("5px solid white");
       setmap2("5px solid white");
       setmap3("5px solid white");
       if (map === 1) {
-        setmap("5px solid green");
+        setmap1("5px solid green");
         setwitchmap(1);
       }
       if (map === 2) {
@@ -74,20 +75,34 @@ export function GameWaitPlayerReady(props: any) {
 
   function select_power(power: number) {
     if (color_ready === "") {
-      setpower("5px solid white");
-      setpower2("5px solid white");
-      setpower3("5px solid white");
-      if (power === 1) {
-        setpower("5px solid green");
-        setwichpower(1);
+      //setpower("5px solid white");
+     // setpower2("5px solid white");
+     // setpower3("5px solid white");
+      
+      if (power === 1 && power1 === "5px solid green") {
+        setpower1("5px solid white");
+        setwichpower(wichpower - 1);
       }
-      if (power === 2) {
+      else if (power === 1) {
+        setpower1("5px solid green");
+        setwichpower(wichpower + 1);
+      }
+      if (power === 2 && power2 === "5px solid green") {
+        setpower2("5px solid white");
+        setwichpower(wichpower - 2);
+
+      }
+      else if (power === 2) {
         setpower2("5px solid green");
-        setwichpower(2);
+        setwichpower(wichpower + 2);
       }
-      if (power === 3) {
+      if (power === 3 && power3 === "5px solid green") {
+        setpower3("5px solid white");
+        setwichpower(wichpower - 4);
+      }
+      else if (power === 3) {
         setpower3("5px solid green");
-        setwichpower(3);
+        setwichpower(wichpower + 4);
       }
     }
   }
@@ -100,17 +115,62 @@ export function GameWaitPlayerReady(props: any) {
         </div>
       );
     }
-    if (power === 2) {
+    else if (power === 2) {
       return (
         <div className="power">
           <img src={img_power2} style={{border:power2}} alt="power2" />
         </div>
       );
     }
-    if (power === 3) {
+    else if (power === 3) {
+      return (
+        <div className="power">
+          <img src={img_power1} style={{border:power3}} alt="power3" />
+          <img src={img_power2} style={{border:power3}} alt="power3" />
+
+        </div>
+      );
+    }
+    else if (power === 4) {
       return (
         <div className="power">
           <img src={img_power3} style={{border:power3}} alt="power3" />
+
+        </div>
+      );
+    }
+    else if (power === 5) {
+      return (
+        <div className="power">
+          <img src={img_power1} style={{border:power3}} alt="power3" />
+          <img src={img_power3} style={{border:power3}} alt="power3" />
+
+        </div>
+      );
+    }
+    else if (power === 6) {
+      return (
+        <div className="power">
+          <img src={img_power2} style={{border:power3}} alt="power3" />
+          <img src={img_power3} style={{border:power3}} alt="power3" />
+
+        </div>
+      );
+    }
+    else if (power === 7) {
+      return (
+        <div className="power">
+          <img src={img_power1} style={{border:power3}} alt="power3" />
+          <img src={img_power2} style={{border:power3}} alt="power3" />
+          <img src={img_power3} style={{border:power3}} alt="power3" />
+
+        </div>
+      );
+    }
+    else {
+      return (
+        <div className="power">
+          <h3> : no power</h3>
         </div>
       );
     }
@@ -155,7 +215,7 @@ export function GameWaitPlayerReady(props: any) {
           <h2> waiting for : {props.op_id} </h2>
         )}
       </b>
-
+          <h1>{wichpower}</h1> 
       <h2> Select map </h2>
 
       <input onClick={() => select_map(1)} style={{border:map1}} type="image" id="image" alt="Login" src={img_map1}></input>

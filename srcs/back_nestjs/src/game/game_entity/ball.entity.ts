@@ -22,15 +22,16 @@ export class BallEntity {
 
   @Column({ default: true })
   right: boolean = true;
+  
+  ///////////////////
+
+  @Column({ nullable: true, type: 'float' })
+  way_y: number = 1;
+  
+  @Column({ nullable: true, type: 'float' })
+  way_x: number = 1;
 
   // BALL SPEED MOUV
-
-  @Column({ nullable: true, type: 'float' })
-  ingame_dx: number = 4;
-
-  @Column({ nullable: true, type: 'float' })
-  ingame_dy: number = 6;
-
 
   @Column({ nullable: true, type: 'float' })
   first_dx: number = 1;
@@ -38,19 +39,31 @@ export class BallEntity {
   @Column({ nullable: true, type: 'float' })
   first_dy: number = 2;
 
+  @Column({ nullable: true, type: 'float' })
+  ingame_dx: number = 4;
 
-  // POWER UP SPEED
+  @Column({ nullable: true, type: 'float' })
+  ingame_dy: number = 6;
+
+  // POWER UP SPEED MOUV/
 
   @Column({ nullable: true, type: 'float' })
   power_first_dx: number = 2;
   
   @Column({ nullable: true, type: 'float' })
-  power_first_dy: number = 4;
-
-
+  power_first_dy: number = 3;
+  
   @Column({ nullable: true, type: 'float' })
-  power_ingame_dx: number = 6;
-
+  power_ingame_dx: number = 5;
+  
   @Column({ nullable: true, type: 'float' })
-  power_ingame_dy: number = 8;
+  power_ingame_dy: number = 6;
+
+  // BALL SIZE
+
+  @Column({ nullable: true})
+  power_rad : number = 30;
+
+  @Column({ nullable: true})
+  rad : number = 10;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { socket } from "../Game";
 import {
   BallMouv,
@@ -9,6 +9,7 @@ import {
   draw_line,
   draw_score,
   draw_game_ended,
+  draw_smasher,
 } from "./BallMouv";
 
 import { GamePlayer_left } from "./GamePlayerLeft";
@@ -17,15 +18,18 @@ import { ballObj, paddleProps_left, paddleProps_right, player_left, player_right
 import { ContactSupport } from "@material-ui/icons";
 
 export function GamePlayer_Left_right(props: any) {
+  const [power, setpower] = useState(0);
+  const [date, setdate] = useState(new Date());
+  
+  let x = 0;
   let u = 0;
   useEffect(() => {
 
     // This useEffect is used to get the room data from the server to set the ball position and the players position
 
     socket.on("sincTheBall", (theroom: any) => {
-      if (theroom.power === 2) {
-        console.log("INGAME_power = ", theroom.power);
-
+      if (theroom.power === 1 || theroom.power === 3
+        || theroom.power === 5 || theroom.power === 7) {
         ballObj.ingame_dx = theroom.set.ball.power_ingame_dx;
         ballObj.ingame_dy = theroom.set.ball.power_ingame_dy;
   
@@ -35,16 +39,27 @@ export function GamePlayer_Left_right(props: any) {
       else {
         ballObj.ingame_dx = theroom.set.ball.ingame_dx;
         ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-  
+        
         ballObj.first_dx = theroom.set.ball.first_dx;
         ballObj.first_dy = theroom.set.ball.first_dy;
       }
-
+      if (theroom.power === 2 || theroom.power === 3
+      || theroom.power === 6 || theroom.power === 7) {
+        ballObj.rad = theroom.set.ball.power_rad;
+      }
+      else {
+        ballObj.rad = theroom.set.ball.rad;
+      }
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
 
+      ballObj.ball_way_x = theroom.set.ball.way_x;
+      ballObj.ball_way_y = theroom.set.ball.way_y;
+      
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
+      setpower(theroom.power);
+      //console.log("INGAME_power = ", theroom.power);
     });
     socket.on("mouvPaddleLeft", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_paddle_obj.x;
@@ -71,7 +86,7 @@ export function GamePlayer_Left_right(props: any) {
       props.setimready(false);
       props.setopready(false);
     });
-  }, [socket]);
+  }, [socket, props.setimready, props.setopready, power]);
 
   // Sincronize the ball position with the server
 
@@ -81,6 +96,7 @@ export function GamePlayer_Left_right(props: any) {
         room: room_name,
         ball: ballObj,
         first: first,
+        power: power,
       };
       socket.emit("sincBall", data);
     }
@@ -109,7 +125,6 @@ export function GamePlayer_Left_right(props: any) {
   }
 
   // This useEffect is used to draw the canvas
-
   let requestAnimationFrameId: any;
   useEffect(() => {
       sinc_ball(props.room, ballObj, true);
@@ -125,24 +140,22 @@ export function GamePlayer_Left_right(props: any) {
           if (player_left.won === false && player_right.won === false) {
             draw_line(ctx, ballObj, canvas.height, canvas.width);
             draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
-            BallMouv(ctx, ballObj, canvas.height, canvas.width);
+
+            if (power === 4 || power === 5
+            || power === 6 || power === 7) {
+              //console.log("DRAWWWWWW POWEEEERRRR = ", power);
+              draw_smasher(ctx, ballObj, canvas.height, canvas.width);
+            }
+            BallMouv(ctx, ballObj, canvas.height, canvas.width, power);
             BallCol_left(ctx, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
-            if (ballObj.is_col === true)
-              u = 1;
+
             BallCol_right(ctx, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
-            if (ballObj.is_col === true || ballObj.init_ball_pos === false)
-              u = 1;
-            if (u > 0)
-              u++;
-            if (u === 6){
-              if (props.im_right === true && ballObj.cal_right === true)
-                sinc_ball(props.room, ballObj, false);
-              else if (props.im_right === false && ballObj.cal_right === false)
-                sinc_ball(props.room, ballObj, false);
-              sinc_player_left(props.room, player_left);
-              sinc_player_right(props.room, player_right);
+            if (ballObj.col_now_paddle === true || u === 50) {
+              sinc_ball(props.room, ballObj, false);
+              ballObj.col_now_paddle = false;
               u = 0;
             }
+            u++;
             PaddleMouv_left(ctx, canvas, paddleProps_left);
             PaddleMouv_right(ctx, canvas, paddleProps_right);
         } else {
@@ -157,7 +170,7 @@ export function GamePlayer_Left_right(props: any) {
         }
       };
       render();
-  }, [props.canvasRef]);
+  }, [props.canvasRef, props.im_right, props.room, props.setimready, props.setopready, requestAnimationFrameId]);
 
   function deleteGameRoom_ingame() {
     if (player_left.won === true || player_right.won === true)

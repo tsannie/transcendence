@@ -6,8 +6,8 @@ export default {
     init_pos_x: 500,
     init_pos_y: 250,
 
-    ball_way_x : 1,
-    ball_way_y : 1,
+    ball_way_x : 0,
+    ball_way_y : 0,
   
     init_ball_pos: false,
     first_col: false,
@@ -21,8 +21,13 @@ export default {
     first_dx: 0,
     first_dy: 0,
 
+    smash: 1,
+
     first_set: true,
     cal_right : false,
+
+    col_paddle: false,
+    col_now_paddle: false,
   },
 
   paddleProps_left: {
