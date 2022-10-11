@@ -1,5 +1,6 @@
 import { Snackbar } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import '../../app.style.scss';
 import React from "react";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -9,7 +10,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function Error2FASnackbar(props: any) {
+export default function ErrorSnackbar(props: any) {
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -19,9 +20,9 @@ export default function Error2FASnackbar(props: any) {
   }
 
   return (
-  <Snackbar open={props.openError} autoHideDuration={3000} onClose={handleClose}>
+  <Snackbar open={props.openError} autoHideDuration={2500} onClose={handleClose}>
     <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-      Error: {props.reasonError} !
+      Error: {props.reason} !
     </Alert>
   </Snackbar>
   );
