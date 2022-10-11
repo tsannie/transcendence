@@ -4,9 +4,10 @@ import { ChannelService } from 'src/channel/service/channel.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
+import { uuid } from 'uuidv4';
 import { MessageEntity } from '../models/message.entity';
 import { IMessage } from '../models/message.interface';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
 const LOADED_MESSAGES = 20;
 
@@ -17,7 +18,7 @@ export class MessageService {
     private allMessages: Repository<MessageEntity>,
 
 	private channelService: ChannelService,
-	
+
 	@Inject(forwardRef( () => DmService))
 	private dmService: DmService,
 
@@ -61,7 +62,7 @@ export class MessageService {
 		const dm = await this.dmService.getDmByName({target: data.target, offset: 0}, user);
 
 		const message = new MessageEntity();
-		message.uuid = uuid();
+		message.uuid = uuidv4();
 		message.content = data.content;
 		message.author = user;
 		message.dm = dm;

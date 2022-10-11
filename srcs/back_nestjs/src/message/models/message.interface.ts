@@ -1,7 +1,7 @@
 export interface IMessage {
-	id?: string;
+	id: string;
 	author: string;
 	content: string;
-	channel?: string;
-	target?: string;
+	channel: string;
+	target: string;
 }
