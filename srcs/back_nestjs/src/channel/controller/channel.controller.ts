@@ -1,16 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query, Req, Request, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
+import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelDto } from '../dto/channel.dto';
 import { ChannelEntity } from '../models/channel.entity';
 import { ChannelService } from '../service/channel.service';
-import { UserEntity } from 'src/user/models/user.entity';
 import { ChannelActionsDto } from '../dto/channelactions.dto';
-import { channel } from 'diagnostics_channel';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
-import { ListDto } from 'src/dm/dto/dm.dto';
 
 @Controller('channel')
 export class ChannelController {
@@ -29,14 +24,14 @@ export class ChannelController {
 
 	@UseGuards( JwtTwoFactorGuard )
 	@Get('userList')
-	async getChannelsUserList(@Request() req) : Promise<ChannelEntity[]> {
-		return await this.channelService.getChannelsUserList(req.user);
+	async getUserList(@Request() req) : Promise<ChannelEntity[]> {
+		return await this.channelService.getUserList(req.user);
 	}
 
 	@UseGuards( JwtTwoFactorGuard )
 	@Get("list")
-	async getChannelsList(@Query() listDto : ListDto) : Promise<ChannelEntity[]> {
-		return await this.channelService.getChannelsList(listDto.offset);
+	async getList() : Promise<ChannelEntity[]> {
+		return await this.channelService.getList();
 	}
 
 	//CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)
