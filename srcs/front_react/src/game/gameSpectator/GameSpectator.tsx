@@ -14,6 +14,7 @@ import {
   draw_line,
   draw_score,
   draw_loading,
+  draw_smasher,
 } from "../gameReact/BallMouv";
 
 import data from "../gameReact/data";
@@ -33,6 +34,7 @@ export function GameSpectator(props: any) {
   const [p1id, setp1id] = useState("null");
   const [p2id, setp2id] = useState("null");
   const [ThisRoom, setThisRoom] = useState("");
+  const [power, setpower] = useState(0);
 
   // UsEffect who manage the canvas in spectator mode by getting the data from the socket.on send by the players who are playing
 
@@ -57,6 +59,7 @@ export function GameSpectator(props: any) {
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
       first_sinc = true;
+      setpower(theroom.power);
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
       paddleProps_left.x = theroom.set.p1_paddle_obj.x;
@@ -106,7 +109,12 @@ export function GameSpectator(props: any) {
           draw_line(ctx, ballObj, canvas.height, canvas.width);
           draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
           if (first_sinc === true) {
-            BallMouv(ctx, ballObj, canvas.height, canvas.width);
+/*             if (power === 4 || power === 5
+              || power === 6 || power === 7) {
+                //console.log("DRAWWWWWW POWEEEERRRR = ", power);
+                draw_smasher(ctx, ballObj, canvas.height, canvas.width);
+            } */
+            BallMouv(ctx, ballObj, canvas.height, canvas.width, power);
             BallCol_left(ctx, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
             BallCol_right(ctx, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
             PaddleMouv_left(ctx, canvas, paddleProps_left);
@@ -121,7 +129,7 @@ export function GameSpectator(props: any) {
       }
     };
     render();
-  }, [socket]);
+  }, [socket, props]);
 
   // reinit values for the next game spectator
 

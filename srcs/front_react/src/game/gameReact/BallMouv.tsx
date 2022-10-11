@@ -96,6 +96,31 @@ export function draw_score(
 }
 
 ////////////////////////
+//// DRAW POWER
+////////////////////////
+
+export function draw_smasher(
+  ctx: any,
+  ballObj: any,
+  canvas_height: number,
+  canvas_width: number
+) {
+  ctx.beginPath();
+
+  ctx.rect((canvas_width / 2) - 40, canvas_height - (canvas_height / 3), 80, 80);
+  ctx.fillStyle = "red";
+  ctx.lineWidth = 1;
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "grey";
+  ctx.fill();
+  if (ballObj.x > (canvas_width / 2) - 40 && ballObj.x < (canvas_width / 2) + 40 && ballObj.y > canvas_height - (canvas_height / 3) && ballObj.y < canvas_height - (canvas_height / 3) + 80) {
+    ballObj.smash = 1.7;
+    ctx.fillStyle = "red";
+  }
+}
+
+
+////////////////////////
 //// BALL FUNCTIONS
 ////////////////////////
 
@@ -103,9 +128,17 @@ export function BallMouv(
   ctx: any,
   ballObj: any,
   canvas_height: number,
-  canvas_width: number
+  canvas_width: number,
+  power: number,
 ) {
   let data = new Ball(ballObj.x, ballObj.y, ballObj.rad);
+
+  // if ball toutch smasher fillstyle red
+
+/*   if ((power === 4 || power === 5 || power === 6 || power === 7) {
+    ctx.fillStyle = "red";
+  } else */
+    ctx.fillStyle = "white";
   data.draw(ctx);
 
   if (ballObj.first_set === true) {
@@ -132,27 +165,45 @@ export function BallMouv(
 
     ballObj.ingame_dy = 6;
     //ballObj.first_dy = 2;
-
+    ballObj.col_paddle = false;
     ballObj.init_ball_pos = true;
   }
   //console.log("ballObj.ingame_dx", ballObj.ingame_dx);
   //console.log("ballObj.ingame_dy", ballObj.ingame_dy);
-
+  // if ball is between center - 40 and center + 40 in x
+  if(ballObj.x > (canvas_width / 2) - 40 && ballObj.x < (canvas_width / 2) + 40) {
+    //ballObj.smash = 3;
+    ballObj.col_paddle = false;
+  }
+  else 
+    ballObj.smash = 1;
 
   if (ballObj.first_col === false) {
-    //console.log("first col");
     ballObj.x += ballObj.first_dx * ballObj.ball_way_x;
     ballObj.y += ballObj.first_dy * ballObj.ball_way_y;
   } else {
     //console.log("not first col");
-    ballObj.x += ballObj.ingame_dx * ballObj.ball_way_x;
+    ballObj.x += ballObj.ingame_dx * ballObj.smash * ballObj.ball_way_x;
     ballObj.y += ballObj.ingame_dy * ballObj.ball_way_y;
   }
 
-  if (ballObj.y - ballObj.rad <= 2 || ballObj.y + ballObj.rad >= canvas_height - 2) {
+  if (ballObj.y + ballObj.rad > canvas_height || ballObj.y - ballObj.rad < 0) {
     ballObj.ball_way_y *= -1;
-
   }
+
+
+
+/*   if (ballObj.y - ballObj.rad <= 0)
+  {
+    ballObj.ball_way_y *= -1;
+    console.log("col_wall_up");
+  }
+    
+  if (allObj.y + ballObj.rad >= canvas_height) {
+    ballObj.ball_way_y *= -1;
+    console.log("col_wall_down");
+
+  } */
 }
 
 export function BallCol_left(
@@ -163,37 +214,37 @@ export function BallCol_left(
   canvas_height: number,
   canvas_width: number
 ) {
-  if (ballObj.x - ballObj.rad <= -50) {
-    ballObj.first_col = false;
-    ballObj.init_ball_pos = false;
-    player_right.score += 1;
-    ballObj.ball_way_x = -1;
-  } else if (player_right.score >= 3) {
-    ctx.font = "30px Comic Sans MS";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
+  //console.log("ballObj.col_paddle = ", ballObj.col_paddle);
+  if (player_right.score >= 10) {
     player_right.won = true;
-  } else if (
-    ballObj.x - ballObj.rad - paddleProps.width - paddleProps.x <= 0 &&
-    ballObj.y >= paddleProps.y &&
-    ballObj.y <= paddleProps.y + paddleProps.height &&
-    ballObj.x >= paddleProps.x
+  }
+  else if (ballObj.x - ballObj.rad <= - (ballObj.rad * 3)) {
+    ballObj.init_ball_pos = false;
+    ballObj.first_col = false;
+    player_right.score += 1;
+  }
+  else if ( ballObj.col_paddle === false &&
+    ballObj.x - ballObj.rad <= paddleProps.x + paddleProps.width &&
+    ballObj.x + (ballObj.rad / 3) >= paddleProps.x &&
+    ballObj.y + ballObj.rad >= paddleProps.y &&
+    ballObj.y - ballObj.rad <= paddleProps.y + paddleProps.height
   ) {
-    ballObj.first_col = true;
-    console.log("col left");
-      
+
+/*     let res = ballObj.y - (paddleProps.y + paddleProps.height / 2);
+    ballObj.ingame_dy = -(res / 10); */
+
     var res = paddleProps.y + paddleProps.height - ballObj.y;
-    res = res / 10 - paddleProps.height / 20;
-
-    ballObj.ingame_dy = -res;
+    ballObj.ingame_dy = -(res / 10 - paddleProps.height / 20);
+    
+    ballObj.smash = 1;
     ballObj.ball_way_y = 1;
+    ballObj.ball_way_x *= -1;
 
-    ballObj.ingame_dx *= -1;
+    ballObj.first_col = true;
+    ballObj.col_paddle = true;
+    ballObj.col_now_paddle = true;
+  }
 
-    ballObj.is_col = true;
-    ballObj.cal_right = false;
-  } else
-    ballObj.is_col = false;
 }
 
 export function BallCol_right(
@@ -204,41 +255,40 @@ export function BallCol_right(
   canvas_height: number,
   canvas_width: number
 ) {
-  if (ballObj.x + ballObj.rad >= canvas_width + 50) {
-    ballObj.first_col = false;
-    ballObj.init_ball_pos = false;
-    player_left.score += 1;
-    ballObj.ball_way_x = 1;
-  } else if (player_left.score >= 3) {
-    ctx.font = "30px Comic Sans MS";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
+
+  
+
+  if (player_left.score >= 10) {
     player_left.won = true;
-  } else if (
-    ballObj.x +
-      ballObj.rad +
-      paddleProps.width +
-      (canvas_width - paddleProps.x - paddleProps.width) >=
-      canvas_width &&
-    ballObj.y >= paddleProps.y &&
-    ballObj.y <= paddleProps.y + paddleProps.height &&
-    ballObj.x <= paddleProps.x + paddleProps.width
+  }
+  else if (ballObj.x + ballObj.rad >= canvas_width + (ballObj.rad * 3)) {
+    ballObj.init_ball_pos = false;
+    ballObj.first_col = false;
+    player_left.score += 1;
+  }
+  else if ( ballObj.col_paddle === false &&
+    ballObj.x + ballObj.rad >= paddleProps.x &&
+    ballObj.x - (ballObj.rad / 3) <= paddleProps.x + paddleProps.width &&
+    ballObj.y + ballObj.rad >= paddleProps.y &&
+    ballObj.y - ballObj.rad <= paddleProps.y + paddleProps.height
   ) {
-    console.log("col right");
-    ballObj.first_col = true;
+
+/*     var res = ballObj.y - (paddleProps.y + paddleProps.height / 2);
+    ballObj.ingame_dy = res / 10; */
+
     var res = paddleProps.y + paddleProps.height - ballObj.y;
-    res = res / 10 - paddleProps.height / 20;
+    ballObj.ingame_dy = -(res / 10 - paddleProps.height / 20);
 
-    ballObj.ingame_dy = -res;
+
+    ballObj.smash = 1;
     ballObj.ball_way_y = 1;
-
     ballObj.ball_way_x *= -1;
-    
-    ballObj.is_col = true;
-    ballObj.cal_right = true;
 
-  } else
-    ballObj.is_col = false;
+    ballObj.first_col = true;
+    ballObj.col_paddle = true;
+    ballObj.col_now_paddle = true;
+    console.log("col_paddle");
+  }
 }
 
 class Ball {
