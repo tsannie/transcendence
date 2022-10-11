@@ -17,7 +17,7 @@ export class ChannelEntity {
 	id: number;
 
 	@CreateDateColumn()
-	time: string;
+	createdAt: string;
 	
 	@Column( {nullable: false, unique: true} )
 	name: string;
@@ -25,7 +25,7 @@ export class ChannelEntity {
 	@Column({ nullable: false } )
 	status: string;
 
-	@Column( { nullable: true })
+	@Column( { select: null, nullable: true })
 	password: string;
 	
 	@ManyToOne( () => UserEntity, (user) => user.owner_of )
