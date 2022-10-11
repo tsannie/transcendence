@@ -1,8 +1,8 @@
 import React, { ContextType, Fragment, useEffect, useState } from "react";
 import { api, COOKIE_NAME } from "./const/const";
 import Menu from "./components/menu/Menu";
-import './app.style.scss'
-import './components/background/bg.style.scss'
+import './app.style.scss';
+import './components/background/bg.style.scss';
 import './components/menu/menu.style.scss';
 import { Navigate, Route, Router, Routes, useLocation } from "react-router-dom";
 import LoginPage from "./components/auth/oauth/LoginPage";
