@@ -13,7 +13,6 @@ import { DmService } from './service/dm.service';
   imports: [
     UserModule,
     TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity]),
-    forwardRef( () => MessageModule),
   ],
   controllers: [DmController],
   providers: [DmService],

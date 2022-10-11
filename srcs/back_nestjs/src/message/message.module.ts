@@ -6,7 +6,6 @@ import { MessageEntity } from './models/message.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserModule } from 'src/user/user.module';
-import { ChannelModule } from 'src/channel/channel.module';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { DmModule } from 'src/dm/dm.module';
 import { AuthModule } from 'src/auth/auth.module';
@@ -15,8 +14,6 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [
     TypeOrmModule.forFeature([MessageEntity, DmEntity, UserEntity]),
     UserModule,
-    ChannelModule,
-    forwardRef(() => DmModule),
     AuthModule,
   ],
   controllers: [MessageController],

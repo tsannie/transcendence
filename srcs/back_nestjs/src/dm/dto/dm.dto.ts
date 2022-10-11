@@ -1,17 +1,11 @@
 import { Type } from "class-transformer";
-import { IsDefined, IsDivisibleBy, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from "class-validator";
+import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export class DmNameDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
   target: string;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @Type( () => Number )
-  @Min(0)
-  offset: number
 }
 
 export class DmIdDto {
@@ -20,18 +14,4 @@ export class DmIdDto {
   @Type( () => Number )
   @IsNumber()
   id: number;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @Type( () => Number )
-  @Min(0)
-  offset: number
-}
-
-export class ListDto {
-  @IsDefined()
-  @IsNotEmpty()
-  @Type( () => Number )
-  @Min(0)
-  offset: number
 }
