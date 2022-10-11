@@ -2,6 +2,7 @@ import React, { ContextType, Fragment, useEffect, useState } from "react";
 import { api, COOKIE_NAME } from "./const/const";
 import Menu from "./components/menu/Menu";
 import './app.style.scss'
+import './components/background/bg.style.scss'
 import './components/menu/menu.style.scss';
 import { Navigate, Route, Router, Routes, useLocation } from "react-router-dom";
 import LoginPage from "./components/auth/oauth/LoginPage";
@@ -16,14 +17,11 @@ import Background from "./components/background/Background";
 
 
 export default function App() {
-    //<AuthProvider>
-    const location = useLocation();
-
-
-  return (
-    <div className="app">
-      <Background/>
-      <Routes key={location.pathname} location={location}>
+    return (
+      <div className="bg">
+        <Background/>
+        <div className="app">
+      <Routes>
         {/* Auth Routes (public) */}
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/2fa" element={<TwoFactorPage/>} />
@@ -35,6 +33,7 @@ export default function App() {
         <Route path="/game" element={<PrivateRoute component={Profile} />}/>
         <Route path="/settings" element={<PrivateRoute component={Settings} />}/>
       </Routes>
+      </div>
     </div>
   );
 }
