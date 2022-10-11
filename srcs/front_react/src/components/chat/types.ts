@@ -1,6 +1,5 @@
 export interface IMessage {
-  uuid?: string;
-  //room: string;
+  uuid: string;
   author: string;
   content: string;
   target: string;
@@ -8,14 +7,14 @@ export interface IMessage {
 
 export interface ICreateChannel {
   name: string;
-  password?: string;
+  password: string;
   status: string;
 }
 
 // TODO: add id
 export interface IChannel {
   name: string;
-  password?: string;
+  password: string;
   status: string;
   owner: any;
   users: any[];
@@ -30,12 +29,12 @@ export interface IChannelActions {
 }
 
 export interface IDm {
-  id?: number;
-  time?: Date;
-  target?: string;
-  offset?: number;
-  users? : any[];
-  messages?: IMessage[];
+  id: number;
+  time: Date;
+  target: string;
+  offset: number;
+  users : any[];
+  messages: IMessage[];
 }
 
 export interface IConvCreated {

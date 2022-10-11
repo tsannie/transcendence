@@ -33,7 +33,7 @@ export default function FormChannel(props: FormChannelProps) {
 
   // create channel in db
   async function createChannels() {
-    const channelData: ICreateChannel = {
+    const channelData: Partial<ICreateChannel> = {
       name: nameChannel,
       status: status,
     };
