@@ -1,10 +1,9 @@
-import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MessageService } from 'src/message/service/message.service';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
-import { Repository } from 'typeorm';
-import { DmNameDto, DmIdDto, ListDto } from '../dto/dm.dto';
+import { In, Repository } from 'typeorm';
+import { DmNameDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 
 @Injectable()
@@ -12,10 +11,6 @@ export class DmService {
   constructor(
     @InjectRepository(DmEntity)
     private dmRepository: Repository<DmEntity>,
-
-	@Inject(forwardRef( () => MessageService))
-	private readonly messageService: MessageService,
-
     private readonly userService: UserService,
   ) {}
 
@@ -39,7 +34,7 @@ export class DmService {
 
 
 	// get a dm by id
-	async getDmById(inputed_id: number, offset: number): Promise<DmEntity> {
+	async getDmById(inputed_id: number): Promise<DmEntity> {
 		let ret = await this.dmRepository
 		.createQueryBuilder("dm")
 		.where("dm.id = :id", {id: inputed_id})
@@ -48,80 +43,37 @@ export class DmService {
 		.addSelect("users.username")
 		.getOne();
 
-		ret.messages = await this.messageService.loadMessages("dm", ret.id, offset);
 		return ret;
 	}
 
-  async getDmByName(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
-		console.log(user);
-    if (user.dms)
-	{
-		let convo = user.dms.find(
-    	  (dm) =>
-    	    (dm.users[0].username === user.username &&
-    	      dm.users[1].username === data.target) ||
-    	    (dm.users[0].username === data.target &&
-    	      dm.users[1].username === user.username),
-    	);
-    	if (convo)
-			return await this.getDmById(convo.id, data.offset);
+	/* This function loads the Dm based on name of target*/
+	async getDmByTarget(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+		if (user.dms)
+		{
+			let convo = user.dms.find(
+			(dm) =>
+				(dm.users[0].username === user.username &&
+				dm.users[1].username === data.target) ||
+				(dm.users[0].username === data.target &&
+				dm.users[1].username === user.username),
+			);
+			if (convo)
+				return await this.getDmById(convo.id);
+		}
+		else
+			throw new UnprocessableEntityException(`No conversation with ${data.target}`);
 	}
-	else
-		throw new UnprocessableEntityException(`No conversation with ${data.target}`);
-  }
 
 
 
 	// get all conversations of a user
-	async getDmsList(data: ListDto, user: UserEntity): Promise<DmEntity[]> {
-		/* return await this.dmRepository
+	async getDmsList( user: UserEntity ): Promise<DmEntity[]> {
+		return await this.dmRepository
 		.createQueryBuilder("dm")
 		.leftJoin("dm.users", "users")
-		.addSelect("users.id")
-		.where('dm.users.id = :id', {id: user.id})
-		.getMany(); */
-
-
-
-
-		let reloaded_datas = await this.userService.findOptions({
-			where: {
-				username: user.username
-			},
-			relations: {
-				dms:{
-					users: true,
-					messages: {
-						author: true,
-					},
-				}
-			},
-			select: {
-				dms: {
-					id: true,
-					users: {
-						id: true,
-						username: true,
-					},
-					messages: {
-						createdAt : true,
-						author: {
-							username: true
-						},
-						content: true,
-					}
-				}
-			},
-			order: {
-				dms:{
-					messages: {
-						createdAt: "DESC",
-					}
-				}
-			},
-
-		})
-		return reloaded_datas.dms;
+		.addSelect("users.username")
+		.where("dm.id IN (:...ids)", {ids: user.dms.map( elem => elem.id)})
+		.getMany()
 	}
 
   /*
@@ -139,9 +91,8 @@ export class DmService {
 				dm.users[1].username === user.username),
 			);
 			if (convo)
-				return await this.getDmById(convo.id, data.offset);
+				return await this.getDmById(convo.id);
 		}
-		console.log(user);
 		let new_dm = new DmEntity();
 
 		new_dm.users = [user, user2];
