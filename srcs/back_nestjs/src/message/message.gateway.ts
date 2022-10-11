@@ -85,9 +85,10 @@ export class MessageGateway
   addMessage(@MessageBody() data: IMessage, @ConnectedSocket() client: Socket) {
     //): Observable<IMessage> {
     this.logger.log(client.id);
-    console.log(data);
+    console.log(data.target);
 
-    if (data.target !== undefined) {
+    console.log("data = ", data);
+    if (data.isDm === true) {
       this.messageService.addMessagetoDm(data);
     } else {
       this.messageService.addMessagetoChannel(data);

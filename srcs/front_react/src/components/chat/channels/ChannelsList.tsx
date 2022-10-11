@@ -20,6 +20,7 @@ import InfosChannels from "./InfosChannels";
 import AdminsActions from "./admins/AdminsActions";
 import { ChatContent } from "../Chat";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
+import { MessagesContext } from "../../../contexts/MessagesContext";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
@@ -33,6 +34,7 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
   const { channelsList, setChannelData } = useContext(ChannelsContext);
+  const { loadMessages, isDm, setIsDm, setConvId } = useContext(MessagesContext);
 
   async function getChannelDatas(channel: any) {
     await api
@@ -55,6 +57,10 @@ export default function ChannelsList(props: ChannelsListProps) {
   function handleClick(channel: IChannel) {
     props.setChatContent(ChatContent.CHANNEL_CONTENT);
     getChannelDatas(channel);
+    setIsDm(false);
+    setConvId(channel.id);
+    console.log(typeof channel.id);
+    loadMessages(channel.id, isDm);
     console.log("channel clicked", channel);
   }
 
