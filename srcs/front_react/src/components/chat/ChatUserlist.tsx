@@ -43,7 +43,6 @@ export default function ChatUserlist(props: ChatUserListProps) {
         console.log(targetUsername);
         console.log(res.data.messages);
         getDmsList();
-        setMessagesList(res.data.messages);
       })
       .catch((res) => {
         console.log("invalid create dm");
