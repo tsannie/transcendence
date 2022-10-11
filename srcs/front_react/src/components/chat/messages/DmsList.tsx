@@ -25,11 +25,11 @@ export default function DmsList(props: DmsListProps) {
   const { targetUsername } = useContext(MessagesContext);
 
   console.log(dmsList); // check why dmsList is not empty at the beginning
-  async function getDmDatas(channel: any) {
+  async function getDmDatas(dm: any) {
     await api
-      .get("dm/", {
+      .get("dm/getByTarget", {
         params: {
-          name: channel.name,
+          name: dm.name,
         },
       })
       .then((res) => {
@@ -45,7 +45,7 @@ export default function DmsList(props: DmsListProps) {
 
   function handleClick(dm: any) {
     props.setChatContent(ChatContent.MESSAGES);
-    //getDmDatas(dm);
+    getDmDatas(dm);
     console.log("click on user dms list");
   }
 

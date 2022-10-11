@@ -41,7 +41,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
     const newChannel = joinNewChannelWithoutStatus(channel);
 
     await api
-      .post("channel/joinChannel", newChannel)
+      .post("channel/join", newChannel)
       .then((res) => {
         console.log("channel joined with success");
         console.log(channel);
@@ -64,7 +64,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
     const newChannel = joinNewChannelWithoutStatus(channel);
 
     await api
-      .post("channel/leaveChannel", newChannel)
+      .post("channel/leave", newChannel)
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);

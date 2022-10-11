@@ -40,8 +40,8 @@ export default function FormChannel(props: FormChannelProps) {
     if (status === "Protected") {
       channelData.password = newPassword;
     }
-    api
-      .post("channel/createChannel", channelData)
+    await api
+      .post("channel/create", channelData)
       .then((res) => {
         console.log("channel created with success");
         console.log(channelData);

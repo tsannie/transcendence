@@ -16,7 +16,7 @@ export class ChannelController {
 	@Get("datas")
 	async getDatas(@Query() query_channel : ChannelDto, @Request() req) : Promise<
 	{
-		status: string, 
+		status: string,
 		data: ChannelEntity
 	}>{
 		return await this.channelService.getDatas(query_channel, req.user);
@@ -36,7 +36,7 @@ export class ChannelController {
 
 	//CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)
 	@UseGuards( JwtTwoFactorGuard )
-	@Post('createChannel')
+	@Post('create')
 	async createChannel(@Body() channel: CreateChannelDto, @Request() req): Promise<void | ChannelEntity> {
 		return await this.channelService.createChannel(channel, req.user);
 	}
@@ -66,7 +66,7 @@ export class ChannelController {
 	}
 
 	@UseGuards( JwtTwoFactorGuard )
-	@Post('unmuteUser')
+	@Post('unMuteUser')
 	async unMuteUser(@Body() channel: ChannelActionsDto, @Request() req) : Promise<ChannelEntity>{
 		return await this.channelService.unMuteUser(channel, req.user);
 	}
@@ -79,19 +79,19 @@ export class ChannelController {
 
 	//ENTER IN A PUBLIC ROOM,
 	@UseGuards( JwtTwoFactorGuard )
-	@Post( 'joinChannel' )
+	@Post( 'join' )
 	async joinChannel( @Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.joinChannel(query_channel, req.user);
 	}
 
 	@UseGuards( JwtTwoFactorGuard )
-	@Post( 'leaveChannel' )
+	@Post( 'leave' )
 	async leaveChannel( @Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.leaveChannel(query_channel, req.user);
 	}
 
 	@UseGuards( JwtTwoFactorGuard )
-	@Post( 'deleteChannel' )
+	@Post( 'delete' )
 	async deleteChannel(@Body() query_channel : ChannelDto, @Request() req) {
 		return await this.channelService.deleteChannel(query_channel, req.user);
 	}
