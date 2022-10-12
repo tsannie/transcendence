@@ -44,7 +44,7 @@ export class UserController {
   addAvatar( @UploadedFile( new ParseFilePipe({
     validators: [
       new MaxFileSizeValidator( { maxSize: 5000000} ),
-      new AvatarFormatValidator( {format: 'jpeg'}  ),
+      new AvatarFormatValidator( {format: ['jpeg', 'png']}  ),
     ]
    })) file: Express.Multer.File, @Request() req) : any{
     // console.log(file);
