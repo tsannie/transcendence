@@ -29,7 +29,7 @@ export const MessagesContext = createContext<MessagesContextType>({
   targetUsername: "",
   setTargetUsername: () => {},
   loadMessages: () => {},
-  isDm: false,
+  isDm: true,
   setIsDm: () => {},
   convId: 0,
   setConvId: () => {},
@@ -44,7 +44,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [isNewMessage, setIsNewMessage] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
   const [targetUsername, setTargetUsername] = useState("");
-  const [isDm, setIsDm] = useState(false);
+  const [isDm, setIsDm] = useState(true);
   const [convId, setConvId] = useState(0);
   const socket = useContext(SocketContext);
   const user = useContext(UserContext);
@@ -64,7 +64,6 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
         target: targetUsername,
         isDm: isDm,
       };
-      console.log(messageData);
       socket.emit("message", messageData);
       setIsNewMessage(true);
       setCurrentMessage("");
@@ -73,6 +72,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   async function loadMessages(id: number, isDm: boolean) {
     console.log("load messages");
+    console.log("isDm: " + isDm);
     if (isDm === true) {
       await api
         .get("message/dm", {
@@ -110,11 +110,11 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   useEffect(() => {
     socket.on("message", (data) => {
-      console.log(data);
-      if (isNewMessage === true) {
+      //console.log(data);
+      //if (isNewMessage === true) {
         loadMessages(data.id, data.isDm);
-        setIsNewMessage(false);
-      }
+        //setIsNewMessage(false);
+      //}
     });
   }, [socket]);
 

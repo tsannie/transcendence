@@ -50,7 +50,7 @@ export class MessageGateway
     try {
       let userId = client.handshake.query.userId;
       let user: UserEntity;
-      console.log("userId = ", userId);
+      //console.log("userId = ", userId);
       if (typeof userId === 'string') {
         user = await this.userService.findById(parseInt(userId));
       }
@@ -72,7 +72,7 @@ export class MessageGateway
 
     // remove client from the map
     this.connectedClients.delete(client.id);
-    console.log("map clients = ", this.connectedClients);
+    //console.log("map clients = ", this.connectedClients);
     client.disconnect();
   }
 
@@ -84,7 +84,7 @@ export class MessageGateway
   @SubscribeMessage('message')
   addMessage(@MessageBody() data: IMessage, @ConnectedSocket() client: Socket) {
     //): Observable<IMessage> {
-    this.logger.log(client.id);
+    this.logger.log("client id = ", client.id);
 
     if (data.isDm === true) {
       this.messageService.addMessagetoDm(data);
@@ -97,6 +97,7 @@ export class MessageGateway
     //this.server.emit('message', data);
 
     // parcourir tous mes clients connectés et envoyer le message uniquement a l'id du target
+    console.log("map clients = ", this.connectedClients);
     this.connectedClients.forEach((value, key) => {
       console.log("data.target = ", data.target);
       if (value.username === data.target || value.username === data.author) {

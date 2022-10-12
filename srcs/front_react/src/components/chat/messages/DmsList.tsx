@@ -10,6 +10,7 @@ import { api } from "../../../const/const";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
+import { UserContext } from "../../../contexts/UserContext";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
@@ -22,23 +23,41 @@ interface DmsListProps {
 export default function DmsList(props: DmsListProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
-  const { targetUsername, loadMessages, isDm, setIsDm, setConvId } = useContext(MessagesContext);
+  const { loadMessages, isDm, setIsDm, setConvId } = useContext(MessagesContext);
+  const { username } = useContext(UserContext);
+
+  // find target username with conv id and user id
+  function findTargetUsername(dmId: number) {
+    console.log("username connected", username);
+
+    let targetUsername = "";
+    let dm = dmsList.find((dm) => dm.id === dmId);
+    if (dm) {
+      dm.users.forEach((user) => {
+        if (user.username !== username) {
+          targetUsername = user.username;
+        }
+      });
+    }
+    console.log("target username", targetUsername);
+    return targetUsername;
+  }
 
   async function getDmDatas(dm: any) {
     await api
       .get("dm/getByTarget", {
         params: {
-          name: dm.name,
+          target: findTargetUsername(dm.id),
         },
       })
       .then((res) => {
         console.log("get infos of channel clicked by user");
-        console.log("status = ", res.data.status);
         setDmData(res.data);
         //props.setIsOpenInfos(true);
       })
       .catch((res) => {
-        console.log("invalid channels private data");
+        console.log("invalid dm data");
+        console.log(res.response.data.message);
       });
   }
 
@@ -48,7 +67,7 @@ export default function DmsList(props: DmsListProps) {
     console.log("dm id clicked", dm.id);
     setIsDm(true);
     setConvId(dm.id);
-    loadMessages(dm.id, isDm);
+    loadMessages(dm.id, true);
     console.log("click on user dms list");
   }
 
@@ -61,7 +80,7 @@ export default function DmsList(props: DmsListProps) {
           onClick={() => handleClick(dm)}
         >
           <ListItemText>
-            {targetUsername}
+            { findTargetUsername(dm.id) }
           </ListItemText>
         </ListItemButton>
       );
