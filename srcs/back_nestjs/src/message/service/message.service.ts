@@ -9,6 +9,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserEntity } from 'src/user/models/user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { DmService } from 'src/dm/service/dm.service';
+import { Server } from 'socket.io';
+import { ChannelService } from 'src/channel/service/channel.service';
 
 const LOADED_MESSAGES = 20;
 
@@ -19,7 +22,9 @@ export class MessageService {
     private allMessages: Repository<MessageEntity>,
 
 	private userService: UserService,
-  ) {}
+	private dmService: DmService,
+	private channelService: ChannelService,
+	) {}
 
 	/* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
 	checkUserValidity(type: string, inputed_id: number, user: UserEntity) : DmEntity | ChannelEntity {
@@ -93,4 +98,34 @@ export class MessageService {
 		message.dm = dm;
 		return await this.allMessages.save(message);
 	}
+
+	// emit message to all users in dm
+	async emitMessageDm(socket: Server, clients: Map<string, UserEntity>, data: IMessage) {
+		let dm = await this.dmService.getDmById(data.id);
+		// je parcours d'abord les users du dm
+    dm.users.forEach(user => {
+			// je regarde si le user est connecté
+			clients.forEach((value, key) => {
+				// si le user est connecté, je lui envoie le message
+				if (value.username === user.username) {
+					console.log("emitting to ", key);
+					//socket.to(key).emit('message', data);
+					return ;
+				}
+			});
+		});
+	}
+
+	// emit message to all users in channel
+	/* async emitMessageChannel(socket: Server, clients: Map<string, UserEntity>, data: IMessage) {
+		let channel = await this.channelService.getChannelById(data.id);
+    console.log("channel = ", channel);
+    channel.users.forEach(user => {
+			clients.forEach((value, key) => {
+				if (value.username === user.username) {
+					socket.to(key).emit('message', data);
+				}
+			});
+		});
+	} */
 }
