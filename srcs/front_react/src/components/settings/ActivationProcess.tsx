@@ -1,9 +1,8 @@
 import { Button, TextField } from "@mui/material";
-import Snackbar from '@mui/material/Snackbar';
 import React, { useContext, useEffect, useState } from "react";
 import { Buffer } from 'buffer';
 import { api } from "../../const/const";
-import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
+import { SnackbarContext, SnackbarContextType } from "../../contexts/SnackbarContext";
 
 
 interface IProps {
@@ -11,7 +10,7 @@ interface IProps {
 }
 
 export default function ActivationProcess(props: IProps) {
-  const { setReason, setOpenSuccess, setOpenError } = useContext(AuthContext) as AuthContextType;
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
 
@@ -30,12 +29,14 @@ export default function ActivationProcess(props: IProps) {
     await api.post('2fa/check-token', {
       token: token,
     }).then(res => {
-      setOpenSuccess(true);
-      setReason('2FA activated');
+      setSeverity("success");
+      setMessage('2FA activated');
+      setOpenSnackbar(true);
       props.setEnable2FA(false);
     }).catch(err => {
-      setReason('Invalid token');
-      setOpenError(true);
+      setSeverity("error");
+      setMessage('Invalid token');
+      setOpenSnackbar(true);
       setToken('');
     })
   }
