@@ -15,6 +15,7 @@ interface IProps {
   openSnackbar: boolean;
   message: string;
   severity: AlertColor | undefined;
+  reloadAfter: boolean;
 }
 
 export default function CustomSnackbar(props: IProps) {
@@ -27,7 +28,7 @@ export default function CustomSnackbar(props: IProps) {
   }
 
   return (
-  <Snackbar open={props.openSnackbar} autoHideDuration={2500} onClose={handleClose}>
+  <Snackbar open={props.openSnackbar} autoHideDuration={2000} onClose={handleClose}>
     <Alert onClose={handleClose} severity={props.severity}>
       {props.message} !
     </Alert>
