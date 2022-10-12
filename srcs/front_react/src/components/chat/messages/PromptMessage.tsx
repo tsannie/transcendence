@@ -13,7 +13,7 @@ export default function PromptMessage(props: PromptMessageProps) {
   const { dmData } = useContext(DmsContext);
 
   return (
-    <>
+    <Box>
       <TextField
         id="input-message"
         variant="outlined"
@@ -31,9 +31,8 @@ export default function PromptMessage(props: PromptMessageProps) {
           width: 18,
           height: 18,
           position: "absolute",
-          bottom: 0,
         }}
       ></Box>
-    </>
+    </Box>
   );
 }

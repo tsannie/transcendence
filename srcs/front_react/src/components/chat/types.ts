@@ -1,7 +1,7 @@
 export interface IMessage {
   id: number; // id du dm ou du channel
   uuid: string;
-  author: string;
+  author: any; // IUser en theorie
   content: string;
   target: string;
   isDm: boolean;

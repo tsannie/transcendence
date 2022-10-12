@@ -53,45 +53,48 @@ export default function ChannelContent(props: ChannelContentProps) {
 
   console.log("channel data", channelData);
   console.log("isopeninfos", props.isOpenInfos);
-  return (
-    <Grid container>
-      {channelData.status !== "publicUser" && (
-        <Grid item xs={9}>
-          <Box sx={{ border: "3px solid red" }}>
-            <Grid item>
-            <Typography variant={"h6"}>
-                {"Channel " + channelData.data.name}
-              </Typography>
-              <Typography variant={"h6"}>
-                {"Created the " + channelData.data.createdAt}
-              </Typography>
-            </Grid>
-            {channelData.status === "owner" && (
+
+  if (channelData !== undefined)
+    return (
+      <Grid container>
+        {channelData.status !== "public" && (
+          <Grid item xs={9}>
+            <Box sx={{ border: "3px solid red" }}>
               <Grid item>
-                <IconButton onClick={handleClick}>
-                  <MoreHorizIcon />
-                </IconButton>
-                {openMoreInfos && (
-                <Button
-                  sx={{
-                    color: "red",
-                    ml: "1vh",
-                  }}
-                  onClick={() => deleteChannel(channelData)}
-                >
-                  Delete
-                </Button>
-                )}
+              <Typography variant={"h6"}>
+                  {"Channel " + channelData.data.name}
+                </Typography>
+                <Typography variant={"h6"}>
+                  {"Created the " + channelData.data.createdAt}
+                </Typography>
               </Grid>
-            )}
-          </Box>
-          <Conv />
+              {channelData.status === "owner" && (
+                <Grid item>
+                  <IconButton onClick={handleClick}>
+                    <MoreHorizIcon />
+                  </IconButton>
+                  {openMoreInfos && (
+                  <Button
+                    sx={{
+                      color: "red",
+                      ml: "1vh",
+                    }}
+                    onClick={() => deleteChannel(channelData)}
+                  >
+                    Delete
+                  </Button>
+                  )}
+                </Grid>
+              )}
+            </Box>
+            <Conv />
+          </Grid>
+        )}
+        <Grid item xs={3}>
+          <InfosChannels
+          />
         </Grid>
-      )}
-      <Grid item xs={3}>
-        <InfosChannels
-        />
       </Grid>
-    </Grid>
-  );
+    );
+  return <></>
 }

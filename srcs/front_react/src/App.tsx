@@ -43,8 +43,6 @@ export default function App() {
     }
   });
 
-  console.log('islogin = ' + isLogin);
-
   if (!isLogin) {
     return (
       <Box sx={{

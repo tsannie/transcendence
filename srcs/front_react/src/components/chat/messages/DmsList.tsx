@@ -1,4 +1,13 @@
-import { Box, Grid, IconButton, List, ListItemButton, ListItemText, Popover, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemText,
+  Popover,
+  Typography,
+} from "@mui/material";
 import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { IConvCreated, IDm, IMessage } from "../types";
 import AddIcon from "@mui/icons-material/Add";
@@ -23,13 +32,12 @@ interface DmsListProps {
 export default function DmsList(props: DmsListProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
-  const { loadMessages, isDm, setIsDm, setConvId } = useContext(MessagesContext);
+  const { loadMessages, isDm, setIsDm, setConvId } =
+    useContext(MessagesContext);
   const { username } = useContext(UserContext);
 
   // find target username with conv id and user id
   function findTargetUsername(dmId: number) {
-    console.log("username connected", username);
-
     let targetUsername = "";
     let dm = dmsList.find((dm) => dm.id === dmId);
     if (dm) {
@@ -39,7 +47,6 @@ export default function DmsList(props: DmsListProps) {
         }
       });
     }
-    console.log("target username", targetUsername);
     return targetUsername;
   }
 
@@ -73,18 +80,13 @@ export default function DmsList(props: DmsListProps) {
 
   return (
     <List>
-    {dmsList.map((dm: any) => {
-      return (
-        <ListItemButton
-          key={dm.id}
-          onClick={() => handleClick(dm)}
-        >
-          <ListItemText>
-            { findTargetUsername(dm.id) }
-          </ListItemText>
-        </ListItemButton>
-      );
-    })}
+      {dmsList.map((dm: any) => {
+        return (
+          <ListItemButton key={dm.id} onClick={() => handleClick(dm)}>
+            <ListItemText>{findTargetUsername(dm.id)}</ListItemText>
+          </ListItemButton>
+        );
+      })}
     </List>
   );
 }
