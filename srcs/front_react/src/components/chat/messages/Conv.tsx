@@ -10,19 +10,10 @@ import { UserContext } from "../../../contexts/UserContext";
 interface ConvProps {}
 
 export default function Conv(props: ConvProps) {
-  /* function newConv() {
-    messages.setOpenConv(true);
-    messages.setIsNewMessage(true);
-  }
- */
-  const { username } = useContext(UserContext);
-
   return (
-    <Grid container sx={{ border: "1px solid green", minHeight: 300 }}>
-      <MessagesList username={username} />
-      <Grid item sx={{ position: "absolute", bottom: "0" }}>
-        <PromptMessage />
-      </Grid>
-    </Grid>
+    <Box sx={{ border: "1px solid green"}}>
+      <MessagesList />
+      <PromptMessage />
+    </Box>
   );
 }

@@ -50,7 +50,7 @@ export class MessageGateway
     try {
       let userId = client.handshake.query.userId;
       let user: UserEntity;
-      //console.log("userId = ", userId);
+      console.log("userId = ", userId);
       if (typeof userId === 'string') {
         user = await this.userService.findById(parseInt(userId));
       }
@@ -58,6 +58,12 @@ export class MessageGateway
         return this.disconnect(client);
       }
       else {
+        // check if user is already connected
+        console.log("map clients in connection = ", this.connectedClients);
+        if (this.connectedClients.has(client.id)) {
+          this.logger.log(`Client already connected: ${client.id}`);
+          return this.disconnect(client);
+        }
         this.connectedClients.set(client.id, user);
         //console.log("map clients = ", this.connectedClients);
       }
@@ -67,16 +73,18 @@ export class MessageGateway
     }
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
 
-    // remove client from the map
     this.connectedClients.delete(client.id);
+    this.connectedClients.clear();
     //console.log("map clients = ", this.connectedClients);
     client.disconnect();
   }
 
   private disconnect(client: Socket) {
+    this.connectedClients.delete(client.id);
+    this.connectedClients.clear();
     client.emit('Error', new UnauthorizedException());
     client.disconnect();
   }
@@ -93,20 +101,28 @@ export class MessageGateway
     }
     console.log("data message = ", data);
 
-    // emit to all clients
-    //this.server.emit('message', data);
-
     // parcourir tous mes clients connectés et envoyer le message uniquement a l'id du target
     console.log("map clients = ", this.connectedClients);
-    this.connectedClients.forEach((value, key) => {
-      console.log("data.target = ", data.target);
-      if (value.username === data.target || value.username === data.author) {
-        // get all message between the 2 users
-        //this.messageService.loadMessages()
-        //this.dmService.
-        this.server.to(key).emit('message', data);
-      }
-    });
+    if (data.isDm === true) {
+      this.connectedClients.forEach((value, key) => {
+        console.log("value username = ", value.username);
+        console.log("data author = ", data.author);
+        if (value.username !== data.author) {
+          this.server.to(key).emit('message', data);
+        }
+      });
+    }
+    else {
+      this.connectedClients.forEach((value, key) => {
+        // check if user is in channel
+        console.log("value = ", value);
+        console.log("data = ", data.id);
+
+        if (value.id === data.id) {
+            this.server.to(data.id.toString()).emit('message', data);
+        }
+      });
+    }
     //this.server.emit('message', data);
     console.log("BEFORE SEND TO CLIENT");
     //this.server.to(client.id).emit('message', data);

@@ -44,8 +44,7 @@ export default function ChannelsList(props: ChannelsListProps) {
         },
       })
       .then((res) => {
-        console.log("get infos of channel clicked by user");
-        console.log("status = ", res.data.status);
+        //console.log("get infos of channel clicked by user");
         setChannelData(res.data);
         props.setIsOpenInfos(true);
       })
@@ -59,9 +58,8 @@ export default function ChannelsList(props: ChannelsListProps) {
     getChannelDatas(channel);
     setIsDm(false);
     setConvId(channel.id);
-    console.log(typeof channel.id);
     loadMessages(channel.id, false);
-    console.log("channel clicked", channel);
+    //console.log("channel clicked", channel);
   }
 
   return (

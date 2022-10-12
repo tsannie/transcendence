@@ -40,9 +40,10 @@ export default function InfosChannels(props: InfosChannelsProps) {
       <Grid item>
         <List>
           Owner
-          <ListItem>
+          <ListItem
+            key={channelData.data.name}
+          >
             <ListItemButton
-              key={channelData.data.name}
               onClick={handleClick}
               disabled={username !== channelData.data.owner.username}
             >
@@ -60,9 +61,10 @@ export default function InfosChannels(props: InfosChannelsProps) {
         <List>
           Admins
           {channelData.data.admins.map((user: any) => (
-            <ListItem>
+            <ListItem
+              key={user.username}
+            >
               <ListItemButton
-                key={user.username}
                 onClick={handleClick}
                 disabled={channelData.status !== "owner"}
               >
@@ -81,9 +83,10 @@ export default function InfosChannels(props: InfosChannelsProps) {
         <List>
           Users
           {channelData.data.users.map((user: any) => (
-            <ListItem>
+            <ListItem
+              key={user.username}
+            >
               <ListItemButton
-                key={user.username}
                 onClick={handleClick}
                 disabled={
                   channelData.status !== "owner" &&
