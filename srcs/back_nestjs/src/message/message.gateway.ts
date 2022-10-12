@@ -31,6 +31,7 @@ export class MessageGateway
   constructor(
     private messageService: MessageService,
     private userService: UserService,
+    private dmService: DmService,
   ) {}
 
   connectedClients: Map<string, UserEntity> = new Map();
@@ -59,7 +60,7 @@ export class MessageGateway
       }
       else {
         // check if user is already connected
-        console.log("map clients in connection = ", this.connectedClients);
+        //console.log("map clients in connection = ", this.connectedClients);
         if (this.connectedClients.has(client.id)) {
           this.logger.log(`Client already connected: ${client.id}`);
           return this.disconnect(client);
@@ -77,7 +78,6 @@ export class MessageGateway
     this.logger.log(`Client disconnected: ${client.id}`);
 
     this.connectedClients.delete(client.id);
-    this.connectedClients.clear();
     //console.log("map clients = ", this.connectedClients);
     client.disconnect();
   }
@@ -104,25 +104,11 @@ export class MessageGateway
     // parcourir tous mes clients connectés et envoyer le message uniquement a l'id du target
     console.log("map clients = ", this.connectedClients);
     if (data.isDm === true) {
-      this.connectedClients.forEach((value, key) => {
-        console.log("value username = ", value.username);
-        console.log("data author = ", data.author);
-        if (value.username !== data.author) {
-          this.server.to(key).emit('message', data);
-        }
-      });
+      this.messageService.emitMessageDm(this.server, this.connectedClients, data);
     }
-    else {
-      this.connectedClients.forEach((value, key) => {
-        // check if user is in channel
-        console.log("value = ", value);
-        console.log("data = ", data.id);
-
-        if (value.id === data.id) {
-            this.server.to(data.id.toString()).emit('message', data);
-        }
-      });
-    }
+    /* else {
+      this.messageService.emitMessage(this.server, data);
+    } */
     //this.server.emit('message', data);
     console.log("BEFORE SEND TO CLIENT");
     //this.server.to(client.id).emit('message', data);
