@@ -13,6 +13,11 @@ interface SocketProviderProps {
 export const SocketProvider = ({ children }: SocketProviderProps) => {
 
   const [userid, setUserid] = useState(0);
+  const socket = io('http://localhost:4000', {
+    query: {
+      userId: userid,
+      }
+  });
 
   async function getUser() {
     console.log("get user");
@@ -26,16 +31,11 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       });
   }
 
-  const socket = io('http://localhost:4000', {
-  query: {
-    userId: userid,
-    }
-  });
-
   useEffect(() => {
     getUser();
     console.log('socket provider');
     socket.on('connect', () => console.log('connected to socket'));
+    socket.on("disconnect", () => console.log(socket.id));
   }, [socket]);
 
   return (
