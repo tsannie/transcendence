@@ -7,9 +7,11 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AvatarEntity } from './avatar.entity';
 
 @Entity()
 export class UserEntity {
@@ -34,12 +36,6 @@ export class UserEntity {
   @Column({ nullable: true })
   secret2FA?: string
 
-  @Column({
-    type:"bytea",
-    nullable: true,
-  })
-  avatar?: string;
-
   @OneToMany( () => ChannelEntity, (channels) => channels.owner, {nullable: true} )
   owner_of?: ChannelEntity[];
 
@@ -57,4 +53,8 @@ export class UserEntity {
   @ManyToMany( () => UserEntity)
   @JoinTable()
   banned?: UserEntity[];
+
+  @OneToOne( () => AvatarEntity, (avatar) => avatar.user, { nullable: true } )
+  @JoinTable()
+  avatar?: AvatarEntity;
 }
