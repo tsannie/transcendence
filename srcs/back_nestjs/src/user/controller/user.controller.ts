@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, ParseFilePipe, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
 import { targetDto } from '../dto/target.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
+import { Express } from 'express'
+import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/filevalidation.pipe';
 
 @Controller('user')
 export class UserController {
@@ -38,9 +40,15 @@ export class UserController {
 
   @UseGuards( JwtTwoFactorGuard )
   @Post("addAvatar")
-  @UseInterceptors(FileInterceptor('image'))
-  async addAvatar( @UploadedFile() file: any, @Request() req) : Promise<void|UserEntity> {
-    return await this.userService.addAvatar(file, req.user);
+  @UseInterceptors( FileInterceptor('avatar') )
+  addAvatar( @UploadedFile( new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator( { maxSize: 5000000} ),
+      new AvatarFormatValidator( {format: 'jpeg'}  ),
+    ]
+   })) file: Express.Multer.File, @Request() req) : any{
+    // console.log(file);
+    //return await this.userService.addAvatar(file, req.user);
   }
 
   //DELETE OR INTEGRATE IN USER GETTER
