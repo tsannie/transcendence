@@ -12,7 +12,7 @@ interface IProps {
 }
 
 export default function ActivationProcess(props: IProps) {
-  const { setMessage, setOpenSnackbar, setSeverity, setReloadAfter } =
+  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
     useContext(SnackbarContext) as SnackbarContextType;
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
@@ -36,7 +36,8 @@ export default function ActivationProcess(props: IProps) {
       .then((res) => {
         setSeverity("success");
         setMessage("2FA activated");
-        setReloadAfter(true);
+        setAfterReload(true);
+        window.location.reload();
       })
       .catch((err) => {
         setSeverity("error");

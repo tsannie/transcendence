@@ -15,7 +15,7 @@ interface IProps {
   openSnackbar: boolean;
   message: string;
   severity: AlertColor | undefined;
-  reloadAfter: boolean;
+  afterReload: boolean;
 }
 
 export default function CustomSnackbar(props: IProps) {
