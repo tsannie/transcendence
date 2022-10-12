@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import BallIcon from "../../assets/img/icon/ball/ball.png";
 import BallHideIcon from "../../assets/img/icon/ball/ball-hide.png";
 import "./bg.style.scss";
@@ -10,6 +10,13 @@ function Background() {
     if (hideBall) setHideBall(false);
     else setHideBall(true);
   };
+  useEffect(() => {
+    setHideBall(localStorage.getItem("hideBallKey") === "true" ? true : false);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('hideBallKey', JSON.stringify(hideBall));
+  }, [hideBall]);
 
   if (!hideBall) {
     return (

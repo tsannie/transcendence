@@ -10,31 +10,25 @@ import "./sidebar.style.scss";
 import { Link } from "react-router-dom";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { useLocation } from "react-router-dom"
+import { SnackbarContext, SnackbarContextType } from "../../contexts/SnackbarContext";
 
 
 
 export default function Sidebar(props: any) {
-  //const [displayGame, setDisplayGame] = useState(false);
-  // chat icon color: #610D7E
-
-  /*border-style: dashed;
-  border-color: white;*/
   const { logout } = useContext(AuthContext) as AuthContextType;
+  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
+  useContext(SnackbarContext) as SnackbarContextType;
   const path = useLocation().pathname;
-
-
 
   const handleLogout = () => {
     api.get('/auth/logout')
       .then(res => {
+        setMessage('bye bye');
+        setSeverity('info');
+        setOpenSnackbar(true);
         logout();
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      })
+      });
   }
-
 
   return (
     <div className="sidebar">

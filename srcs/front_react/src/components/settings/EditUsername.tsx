@@ -12,7 +12,7 @@ function EditUsername() {
   const { user } = React.useContext(AuthContext) as AuthContextType;
   const [editUsername, setEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const { setMessage, setOpenSnackbar, setSeverity, setReloadAfter } =
+  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
     useContext(SnackbarContext) as SnackbarContextType;
 
   const handleUsername = () => {
@@ -30,8 +30,9 @@ function EditUsername() {
       .post("user/edit-username", { username: newUsername })
       .then(({ data }) => {
         setSeverity("success");
-        setMessage("Username updated");
-        setReloadAfter(true);
+        setMessage("username updated");
+        setAfterReload(true);
+        window.location.reload();
       })
       .catch((error) => {
         setSeverity("error");
