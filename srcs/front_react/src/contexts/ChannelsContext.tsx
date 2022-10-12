@@ -35,7 +35,6 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
 
   // get all available channels
   async function getAvailableChannels() {
-    console.log("get available channels");
     await api
       .get("channel/list", {
         params: {
@@ -47,13 +46,13 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
         console.log(res.data);
       })
       .catch((res) => {
-        console.log("invalid channels");
+        console.log("invalid available channels");
+        console.log(res);
       });
   }
 
   // get all channels
   async function getChannelsUserlist() {
-    console.log("get channels");
     await api
       .get("channel/userlist")
       .then((res) => {
@@ -61,7 +60,7 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
         console.log(res.data);
       })
       .catch((res) => {
-        console.log("invalid channels");
+        console.log("invalid userlist channels");
         console.log(res);
       });
   }

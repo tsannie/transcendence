@@ -60,7 +60,7 @@ export default function ChannelsList(props: ChannelsListProps) {
     setIsDm(false);
     setConvId(channel.id);
     console.log(typeof channel.id);
-    loadMessages(channel.id, isDm);
+    loadMessages(channel.id, false);
     console.log("channel clicked", channel);
   }
 

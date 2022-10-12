@@ -26,7 +26,6 @@ interface ChatUserListProps {
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-  const { setMessagesList, setTargetUsername } = useContext(MessagesContext);
   const { userid, users } = useContext(UserContext);
   const { getDmsList } = useContext(DmsContext);
 
@@ -41,7 +40,6 @@ export default function ChatUserlist(props: ChatUserListProps) {
       .then((res) => {
         console.log("dm created with success");
         console.log(targetUsername);
-        console.log(res.data.messages);
         getDmsList();
       })
       .catch((res) => {
@@ -59,7 +57,6 @@ export default function ChatUserlist(props: ChatUserListProps) {
     console.log("handle new message");
     createDm(newDm);
     props.setChatContent(ChatContent.MESSAGES);
-    setTargetUsername(targetUsername);
   }
 
   return (

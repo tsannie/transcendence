@@ -65,7 +65,7 @@ export class ChannelService {
 				if (isUser)
 				{
 					response.status = "user";
-					response.data = await this.getPublicData(query_channel);
+					response.data = await this.getUserData(query_channel);
 				}
 				else
 				{
