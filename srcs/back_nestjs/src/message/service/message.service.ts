@@ -25,7 +25,7 @@ export class MessageService {
 	checkUserValidity(type: string, inputed_id: number, user: UserEntity) : DmEntity | ChannelEntity {
 		if (type === "dm")
 		{
-			let dm = user.dms.find( elem => elem.id === inputed_id);
+			let dm = user.dms.find( elem => elem.id == inputed_id);
 			if (!dm)
 				throw new UnprocessableEntityException("User is not part of the dm.");
 			else

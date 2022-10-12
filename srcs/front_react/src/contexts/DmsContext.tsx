@@ -34,6 +34,7 @@ export const DmsProvider = ({ children }: DmsContextProps) => {
       .get("dm/list")
       .then((res) => {
         setDmsList(res.data);
+        console.log(res.data);
       })
       .catch((res) => {
         console.log("invalid dms");

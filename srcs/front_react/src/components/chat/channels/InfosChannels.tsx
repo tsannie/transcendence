@@ -44,7 +44,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
             <ListItemButton
               key={channelData.data.name}
               onClick={handleClick}
-              disabled={username !== channelData.data.owner}
+              disabled={username !== channelData.data.owner.username}
             >
               {
                 <ListItemText>
@@ -56,28 +56,26 @@ export default function InfosChannels(props: InfosChannelsProps) {
         </List>
       </Grid>
 
-      {channelData.status !== "publicUser" && (
-        <Grid item>
-          <List>
-            Admins
-            {channelData.data.admins.map((user: any) => (
-              <ListItem>
-                <ListItemButton
-                  key={user.username}
-                  onClick={handleClick}
-                  disabled={channelData.status !== "owner"}
-                >
-                  <ListItemText primary={user.username}></ListItemText>
-                  {open ? <ExpandLess /> : <ExpandMore />}
-                </ListItemButton>
-                <Collapse in={open} timeout="auto" unmountOnExit>
-                  <AdminsActions userTargeted={user} />
-                </Collapse>
-              </ListItem>
-            ))}
-          </List>
-        </Grid>
-      )}
+      <Grid item>
+        <List>
+          Admins
+          {channelData.data.admins.map((user: any) => (
+            <ListItem>
+              <ListItemButton
+                key={user.username}
+                onClick={handleClick}
+                disabled={channelData.status !== "owner"}
+              >
+                <ListItemText primary={user.username}></ListItemText>
+                {open ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <AdminsActions userTargeted={user} />
+              </Collapse>
+            </ListItem>
+          ))}
+        </List>
+      </Grid>
 
       <Grid item>
         <List>
