@@ -5,7 +5,7 @@ import { targetDto } from '../dto/target.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express } from 'express'
-import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/filevalidation.pipe';
+import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/filevalidation.validator';
 
 @Controller('user')
 export class UserController {
@@ -44,10 +44,10 @@ export class UserController {
   addAvatar( @UploadedFile( new ParseFilePipe({
     validators: [
       new MaxFileSizeValidator( { maxSize: 5000000} ),
-      new AvatarFormatValidator( {format: ['jpeg', 'png']}  ),
+      new AvatarFormatValidator( {format: ['jpeg', 'png']} ),
     ]
    })) file: Express.Multer.File, @Request() req) : any{
-    // console.log(file);
+    console.log(file);
     //return await this.userService.addAvatar(file, req.user);
   }
 
