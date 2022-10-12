@@ -51,6 +51,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   function sendMessage(id: number) {
     console.log("send message");
+    console.log(targetUsername);
     const inputMessage = document.getElementById(
       "input-message"
     ) as HTMLInputElement;
@@ -82,7 +83,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
           },
         })
         .then((res) => {
-          console.log("msg data = ", res.data);
+          //console.log("msg data = ", res.data);
           setMessagesList(res.data);
         })
         .catch((res) => {
@@ -110,13 +111,10 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   useEffect(() => {
     socket.on("message", (data) => {
-      //console.log(data);
-      //if (isNewMessage === true) {
-        loadMessages(data.id, data.isDm);
-        //setIsNewMessage(false);
-      //}
+      console.log("message received from server !!!!!!");
+      loadMessages(data.id, data.isDm);
     });
-  }, [socket]);
+  }, [socket, messagesList]);
 
   return (
     <MessagesContext.Provider

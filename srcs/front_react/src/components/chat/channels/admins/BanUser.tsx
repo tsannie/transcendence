@@ -33,6 +33,7 @@ export default function BanUser(props: BanUserProps) {
   async function banUser(user: any, channel: any) {
     const newChannel = createChannelActions(channel, user.username);
 
+    console.log("newChannel = ", newChannel);
     if (newChannel.target !== "") {
       await api
         .post("channel/banUser", newChannel)
