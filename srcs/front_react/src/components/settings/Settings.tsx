@@ -1,8 +1,6 @@
 import { Button } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import ActivationProcess from "./ActivationProcess";
-import Success2FASnackbar from "../snackbar/SuccessSnackbar";
-import Error2FASnackbar from "../snackbar/ErrorSnackbar";
 import { api } from "../../const/const";
 import "./settings.style.scss";
 import SettingsPicture from "./SettingsPicture";

@@ -3,12 +3,13 @@ import { AuthContext, AuthContextType } from '../../contexts/AuthContext';
 import EditIcon from "../../assets/img/icon/edit.png";
 import VerifIcon from "../../assets/img/icon/verifier.png";
 import { api } from '../../const/const';
+import { SnackbarContext, SnackbarContextType } from '../../contexts/SnackbarContext';
 
 function EditUsername() {
   const { user } = React.useContext(AuthContext) as AuthContextType;
   const [editUsername, setEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const { setReason, setOpenSuccess, setOpenError } = useContext(AuthContext) as AuthContextType;
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
 
 
   const handleUsername = () => {
@@ -25,12 +26,14 @@ function EditUsername() {
 
     api.post('user/edit-username', {username: newUsername}).then(({ data }) => {
       console.log('success', data);
-      setReason('Username updated')
-      setOpenSuccess(true);
+      setSeverity("success");
+      setMessage('Username updated');
+      setOpenSnackbar(true);
     })
     .catch((error) => {
-      setReason('\'' + newUsername + '\' is already use or invalid');
-      setOpenError(true);
+      setSeverity("error");
+      setMessage('\'' + newUsername + '\' is already use or invalid');
+      setOpenSnackbar(true);
       setNewUsername('');
     });
   }
