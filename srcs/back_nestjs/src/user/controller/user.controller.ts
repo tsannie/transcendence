@@ -41,14 +41,13 @@ export class UserController {
   @UseGuards( JwtTwoFactorGuard )
   @Post("addAvatar")
   @UseInterceptors( FileInterceptor('avatar') )
-  addAvatar( @UploadedFile( new ParseFilePipe({
+  async addAvatar( @UploadedFile( new ParseFilePipe({
     validators: [
       new MaxFileSizeValidator( { maxSize: 5000000} ),
       new AvatarFormatValidator( {format: ['jpeg', 'png']} ),
     ]
-   })) file: Express.Multer.File, @Request() req) : any{
-    console.log(file);
-    //return await this.userService.addAvatar(file, req.user);
+   })) file: Express.Multer.File, @Request() req) : Promise<any>{
+    return await this.userService.addAvatar(file, req.user);
   }
 
   //DELETE OR INTEGRATE IN USER GETTER
