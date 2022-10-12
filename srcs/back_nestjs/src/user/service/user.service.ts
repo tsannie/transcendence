@@ -1,13 +1,21 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, FindOptionsRelations, Repository } from 'typeorm';
+import { AvatarEntity } from '../models/avatar.entity';
 import { UserEntity } from '../models/user.entity';
+import * as sharp from 'sharp';
+import * as fs from 'fs';
+
+export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
 
 @Injectable()
 export class UserService {
   constructor(
 	@InjectRepository(UserEntity)
 	private allUser: Repository<UserEntity>,
+
+	@InjectRepository(AvatarEntity)
+	private avatarRepository: Repository<AvatarEntity>,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -135,12 +143,41 @@ export class UserService {
 		return await this.allUser.save(requester);
 	}
 
-  async addAvatar(file: any, user: UserEntity) {
-    console.log(file);
-	return file;
-	// user.avatar = data.image;
-    // return await this.allUser.save(user);
-  }
+	async deleteAvatar(user: UserEntity) {
+		console.log("c'est possible")
+		if (user.avatar)
+		{
+			let avatar = user.avatar;
+			user.avatar = null;
+			console.log("ICI = ", `${AVATAR_DEST}/${avatar.filename}`);
+			fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}`);
+			return this.avatarRepository.remove(avatar);
+		}
+	}
+
+	async addAvatar(file: any, user: UserEntity) : Promise<any> {
+		console.log(user);
+		let user_reloaded = await this.findById(user.id, {
+			avatar: true
+		});
+		console.log("reloaded = ", user_reloaded);
+		// if (user.avatar)
+		// 	await this.deleteAvatar(user);
+			
+		// let resized = await sharp(file.buffer)
+		// .resize(512, 512)
+		// .toFile(`${AVATAR_DEST}/${user.id}.jpg`)
+		// .catch( err =>
+		// 		{
+		// 			throw new UnprocessableEntityException(`Cannot resize avatar for user ${user.username}.`)
+		// 		}
+		// );
+
+		// let avatar = new AvatarEntity();
+		// avatar.filename = `${user.id}.jpg`;
+		// avatar.user = user;
+		// return await this.avatarRepository.save(avatar);
+	}
 
   async getAvatar(user: UserEntity) {
 	//return user.avatar;
