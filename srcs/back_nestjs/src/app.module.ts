@@ -24,6 +24,7 @@ import { DmController } from './dm/controller/dm.controller';
 import { DmService } from './dm/service/dm.service';
 import { DmModule } from './dm/dm.module';
 import { DmEntity } from './dm/models/dm.entity';
+import { AvatarEntity } from './user/models/avatar.entity';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { DmEntity } from './dm/models/dm.entity';
       autoLoadEntities: true,
       synchronize: true, //TODO deploiement false
     }),
-    TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity]),
+    TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity, AvatarEntity]),
     UserModule,
     AuthModule,
     PassportModule,
