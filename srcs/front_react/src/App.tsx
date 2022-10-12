@@ -1,10 +1,8 @@
-import React, { ContextType, Fragment, useEffect, useState } from "react";
-import { api, COOKIE_NAME } from "./const/const";
-import Menu from "./components/menu/Menu";
+import React from "react";
 import "./app.style.scss";
 import "./components/background/bg.style.scss";
 import "./components/menu/menu.style.scss";
-import { Navigate, Route, Router, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import LoginPage from "./components/auth/oauth/LoginPage";
 import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
@@ -15,6 +13,7 @@ import Profile from "./components/profile/Profile";
 import { AnimatePresence } from "framer-motion"; // TODO delete ?
 import Background from "./components/background/Background";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
+import GamePage from "./components/game/GamePage";
 
 export default function App() {
   return (
@@ -36,7 +35,7 @@ export default function App() {
             <Route path="/chat" element={<PrivateRoute component={Chat} />} />
             <Route
               path="/game"
-              element={<PrivateRoute component={Profile} />}
+              element={<PrivateRoute component={GamePage} />}
             />
             <Route
               path="/settings"
