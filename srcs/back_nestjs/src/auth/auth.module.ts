@@ -10,10 +10,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { FortyTwoStrategy } from './strategy/fortyTwo.strategy';
 import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
+import { AvatarEntity } from 'src/user/models/avatar.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, AvatarEntity]),
     UserModule,
     PassportModule,
   ],
