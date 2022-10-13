@@ -13,7 +13,7 @@ interface SocketProviderProps {
 export const SocketProvider = ({ children }: SocketProviderProps) => {
 
   const [userid, setUserid] = useState(0);
-  const socket = io('http://localhost:4000', {
+  const socket = io('http://localhost:4000/chat', {
     query: {
       userId: userid,
       }
@@ -35,7 +35,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     getUser();
     console.log('socket provider');
     socket.on('connect', () => console.log('connected to socket'));
-    socket.on("disconnect", () => console.log(socket.id));
+    socket.on("disconnect", () => console.log("disconnected from socket"));
   }, [socket]);
 
   return (

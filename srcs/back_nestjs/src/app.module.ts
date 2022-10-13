@@ -24,6 +24,7 @@ import { DmController } from './dm/controller/dm.controller';
 import { DmService } from './dm/service/dm.service';
 import { DmModule } from './dm/dm.module';
 import { DmEntity } from './dm/models/dm.entity';
+import { ConnectedUserModule } from './connected-user/connected-user.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DmEntity } from './dm/models/dm.entity';
     ChannelModule,
     MessageModule,
     DmModule,
+    ConnectedUserModule,
   ],
   controllers: [AppController, TwoFactorController, DmController],
   providers: [

@@ -51,7 +51,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   function sendMessage(id: number) {
     console.log("send message");
-    console.log(targetUsername);
+    console.log("target username", targetUsername);
     const inputMessage = document.getElementById(
       "input-message"
     ) as HTMLInputElement;
@@ -72,8 +72,6 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
   }
 
   async function loadMessages(id: number, isDm: boolean) {
-    console.log("load messages");
-    console.log("isDm: " + isDm);
     if (isDm === true) {
       await api
         .get("message/dm", {
@@ -111,7 +109,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   useEffect(() => {
     socket.on("message", (data) => {
-      console.log("message received from server !!!!!!");
+      //console.log("message received from server !!!!!!");
       loadMessages(data.id, data.isDm);
     });
   }, [socket, messagesList]);
