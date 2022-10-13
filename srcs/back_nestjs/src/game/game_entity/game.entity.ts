@@ -22,7 +22,7 @@ export class GameEntity {
   fast_play: boolean;
 
   @Column({ nullable: true })
-  nbr_co: number;
+  nbr_co: number = 0;
 
   @Column('boolean', { default: false })
   gave_up: boolean;
