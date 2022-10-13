@@ -7,7 +7,7 @@ import { DmEntity } from 'src/dm/models/dm.entity';
 import { AvatarEntity } from './models/avatar.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DmEntity, UserEntity, AvatarEntity])],
+  imports: [TypeOrmModule.forFeature([DmEntity, AvatarEntity, UserEntity, ])],
   providers: [UserService],
   controllers: [UserController],
   exports: [UserService],

@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
@@ -54,7 +55,6 @@ export class UserEntity {
   @JoinTable()
   banned?: UserEntity[];
 
-  @OneToOne( () => AvatarEntity, (avatar) => avatar.user, { nullable: true } )
-  @JoinTable()
+  @OneToOne( () => AvatarEntity, (avatar) => avatar.user, { eager: true, nullable: true, /* cascade: ["remove"]*/}  )
   avatar?: AvatarEntity;
 }

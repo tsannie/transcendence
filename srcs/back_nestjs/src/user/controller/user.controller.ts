@@ -11,6 +11,7 @@ import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/fi
 export class UserController {
   constructor(private userService: UserService) {}
 
+
   @Get()
   async getAllUser():  Promise<UserEntity[]> {
     return await this.userService.getAllUser();
