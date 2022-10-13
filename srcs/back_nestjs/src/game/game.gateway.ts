@@ -39,13 +39,16 @@ export class GameGateway implements OnGatewayInit {
     this.logger.log('Initialized');
   }
 
-  ///////////////////////////////////////////////
-  //////////////// SPECTATOR ROOM 
+  //////////////////////////////////////////////
+  ////////////// SPECTATOR ROOM 
   ///////////////////////////////////////////////
 
   @SubscribeMessage('LeaveGameSpectator')
   async LeaveGameSpectator(client: Socket, room: string) {
     client.leave(room);
+
+    //const room_game = await this.all_game.findOne({ room_name: room });
+
     if (this.all_rooms[room]) {
       this.all_rooms[room].spectator--;
       await this.all_game.save(this.all_rooms[room]);
@@ -142,8 +145,8 @@ export class GameGateway implements OnGatewayInit {
     if (this.all_rooms[room].p2_ready === true && this.all_rooms[room].p1_ready === true) {
       this.all_rooms[room].game_started = true;
       this.all_rooms[room].thedate = new Date();
-      //send withc power and witch map before the second player 
-      //can touth ready and if player ready cant change power and map 
+      ////send withc power and witch map before the second player 
+      ////can touth ready and if player ready cant change power and map 
       client.emit('readyGame', this.all_rooms[room]);
       client.to(room).emit('readyGame', this.all_rooms[room]);
     } else
@@ -174,6 +177,7 @@ export class GameGateway implements OnGatewayInit {
     }
     this.all_rooms[room].set.set_p1.name = this.all_rooms[room].p1;
     this.all_rooms[room].set.set_p2.name = this.all_rooms[room].p2;
+
     this.all_rooms[room].spectator = 0;
 
     await this.all_game.save(this.all_rooms[room])

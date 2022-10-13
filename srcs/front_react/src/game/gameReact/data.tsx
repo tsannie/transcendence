@@ -54,3 +54,14 @@ export default {
     won: false,
   },
 };
+
+/* export interface IBall {
+  x: number;
+  y: number;
+  ball_way_x: number;
+  ball_way_y: number;
+}
+
+const ball: IBall;
+
+ball.x = 10; */

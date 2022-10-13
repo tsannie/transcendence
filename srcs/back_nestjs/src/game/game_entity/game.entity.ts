@@ -29,6 +29,7 @@ export class GameEntity {
 
   @Column({ default: 0 })
   spectator: number;
+  //boolean
 
   @Column({ nullable: true })
   p1?: string;

@@ -42,23 +42,42 @@ export function GameSpectator(props: any) {
   let requestAnimationFrameId: any;
   useEffect(() => {
     socket.on("sincTheBall_spec", (theroom: any) => {
+      console.log("sincTheBall_spec");
+      if (theroom.power === 1 || theroom.power === 3
+        || theroom.power === 5 || theroom.power === 7) {
+        ballObj.ingame_dx = theroom.set.ball.power_ingame_dx;
+        ballObj.ingame_dy = theroom.set.ball.power_ingame_dy;
+  
+        ballObj.first_dx = theroom.set.ball.power_first_dx;
+        ballObj.first_dy = theroom.set.ball.power_first_dy;
+      }
+      else {
+        ballObj.ingame_dx = theroom.set.ball.ingame_dx;
+        ballObj.ingame_dy = theroom.set.ball.ingame_dy;
+        
+        ballObj.first_dx = theroom.set.ball.first_dx;
+        ballObj.first_dy = theroom.set.ball.first_dy;
+      }
+      if (theroom.power === 2 || theroom.power === 3
+      || theroom.power === 6 || theroom.power === 7) {
+        ballObj.rad = theroom.set.ball.power_rad;
+      }
+      else {
+        ballObj.rad = theroom.set.ball.rad;
+      }
       ballObj.x = theroom.set.ball.x;
       ballObj.y = theroom.set.ball.y;
 
-      ballObj.ingame_dx = theroom.set.ball.ingame_dx;
-      ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-/* 
-      ballObj.init_dx = theroom.set.ball.init_dx;
-      ballObj.init_dy = theroom.set.ball.init_dy;
-
-      ballObj.init_first_dx = theroom.set.ball.init_first_dx;
-      ballObj.init_first_dy = theroom.set.ball.init_first_dy; */
-
-      ballObj.first_dx = theroom.set.ball.first_dx;
-      ballObj.first_dy = theroom.set.ball.first_dy;
-
+      ballObj.ball_way_x = theroom.set.ball.way_x;
+      ballObj.ball_way_y = theroom.set.ball.way_y;
+      
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
+      gameSpecs.power = theroom.power;
+
+      player_left.score = theroom.set.set_p1.score;
+      player_right.score = theroom.set.set_p2.score;
+
       first_sinc = true;
       setpower(theroom.power);
     });
@@ -110,11 +129,9 @@ export function GameSpectator(props: any) {
           draw_line(ctx, ballObj, canvas.height, canvas.width);
           draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
           if (first_sinc === true) {
-/*             if (power === 4 || power === 5
-              || power === 6 || power === 7) {
-                //console.log("DRAWWWWWW POWEEEERRRR = ", power);
-                draw_smasher(ctx, ballObj, canvas.height, canvas.width);
-            } */
+            if (gameSpecs.power === 4 || gameSpecs.power === 5
+            || gameSpecs.power === 6 || gameSpecs.power === 7)
+              draw_smasher(ctx, gameSpecs, ballObj, canvas.height, canvas.width);
             BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, power);
             BallCol_left(ctx, gameSpecs, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
             BallCol_right(ctx, gameSpecs, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);

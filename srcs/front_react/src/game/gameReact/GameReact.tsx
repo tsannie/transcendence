@@ -20,6 +20,16 @@ import { ContactSupport } from "@material-ui/icons";
 export function GamePlayer_Left_right(props: any) {
   const [power, setpower] = useState(0);
   const [date, setdate] = useState(new Date());
+  /* enum powerEnum {
+    normal = 0,
+    power = 1,
+    smash = 2,
+    power_smash = 3,
+    slow = 4,
+    power_slow = 5,
+    smash_slow = 6,
+    power_smash_slow = 7,
+  } */
   
   let x = 0;
   let u = 0;
@@ -144,18 +154,21 @@ export function GamePlayer_Left_right(props: any) {
             draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
             //console.log("power = ", gameSpecs.power);
             if (gameSpecs.power === 4 || gameSpecs.power === 5
-            || gameSpecs.power === 6 || gameSpecs.power === 7) {
+            || gameSpecs.power === 6 || gameSpecs.power === 7)
               draw_smasher(ctx, gameSpecs, ballObj, canvas.height, canvas.width);
-            }
             BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, gameSpecs.power);
             BallCol_left(ctx, gameSpecs, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
             BallCol_right(ctx, gameSpecs, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
-            if (ballObj.col_now_paddle === true /* || u === 50 */) {
+            if (ballObj.col_now_paddle === true  || u === 50) {
               sinc_ball(props.room, ballObj, false);
               ballObj.col_now_paddle = false;
               u = 0;
             }
             u++;
+/*             if (ballObj.init_ball_pos === false) {
+              sinc_player_left(props.room, player_left);
+              sinc_player_right(props.room, player_right);
+            } */
             PaddleMouv_left(ctx, canvas, paddleProps_left);
             PaddleMouv_right(ctx, canvas, paddleProps_right);
         } else {
