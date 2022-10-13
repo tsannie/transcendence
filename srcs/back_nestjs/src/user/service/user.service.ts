@@ -180,7 +180,17 @@ export class UserService {
 		return await this.avatarRepository.save(avatar);
 	}
 
-  async getAvatar(user: UserEntity) {
-	//return user.avatar;
-  }
+	async getAvatar(inputed_id: number) : Promise<string> {
+		let avatar = await this.avatarRepository
+		.createQueryBuilder("avatar")
+		.leftJoin("avatar.user", "user")
+		.addSelect("user.id")
+		.where("user.id = :id", { id: inputed_id })
+		.getOne()
+
+		if (!avatar)
+			throw new UnprocessableEntityException("Cannot find any avatar correspondingn to that id");
+
+		return `${AVATAR_DEST}/${avatar.filename}`;
+	}
 }
