@@ -1,4 +1,5 @@
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import {
   Column,
@@ -57,4 +58,7 @@ export class UserEntity {
   @ManyToMany( () => UserEntity)
   @JoinTable()
   banned?: UserEntity[];
+
+  @OneToMany(() => ConnectedUserEntity, (connection) => connection.user)
+  connections?: ConnectedUserEntity[];
 }

@@ -157,6 +157,26 @@ export class ChannelService {
 			return returned_channel;
 	}
 
+	// get a channel by id (used for message)
+	async getChannelById(inputed_id: number): Promise<ChannelEntity> {
+		let ret = await this.channelRepository
+		.createQueryBuilder("channel")
+		.where("channel.id = :id", {id: inputed_id})
+		.leftJoin("channel.users", "users")
+		.addSelect("users.id")
+		.addSelect("users.username")
+		.leftJoin("channel.admins", "admins")
+		.addSelect("admins.id")
+		.addSelect("admins.username")
+		.leftJoin("channel.owner", "owner")
+		.addSelect("owner.username")
+		.addSelect("owner.id")
+		.getOne();
+
+		return ret;
+	}
+
+
 	/* This function compares hashed password in db, with the one the user just typed */
 	async checkPassword(inputed_password : string, channel_password: string)
 	{

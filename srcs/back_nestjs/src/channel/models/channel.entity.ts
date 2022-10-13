@@ -18,23 +18,23 @@ export class ChannelEntity {
 
 	@CreateDateColumn()
 	createdAt: string;
-	
+
 	@Column( {nullable: false, unique: true} )
 	name: string;
-	
+
 	@Column({ nullable: false } )
 	status: string;
 
 	@Column( { select: null, nullable: true })
 	password: string;
-	
+
 	@ManyToOne( () => UserEntity, (user) => user.owner_of )
 	owner: UserEntity;
-	
+
 	@ManyToMany( () => UserEntity, (user) => user.admin_of )
 	@JoinTable()
 	admins: UserEntity[];
-	
+
 	//CHANGE NEXT TWO FIELDS IF CIRCULAR DEPENDENCIES
 	@ManyToMany( () => UserEntity, (user) => user.channels )
 	users: UserEntity[];

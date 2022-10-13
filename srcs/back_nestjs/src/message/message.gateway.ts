@@ -17,6 +17,10 @@ import { UserService } from 'src/user/service/user.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { IMessage } from './models/message.interface';
 import { UserEntity } from 'src/user/models/user.entity';
+import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
+import { Repository } from 'typeorm';
+import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
+import { ConnectedUserDto } from 'src/connected-user/dto/connected-user.dto';
 
 
 // cree une websocket sur le port par defaut
@@ -24,6 +28,7 @@ import { UserEntity } from 'src/user/models/user.entity';
   cors: {
     origin: 'http://localhost:3000',
   },
+  namespace: 'chat',
 })
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -32,9 +37,10 @@ export class MessageGateway
     private messageService: MessageService,
     private userService: UserService,
     private dmService: DmService,
+    private connectedUserService: ConnectedUserService,
+    @InjectRepository(ConnectedUserEntity)
+    private connectedUserRepository: Repository<ConnectedUserEntity>,
   ) {}
-
-  connectedClients: Map<string, UserEntity> = new Map();
 
   private readonly logger: Logger = new Logger('messageGateway');
 
@@ -59,14 +65,13 @@ export class MessageGateway
         return this.disconnect(client);
       }
       else {
-        // check if user is already connected
-        //console.log("map clients in connection = ", this.connectedClients);
-        if (this.connectedClients.has(client.id)) {
-          this.logger.log(`Client already connected: ${client.id}`);
-          return this.disconnect(client);
-        }
-        this.connectedClients.set(client.id, user);
-        //console.log("map clients = ", this.connectedClients);
+
+        let connectedUser = new ConnectedUserDto();
+
+        connectedUser.socketId = client.id;
+        connectedUser.user = user;
+
+        this.connectedUserService.create(connectedUser);
       }
     }
     catch {
@@ -77,14 +82,13 @@ export class MessageGateway
   async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
 
-    this.connectedClients.delete(client.id);
+    this.connectedUserService.deleteBySocketId(client.id);
     //console.log("map clients = ", this.connectedClients);
     client.disconnect();
   }
 
   private disconnect(client: Socket) {
-    this.connectedClients.delete(client.id);
-    this.connectedClients.clear();
+    this.connectedUserService.deleteBySocketId(client.id);
     client.emit('Error', new UnauthorizedException());
     client.disconnect();
   }
@@ -96,21 +100,10 @@ export class MessageGateway
 
     if (data.isDm === true) {
       this.messageService.addMessagetoDm(data);
+      this.messageService.emitMessageDm(this.server, data);
     } else {
       this.messageService.addMessagetoChannel(data);
+      this.messageService.emitMessageChannel(this.server, data);
     }
-    console.log("data message = ", data);
-
-    // parcourir tous mes clients connectés et envoyer le message uniquement a l'id du target
-    console.log("map clients = ", this.connectedClients);
-    if (data.isDm === true) {
-      this.messageService.emitMessageDm(this.server, this.connectedClients, data);
-    }
-    /* else {
-      this.messageService.emitMessage(this.server, data);
-    } */
-    //this.server.emit('message', data);
-    console.log("BEFORE SEND TO CLIENT");
-    //this.server.to(client.id).emit('message', data);
   }
 }
