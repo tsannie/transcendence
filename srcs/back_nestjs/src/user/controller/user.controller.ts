@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, ParseFilePipe, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Query, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
-import { targetDto } from '../dto/target.dto';
+import { targetNameDto, targetIdDto } from '../dto/target.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express } from 'express'
@@ -10,7 +10,6 @@ import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/fi
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
-
 
   @Get()
   async getAllUser():  Promise<UserEntity[]> {
@@ -29,13 +28,13 @@ export class UserController {
 
 	@UseGuards( JwtTwoFactorGuard )
   @Post("banUser")
-  async banUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
+  async banUser(@Body() body: targetNameDto, @Request() req) : Promise<UserEntity> {
     return await this.userService.banUser(body.target, req.user);
   }
 
   @UseGuards( JwtTwoFactorGuard )
   @Post("unBanUser")
-  async unBanUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
+  async unBanUser(@Body() body: targetNameDto, @Request() req) : Promise<UserEntity> {
     return await this.userService.unBanUser(body.target, req.user);
   }
 
@@ -51,10 +50,9 @@ export class UserController {
     return await this.userService.addAvatar(file, req.user);
   }
 
-  //DELETE OR INTEGRATE IN USER GETTER
   @UseGuards( JwtTwoFactorGuard )
-  @Get("getAvatar")
-  async getAvatar (@Request() req) {//: Promise<string> {
-    // return await this.userService.getAvatar(req.user);
+  @Get("avatar")
+  async getAvatar(@Query() data : targetIdDto, @Res() res) : Promise<any> {
+	res.sendFile(await this.userService.getAvatar(data.id))
   }
 }
