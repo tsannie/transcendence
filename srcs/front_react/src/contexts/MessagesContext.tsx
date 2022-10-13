@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { createContext } from "react";
 import { IMessage } from "../components/chat/types";
 import { api } from "../const/const";
@@ -110,9 +110,10 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
   useEffect(() => {
     socket.on("message", (data) => {
       //console.log("message received from server !!!!!!");
-      loadMessages(data.id, data.isDm);
+      //loadMessages(data.id, data.isDm);
+      setMessagesList((messagesList) => [...messagesList, data]);
     });
-  }, [socket, messagesList]);
+  }, [socket]);
 
   return (
     <MessagesContext.Provider
