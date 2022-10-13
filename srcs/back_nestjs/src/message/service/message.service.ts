@@ -124,16 +124,15 @@ export class MessageService {
 
     if (dm) {
       console.log('dm.users', dm.users);
-      dm.users.forEach((user: UserEntity) => {
-        // load relations to get connected users
-        this.userService
-          .findByName(user.username, { connections: true })
-          .then((user: UserEntity) => {
-            user.connections.forEach((connection) => {
-              socket.to(connection.socketId).emit('message', data);
-            });
-          });
-      });
+      for (const dmUser of dm.users) {
+        const user = await this.userService.findByName(dmUser.username, { connections: true })
+
+        for (const connection of user.connections) {
+          if (data.author !== dmUser.username) {
+            socket.to(connection.socketId).emit('message', data);
+          }
+        }
+      }
     }
   }
 
