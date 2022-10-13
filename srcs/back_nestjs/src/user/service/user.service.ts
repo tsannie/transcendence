@@ -5,6 +5,7 @@ import { AvatarEntity } from '../models/avatar.entity';
 import { UserEntity } from '../models/user.entity';
 import * as sharp from 'sharp';
 import * as fs from 'fs';
+import { resolve } from 'path';
 
 export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
 
@@ -144,39 +145,39 @@ export class UserService {
 	}
 
 	async deleteAvatar(user: UserEntity) {
-		console.log("c'est possible")
 		if (user.avatar)
 		{
 			let avatar = user.avatar;
 			user.avatar = null;
-			console.log("ICI = ", `${AVATAR_DEST}/${avatar.filename}`);
-			fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}`);
-			return this.avatarRepository.remove(avatar);
+			try
+			{
+				fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}`);
+			}
+			catch (err)
+			{
+				throw new UnprocessableEntityException(`Cannot delete old avatar from server.`);
+			}
+			return await this.avatarRepository.remove(avatar);
 		}
 	}
 
 	async addAvatar(file: any, user: UserEntity) : Promise<any> {
-		console.log(user);
-		let user_reloaded = await this.findById(user.id, {
-			avatar: true
-		});
-		console.log("reloaded = ", user_reloaded);
-		// if (user.avatar)
-		// 	await this.deleteAvatar(user);
-			
-		// let resized = await sharp(file.buffer)
-		// .resize(512, 512)
-		// .toFile(`${AVATAR_DEST}/${user.id}.jpg`)
-		// .catch( err =>
-		// 		{
-		// 			throw new UnprocessableEntityException(`Cannot resize avatar for user ${user.username}.`)
-		// 		}
-		// );
+		if (user.avatar)
+			await this.deleteAvatar(user);
 
-		// let avatar = new AvatarEntity();
-		// avatar.filename = `${user.id}.jpg`;
-		// avatar.user = user;
-		// return await this.avatarRepository.save(avatar);
+		let resized = await sharp(file.buffer)
+		.resize(512, 512)
+		.toFile(`${AVATAR_DEST}/${user.id}.jpg`)
+		.catch( err =>
+				{
+					throw new UnprocessableEntityException(`Cannot resize avatar for user ${user.username}.`)
+				}
+		);
+
+		let avatar = new AvatarEntity();
+		avatar.filename = `${user.id}.jpg`;
+		avatar.user = user;
+		return await this.avatarRepository.save(avatar);
 	}
 
   async getAvatar(user: UserEntity) {
