@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { GameEntity } from '../game_entity/game.entity';
 
@@ -21,6 +22,40 @@ export class GameService {
         room_name: room_name,
       },
     });
+  }
+
+  async joinFastRoom(room: string): Promise<GameEntity> {
+
+    var room_game;
+    const size = await this.all_game.count();
+    if (size != 0) {
+      const all_rooms = await this.all_game.find();
+      all_rooms.forEach((room_db) => {
+        if (room_db.fast_play === true && room_db.nbr_co === 1) {
+          room_game = room_db;
+        }
+      });
+    } else {
+      room_game = new GameEntity();
+      room_game.fast_play = true;
+      room_game.room_name = randomUUID();
+    }
+    return room_game;
+  }
+
+  async joinInvitation(room: string): Promise<GameEntity> {
+
+    let room_game = await this.all_game.findOneBy({ room_name: room });
+    if (!room_game) {
+      room_game = new GameEntity();
+      room_game.fast_play = true;
+      room_game.room_name = room;
+    }
+    return room_game;
+  }
+
+  async get_room(room_name: string): Promise<GameEntity> {
+    return await this.findByName(room_name);
   }
 
   async deleteUser(id: number): Promise<void> {
