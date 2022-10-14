@@ -11,18 +11,21 @@ interface MessagesListProps {}
 
 export default function MessagesList(props: MessagesListProps) {
   const { messagesList } = useContext(MessagesContext);
-  const { username } = useContext(UserContext);
+  const { userConnected } = useContext(UserContext);
 
   return (
     <List sx={{ position: "relative"}}>
+
       {[...messagesList].reverse().map((messageData: IMessage) => {
-        if (username === messageData.author.username)
+        console.log("username conecte sur la page = ", userConnected.username);
+        console.log("messagedata = ", messageData);
+        if (userConnected.username === messageData.author.username)
           return (
             <ListItem
               sx={{
                 width: "fit-content",
                 height: "fit-content",
-                backgroundColor: "#064fbd",
+                backgroundColor: "#064fbd", // author
                 color: "white",
                 fontFamily: "sans-serif",
                 fontSize: 16,

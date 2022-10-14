@@ -26,9 +26,8 @@ interface ChatUserListProps {
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-  const { userid, users } = useContext(UserContext);
+  const { userConnected, users } = useContext(UserContext);
   const { getDmsList } = useContext(DmsContext);
-  const { setTargetUsername } = useContext(MessagesContext);
 
   function handleClick(username: string) {
     createNewConv(username);
@@ -54,7 +53,6 @@ export default function ChatUserlist(props: ChatUserListProps) {
       target: targetUsername,
     };
 
-    setTargetUsername(targetUsername);
     console.log(newDm);
     console.log("handle new message");
     createDm(newDm);
@@ -75,7 +73,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
       <List>
         {users.map(
           (user) =>
-            user.id !== userid && (
+            user.id !== userConnected.id && (
               <ListItemButton
                 key={user.id}
                 onClick={() => handleClick(user.username)}

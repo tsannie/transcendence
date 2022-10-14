@@ -81,7 +81,7 @@ export class MessageService {
 	Might necessit refactoring later. TODO*/
   async addMessagetoChannel(data: IMessage): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
-    const user = await this.userService.findByName(data.author, {
+    const user = await this.userService.findByName(data.author.username, {
       dms: true,
       channels: true,
       admin_of: true,
@@ -102,8 +102,9 @@ export class MessageService {
 
   /* TODO modify input */
   async addMessagetoDm(data: IMessage): Promise<MessageEntity> {
+    console.log('addMessagetoDm = ', data);
     //TODO change input type(DTO over interface) and load less from user
-    const user = await this.userService.findByName(data.author, {
+    const user = await this.userService.findByName(data.author.username, {
       dms: true,
       channels: true,
       admin_of: true,
@@ -130,14 +131,11 @@ export class MessageService {
         });
 
         for (const connection of user.connections) {
-          if (data.author !== dmUser.username) {
-            socket.to(connection.socketId).emit('message', data);
-          }
+          socket.to(connection.socketId).emit('message', data);
         }
       }
     }
   }
-
 
   // est-ce qu'on prend cette abstraction ou on fait un emit message par target ?
   /* async emitMessageToAllTargetInChannel(channelTarget: any, socket: Server, data: IMessage) {

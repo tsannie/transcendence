@@ -23,11 +23,11 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
 
   const { getChannelsUserlist, getAvailableChannels, availableChannels } =
     useContext(ChannelsContext);
-  const { username } = useContext(UserContext);
+  //const { user } = useContext(UserContext);
 
   function isInChannel(channel: IChannel): boolean {
     console.log("is in channel = ", channel);
-    return false;
+    return true;
     //return channel.users.find((user) => user.username === username);
   }
 
