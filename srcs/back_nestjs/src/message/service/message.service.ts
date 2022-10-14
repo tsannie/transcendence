@@ -164,9 +164,7 @@ export class MessageService {
         });
 
         for (const connection of user.connections) {
-          if (data.author !== channelUser.username) {
-            socket.to(connection.socketId).emit('message', data);
-          }
+          socket.to(connection.socketId).emit('message', data);
         }
       }
     }
@@ -181,9 +179,7 @@ export class MessageService {
           );
 
           for (const connection of user.connections) {
-            if (data.author !== channelAdmin.username) {
-              socket.to(connection.socketId).emit('message', data);
-            }
+            socket.to(connection.socketId).emit('message', data);
           }
         }
       }
@@ -196,9 +192,7 @@ export class MessageService {
 
     if (owner) {
       for (const connection of owner.connections) {
-        if (data.author !== owner.username) {
-          socket.to(connection.socketId).emit('message', data);
-        }
+        socket.to(connection.socketId).emit('message', data);
       }
     }
   }
