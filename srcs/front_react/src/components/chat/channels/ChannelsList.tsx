@@ -27,34 +27,19 @@ import { MessagesContext } from "../../../contexts/MessagesContext";
 
 interface ChannelsListProps {
   setChatContent: (chatContent: ChatContent) => void;
+  getChannelDatas: (channelName: string) => void;
 }
 
 export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
-  const { channelsList, setChannelData } = useContext(ChannelsContext);
+  const { channelsList } = useContext(ChannelsContext);
   const { loadMessages, isDm, setIsDm, setConvId, messagesList } =
     useContext(MessagesContext);
 
-  async function getChannelDatas(channelName: string) {
-    await api
-      .get("channel/datas", {
-        params: {
-          name: channelName,
-        },
-      })
-      .then((res) => {
-        //console.log("get infos of channel clicked by user");
-        setChannelData(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid channels private data");
-      });
-  }
-
   function handleClick(channel: IChannel) {
     props.setChatContent(ChatContent.CHANNEL_CONTENT);
-    getChannelDatas(channel.name);
+    props.getChannelDatas(channel.name);
     setIsDm(false);
     setConvId(channel.id);
     loadMessages(channel.id, false);

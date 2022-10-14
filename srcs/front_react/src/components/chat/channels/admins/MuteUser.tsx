@@ -9,11 +9,11 @@ interface MuteUserProps {
 }
 
 export default function MuteUser(props: MuteUserProps) {
-  const { channelData } = useContext(ChannelsContext);
+  //const { channelData } = useContext(ChannelsContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("ban user", channelData);
-    muteUser(props.userTargeted, channelData);
+    //console.log("ban user", channelData);
+    //muteUser(props.userTargeted, channelData);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

@@ -9,11 +9,11 @@ interface MakeAdminProps {
 }
 
 export default function MakeAdmin(props: MakeAdminProps) {
-  const { channelData } = useContext(ChannelsContext);
+  //const { channelData } = useContext(ChannelsContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("makeAdmin", channelData);
-    makeAdmin(props.userTargeted, channelData);
+    //console.log("makeAdmin", channelData);
+    //makeAdmin(props.userTargeted, channelData);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

@@ -9,11 +9,11 @@ interface RevokeAdminProps {
 }
 
 export default function RevokeAdmin(props: RevokeAdminProps) {
-  const { channelData } = useContext(ChannelsContext);
+  //const { channelData } = useContext(ChannelsContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("makeAdmin", channelData);
-    revokeAdmin(props.userTargeted, channelData);
+    //console.log("makeAdmin", channelData);
+    //revokeAdmin(props.userTargeted, channelData);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

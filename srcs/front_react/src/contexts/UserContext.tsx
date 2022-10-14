@@ -9,6 +9,7 @@ export type UserContextType = {
   users: any[];
   userConnected: any;
   setUserConnected: (users: any[]) => void;
+  getUser: () => void;
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -18,6 +19,7 @@ export const UserContext = createContext<UserContextType>({
   users: [],
   userConnected: {},
   setUserConnected: () => {},
+  getUser: () => {},
 });
 
 interface UserContextProps {
@@ -72,6 +74,7 @@ export const UserProvider = ({ children }: UserContextProps) => {
         users,
         userConnected,
         setUserConnected,
+        getUser,
       }}
     >
       {children}

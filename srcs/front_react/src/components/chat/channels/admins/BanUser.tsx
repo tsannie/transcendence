@@ -3,19 +3,23 @@ import { Channel } from "diagnostics_channel";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { UserContext } from "../../../../contexts/UserContext";
 import { IChannelActions } from "../../types";
 
 interface BanUserProps {
   userTargeted: any;
+  getChannelDatas: any;
+  channelData: any;
 }
 
 export default function BanUser(props: BanUserProps) {
-  const { channelData } = useContext(ChannelsContext);
+  //const { channelData } = useContext(ChannelsContext);
+
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("ban user", channelData);
-    banUser(props.userTargeted, channelData);
-    //getChannelDatas(channelData.name);
+    //console.log("ban user", channelData);
+    banUser(props.userTargeted, props.channelData);
+    props.getChannelDatas(props.channelData.data.name);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
