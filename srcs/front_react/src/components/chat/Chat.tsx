@@ -48,14 +48,10 @@ export default function Chat(props: ChatProps) {
       <Grid container>
         <Grid item xs={4}>
           <Grid item>
-            <Dms
-              setChatContent={setChatContent}
-            />
+            <Dms setChatContent={setChatContent} />
           </Grid>
           <Grid item>
-            <Channels
-              setChatContent={setChatContent}
-            />
+            <Channels setChatContent={setChatContent} />
           </Grid>
         </Grid>
         <Grid item xs={8}>
@@ -71,13 +67,9 @@ export default function Chat(props: ChatProps) {
             </Grid>
           )}
           {chatContent === ChatContent.NEW_DM && (
-            <ChatUserlist
-              setChatContent={setChatContent}
-            />
+            <ChatUserlist setChatContent={setChatContent} />
           )}
-          {chatContent === ChatContent.CHANNEL_CONTENT && (
-            <ChannelContent />
-          )}
+          {chatContent === ChatContent.CHANNEL_CONTENT && <ChannelContent />}
         </Grid>
       </Grid>
     </ChatProvider>

@@ -1,21 +1,18 @@
-import { Button, List, ListItemButton, Popover } from '@mui/material';
-import { Channel } from 'diagnostics_channel';
-import React, { useContext, useState } from 'react'
-import { api } from '../../../../const/const';
-import { ChannelsContext } from '../../../../contexts/ChannelsContext';
-import { IChannelActions } from '../../types';
+import { Button, List, ListItemButton, Popover } from "@mui/material";
+import { Channel } from "diagnostics_channel";
+import React, { useContext, useState } from "react";
+import { api } from "../../../../const/const";
+import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { IChannelActions } from "../../types";
 
 interface BanUserProps {
   userTargeted: any;
 }
 
 export default function BanUser(props: BanUserProps) {
-
   const { channelData } = useContext(ChannelsContext);
 
-  function handleClick(
-    event: React.MouseEvent<HTMLButtonElement>
-  ) {
+  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     console.log("ban user", channelData);
     banUser(props.userTargeted, channelData);
     //getChannelDatas(channelData.name);
@@ -61,5 +58,5 @@ export default function BanUser(props: BanUserProps) {
     >
       Ban
     </Button>
-  )
+  );
 }

@@ -12,8 +12,7 @@ import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-interface ChannelContentProps {
-}
+interface ChannelContentProps {}
 
 export default function ChannelContent(props: ChannelContentProps) {
   const [openMoreInfos, setOpenMoreInfos] = useState(false);
@@ -59,7 +58,7 @@ export default function ChannelContent(props: ChannelContentProps) {
           <Grid item xs={9}>
             <Box sx={{ border: "3px solid red" }}>
               <Grid item>
-              <Typography variant={"h6"}>
+                <Typography variant={"h6"}>
                   {"Channel " + channelData.data.name}
                 </Typography>
                 <Typography variant={"h6"}>
@@ -72,15 +71,15 @@ export default function ChannelContent(props: ChannelContentProps) {
                     <MoreHorizIcon />
                   </IconButton>
                   {openMoreInfos && (
-                  <Button
-                    sx={{
-                      color: "red",
-                      ml: "1vh",
-                    }}
-                    onClick={() => deleteChannel(channelData)}
-                  >
-                    Delete
-                  </Button>
+                    <Button
+                      sx={{
+                        color: "red",
+                        ml: "1vh",
+                      }}
+                      onClick={() => deleteChannel(channelData)}
+                    >
+                      Delete
+                    </Button>
                   )}
                 </Grid>
               )}
@@ -89,10 +88,9 @@ export default function ChannelContent(props: ChannelContentProps) {
           </Grid>
         )}
         <Grid item xs={3}>
-          <InfosChannels
-          />
+          <InfosChannels />
         </Grid>
       </Grid>
     );
-  return <></>
+  return <></>;
 }

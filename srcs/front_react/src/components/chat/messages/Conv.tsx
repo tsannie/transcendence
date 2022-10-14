@@ -11,7 +11,7 @@ interface ConvProps {}
 
 export default function Conv(props: ConvProps) {
   return (
-    <Box sx={{ border: "1px solid green"}}>
+    <Box sx={{ border: "1px solid green" }}>
       <MessagesList />
       <PromptMessage />
     </Box>

@@ -17,7 +17,6 @@ interface ChannelProps {
 }
 
 export default function Channels(props: ChannelProps) {
-
   const { getChannelsUserlist } = useContext(ChannelsContext);
 
   function setChannel() {
@@ -40,9 +39,7 @@ export default function Channels(props: ChannelProps) {
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <ChannelsList
-        setChatContent={props.setChatContent}
-      />
+      <ChannelsList setChatContent={props.setChatContent} />
     </Box>
   );
 }

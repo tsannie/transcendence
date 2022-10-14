@@ -23,7 +23,6 @@ interface DmsContextProps {
 }
 
 export const DmsProvider = ({ children }: DmsContextProps) => {
-
   const [dmsList, setDmsList] = useState<IConvCreated[]>([]);
   const [dmData, setDmData] = useState<any>();
 

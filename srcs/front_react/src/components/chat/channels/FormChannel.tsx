@@ -19,8 +19,7 @@ import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 
-interface FormChannelProps {
-}
+interface FormChannelProps {}
 
 export default function FormChannel(props: FormChannelProps) {
   const [nameChannel, setNameChannel] = useState("");
@@ -29,7 +28,8 @@ export default function FormChannel(props: FormChannelProps) {
   const [enablePassword, setEnablePassword] = useState(false);
   const [error, setError] = useState("");
 
-  const { getChannelsUserlist, getAvailableChannels } = useContext(ChannelsContext);
+  const { getChannelsUserlist, getAvailableChannels } =
+    useContext(ChannelsContext);
 
   // create channel in db
   async function createChannels() {
@@ -53,7 +53,7 @@ export default function FormChannel(props: FormChannelProps) {
         console.log(res.response.data.message);
         setError(res.response.data.message[1]);
       });
-      setError("");
+    setError("");
   }
 
   return (
@@ -64,39 +64,38 @@ export default function FormChannel(props: FormChannelProps) {
         onChange={(event) => {
           setNameChannel(event.target.value);
         }}
+      ></TextField>
+      {error !== "" && <Alert severity="error"> {error} </Alert>}
+      <FormControl>
+        <InputLabel id="channel-status">Status</InputLabel>
+        <Select
+          labelId="channel-status"
+          id="channel-status-select"
+          value={status}
+          label="Status"
+          onChange={(event) => {
+            setStatus(event.target.value);
+            if (event.target.value === "Protected") {
+              setEnablePassword(true);
+            } else {
+              setEnablePassword(false);
+            }
+          }}
         >
-        </TextField>
-        {error !== "" && <Alert severity="error"> {error} </Alert> }
-        <FormControl>
-          <InputLabel id="channel-status">Status</InputLabel>
-          <Select
-            labelId="channel-status"
-            id="channel-status-select"
-            value={status}
-            label="Status"
-            onChange={(event) => {
-              setStatus(event.target.value);
-              if (event.target.value === "Protected") {
-                setEnablePassword(true);
-              } else {
-                setEnablePassword(false);
-              }
-            }}
-          >
-            <MenuItem value={"Public"}>Public</MenuItem>
-            <MenuItem value={"Private"}>Private</MenuItem>
-            <MenuItem value={"Protected"}>Protected</MenuItem>
-          </Select>
-        </FormControl>
-        {enablePassword && (
-          <TextField
-            variant="outlined"
-            placeholder="password"
-            onChange={(event) => {
-              setNewPassword(event.target.value);
-            }}
-          />
-        )}
+          <MenuItem value={"Public"}>Public</MenuItem>
+          <MenuItem value={"Private"}>Private</MenuItem>
+          <MenuItem value={"Protected"}>Protected</MenuItem>
+        </Select>
+      </FormControl>
+      {enablePassword && (
+        <TextField
+          variant="outlined"
+          placeholder="password"
+          onChange={(event) => {
+            setNewPassword(event.target.value);
+          }}
+        />
+      )}
 
       <Button variant="contained" onClick={createChannels}>
         Create channel

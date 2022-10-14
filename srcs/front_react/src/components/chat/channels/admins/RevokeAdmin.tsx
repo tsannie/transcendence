@@ -1,20 +1,17 @@
-import { Button, List, ListItemButton, Popover } from '@mui/material';
-import React, { useContext, useState } from 'react'
-import { api } from '../../../../const/const';
-import { ChannelsContext } from '../../../../contexts/ChannelsContext';
-import { IChannel, IChannelActions } from '../../types';
+import { Button, List, ListItemButton, Popover } from "@mui/material";
+import React, { useContext, useState } from "react";
+import { api } from "../../../../const/const";
+import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { IChannel, IChannelActions } from "../../types";
 
 interface RevokeAdminProps {
   userTargeted: any;
 }
 
 export default function RevokeAdmin(props: RevokeAdminProps) {
-
   const { channelData } = useContext(ChannelsContext);
 
-  function handleClick(
-    event: React.MouseEvent<HTMLButtonElement>
-  ) {
+  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     console.log("makeAdmin", channelData);
     revokeAdmin(props.userTargeted, channelData);
   }
@@ -58,5 +55,5 @@ export default function RevokeAdmin(props: RevokeAdminProps) {
     >
       RevokeAdmin
     </Button>
-  )
+  );
 }
