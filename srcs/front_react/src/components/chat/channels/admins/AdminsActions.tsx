@@ -3,6 +3,7 @@ import { channel } from "diagnostics_channel";
 import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { UserContext } from "../../../../contexts/UserContext";
 import { IChannel } from "../../types";
 import BanUser from "./BanUser";
 import MakeAdmin from "./MakeAdmin";
@@ -13,18 +14,24 @@ import UnmuteUser from "./UnmuteUser";
 
 interface AdminsActionsProps {
   userTargeted: any;
+  getChannelDatas: any;
+  channelData: any;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
-  const { channelData } = useContext(ChannelsContext);
+  //const { channelData, setChannelData } = useContext(ChannelsContext);
 
-  function isBan() {
-    console.log("channelData = ", channelData);
-    if (channelData.banned && channelData.banned.length > 0) {
-      return channelData.bannedUsers.find(
-        (user: any) => user.username === props.userTargeted.username
-      );
+  function isBan(channel: any): boolean {
+    console.log("channelData = ", channel);
+    console.log("userTargeted = ", props.userTargeted);
+
+    for (let i = 0; channel.data.banned && i < channel.data.banned.length; i++) {
+      console.log("channelData.data.banned[i] = ", channel.data.banned[i]);
+      if (channel.data.banned[i].id === props.userTargeted.id) {
+        return true;
+      }
     }
+    return false;
   }
 
   console.log("admin actions)");
@@ -32,13 +39,13 @@ export default function AdminsActions(props: AdminsActionsProps) {
   return (
     <List>
       <ListItem>
-        {!isBan() ? (
-          <BanUser userTargeted={props.userTargeted} />
+        {!isBan(props.channelData) ? (
+          <BanUser userTargeted={props.userTargeted} getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
         ) : (
-          <UnbanUser userTargeted={props.userTargeted} />
+          <UnbanUser userTargeted={props.userTargeted} getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
         )}
       </ListItem>
-      <ListItem>
+      {/* <ListItem>
         <MuteUser userTargeted={props.userTargeted} />
       </ListItem>
       <ListItem>
@@ -49,7 +56,7 @@ export default function AdminsActions(props: AdminsActionsProps) {
       </ListItem>
       <ListItem>
         <RevokeAdmin userTargeted={props.userTargeted} />
-      </ListItem>
+      </ListItem> */}
     </List>
   );
 }

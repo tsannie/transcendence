@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
+import { UserContext } from "../../../contexts/UserContext";
 
 interface FormChannelProps {}
 
@@ -30,6 +31,7 @@ export default function FormChannel(props: FormChannelProps) {
 
   const { getChannelsUserlist, getAvailableChannels } =
     useContext(ChannelsContext);
+  const { getUser } = useContext(UserContext);
 
   // create channel in db
   async function createChannels() {
@@ -47,6 +49,7 @@ export default function FormChannel(props: FormChannelProps) {
         console.log(channelData);
         getChannelsUserlist();
         getAvailableChannels();
+        getUser();
       })
       .catch((res) => {
         console.log("error");

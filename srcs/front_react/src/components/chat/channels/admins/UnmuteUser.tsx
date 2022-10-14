@@ -9,11 +9,11 @@ interface UnmuteUserProps {
 }
 
 export default function UnmuteUser(props: UnmuteUserProps) {
-  const { channelData } = useContext(ChannelsContext);
+  //const { channelData } = useContext(ChannelsContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("ban user", channelData);
-    unmuteUser(props.userTargeted, channelData);
+    //console.log("ban user", channelData);
+    //unmuteUser(props.userTargeted, channelData);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

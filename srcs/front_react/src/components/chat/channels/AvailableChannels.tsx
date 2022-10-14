@@ -23,12 +23,20 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
 
   const { getChannelsUserlist, getAvailableChannels, availableChannels } =
     useContext(ChannelsContext);
-  //const { user } = useContext(UserContext);
+  const { userConnected } = useContext(UserContext);
 
-  function isInChannel(channel: IChannel): boolean {
-    console.log("is in channel = ", channel);
-    return true;
-    //return channel.users.find((user) => user.username === username);
+  function isInChannel(channelId: number): boolean {
+    for (let i = 0; userConnected.channels && i < userConnected.channels.length; i++) {
+      if (userConnected.channels[i].id === channelId) {
+        return true;
+      }
+    }
+    for (let i = 0; userConnected.owner_of && i < userConnected.owner_of.length; i++) {
+      if (userConnected.owner_of[i].id === channelId) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
@@ -114,7 +122,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
             }}
           ></TextField>
 
-          {isInChannel(channel) ? (
+          {!isInChannel(channel.id) ? (
             <ListItemButton
               onClick={() => {
                 joinChannel(channel);
