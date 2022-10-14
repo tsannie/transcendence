@@ -13,7 +13,6 @@ import { Channel } from "diagnostics_channel";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 
 interface ChannelProps {
-  setIsOpenInfos: (isOpenInfos: boolean) => void;
   setChatContent: (chatContent: ChatContent) => void;
 }
 
@@ -42,7 +41,6 @@ export default function Channels(props: ChannelProps) {
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
       <ChannelsList
-        setIsOpenInfos={props.setIsOpenInfos}
         setChatContent={props.setChatContent}
       />
     </Box>

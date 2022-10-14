@@ -17,6 +17,7 @@ export default function UnbanUser(props: UnbanUserProps) {
   ) {
     console.log("unban user", channelData);
     unbanUser(props.userTargeted, channelData);
+    //getChannelDatas(channelData.name);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

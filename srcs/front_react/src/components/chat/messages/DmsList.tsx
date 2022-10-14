@@ -34,7 +34,7 @@ export default function DmsList(props: DmsListProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
   const { loadMessages, isDm, setIsDm, setConvId, messagesList } = useContext(MessagesContext);
-  const { username } = useContext(UserContext);
+  const { userConnected } = useContext(UserContext);
 
   // find target username with conv id and user id
   function findTargetUsername(dmId: number) {
@@ -42,7 +42,7 @@ export default function DmsList(props: DmsListProps) {
     let dm = dmsList.find((dm) => dm.id === dmId);
     if (dm) {
       dm.users.forEach((user) => {
-        if (user.username !== username) {
+        if (user.username !== userConnected.username) {
           targetUsername = user.username;
         }
       });
@@ -60,7 +60,6 @@ export default function DmsList(props: DmsListProps) {
       .then((res) => {
         console.log("get infos of channel clicked by user");
         setDmData(res.data);
-        //props.setIsOpenInfos(true);
       })
       .catch((res) => {
         console.log("invalid dm data");

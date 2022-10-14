@@ -18,6 +18,7 @@ export default function BanUser(props: BanUserProps) {
   ) {
     console.log("ban user", channelData);
     banUser(props.userTargeted, channelData);
+    //getChannelDatas(channelData.name);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {

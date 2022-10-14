@@ -36,10 +36,11 @@ export enum ChatContent {
 interface ChatProps {}
 
 export default function Chat(props: ChatProps) {
-  const [isOpenInfos, setIsOpenInfos] = useState(false);
   const [chatContent, setChatContent] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
   );
+  console.log("chatContent", chatContent);
+  //const { isOpenInfos } = useContext(ChannelsContext);
   // enum with 3 strings differentes
 
   return (
@@ -53,7 +54,6 @@ export default function Chat(props: ChatProps) {
           </Grid>
           <Grid item>
             <Channels
-              setIsOpenInfos={setIsOpenInfos}
               setChatContent={setChatContent}
             />
           </Grid>
@@ -75,8 +75,8 @@ export default function Chat(props: ChatProps) {
               setChatContent={setChatContent}
             />
           )}
-          {chatContent === ChatContent.CHANNEL_CONTENT && isOpenInfos && (
-            <ChannelContent isOpenInfos={isOpenInfos} />
+          {chatContent === ChatContent.CHANNEL_CONTENT && (
+            <ChannelContent />
           )}
         </Grid>
       </Grid>
