@@ -20,6 +20,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { UserContext } from "../../../contexts/UserContext";
+import { reverse } from "dns";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
@@ -32,8 +33,7 @@ interface DmsListProps {
 export default function DmsList(props: DmsListProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
-  const { loadMessages, isDm, setIsDm, setConvId } =
-    useContext(MessagesContext);
+  const { loadMessages, isDm, setIsDm, setConvId, messagesList } = useContext(MessagesContext);
   const { username } = useContext(UserContext);
 
   // find target username with conv id and user id
