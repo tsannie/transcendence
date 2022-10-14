@@ -8,8 +8,8 @@ import { MessagesContext } from "../../../contexts/MessagesContext";
 interface PromptMessageProps {}
 
 export default function PromptMessage(props: PromptMessageProps) {
-
-  const { setCurrentMessage, sendMessage, convId } = useContext(MessagesContext);
+  const { setCurrentMessage, sendMessage, convId } =
+    useContext(MessagesContext);
   const { dmData } = useContext(DmsContext);
 
   return (
@@ -26,7 +26,7 @@ export default function PromptMessage(props: PromptMessageProps) {
         component="img"
         alt="send message img"
         src={Paperplane}
-        onClick={() => sendMessage(convId) }
+        onClick={() => sendMessage(convId)}
         sx={{
           width: 18,
           height: 18,

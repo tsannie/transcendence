@@ -19,7 +19,6 @@ export default function AdminsActions(props: AdminsActionsProps) {
   const { channelData } = useContext(ChannelsContext);
 
   function isBan() {
-
     console.log("channelData = ", channelData);
     if (channelData.banned && channelData.banned.length > 0) {
       return channelData.bannedUsers.find(
@@ -33,12 +32,11 @@ export default function AdminsActions(props: AdminsActionsProps) {
   return (
     <List>
       <ListItem>
-      {!isBan() ? (
-
-        <BanUser userTargeted={props.userTargeted} />
-      ) : (
-        <UnbanUser userTargeted={props.userTargeted} />
-      )}
+        {!isBan() ? (
+          <BanUser userTargeted={props.userTargeted} />
+        ) : (
+          <UnbanUser userTargeted={props.userTargeted} />
+        )}
       </ListItem>
       <ListItem>
         <MuteUser userTargeted={props.userTargeted} />

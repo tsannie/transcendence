@@ -17,8 +17,7 @@ import Collapse from "@mui/material/Collapse";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-interface InfosChannelsProps {
-}
+interface InfosChannelsProps {}
 
 export default function InfosChannels(props: InfosChannelsProps) {
   const [channelId, setChannelId] = useState(0);
@@ -40,18 +39,14 @@ export default function InfosChannels(props: InfosChannelsProps) {
       <Grid item>
         <List>
           Owner
-          <ListItem
-            key={channelData.data.name}
-          >
+          <ListItem key={channelData.data.name}>
             <ListItemButton
               onClick={handleClick}
-              disabled={userConnected.username !== channelData.data.owner.username}
-            >
-              {
-                <ListItemText>
-                  {channelData.data.owner.username}
-                </ListItemText>
+              disabled={
+                userConnected.username !== channelData.data.owner.username
               }
+            >
+              {<ListItemText>{channelData.data.owner.username}</ListItemText>}
             </ListItemButton>
           </ListItem>
         </List>
@@ -61,9 +56,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
         <List>
           Admins
           {channelData.data.admins.map((user: any) => (
-            <ListItem
-              key={user.username}
-            >
+            <ListItem key={user.username}>
               <ListItemButton
                 onClick={handleClick}
                 disabled={channelData.status !== "owner"}
@@ -83,9 +76,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
         <List>
           Users
           {channelData.data.users.map((user: any) => (
-            <ListItem
-              key={user.username}
-            >
+            <ListItem key={user.username}>
               <ListItemButton
                 onClick={handleClick}
                 disabled={

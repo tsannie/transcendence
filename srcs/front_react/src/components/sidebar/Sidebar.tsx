@@ -10,11 +10,11 @@ import ExitIcon from "../../assets/exit.png";
 import { Box } from "@mui/system";
 import { Grid, IconButton } from "@mui/material";
 import { COOKIE_NAME } from "../../const/const";
-import HomeIcon from '@mui/icons-material/Home';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import LogoutIcon from '@mui/icons-material/Logout';
-import MessageIcon from '@mui/icons-material/Message';
+import HomeIcon from "@mui/icons-material/Home";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import LogoutIcon from "@mui/icons-material/Logout";
+import MessageIcon from "@mui/icons-material/Message";
 
 interface SidebarProps {
   setIsLogin: (isLogin: boolean) => void;
@@ -28,12 +28,13 @@ export default function Sidebar(props: any) {
 
   // to do: passer d'icone en icone en remettant tous les autres state a false
 
-  function logout() { // TODO route api logout
-    document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
+  function logout() {
+    // TODO route api logout
+    document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
     props.setIsLogin(false);
     props.setIs2FA(false);
     window.location.reload();
-  };
+  }
 
   function resetInput() {
     props.setInputChat(false);
@@ -83,10 +84,10 @@ export default function Sidebar(props: any) {
         </IconButton>
       </Grid>
       <Grid item sx={{}}>
-        <img src={ChatIcon} onClick={() => selectInput('Chat')}></img>
+        <img src={ChatIcon} onClick={() => selectInput("Chat")}></img>
       </Grid>
       <Grid item sx={{}}>
-        <img src={SettingsIcon} onClick={() => selectInput('Settings')}></img>
+        <img src={SettingsIcon} onClick={() => selectInput("Settings")}></img>
       </Grid>
       <Grid item sx={{}}>
         <img src={ExitIcon} onClick={logout}></img>

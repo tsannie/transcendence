@@ -33,7 +33,8 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
   const { channelsList, setChannelData } = useContext(ChannelsContext);
-  const { loadMessages, isDm, setIsDm, setConvId, messagesList } = useContext(MessagesContext);
+  const { loadMessages, isDm, setIsDm, setConvId, messagesList } =
+    useContext(MessagesContext);
 
   async function getChannelDatas(channelName: string) {
     await api
@@ -72,13 +73,10 @@ export default function ChannelsList(props: ChannelsListProps) {
               mb: "1vh",
               border: "1px solid black",
             }}
-
             key={channelData.name}
             onClick={() => handleClick(channelData)}
           >
-            <ListItemText sx={{ml: "1vw"}}>
-              {channelData.name}
-            </ListItemText>
+            <ListItemText sx={{ ml: "1vw" }}>{channelData.name}</ListItemText>
             <TextField
               sx={{
                 minWidth: "15vw",
