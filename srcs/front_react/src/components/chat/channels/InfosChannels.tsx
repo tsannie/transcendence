@@ -25,7 +25,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
   const [displayAdminActions, setDisplayAdminActions] = useState(false);
   const [open, setOpen] = React.useState(true);
   const { channelData } = useContext(ChannelsContext);
-  const { username } = useContext(UserContext);
+  const { userConnected } = useContext(UserContext);
 
   function handleClick(event: any) {
     console.log("click on user who i wnat to ban, mute etc");
@@ -45,7 +45,7 @@ export default function InfosChannels(props: InfosChannelsProps) {
           >
             <ListItemButton
               onClick={handleClick}
-              disabled={username !== channelData.data.owner.username}
+              disabled={userConnected.username !== channelData.data.owner.username}
             >
               {
                 <ListItemText>

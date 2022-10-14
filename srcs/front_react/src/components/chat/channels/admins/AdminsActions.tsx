@@ -1,6 +1,8 @@
 import { Button, List, ListItem, Popover } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { channel } from "diagnostics_channel";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../../const/const";
+import { ChannelsContext } from "../../../../contexts/ChannelsContext";
 import { IChannel } from "../../types";
 import BanUser from "./BanUser";
 import MakeAdmin from "./MakeAdmin";
@@ -14,27 +16,29 @@ interface AdminsActionsProps {
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const { channelData } = useContext(ChannelsContext);
 
-  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    setAnchorEl(event.currentTarget);
-    //props.getChannelsUserlist();
+  function isBan() {
+
+    console.log("channelData = ", channelData);
+    if (channelData.banned && channelData.banned.length > 0) {
+      return channelData.bannedUsers.find(
+        (user: any) => user.username === props.userTargeted.username
+      );
+    }
   }
 
-  function handleClose() {
-    setAnchorEl(null);
-  }
   console.log("admin actions)");
 
   return (
     <List>
       <ListItem>
+      {!isBan() ? (
+
         <BanUser userTargeted={props.userTargeted} />
-      </ListItem>
-      <ListItem>
+      ) : (
         <UnbanUser userTargeted={props.userTargeted} />
+      )}
       </ListItem>
       <ListItem>
         <MuteUser userTargeted={props.userTargeted} />

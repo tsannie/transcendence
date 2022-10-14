@@ -11,15 +11,11 @@ export type MessagesContextType = {
   currentMessage: string;
   setCurrentMessage: (currentMessage: string) => void;
   sendMessage: (id: number) => void;
-  targetUsername: string;
-  setTargetUsername: (targetUsername: string) => void;
   loadMessages: (targetId: number, isDm: boolean) => void;
   isDm: boolean;
   setIsDm: (isDm: boolean) => void;
   convId: number;
   setConvId: (convId: number) => void;
-  isNewMessage: boolean;
-  setIsNewMessage: (isNewMessage: boolean) => void;
 };
 
 export const MessagesContext = createContext<MessagesContextType>({
@@ -28,15 +24,11 @@ export const MessagesContext = createContext<MessagesContextType>({
   currentMessage: "",
   setCurrentMessage: () => {},
   sendMessage: () => {},
-  targetUsername: "",
-  setTargetUsername: () => {},
   loadMessages: () => {},
   isDm: true,
   setIsDm: () => {},
   convId: 0,
   setConvId: () => {},
-  isNewMessage: false,
-  setIsNewMessage: () => {},
 });
 
 interface MessagesContextProps {
@@ -45,17 +37,14 @@ interface MessagesContextProps {
 
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);
-  const [isNewMessage, setIsNewMessage] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
-  const [targetUsername, setTargetUsername] = useState("");
   const [isDm, setIsDm] = useState(true);
   const [convId, setConvId] = useState(0);
   const socket = useContext(SocketContext);
-  const user = useContext(UserContext);
+  const { userConnected } = useContext(UserContext);
 
   function sendMessage(id: number) {
     console.log("send message");
-    console.log("target username", targetUsername);
     const inputMessage = document.getElementById(
       "input-message"
     ) as HTMLInputElement;
@@ -64,13 +53,11 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
     if (currentMessage !== "") {
       const messageData: Partial<IMessage> = {
         id: id,
-        author: user.username,
+        author: userConnected,
         content: currentMessage,
-        //target: targetUsername,
         isDm: isDm,
       };
       socket.emit("message", messageData);
-      setIsNewMessage(true);
       setCurrentMessage("");
     }
   }
@@ -114,9 +101,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
   useEffect(() => {
     socket.on("message", (data) => {
       //console.log("message received from server !!!!!!");
-      //loadMessages(data.id, data.isDm);
       setMessagesList((messagesList) => [data, ...messagesList]);
-      setIsNewMessage(true);
     });
   }, [socket]);
 
@@ -128,15 +113,11 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
         currentMessage,
         setCurrentMessage,
         sendMessage,
-        targetUsername,
-        setTargetUsername,
         loadMessages,
         isDm,
         setIsDm,
         convId,
         setConvId,
-        isNewMessage,
-        setIsNewMessage,
       }}
     >
       {children}

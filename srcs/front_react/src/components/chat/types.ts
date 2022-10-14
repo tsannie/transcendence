@@ -3,7 +3,6 @@ export interface IMessage {
   uuid: string;
   author: any; // IUser en theorie
   content: string;
-  target: string;
   isDm: boolean;
 }
 

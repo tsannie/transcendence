@@ -27,7 +27,6 @@ import { MessagesContext } from "../../../contexts/MessagesContext";
 
 interface ChannelsListProps {
   setChatContent: (chatContent: ChatContent) => void;
-  setIsOpenInfos: (isOpenInfos: boolean) => void;
 }
 
 export default function ChannelsList(props: ChannelsListProps) {
@@ -36,17 +35,16 @@ export default function ChannelsList(props: ChannelsListProps) {
   const { channelsList, setChannelData } = useContext(ChannelsContext);
   const { loadMessages, isDm, setIsDm, setConvId, messagesList } = useContext(MessagesContext);
 
-  async function getChannelDatas(channel: any) {
+  async function getChannelDatas(channelName: string) {
     await api
       .get("channel/datas", {
         params: {
-          name: channel.name,
+          name: channelName,
         },
       })
       .then((res) => {
         //console.log("get infos of channel clicked by user");
         setChannelData(res.data);
-        props.setIsOpenInfos(true);
       })
       .catch((res) => {
         console.log("invalid channels private data");
@@ -55,7 +53,7 @@ export default function ChannelsList(props: ChannelsListProps) {
 
   function handleClick(channel: IChannel) {
     props.setChatContent(ChatContent.CHANNEL_CONTENT);
-    getChannelDatas(channel);
+    getChannelDatas(channel.name);
     setIsDm(false);
     setConvId(channel.id);
     loadMessages(channel.id, false);

@@ -13,7 +13,6 @@ import { MessagesContext } from "../../../contexts/MessagesContext";
 import { UserContext } from "../../../contexts/UserContext";
 
 interface ChannelContentProps {
-  isOpenInfos: boolean;
 }
 
 export default function ChannelContent(props: ChannelContentProps) {
@@ -21,7 +20,7 @@ export default function ChannelContent(props: ChannelContentProps) {
   const { getChannelsUserlist, channelData } = useContext(ChannelsContext);
 
   function handleClick(event: any) {
-    console.log("more infos");
+    console.log("more infos (delete channel)");
     setOpenMoreInfos(!openMoreInfos);
   }
 
@@ -52,7 +51,6 @@ export default function ChannelContent(props: ChannelContentProps) {
   }
 
   console.log("channel data", channelData);
-  console.log("isopeninfos", props.isOpenInfos);
 
   if (channelData !== undefined)
     return (
