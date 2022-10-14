@@ -6,26 +6,22 @@ export type ChannelsContextType = {
   channelsList: IChannel[];
   setChannelsList: (channelsList: IChannel[]) => void;
   getChannelsUserlist: () => void;
-  channelData: any;
-  setChannelData: (channelData: any) => void;
+  //channelData: any;
+  //setChannelData: (channelData: any) => void;
   availableChannels: IChannel[];
   setAvailableChannels: (availableChannels: IChannel[]) => void;
   getAvailableChannels: () => void;
-  //isOpenInfos: boolean;
-  //setIsOpenInfos: (isOpenInfos: boolean) => void;
 };
 
 export const ChannelsContext = createContext<ChannelsContextType>({
   channelsList: [],
   setChannelsList: () => {},
   getChannelsUserlist: () => {},
-  channelData: {},
-  setChannelData: () => {},
+  //channelData: {},
+  //setChannelData: () => {},
   availableChannels: [],
   setAvailableChannels: () => {},
   getAvailableChannels: () => {},
-  //isOpenInfos: false,
-  //setIsOpenInfos: () => {},
 });
 
 interface ChannelsContextProps {
@@ -34,9 +30,8 @@ interface ChannelsContextProps {
 
 export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
   const [channelsList, setChannelsList] = useState<IChannel[]>([]);
-  const [channelData, setChannelData] = useState<IChannel>();
+  //const [channelData, setChannelData] = useState<IChannel>();
   const [availableChannels, setAvailableChannels] = useState<any[]>([]);
-  //const [isOpenInfos, setIsOpenInfos] = useState(false);
 
   // get all available channels
   async function getAvailableChannels() {
@@ -82,13 +77,11 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
         channelsList,
         setChannelsList,
         getChannelsUserlist,
-        channelData,
-        setChannelData,
+        //channelData,
+        //setChannelData,
         availableChannels,
         setAvailableChannels,
         getAvailableChannels,
-        //isOpenInfos,
-        //setIsOpenInfos,
       }}
     >
       {children}

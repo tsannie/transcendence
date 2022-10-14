@@ -12,11 +12,14 @@ import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { UserContext } from "../../../contexts/UserContext";
 
-interface ChannelContentProps {}
+interface ChannelContentProps {
+  getChannelDatas: any;
+  channelData: any;
+}
 
 export default function ChannelContent(props: ChannelContentProps) {
   const [openMoreInfos, setOpenMoreInfos] = useState(false);
-  const { getChannelsUserlist, channelData } = useContext(ChannelsContext);
+  const { getChannelsUserlist} = useContext(ChannelsContext);
 
   function handleClick(event: any) {
     console.log("more infos (delete channel)");
@@ -49,23 +52,23 @@ export default function ChannelContent(props: ChannelContentProps) {
       });
   }
 
-  console.log("channel data", channelData);
+  console.log("channel data", props.channelData);
 
-  if (channelData !== undefined)
+  if (props.channelData !== undefined)
     return (
       <Grid container>
-        {channelData.status !== "public" && (
+        {props.channelData.status !== "public" && (
           <Grid item xs={9}>
             <Box sx={{ border: "3px solid red" }}>
               <Grid item>
                 <Typography variant={"h6"}>
-                  {"Channel " + channelData.data.name}
+                  {"Channel " + props.channelData.data.name}
                 </Typography>
                 <Typography variant={"h6"}>
-                  {"Created the " + channelData.data.createdAt}
+                  {"Created the " + props.channelData.data.createdAt}
                 </Typography>
               </Grid>
-              {channelData.status === "owner" && (
+              {props.channelData.status === "owner" && (
                 <Grid item>
                   <IconButton onClick={handleClick}>
                     <MoreHorizIcon />
@@ -76,7 +79,7 @@ export default function ChannelContent(props: ChannelContentProps) {
                         color: "red",
                         ml: "1vh",
                       }}
-                      onClick={() => deleteChannel(channelData)}
+                      onClick={() => deleteChannel(props.channelData)}
                     >
                       Delete
                     </Button>
@@ -88,7 +91,7 @@ export default function ChannelContent(props: ChannelContentProps) {
           </Grid>
         )}
         <Grid item xs={3}>
-          <InfosChannels />
+          <InfosChannels getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
         </Grid>
       </Grid>
     );

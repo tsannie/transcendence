@@ -14,6 +14,7 @@ import { ChannelsContext } from "../../../contexts/ChannelsContext";
 
 interface ChannelProps {
   setChatContent: (chatContent: ChatContent) => void;
+  getChannelDatas: (channelName: string) => void;
 }
 
 export default function Channels(props: ChannelProps) {
@@ -39,7 +40,7 @@ export default function Channels(props: ChannelProps) {
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <ChannelsList setChatContent={props.setChatContent} />
+      <ChannelsList setChatContent={props.setChatContent} getChannelDatas={props.getChannelDatas}  />
     </Box>
   );
 }

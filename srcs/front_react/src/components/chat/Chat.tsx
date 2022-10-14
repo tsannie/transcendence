@@ -39,9 +39,30 @@ export default function Chat(props: ChatProps) {
   const [chatContent, setChatContent] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
   );
+  //const { setChannelData, channelData } = useContext(ChannelsContext);
+  const [channelData, setChannelData] = useState<IChannel>();
   console.log("chatContent", chatContent);
   //const { isOpenInfos } = useContext(ChannelsContext);
   // enum with 3 strings differentes
+
+  async function getChannelDatas(channelName: string) {
+    await api
+      .get("channel/datas", {
+        params: {
+          name: channelName,
+        },
+      })
+      .then((res) => {
+        //console.log("get infos of channel clicked by user");
+        console.log(res.data);
+        setChannelData(res.data);
+        //console.log("channel data", channelData);
+      })
+      .catch((res) => {
+        console.log("invalid channels private data");
+      });
+  }
+
 
   return (
     <ChatProvider>
@@ -51,7 +72,7 @@ export default function Chat(props: ChatProps) {
             <Dms setChatContent={setChatContent} />
           </Grid>
           <Grid item>
-            <Channels setChatContent={setChatContent} />
+            <Channels setChatContent={setChatContent} getChannelDatas={getChannelDatas} />
           </Grid>
         </Grid>
         <Grid item xs={8}>
@@ -69,7 +90,7 @@ export default function Chat(props: ChatProps) {
           {chatContent === ChatContent.NEW_DM && (
             <ChatUserlist setChatContent={setChatContent} />
           )}
-          {chatContent === ChatContent.CHANNEL_CONTENT && <ChannelContent />}
+          {chatContent === ChatContent.CHANNEL_CONTENT && <ChannelContent getChannelDatas={getChannelDatas} channelData={channelData}/>}
         </Grid>
       </Grid>
     </ChatProvider>
