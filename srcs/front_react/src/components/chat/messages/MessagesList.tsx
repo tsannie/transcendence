@@ -10,13 +10,13 @@ import { IMessage } from "../types";
 interface MessagesListProps {}
 
 export default function MessagesList(props: MessagesListProps) {
-  const { messagesList } = useContext(MessagesContext);
+  const { messagesList, loadMessages, isDm, convId, isNewMessage, setIsNewMessage } = useContext(MessagesContext);
   const { username } = useContext(UserContext);
 
   return (
-    <List>
-      {messagesList.map((messageData: IMessage) => {
-        if (username === messageData.author.username) {
+    <List sx={{ position: "relative"}}>
+      {[...messagesList].reverse().map((messageData: IMessage) => {
+        if (username === messageData.author.username)
           return (
             <ListItem
               sx={{
@@ -30,14 +30,13 @@ export default function MessagesList(props: MessagesListProps) {
                 mr: 0.5,
                 mb: 1,
                 p: 1,
-                justifyContent: "flex-end",
+                right: 0,
               }}
               key={messageData.uuid}
             >
               {messageData.content}
             </ListItem>
           );
-        } else {
           return (
             <ListItem
               sx={{
@@ -58,7 +57,6 @@ export default function MessagesList(props: MessagesListProps) {
               {messageData.content}
             </ListItem>
           );
-        }
       })}
     </List>
   );

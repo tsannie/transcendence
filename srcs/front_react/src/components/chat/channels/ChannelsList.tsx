@@ -34,7 +34,7 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
   const { channelsList, setChannelData } = useContext(ChannelsContext);
-  const { loadMessages, isDm, setIsDm, setConvId } = useContext(MessagesContext);
+  const { loadMessages, isDm, setIsDm, setConvId, messagesList } = useContext(MessagesContext);
 
   async function getChannelDatas(channel: any) {
     await api
