@@ -15,7 +15,6 @@ interface DmProps {
 }
 
 export default function Dms(props: DmProps) {
-
   //const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [newDm, setNewDm] = useState(false);
   const { getDmsList } = useContext(DmsContext);
@@ -42,9 +41,7 @@ export default function Dms(props: DmProps) {
       <IconButton onClick={setDm}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <DmsList
-        setChatContent={props.setChatContent}
-      />
+      <DmsList setChatContent={props.setChatContent} />
     </Box>
   );
 }

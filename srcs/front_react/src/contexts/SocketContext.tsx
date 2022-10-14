@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { api } from '../const/const';
-import { MessagesContext } from './MessagesContext';
-import { UserContext } from './UserContext';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { api } from "../const/const";
+import { MessagesContext } from "./MessagesContext";
+import { UserContext } from "./UserContext";
 
 export const SocketContext = createContext<Socket>(io());
 
@@ -11,12 +11,11 @@ interface SocketProviderProps {
 }
 
 export const SocketProvider = ({ children }: SocketProviderProps) => {
-
   const [userid, setUserid] = useState(0);
-  const socket = io('http://localhost:4000/chat', {
+  const socket = io("http://localhost:4000/chat", {
     query: {
       userId: userid,
-      }
+    },
   });
 
   async function getUser() {
@@ -33,14 +32,12 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
 
   useEffect(() => {
     getUser();
-    console.log('socket provider');
-    socket.on('connect', () => console.log('connected to socket'));
+    console.log("socket provider");
+    socket.on("connect", () => console.log("connected to socket"));
     socket.on("disconnect", () => console.log("disconnected from socket"));
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={socket}>
-      {children}
-    </SocketContext.Provider>
+    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
   );
 };

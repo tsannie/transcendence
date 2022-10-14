@@ -6,10 +6,9 @@ export type UserContextType = {
   //username: string;
   //userid: number;
   //setUsername: (username: string) => void;
-  users: any[],
-  userConnected: any,
+  users: any[];
+  userConnected: any;
   setUserConnected: (users: any[]) => void;
-
 };
 
 export const UserContext = createContext<UserContextType>({

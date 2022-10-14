@@ -33,7 +33,8 @@ interface DmsListProps {
 export default function DmsList(props: DmsListProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
-  const { loadMessages, isDm, setIsDm, setConvId, messagesList } = useContext(MessagesContext);
+  const { loadMessages, isDm, setIsDm, setConvId, messagesList } =
+    useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
 
   // find target username with conv id and user id

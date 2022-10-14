@@ -1,6 +1,4 @@
-import {
-  Box, Grid
-} from "@mui/material";
+import { Box, Grid } from "@mui/material";
 
 import React, { useEffect, useState } from "react";
 
@@ -22,70 +20,78 @@ export default function App() {
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
-      api.get('auth/isTwoFactor').then(res => {
-        setIs2FA(res.data.isTwoFactor);
-      }).catch(res => {
-        console.log('invalid jwt');
-        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
-      });
+      api
+        .get("auth/isTwoFactor")
+        .then((res) => {
+          setIs2FA(res.data.isTwoFactor);
+        })
+        .catch((res) => {
+          console.log("invalid jwt");
+          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
+        });
 
-      console.log('is2FA', is2FA);
+      console.log("is2FA", is2FA);
 
       if (is2FA === false) {
         setIsLogin(true);
       } else if (is2FA === true) {
-        api.get('auth/profile').then(res => {
-          setIsLogin(true);
-        }).catch(res => {
-          setIsLogin(false);
-        });
+        api
+          .get("auth/profile")
+          .then((res) => {
+            setIsLogin(true);
+          })
+          .catch((res) => {
+            setIsLogin(false);
+          });
       }
     }
   });
 
   if (!isLogin) {
     return (
-      <Box sx={{
+      <Box
+        sx={{
           bgcolor: "rgba(0, 0, 0, 0.70)",
           height: "100vh",
           pt: "2vh",
-      }}>
-      <Box sx={{
-          display: "flex",
-          justifyContent: "center",
-      }}>
-      <img src={LogoIcon}></img>
-      </Box>
-        {!is2FA &&
-          <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />
-        }
-        {is2FA &&
-          <TwoFactorCode setIsLogin={setIsLogin}/>
-        }
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <img src={LogoIcon}></img>
+        </Box>
+        {!is2FA && <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />}
+        {is2FA && <TwoFactorCode setIsLogin={setIsLogin} />}
       </Box>
     );
   } else {
     return (
       <SocketProvider>
-        <Grid
-          container
-        >
-          <Grid item >
-          <Sidebar
-            setInputChat={setInputChat}
-            setInputSettings={setInputSettings}
-            setIsLogin={setIsLogin}
-            setIs2FA={setIs2FA}
-          />
+        <Grid container>
+          <Grid item>
+            <Sidebar
+              setInputChat={setInputChat}
+              setInputSettings={setInputSettings}
+              setIsLogin={setIsLogin}
+              setIs2FA={setIs2FA}
+            />
           </Grid>
-            <Grid item xs={11} sx={{
+          <Grid
+            item
+            xs={11}
+            sx={{
               ml: "72px",
-            }}>
-              {inputChat && <Chat />}
-              {inputSettings && <Settings />}
-            </Grid>
+            }}
+          >
+            {inputChat && <Chat />}
+            {inputSettings && <Settings />}
+          </Grid>
         </Grid>
-    </SocketProvider>
+      </SocketProvider>
     );
   }
 }

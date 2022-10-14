@@ -8,5 +8,4 @@ const root = createRoot(document.getElementById("root")!);
 //    <App />
 //    <Register />
 
-
 root.render(<App />);
