@@ -66,7 +66,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
         id: id,
         author: user.username,
         content: currentMessage,
-        target: targetUsername,
+        //target: targetUsername,
         isDm: isDm,
       };
       socket.emit("message", messageData);
@@ -119,13 +119,6 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
       setIsNewMessage(true);
     });
   }, [socket]);
-
-  useEffect(() => {
-    if (isNewMessage) {
-      loadMessages(convId, isDm);
-      setIsNewMessage(false);
-    }
-  }, [isNewMessage]);
 
   return (
     <MessagesContext.Provider

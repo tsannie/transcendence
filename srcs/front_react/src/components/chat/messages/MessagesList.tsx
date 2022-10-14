@@ -10,7 +10,7 @@ import { IMessage } from "../types";
 interface MessagesListProps {}
 
 export default function MessagesList(props: MessagesListProps) {
-  const { messagesList, loadMessages, isDm, convId, isNewMessage, setIsNewMessage } = useContext(MessagesContext);
+  const { messagesList } = useContext(MessagesContext);
   const { username } = useContext(UserContext);
 
   return (

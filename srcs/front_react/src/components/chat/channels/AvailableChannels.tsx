@@ -12,15 +12,24 @@ import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { IChannel } from "../types";
-import LockIcon from '@mui/icons-material/Lock';
+import LockIcon from "@mui/icons-material/Lock";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { UserContext } from "../../../contexts/UserContext";
 
 interface AvailableChannelsProps {}
 
 export default function AvailableChannels(props: AvailableChannelsProps) {
   const [channelPassword, setChannelPassword] = useState("");
 
-  const { getChannelsUserlist, getAvailableChannels, availableChannels } = useContext(ChannelsContext);
+  const { getChannelsUserlist, getAvailableChannels, availableChannels } =
+    useContext(ChannelsContext);
+  const { username } = useContext(UserContext);
+
+  function isInChannel(channel: IChannel): boolean {
+    console.log("is in channel = ", channel);
+    return false;
+    //return channel.users.find((user) => user.username === username);
+  }
 
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
@@ -82,7 +91,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
   }, []);
 
   return (
-    <List sx={{ border: "1px solid black"}}>
+    <List sx={{ border: "1px solid black" }}>
       Available Channels
       <IconButton onClick={() => getAvailableChannels()}>
         <RefreshIcon />
@@ -93,17 +102,19 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
           <ListItemIcon>
             {channel.status === "Protected" ? <LockIcon /> : <></>}
           </ListItemIcon>
-            <TextField
-              sx={{
-                minWidth: "15vw",
-                display: channel.status === "Protected" ? "block" : "none",
-              }}
-              placeholder="password"
-              type="password"
-              onChange={(event) => {
-                setChannelPassword(event.target.value);
-              }}
-            ></TextField>
+          <TextField
+            sx={{
+              minWidth: "15vw",
+              display: channel.status === "Protected" ? "block" : "none",
+            }}
+            placeholder="password"
+            type="password"
+            onChange={(event) => {
+              setChannelPassword(event.target.value);
+            }}
+          ></TextField>
+
+          {isInChannel(channel) ? (
             <ListItemButton
               onClick={() => {
                 joinChannel(channel);
@@ -112,6 +123,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
             >
               Join
             </ListItemButton>
+          ) : (
             <ListItemButton
               onClick={() => {
                 leaveChannel(channel);
@@ -120,6 +132,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
             >
               Leave
             </ListItemButton>
+          )}
         </ListItem>
       ))}
     </List>
