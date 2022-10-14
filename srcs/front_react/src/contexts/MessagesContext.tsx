@@ -18,6 +18,8 @@ export type MessagesContextType = {
   setIsDm: (isDm: boolean) => void;
   convId: number;
   setConvId: (convId: number) => void;
+  isNewMessage: boolean;
+  setIsNewMessage: (isNewMessage: boolean) => void;
 };
 
 export const MessagesContext = createContext<MessagesContextType>({
@@ -33,6 +35,8 @@ export const MessagesContext = createContext<MessagesContextType>({
   setIsDm: () => {},
   convId: 0,
   setConvId: () => {},
+  isNewMessage: false,
+  setIsNewMessage: () => {},
 });
 
 interface MessagesContextProps {
@@ -111,9 +115,17 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
     socket.on("message", (data) => {
       //console.log("message received from server !!!!!!");
       //loadMessages(data.id, data.isDm);
-      setMessagesList((messagesList) => [...messagesList, data]);
+      setMessagesList((messagesList) => [data, ...messagesList]);
+      setIsNewMessage(true);
     });
   }, [socket]);
+
+  useEffect(() => {
+    if (isNewMessage) {
+      loadMessages(convId, isDm);
+      setIsNewMessage(false);
+    }
+  }, [isNewMessage]);
 
   return (
     <MessagesContext.Provider
@@ -130,6 +142,8 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
         setIsDm,
         convId,
         setConvId,
+        isNewMessage,
+        setIsNewMessage,
       }}
     >
       {children}

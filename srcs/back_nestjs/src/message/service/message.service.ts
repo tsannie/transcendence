@@ -125,7 +125,9 @@ export class MessageService {
     if (dm) {
       console.log('dm.users', dm.users);
       for (const dmUser of dm.users) {
-        const user = await this.userService.findByName(dmUser.username, { connections: true })
+        const user = await this.userService.findByName(dmUser.username, {
+          connections: true,
+        });
 
         for (const connection of user.connections) {
           if (data.author !== dmUser.username) {
@@ -136,31 +138,84 @@ export class MessageService {
     }
   }
 
+
+  // est-ce qu'on prend cette abstraction ou on fait un emit message par target ?
+  /* async emitMessageToAllTargetInChannel(channelTarget: any, socket: Server, data: IMessage) {
+    if (channelTarget) {
+      for (const channelUser of channelTarget) {
+        const user = await this.userService.findByName(channelUser.username, {
+          connections: true,
+        });
+
+        for (const connection of user.connections) {
+          if (data.author !== channelUser.username) {
+            socket.to(connection.socketId).emit('message', data);
+          }
+        }
+      }
+    }
+  } */
+
+  async emitMessageToUserInChannel(channel: ChannelEntity, socket: Server, data: IMessage) {
+    if (channel.users) {
+      for (const channelUser of channel.users) {
+        const user = await this.userService.findByName(channelUser.username, {
+          connections: true,
+        });
+
+        for (const connection of user.connections) {
+          if (data.author !== channelUser.username) {
+            socket.to(connection.socketId).emit('message', data);
+          }
+        }
+      }
+    }
+  }
+
+  async emitMessageToAdminInChannel(channel: ChannelEntity, socket: Server, data: IMessage) {
+     if (channel.admins) {
+        for (const channelAdmin of channel.admins) {
+          const user = await this.userService.findByName(
+            channelAdmin.username,
+            { connections: true },
+          );
+
+          for (const connection of user.connections) {
+            if (data.author !== channelAdmin.username) {
+              socket.to(connection.socketId).emit('message', data);
+            }
+          }
+        }
+      }
+  }
+
+  async emitMessageToOwnerInChannel(channel: ChannelEntity, socket: Server, data: IMessage) {
+    const owner = await this.userService.findByName(channel.owner.username, {
+      connections: true,
+    });
+
+    if (owner) {
+      for (const connection of owner.connections) {
+        if (data.author !== owner.username) {
+          socket.to(connection.socketId).emit('message', data);
+        }
+      }
+    }
+  }
+
   // emit message to all users in channel
   async emitMessageChannel(socket: Server, data: IMessage) {
-		const channel = await this.channelService.getChannelById(data.id);
+    const channel = await this.channelService.getChannelById(data.id);
 
     console.log(channel);
     if (channel) {
       console.log('channel.users', channel.users);
-      channel.users.forEach((user: UserEntity) => {
-        // load relations to get connected users
-        this.userService
-          .findByName(user.username, { connections: true })
-          .then((user: UserEntity) => {
-            user.connections.forEach((connection) => {
-              socket.to(connection.socketId).emit('message', data);
-            });
-          });
-      });
+      this.emitMessageToUserInChannel(channel, socket, data);
+      this.emitMessageToAdminInChannel(channel, socket, data);
+      this.emitMessageToOwnerInChannel(channel, socket, data);
 
-			this.userService
-          .findByName(channel.owner.username, { connections: true })
-          .then((user: UserEntity) => {
-            user.connections.forEach((connection) => {
-              socket.to(connection.socketId).emit('message', data);
-            });
-          });
+      //this.emitMessageToAllTargetInChannel(channel.users, socket, data);
+      //this.emitMessageToAllTargetInChannel(channel.admins, socket, data);
     }
-	}
+  }
 }
