@@ -25,7 +25,7 @@ export default function Settings() {
         <SettingsPicture />
       </div>
       <h2>Username</h2>
-      <EditUsername/>
+        <EditUsername/>
       <h2>Email</h2>
       <span>{user?.email}</span>
       <h2>Two Factor Authentication (2FA)</h2>

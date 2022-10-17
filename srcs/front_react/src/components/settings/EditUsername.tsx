@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useState } from "react";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import EditIcon from "../../assets/img/icon/edit.png";
-import VerifIcon from "../../assets/img/icon/verifier.png";
+import EditIcon from "../../assets/img/icon/edit.svg";
+import VerifIcon from "../../assets/img/icon/circle_check.svg";
 import { api } from "../../const/const";
 import {
   SnackbarContext,

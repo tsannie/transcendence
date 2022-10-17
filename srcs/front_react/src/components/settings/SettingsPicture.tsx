@@ -1,6 +1,6 @@
 import React from "react";
 import TestProfile from "../../assets/quatennens.jpg";
-import EditIcon from "../../assets/img/icon/edit.png";
+import EditIcon from "../../assets/img/icon/edit.svg";
 import './settings.style.scss';
 
 export default function SettingsPicture() {
