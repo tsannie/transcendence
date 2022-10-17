@@ -9,21 +9,6 @@ export default function ButtonLogin(props: any) {
     window.location.href = REDIRECT_LINK_AUTH;
   }
 
- /* useEffect(() => {
-    if (document.cookie.includes(COOKIE_NAME)) {
-      api.post('2fa/auth2fa').then(res => {
-        if (res.data.isSecondFactor === false) {
-          console.log('hello')
-          setIsLogin(true);
-        }
-      }).catch(res => {
-        console.log('invalid jwt');
-        //console.log(res)
-        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
-      });
-    }
-  });*/
-
   return (
     <Box sx={{
       display: "flex",
