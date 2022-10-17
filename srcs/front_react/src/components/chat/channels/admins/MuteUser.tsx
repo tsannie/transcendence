@@ -6,14 +6,15 @@ import { IChannel, IChannelActions } from "../../types";
 
 interface MuteUserProps {
   userTargeted: any;
+  getChannelDatas: any;
+  channelData: any;
 }
 
 export default function MuteUser(props: MuteUserProps) {
-  //const { channelData } = useContext(ChannelsContext);
-
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("ban user", channelData);
-    //muteUser(props.userTargeted, channelData);
+    muteUser(props.userTargeted, props.channelData);
+    props.getChannelDatas(props.channelData.data.name);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
@@ -34,7 +35,8 @@ export default function MuteUser(props: MuteUserProps) {
         .post("channel/muteUser", newChannel)
         .then((res) => {
           console.log("user mute with success");
-          console.log(channel);
+          props.channelData.data.muted = res.data.muted;
+          props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");

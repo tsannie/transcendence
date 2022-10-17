@@ -6,14 +6,15 @@ import { IChannel, IChannelActions } from "../../types";
 
 interface RevokeAdminProps {
   userTargeted: any;
+  getChannelDatas: any;
+  channelData: any;
 }
 
 export default function RevokeAdmin(props: RevokeAdminProps) {
-  //const { channelData } = useContext(ChannelsContext);
-
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("makeAdmin", channelData);
-    //revokeAdmin(props.userTargeted, channelData);
+    revokeAdmin(props.userTargeted, props.channelData);
+    props.getChannelDatas(props.channelData.data.name);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
@@ -34,7 +35,8 @@ export default function RevokeAdmin(props: RevokeAdminProps) {
         .post("channel/revokeAdmin", newChannel)
         .then((res) => {
           console.log("user in not admin anymore");
-          console.log(channel);
+          props.channelData.data.admins = res.data.admins;
+          props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
