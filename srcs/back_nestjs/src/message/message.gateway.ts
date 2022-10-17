@@ -36,10 +36,7 @@ export class MessageGateway
   constructor(
     private messageService: MessageService,
     private userService: UserService,
-    private dmService: DmService,
     private connectedUserService: ConnectedUserService,
-    @InjectRepository(ConnectedUserEntity)
-    private connectedUserRepository: Repository<ConnectedUserEntity>,
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
@@ -70,7 +67,6 @@ export class MessageGateway
 
         connectedUser.socketId = client.id;
         connectedUser.user = user;
-
         this.connectedUserService.create(connectedUser);
       }
     }
@@ -83,7 +79,6 @@ export class MessageGateway
     this.logger.log(`Client disconnected: ${client.id}`);
 
     this.connectedUserService.deleteBySocketId(client.id);
-    //console.log("map clients = ", this.connectedClients);
     client.disconnect();
   }
 
@@ -95,7 +90,6 @@ export class MessageGateway
 
   @SubscribeMessage('message')
   addMessage(@MessageBody() data: IMessage, @ConnectedSocket() client: Socket) {
-    //): Observable<IMessage> {
     this.logger.log("client id = ", client.id);
 
     if (data.isDm === true) {

@@ -13,7 +13,6 @@ export class ConnectedUserDto{
     @IsDefined()
     @IsNotEmpty()
     @Type( () => String )
-    @Min(0)
     socketId: string;
 
     @IsDefined()
