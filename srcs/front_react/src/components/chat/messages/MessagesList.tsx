@@ -1,19 +1,38 @@
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { SocketContext } from "../SocketContext";
 import { IMessage } from "../types";
 
-export default function MessagesList(props: any) {
+interface MessagesListProps {
+  //setMessagesList: (messagesList: IMessage[]) => void;
+  messagesList: IMessage[];
+  username: string;
+}
+
+export default function MessagesList(props: MessagesListProps) {
+
+  const socket = useContext(SocketContext);
+
+  console.log("messagesList");
+
+  useEffect(() => {
+    console.log("listen message");
+    socket.on("message", (data) => {
+      console.log(data);
+    });
+  }, [socket]);
+
   return (
     <Box
       sx={{
-        width: 640,
-        height: "fit-content",
-        minHeight: 724,
+        border: "1px solid black",
+        x: 20,
       }}
     >
-      <Box>
+      <>
         {props.messagesList.map((messageData: IMessage) => {
-          if (props.author === messageData.author)
+          //console.log("uuid du msg", messageData.uuid);
+          //if (props.username === messageData.author)
             return (
               <Box
                 sx={{
@@ -29,7 +48,7 @@ export default function MessagesList(props: any) {
                   mb: 1,
                   p: 1,
                 }}
-                key={messageData.id}
+                key={messageData.uuid}
               >
                 {messageData.content}
               </Box>
@@ -49,13 +68,13 @@ export default function MessagesList(props: any) {
                 mb: 1,
                 p: 1,
               }}
-              key={messageData.id}
+              key={messageData.uuid}
             >
               {messageData.content}
             </Box>
           );
         })}
-      </Box>
+      </>
     </Box>
   );
 }

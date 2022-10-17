@@ -1,28 +1,53 @@
+import { MessageEntity } from 'src/message/models/message.entity';
+import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
-  OneToOne,
-  PrimaryColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
 export class ChannelEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
 
-  @Column()
-  name: string;
+	@CreateDateColumn()
+	createdAt: string;
+	
+	@Column( {nullable: false, unique: true} )
+	name: string;
+	
+	@Column({ nullable: false } )
+	status: string;
 
-  @Column()
-  status: string;
+	@Column( { select: null, nullable: true })
+	password: string;
+	
+	@ManyToOne( () => UserEntity, (user) => user.owner_of )
+	owner: UserEntity;
+	
+	@ManyToMany( () => UserEntity, (user) => user.admin_of )
+	@JoinTable()
+	admins: UserEntity[];
+	
+	//CHANGE NEXT TWO FIELDS IF CIRCULAR DEPENDENCIES
+	@ManyToMany( () => UserEntity, (user) => user.channels )
+	users: UserEntity[];
 
-  @Column({nullable: true} )
-  ownerid: string;
+	@OneToMany( () => MessageEntity, (message) => message.channel )
+	messages: MessageEntity[];
 
-  @PrimaryGeneratedColumn()
-  id: number;
+	@ManyToMany( () => UserEntity )
+	@JoinTable()
+	muted: UserEntity[];
 
-  @CreateDateColumn()
-  time: string;
+	@ManyToMany( () => UserEntity )
+	@JoinTable()
+	banned: UserEntity[];
 }
+

@@ -1,55 +1,60 @@
-import { Box, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import { Box, Grid, Popover, Typography } from "@mui/material";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { IMessage } from "./types";
-import ChatJoin from "./ChatJoin";
+import { IChannel, IMessage } from "./types";
 import MessagesList from "./messages/MessagesList";
 import PromptMessage from "./messages/PromptMessage";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
-import { ContactSupportOutlined } from "@material-ui/icons";
-import HistoryMessages from "./messages/HistoryMessages";
 import { api, COOKIE_NAME } from "../../const/const";
+import DmList from "./messages/DmList";
+import Conv from "./messages/Conv";
+import FormChannel from "./channels/FormChannel";
+import { SocketContext, SocketProvider } from "./SocketContext";
 
-export const socket = io("http://localhost:4000");
+export enum ChatContent {
+  NEW_CHANNELS,
+  NEW_DM,
+  MESSAGES,
+}
 
-export default function Chat() {
-  const [room, setRoom] = useState("");
-  const [currentMessage, setCurrentMessage] = useState("");
-  const [windowChat, setWindowChat] = useState(false);
-  const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
-  const [author, setAuthor] = useState("");
+interface ChatProps {
+  getAllUsers: () => Promise<void>;
+  users: any[];
+}
+
+export default function Chat(props: ChatProps) {
   const [username, setUsername] = useState("");
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [messagesList, setMessagesList] = useState<IMessage[]>([]);
+  const [targetUsername, setTargetUsername] = useState("");
   const [isNewMessage, setIsNewMessage] = useState(false);
-  const [id, setId] = useState(0);
+  const [userId, setUserId] = useState(0);
+  const [channelsList, setChannelsList] = useState<IChannel[]>([]);
 
-  function createRoom() {
-    console.log(room);
-    if (room !== "") {
-      socket.emit("createRoom", room);
-      console.log(`User join room ${room}`);
-      setWindowChat(true);
-      console.log(windowChat);
-    }
-  }
+  const [enumState, setEnumState] = useState<ChatContent>(
+    ChatContent.NEW_CHANNELS
+  );
+  // enum with 3 strings differentes
 
-  async function getUser() {          // TODO explain to dov
-    if (document.cookie.includes(COOKIE_NAME)) {
-      await api
-        .get("auth/profile")
-        .then((res) => {
-          setId(res.data.id);
-          setUsername(res.data.username);
-        })
-        .catch((res) => {
-          console.log("invalid jwt");
-          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-        });
-    }
+  const socket = useContext(SocketContext);
+
+  async function getUser() {
+    console.log("get user");
+    await api
+      .get("auth/profile")
+      .then((res) => {
+        setUsername(res.data.username);
+        setUserId(res.data.id);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+      });
   }
 
   function sendMessage() {
+    console.log("send message");
     const inputMessage = document.getElementById(
       "input-message"
     ) as HTMLInputElement;
@@ -57,82 +62,75 @@ export default function Chat() {
     inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: IMessage = {
-        id: uuidv4(),
-        room: room,
         author: username,
         content: currentMessage,
-        time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
+        target: targetUsername,
       };
+      console.log(messageData);
+      console.log(socket);
       socket.emit("message", messageData);
       setMessagesList((list) => [...list, messageData]);
       setCurrentMessage("");
-      setAuthor(messageData.author);
     }
   }
 
+  // get user once on load
   useEffect(() => {
     getUser();
-  });
+  }, []);
 
   // listen message from backend
-  useEffect(() => {
+  /* useEffect(() => {
+    console.log("listen message");
     socket.on("message", (data) => {
       console.log(data);
       setMessagesList((list) => [...list, data]);
     });
-  }, [socket]);
+  }, [socket]); */
 
-  if (!windowChat) {
-    return (
-      <div>
-        <ChatJoin setRoom={setRoom} createRoom={createRoom} />
-      </div>
-    );
-  }
   return (
-    <Box sx={{}}>
-      <Box
-        sx={{
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          sx={{
-            fontWeight: "bold",
-          }}
-          variant="h4"
-        >
-          Live chat
-        </Typography>
-      </Box>
-      <Box>
-        <HistoryMessages isNewMessage={isNewMessage} />
-      </Box>
-      <Box>
-        <MessagesList messagesList={messagesList} author={author} />
-      </Box>
-      <Box>
-        <PromptMessage
-          setCurrentMessage={setCurrentMessage}
-          currentMessage={currentMessage}
-          sendMessage={sendMessage}
-        />
-      </Box>
-      <Box>
-        <ChatUserlist setIsNewMessage={setIsNewMessage} />
-      </Box>
-      <Box
-        sx={{
-          position: "relative",
-          display: "flex",
-          float: "right",
-        }}
-      >
-        <Channels />
-      </Box>
-    </Box>
+      <Grid container>
+        <Grid item xs={4}>
+          <Grid item>
+            {/* <DmList
+              isNewMessage={isNewMessage}
+              setEnumState={setEnumState}
+              getAllUsers={props.getAllUsers}
+              users={props.users}
+            /> */}
+          </Grid>
+          <Grid item>
+            <Channels
+              channelsList={channelsList}
+              setChannelsList={setChannelsList}
+              setEnumState={setEnumState}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={8}>
+          {enumState === ChatContent.MESSAGES && (
+            <Conv
+              messagesList={messagesList}
+              //setMessagesList={setMessagesList}
+              username={username}
+              setCurrentMessage={setCurrentMessage}
+              sendMessage={sendMessage}
+            />
+          )}
+          {enumState === ChatContent.NEW_CHANNELS && (
+            <FormChannel setChannelsList={setChannelsList} />
+          )}
+
+          {enumState === ChatContent.NEW_DM && (
+            <ChatUserlist
+              setMessagesList={setMessagesList}
+              setTargetUsername={setTargetUsername}
+              setEnumState={setEnumState}
+              getAllUsers={props.getAllUsers}
+              users={props.users}
+            />
+          )}
+        </Grid>
+      </Grid>
   );
 }
