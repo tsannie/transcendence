@@ -13,14 +13,16 @@ interface BanUserProps {
 }
 
 export default function BanUser(props: BanUserProps) {
+
+  const { getUser } = useContext(UserContext);
+
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    //console.log("ban user", channelData);
     banUser(props.userTargeted, props.channelData);
     props.getChannelDatas(props.channelData.data.name);
+    getUser();
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
-    //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
       channel_name: channel.data.name,
       target: targetUsername,

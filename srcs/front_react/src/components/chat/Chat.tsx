@@ -1,28 +1,13 @@
 import { Box, Grid, Popover, Typography } from "@mui/material";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { v4 as uuidv4 } from "uuid";
-import { IChannel, IConvCreated, IMessage } from "./types";
-import MessagesList from "./messages/MessagesList";
-import PromptMessage from "./messages/PromptMessage";
+import { useState } from "react";
+import { IChannel } from "./types";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
 import { api, COOKIE_NAME } from "../../const/const";
-import DmList from "./messages/DmsList";
 import Conv from "./messages/Conv";
 import FormChannel from "./channels/FormChannel";
-import { SocketContext, SocketProvider } from "../../contexts/SocketContext";
 import AvailableChannels from "./channels/AvailableChannels";
 import ChannelContent from "./channels/ChannelContent";
-import {
-  ChannelsContext,
-  ChannelsProvider,
-} from "../../contexts/ChannelsContext";
-import {
-  MessagesContext,
-  MessagesProvider,
-} from "../../contexts/MessagesContext";
-import { UserContext, UserProvider } from "../../contexts/UserContext";
 import { ChatProvider } from "../../contexts/ChatContext";
 import Dms from "./messages/Dms";
 
@@ -40,22 +25,18 @@ export default function Chat(props: ChatProps) {
     ChatContent.NEW_CHANNELS
   );
   const [channelData, setChannelData] = useState<IChannel>();
-  console.log("chatContent", chatContent);
 
   async function getChannelDatas(channelName: string) {
-    await api
-      .get("channel/datas", {
+    try {
+      const res = await api.get("channel/datas", {
         params: {
           name: channelName,
         },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setChannelData(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid channels private data");
       });
+      setChannelData(res.data);
+    } catch {
+      console.log("invalid get channels datas");
+    }
   }
 
   return (

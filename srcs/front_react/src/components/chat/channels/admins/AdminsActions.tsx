@@ -20,12 +20,8 @@ interface AdminsActionsProps {
 
 export default function AdminsActions(props: AdminsActionsProps) {
   function isBan(channel: any): boolean {
-    for (
-      let i = 0;
-      channel.data.banned && i < channel.data.banned.length;
-      i++
-    ) {
-      if (channel.data.banned[i].id === props.userTargeted.id) {
+    for (const ban of channel.data.banned) {
+      if (ban.id === props.userTargeted.id) {
         return true;
       }
     }
@@ -33,8 +29,8 @@ export default function AdminsActions(props: AdminsActionsProps) {
   }
 
   function isMute(channel: any): boolean {
-    for (let i = 0; channel.data.muted && i < channel.data.muted.length; i++) {
-      if (channel.data.muted[i].id === props.userTargeted.id) {
+    for (const mute of channel.data.muted) {
+      if (mute.id === props.userTargeted.id) {
         return true;
       }
     }
@@ -42,12 +38,8 @@ export default function AdminsActions(props: AdminsActionsProps) {
   }
 
   function isAdmin(channel: any): boolean {
-    for (
-      let i = 0;
-      channel.data.admins && i < channel.data.admins.length;
-      i++
-    ) {
-      if (channel.data.admins[i].id === props.userTargeted.id) {
+    for (const admin of channel.data.admins) {
+      if (admin.id === props.userTargeted.id) {
         return true;
       }
     }

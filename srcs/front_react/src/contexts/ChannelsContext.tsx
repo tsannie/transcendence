@@ -1,6 +1,7 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { IChannel } from "../components/chat/types";
 import { api } from "../const/const";
+import { UserContext } from "./UserContext";
 
 export type ChannelsContextType = {
   channelsList: IChannel[];
@@ -27,6 +28,7 @@ interface ChannelsContextProps {
 export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
   const [channelsList, setChannelsList] = useState<IChannel[]>([]);
   const [availableChannels, setAvailableChannels] = useState<any[]>([]);
+  const { getUser } = useContext(UserContext);
 
   // get all available channels
   async function getAvailableChannels() {
@@ -38,6 +40,7 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
       })
       .then((res) => {
         setAvailableChannels(res.data);
+        getUser();
         console.log(res.data);
       })
       .catch((res) => {
