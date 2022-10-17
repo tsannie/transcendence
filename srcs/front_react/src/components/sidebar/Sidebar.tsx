@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import HomeIcon from "../../assets/img/icon/home.png";
-import ChatIcon from "../../assets/img/icon/chat.png";
-import GameIcon from "../../assets/img/icon/game.png";
-import SettingsIcon from "../../assets/img/icon/settings.png";
-import LogOutIcon from "../../assets/img/icon/log-out.png";
-import ProfileIcon from "../../assets/img/icon/user.png";
+import HomeIcon from "../../assets/img/icon/home.svg";
+import ChatIcon from "../../assets/img/icon/chat.svg";
+import GameIcon from "../../assets/img/icon/play.svg";
+import SettingsIcon from "../../assets/img/icon/settings.svg";
+import LogOutIcon from "../../assets/img/icon/logout.svg";
+import ProfileIcon from "../../assets/img/icon/user.svg";
 import { api, COOKIE_NAME } from "../../const/const";
 import "./sidebar.style.scss";
 import { Link } from "react-router-dom";

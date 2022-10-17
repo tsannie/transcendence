@@ -5,7 +5,11 @@
   align-items: center;
   margin-right: 1vw;
 }
-
+.test {
+  fill:rgba(255,250,220,0.4);
+  stroke: rgba(0,0,0,0.7);
+  stroke-width:2;
+}
 .sidebar__icon {
   display: flex;
   flex-direction: column;
@@ -23,6 +27,7 @@
     border-radius: 50%;
     border-style: dashed;
     border-color: transparent;
+    // fill svg icon color
   }
   img:hover {
     filter: invert(40%);
