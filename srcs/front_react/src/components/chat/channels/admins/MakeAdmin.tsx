@@ -6,14 +6,15 @@ import { IChannel, IChannelActions } from "../../types";
 
 interface MakeAdminProps {
   userTargeted: any;
+  getChannelDatas: any;
+  channelData: any;
 }
 
 export default function MakeAdmin(props: MakeAdminProps) {
-  //const { channelData } = useContext(ChannelsContext);
-
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("makeAdmin", channelData);
-    //makeAdmin(props.userTargeted, channelData);
+    makeAdmin(props.userTargeted, props.channelData);
+    props.getChannelDatas(props.channelData.data.name);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
@@ -34,7 +35,8 @@ export default function MakeAdmin(props: MakeAdminProps) {
         .post("channel/makeAdmin", newChannel)
         .then((res) => {
           console.log("user ban with success");
-          console.log(channel);
+          props.channelData.data.admins = res.data.admins;
+          props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");

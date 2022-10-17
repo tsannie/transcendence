@@ -19,14 +19,9 @@ interface AdminsActionsProps {
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
-  //const { channelData, setChannelData } = useContext(ChannelsContext);
 
   function isBan(channel: any): boolean {
-    console.log("channelData = ", channel);
-    console.log("userTargeted = ", props.userTargeted);
-
     for (let i = 0; channel.data.banned && i < channel.data.banned.length; i++) {
-      console.log("channelData.data.banned[i] = ", channel.data.banned[i]);
       if (channel.data.banned[i].id === props.userTargeted.id) {
         return true;
       }
@@ -34,7 +29,23 @@ export default function AdminsActions(props: AdminsActionsProps) {
     return false;
   }
 
-  console.log("admin actions)");
+  function isMute(channel: any): boolean {
+    for (let i = 0; channel.data.muted && i < channel.data.muted.length; i++) {
+      if (channel.data.muted[i].id === props.userTargeted.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function isAdmin(channel: any): boolean {
+    for (let i = 0; channel.data.admins && i < channel.data.admins.length; i++) {
+      if (channel.data.admins[i].id === props.userTargeted.id) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   return (
     <List>
@@ -45,18 +56,20 @@ export default function AdminsActions(props: AdminsActionsProps) {
           <UnbanUser userTargeted={props.userTargeted} getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
         )}
       </ListItem>
-      {/* <ListItem>
-        <MuteUser userTargeted={props.userTargeted} />
+      <ListItem>
+        {!isMute(props.channelData) ? (
+          <MuteUser userTargeted={props.userTargeted} getChannelDatas={props.getChannelDatas} channelData={props.channelData}/>
+        ) : (
+          <UnmuteUser userTargeted={props.userTargeted} getChannelDatas={props.getChannelDatas} channelData={props.channelData}/>
+        )}
       </ListItem>
       <ListItem>
-        <UnmuteUser userTargeted={props.userTargeted} />
+        {!isAdmin(props.channelData) ? (
+          <MakeAdmin userTargeted={props.userTargeted} getChannelDatas={props.getChannelDatas} channelData={props.channelData}/>
+        ) : (
+          <RevokeAdmin userTargeted={props.userTargeted} getChannelDatas={props.getChannelDatas} channelData={props.channelData}/>
+        )}
       </ListItem>
-      <ListItem>
-        <MakeAdmin userTargeted={props.userTargeted} />
-      </ListItem>
-      <ListItem>
-        <RevokeAdmin userTargeted={props.userTargeted} />
-      </ListItem> */}
     </List>
   );
 }

@@ -13,8 +13,6 @@ interface BanUserProps {
 }
 
 export default function BanUser(props: BanUserProps) {
-  //const { channelData } = useContext(ChannelsContext);
-
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("ban user", channelData);
@@ -41,7 +39,8 @@ export default function BanUser(props: BanUserProps) {
         .post("channel/banUser", newChannel)
         .then((res) => {
           console.log("user ban with success");
-          console.log(channel);
+          props.channelData.data.banned = res.data.banned;
+          props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
