@@ -12,16 +12,13 @@ interface UnbanUserProps {
 }
 
 export default function UnbanUser(props: UnbanUserProps) {
-  //const { channelData } = useContext(ChannelsContext);
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
-    //console.log("unban user", channelData);
     unbanUser(props.userTargeted, props.channelData);
     props.getChannelDatas(props.channelData.data.name);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
-    //console.log("channel = ", channel);
     const newChannel: IChannelActions = {
       channel_name: channel.data.name,
       target: targetUsername,
@@ -39,6 +36,8 @@ export default function UnbanUser(props: UnbanUserProps) {
         .then((res) => {
           console.log("user ban with success");
           console.log(channel);
+          props.channelData.data.banned = res.data.banned;
+          props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");

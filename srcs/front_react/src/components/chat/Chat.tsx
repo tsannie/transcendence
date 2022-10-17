@@ -39,11 +39,8 @@ export default function Chat(props: ChatProps) {
   const [chatContent, setChatContent] = useState<ChatContent>(
     ChatContent.NEW_CHANNELS
   );
-  //const { setChannelData, channelData } = useContext(ChannelsContext);
   const [channelData, setChannelData] = useState<IChannel>();
   console.log("chatContent", chatContent);
-  //const { isOpenInfos } = useContext(ChannelsContext);
-  // enum with 3 strings differentes
 
   async function getChannelDatas(channelName: string) {
     await api
@@ -53,10 +50,8 @@ export default function Chat(props: ChatProps) {
         },
       })
       .then((res) => {
-        //console.log("get infos of channel clicked by user");
         console.log(res.data);
         setChannelData(res.data);
-        //console.log("channel data", channelData);
       })
       .catch((res) => {
         console.log("invalid channels private data");
