@@ -4,13 +4,39 @@ import React, { useContext, useState } from "react";
 import Paperplane from "../../../assets/paperplane.png";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
+import { SocketContext } from "../../../contexts/SocketContext";
+import { UserContext } from "../../../contexts/UserContext";
+import { IMessage } from "../types";
 
 interface PromptMessageProps {}
 
 export default function PromptMessage(props: PromptMessageProps) {
-  const { setCurrentMessage, sendMessage, convId } =
+  const { convId } =
     useContext(MessagesContext);
-  const { dmData } = useContext(DmsContext);
+  const { userConnected } = useContext(UserContext);
+  const { isDm, setIsNewMessage } = useContext(MessagesContext);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const socket = useContext(SocketContext);
+
+  function sendMessage(id: number) {
+    console.log("send message");
+    const inputMessage = document.getElementById(
+      "input-message"
+    ) as HTMLInputElement;
+
+    inputMessage.value = "";
+    if (currentMessage !== "") {
+      const messageData: Partial<IMessage> = {
+        id: id,
+        author: userConnected,
+        content: currentMessage,
+        isDm: isDm,
+      };
+      socket.emit("message", messageData);
+      setCurrentMessage("");
+      setIsNewMessage(true);
+    }
+  }
 
   return (
     <Box>

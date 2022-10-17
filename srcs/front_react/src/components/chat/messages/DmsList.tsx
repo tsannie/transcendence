@@ -33,7 +33,7 @@ interface DmsListProps {
 export default function DmsList(props: DmsListProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { dmsList, getDmsList, setDmData } = useContext(DmsContext);
-  const { loadMessages, isDm, setIsDm, setConvId, messagesList } =
+  const { loadMessages, isDm, setIsDm, setConvId, setDisplayConv } =
     useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
 
@@ -73,6 +73,8 @@ export default function DmsList(props: DmsListProps) {
     getDmDatas(dm);
     console.log("dm id clicked", dm.id);
     setIsDm(true);
+    setDisplayConv(true);
+    //console.log()
     setConvId(dm.id);
     loadMessages(dm.id, true);
     console.log("click on user dms list");
