@@ -26,12 +26,20 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
   const { userConnected } = useContext(UserContext);
 
   function isInChannel(channelId: number): boolean {
-    for (let i = 0; userConnected.channels && i < userConnected.channels.length; i++) {
+    for (
+      let i = 0;
+      userConnected.channels && i < userConnected.channels.length;
+      i++
+    ) {
       if (userConnected.channels[i].id === channelId) {
         return true;
       }
     }
-    for (let i = 0; userConnected.owner_of && i < userConnected.owner_of.length; i++) {
+    for (
+      let i = 0;
+      userConnected.owner_of && i < userConnected.owner_of.length;
+      i++
+    ) {
       if (userConnected.owner_of[i].id === channelId) {
         return true;
       }
@@ -107,20 +115,26 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
       {availableChannels.map((channel) => (
         <ListItem key={channel.name}>
           <ListItemText primary={channel.name} />
-          <ListItemIcon>
-            {channel.status === "Protected" ? <LockIcon /> : <></>}
-          </ListItemIcon>
-          <TextField
-            sx={{
-              minWidth: "15vw",
-              display: channel.status === "Protected" ? "block" : "none",
-            }}
-            placeholder="password"
-            type="password"
-            onChange={(event) => {
-              setChannelPassword(event.target.value);
-            }}
-          ></TextField>
+
+          {!isInChannel(channel.id) ? (
+            <TextField
+              sx={{
+                minWidth: "15vw",
+                display: channel.status === "Protected" ? "block" : "none",
+                ml: 2,
+              }}
+              placeholder="password"
+              type="password"
+              value={channelPassword}
+              onChange={(event) => {
+                setChannelPassword(event.target.value);
+              }}
+            ></TextField>
+          ) : (
+            <ListItemIcon>
+              {channel.status === "Protected" ? <LockIcon sx={{ ml: 1.5, maxHeight: 18, maxWidth: 18}} /> : <></>}
+            </ListItemIcon>
+          )}
 
           {!isInChannel(channel.id) ? (
             <ListItemButton

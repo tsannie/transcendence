@@ -57,6 +57,8 @@ export default function FormChannel(props: FormChannelProps) {
         setError(res.response.data.message[1]);
       });
     setError("");
+    setNewPassword("");
+    setNameChannel("");
   }
 
   return (
@@ -64,6 +66,7 @@ export default function FormChannel(props: FormChannelProps) {
       <TextField
         variant="outlined"
         placeholder="name"
+        value={nameChannel}
         onChange={(event) => {
           setNameChannel(event.target.value);
         }}
@@ -94,6 +97,9 @@ export default function FormChannel(props: FormChannelProps) {
         <TextField
           variant="outlined"
           placeholder="password"
+          type="password"
+          // reset input password when msg is sent
+          value={newPassword}
           onChange={(event) => {
             setNewPassword(event.target.value);
           }}

@@ -50,6 +50,7 @@ export default function ChannelContent(props: ChannelContentProps) {
         console.log("invalid channels");
         console.log(res);
       });
+      setOpenMoreInfos(false);
   }
 
   console.log("channel data", props.channelData);

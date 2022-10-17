@@ -34,7 +34,7 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
   const { channelsList } = useContext(ChannelsContext);
-  const { loadMessages, isDm, setIsDm, setConvId, messagesList } =
+  const { loadMessages, isDm, setIsDm, setConvId } =
     useContext(MessagesContext);
 
   function handleClick(channel: IChannel) {
@@ -62,17 +62,6 @@ export default function ChannelsList(props: ChannelsListProps) {
             onClick={() => handleClick(channelData)}
           >
             <ListItemText sx={{ ml: "1vw" }}>{channelData.name}</ListItemText>
-            <TextField
-              sx={{
-                minWidth: "15vw",
-                display: channelData.status === "Protected" ? "block" : "none",
-              }}
-              placeholder="password"
-              type="password"
-              onChange={(event) => {
-                setChannelPassword(event.target.value);
-              }}
-            ></TextField>
           </ListItemButton>
         );
       })}

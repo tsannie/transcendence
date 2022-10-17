@@ -14,7 +14,7 @@ export default function PromptMessage(props: PromptMessageProps) {
   const { convId } =
     useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
-  const { isDm, setIsNewMessage } = useContext(MessagesContext);
+  const { isDm } = useContext(MessagesContext);
   const [currentMessage, setCurrentMessage] = useState("");
   const socket = useContext(SocketContext);
 
@@ -34,7 +34,6 @@ export default function PromptMessage(props: PromptMessageProps) {
       };
       socket.emit("message", messageData);
       setCurrentMessage("");
-      setIsNewMessage(true);
     }
   }
 
