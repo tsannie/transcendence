@@ -6,8 +6,6 @@ export type ChannelsContextType = {
   channelsList: IChannel[];
   setChannelsList: (channelsList: IChannel[]) => void;
   getChannelsUserlist: () => void;
-  //channelData: any;
-  //setChannelData: (channelData: any) => void;
   availableChannels: IChannel[];
   setAvailableChannels: (availableChannels: IChannel[]) => void;
   getAvailableChannels: () => void;
@@ -17,8 +15,6 @@ export const ChannelsContext = createContext<ChannelsContextType>({
   channelsList: [],
   setChannelsList: () => {},
   getChannelsUserlist: () => {},
-  //channelData: {},
-  //setChannelData: () => {},
   availableChannels: [],
   setAvailableChannels: () => {},
   getAvailableChannels: () => {},
@@ -30,7 +26,6 @@ interface ChannelsContextProps {
 
 export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
   const [channelsList, setChannelsList] = useState<IChannel[]>([]);
-  //const [channelData, setChannelData] = useState<IChannel>();
   const [availableChannels, setAvailableChannels] = useState<any[]>([]);
 
   // get all available channels
@@ -77,8 +72,6 @@ export const ChannelsProvider = ({ children }: ChannelsContextProps) => {
         channelsList,
         setChannelsList,
         getChannelsUserlist,
-        //channelData,
-        //setChannelData,
         availableChannels,
         setAvailableChannels,
         getAvailableChannels,
