@@ -25,7 +25,7 @@ export class ChannelEntity {
 	@Column({ nullable: false } )
 	status: string;
 
-	@Column( { select: null, nullable: true })
+	@Column( { nullable: true }) // remettre le select null si solution trouve
 	password: string;
 
 	@ManyToOne( () => UserEntity, (user) => user.owner_of )

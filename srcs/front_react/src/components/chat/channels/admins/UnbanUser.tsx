@@ -12,7 +12,6 @@ interface UnbanUserProps {
 }
 
 export default function UnbanUser(props: UnbanUserProps) {
-
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     unbanUser(props.userTargeted, props.channelData);
     props.getChannelDatas(props.channelData.data.name);

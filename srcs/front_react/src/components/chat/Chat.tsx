@@ -58,7 +58,6 @@ export default function Chat(props: ChatProps) {
       });
   }
 
-
   return (
     <ChatProvider>
       <Grid container>
@@ -67,7 +66,10 @@ export default function Chat(props: ChatProps) {
             <Dms setChatContent={setChatContent} />
           </Grid>
           <Grid item>
-            <Channels setChatContent={setChatContent} getChannelDatas={getChannelDatas} />
+            <Channels
+              setChatContent={setChatContent}
+              getChannelDatas={getChannelDatas}
+            />
           </Grid>
         </Grid>
         <Grid item xs={8}>
@@ -85,7 +87,12 @@ export default function Chat(props: ChatProps) {
           {chatContent === ChatContent.NEW_DM && (
             <ChatUserlist setChatContent={setChatContent} />
           )}
-          {chatContent === ChatContent.CHANNEL_CONTENT && <ChannelContent getChannelDatas={getChannelDatas} channelData={channelData}/>}
+          {chatContent === ChatContent.CHANNEL_CONTENT && (
+            <ChannelContent
+              getChannelDatas={getChannelDatas}
+              channelData={channelData}
+            />
+          )}
         </Grid>
       </Grid>
     </ChatProvider>

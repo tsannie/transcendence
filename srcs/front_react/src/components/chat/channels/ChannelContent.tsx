@@ -19,7 +19,7 @@ interface ChannelContentProps {
 
 export default function ChannelContent(props: ChannelContentProps) {
   const [openMoreInfos, setOpenMoreInfos] = useState(false);
-  const { getChannelsUserlist} = useContext(ChannelsContext);
+  const { getChannelsUserlist } = useContext(ChannelsContext);
 
   function handleClick(event: any) {
     console.log("more infos (delete channel)");
@@ -50,7 +50,7 @@ export default function ChannelContent(props: ChannelContentProps) {
         console.log("invalid channels");
         console.log(res);
       });
-      setOpenMoreInfos(false);
+    setOpenMoreInfos(false);
   }
 
   console.log("channel data", props.channelData);
@@ -92,7 +92,10 @@ export default function ChannelContent(props: ChannelContentProps) {
           </Grid>
         )}
         <Grid item xs={3}>
-          <InfosChannels getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
+          <InfosChannels
+            getChannelDatas={props.getChannelDatas}
+            channelData={props.channelData}
+          />
         </Grid>
       </Grid>
     );

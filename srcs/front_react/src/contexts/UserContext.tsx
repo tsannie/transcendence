@@ -3,9 +3,6 @@ import { IChannel } from "../components/chat/types";
 import { api } from "../const/const";
 
 export type UserContextType = {
-  //username: string;
-  //userid: number;
-  //setUsername: (username: string) => void;
   users: any[];
   userConnected: any;
   setUserConnected: (users: any[]) => void;
@@ -13,9 +10,6 @@ export type UserContextType = {
 };
 
 export const UserContext = createContext<UserContextType>({
-  //username: "",
-  //userid: 0,
-  //setUsername: () => {},
   users: [],
   userConnected: {},
   setUserConnected: () => {},
@@ -27,8 +21,6 @@ interface UserContextProps {
 }
 
 export const UserProvider = ({ children }: UserContextProps) => {
-  //const [username, setUsername] = useState("");
-  //const [userid, setUserid] = useState(0);
   const [users, setUsers] = useState<any[]>([]);
   const [userConnected, setUserConnected] = useState<any[]>([]);
 
@@ -37,9 +29,7 @@ export const UserProvider = ({ children }: UserContextProps) => {
     await api
       .get("auth/profile")
       .then((res) => {
-        //setUsername(res.data.username);
-        //setUserid(res.data.id);
-        console.log("user connected = ", res.data);
+        //console.log("user connected = ", res.data);
         setUserConnected(res.data);
       })
       .catch((res) => {
@@ -68,9 +58,6 @@ export const UserProvider = ({ children }: UserContextProps) => {
   return (
     <UserContext.Provider
       value={{
-        //username,
-        //setUsername,
-        //userid,
         users,
         userConnected,
         setUserConnected,

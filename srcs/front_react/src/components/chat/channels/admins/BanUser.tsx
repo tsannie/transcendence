@@ -13,7 +13,6 @@ interface BanUserProps {
 }
 
 export default function BanUser(props: BanUserProps) {
-
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("ban user", channelData);
     banUser(props.userTargeted, props.channelData);

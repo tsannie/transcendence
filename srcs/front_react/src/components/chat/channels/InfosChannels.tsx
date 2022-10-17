@@ -49,7 +49,11 @@ export default function InfosChannels(props: InfosChannelsProps) {
                 userConnected.username !== props.channelData.data.owner.username
               }
             >
-              {<ListItemText>{props.channelData.data.owner.username}</ListItemText>}
+              {
+                <ListItemText>
+                  {props.channelData.data.owner.username}
+                </ListItemText>
+              }
             </ListItemButton>
           </ListItem>
         </List>
@@ -68,7 +72,11 @@ export default function InfosChannels(props: InfosChannelsProps) {
                 {open ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse in={open} timeout="auto" unmountOnExit>
-                <AdminsActions userTargeted={user} getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
+                <AdminsActions
+                  userTargeted={user}
+                  getChannelDatas={props.getChannelDatas}
+                  channelData={props.channelData}
+                />
               </Collapse>
             </ListItem>
           ))}
@@ -91,38 +99,45 @@ export default function InfosChannels(props: InfosChannelsProps) {
                 {open ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse in={!open} timeout="auto" unmountOnExit>
-                <AdminsActions userTargeted={user} getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
+                <AdminsActions
+                  userTargeted={user}
+                  getChannelDatas={props.getChannelDatas}
+                  channelData={props.channelData}
+                />
               </Collapse>
             </ListItem>
           ))}
         </List>
       </Grid>
-      {
-        props.channelData.data.banned && props.channelData.data.banned.length > 0 ? (
-      <Grid item>
-        <List>
-          Banned
-          {props.channelData.data.banned.map((user: any) => (
-            <ListItem key={user.username}>
-              <ListItemButton
-                onClick={handleClick}
-                disabled={
-                  props.channelData.status !== "owner" &&
-                  props.channelData.status !== "admin"
-                }
-              >
-                <ListItemText primary={user.username}></ListItemText>
-                {open ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={!open} timeout="auto" unmountOnExit>
-                <AdminsActions userTargeted={user} getChannelDatas={props.getChannelDatas} channelData={props.channelData} />
-              </Collapse>
-            </ListItem>
-          ))}
-        </List>
-      </Grid>
-        ) : null
-      }
+      {props.channelData.data.banned &&
+      props.channelData.data.banned.length > 0 ? (
+        <Grid item>
+          <List>
+            Banned
+            {props.channelData.data.banned.map((user: any) => (
+              <ListItem key={user.username}>
+                <ListItemButton
+                  onClick={handleClick}
+                  disabled={
+                    props.channelData.status !== "owner" &&
+                    props.channelData.status !== "admin"
+                  }
+                >
+                  <ListItemText primary={user.username}></ListItemText>
+                  {open ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={!open} timeout="auto" unmountOnExit>
+                  <AdminsActions
+                    userTargeted={user}
+                    getChannelDatas={props.getChannelDatas}
+                    channelData={props.channelData}
+                  />
+                </Collapse>
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+      ) : null}
     </Grid>
   );
 }
