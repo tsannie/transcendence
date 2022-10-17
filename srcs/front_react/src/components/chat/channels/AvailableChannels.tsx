@@ -26,22 +26,20 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
   const { userConnected, getUser } = useContext(UserContext);
 
   function isInChannel(channelId: number): boolean {
-    for (
-      let i = 0;
-      userConnected.channels && i < userConnected.channels.length;
-      i++
-    ) {
-      if (userConnected.channels[i].id === channelId) {
-        return true;
+
+    if (userConnected.channels) {
+      for (const channel of userConnected.channels) {
+        if (channel.id === channelId) {
+          return true;
+        }
       }
     }
-    for (
-      let i = 0;
-      userConnected.owner_of && i < userConnected.owner_of.length;
-      i++
-    ) {
-      if (userConnected.owner_of[i].id === channelId) {
-        return true;
+
+    if (userConnected.owner_of) {
+      for (const owner of userConnected.owner_of) {
+        if (owner.id === channelId) {
+          return true;
+        }
       }
     }
     return false;
