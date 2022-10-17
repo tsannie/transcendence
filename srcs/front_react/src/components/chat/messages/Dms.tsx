@@ -15,7 +15,6 @@ interface DmProps {
 }
 
 export default function Dms(props: DmProps) {
-  //const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [newDm, setNewDm] = useState(false);
   const { getDmsList } = useContext(DmsContext);
 

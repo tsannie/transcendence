@@ -8,27 +8,29 @@ import { UserContext } from "./UserContext";
 export type MessagesContextType = {
   messagesList: IMessage[];
   setMessagesList: (messagesList: IMessage[]) => void;
-  currentMessage: string;
-  setCurrentMessage: (currentMessage: string) => void;
-  sendMessage: (id: number) => void;
   loadMessages: (targetId: number, isDm: boolean) => void;
   isDm: boolean;
   setIsDm: (isDm: boolean) => void;
   convId: number;
   setConvId: (convId: number) => void;
+  isNewMessage: boolean;
+  setIsNewMessage: (isNewMessage: boolean) => void;
+  displayConv: boolean;
+  setDisplayConv: (displayConv: boolean) => void;
 };
 
 export const MessagesContext = createContext<MessagesContextType>({
   messagesList: [],
   setMessagesList: () => {},
-  currentMessage: "",
-  setCurrentMessage: () => {},
-  sendMessage: () => {},
   loadMessages: () => {},
   isDm: true,
   setIsDm: () => {},
   convId: 0,
   setConvId: () => {},
+  isNewMessage: false,
+  setIsNewMessage: () => {},
+  displayConv: false,
+  setDisplayConv: () => {},
 });
 
 interface MessagesContextProps {
@@ -37,30 +39,13 @@ interface MessagesContextProps {
 
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);
-  const [currentMessage, setCurrentMessage] = useState("");
+  //const [currentMessage, setCurrentMessage] = useState("");
+  const [isNewMessage, setIsNewMessage] = useState(false);
+  const [displayConv, setDisplayConv] = useState(false);
   const [isDm, setIsDm] = useState(true);
   const [convId, setConvId] = useState(0);
   const socket = useContext(SocketContext);
   const { userConnected } = useContext(UserContext);
-
-  function sendMessage(id: number) {
-    console.log("send message");
-    const inputMessage = document.getElementById(
-      "input-message"
-    ) as HTMLInputElement;
-
-    inputMessage.value = "";
-    if (currentMessage !== "") {
-      const messageData: Partial<IMessage> = {
-        id: id,
-        author: userConnected,
-        content: currentMessage,
-        isDm: isDm,
-      };
-      socket.emit("message", messageData);
-      setCurrentMessage("");
-    }
-  }
 
   async function loadMessages(id: number, isDm: boolean) {
     if (isDm === true) {
@@ -103,21 +88,22 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
       //console.log("message received from server !!!!!!");
       setMessagesList((messagesList) => [data, ...messagesList]);
     });
-  }, [socket]);
+  }, []);
 
   return (
     <MessagesContext.Provider
       value={{
         messagesList,
         setMessagesList,
-        currentMessage,
-        setCurrentMessage,
-        sendMessage,
         loadMessages,
         isDm,
         setIsDm,
         convId,
         setConvId,
+        displayConv,
+        setDisplayConv,
+        isNewMessage,
+        setIsNewMessage,
       }}
     >
       {children}
