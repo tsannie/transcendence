@@ -10,11 +10,12 @@ import { IMessage } from "../types";
 interface MessagesListProps {}
 
 export default function MessagesList(props: MessagesListProps) {
-  const { messagesList, displayConv, setDisplayConv, isNewMessage } = useContext(MessagesContext);
+  const { messagesList } = useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
+  const { convId } = useContext(MessagesContext);
 
     return (
-      <List sx={{ position: "relative" }}>
+      <List key={convId} sx={{ position: "relative" }} >
         {[...messagesList].reverse().map((messageData: IMessage) => {
           if (userConnected.username === messageData.author.username)
             return (

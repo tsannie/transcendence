@@ -13,10 +13,6 @@ export type MessagesContextType = {
   setIsDm: (isDm: boolean) => void;
   convId: number;
   setConvId: (convId: number) => void;
-  isNewMessage: boolean;
-  setIsNewMessage: (isNewMessage: boolean) => void;
-  displayConv: boolean;
-  setDisplayConv: (displayConv: boolean) => void;
 };
 
 export const MessagesContext = createContext<MessagesContextType>({
@@ -27,10 +23,6 @@ export const MessagesContext = createContext<MessagesContextType>({
   setIsDm: () => {},
   convId: 0,
   setConvId: () => {},
-  isNewMessage: false,
-  setIsNewMessage: () => {},
-  displayConv: false,
-  setDisplayConv: () => {},
 });
 
 interface MessagesContextProps {
@@ -39,13 +31,9 @@ interface MessagesContextProps {
 
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);
-  //const [currentMessage, setCurrentMessage] = useState("");
-  const [isNewMessage, setIsNewMessage] = useState(false);
-  const [displayConv, setDisplayConv] = useState(false);
   const [isDm, setIsDm] = useState(true);
   const [convId, setConvId] = useState(0);
   const socket = useContext(SocketContext);
-  const { userConnected } = useContext(UserContext);
 
   async function loadMessages(id: number, isDm: boolean) {
     if (isDm === true) {
@@ -100,10 +88,6 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
         setIsDm,
         convId,
         setConvId,
-        displayConv,
-        setDisplayConv,
-        isNewMessage,
-        setIsNewMessage,
       }}
     >
       {children}
