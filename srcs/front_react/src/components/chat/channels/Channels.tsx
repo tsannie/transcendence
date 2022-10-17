@@ -40,7 +40,10 @@ export default function Channels(props: ChannelProps) {
       <IconButton onClick={setChannel}>
         <AddIcon sx={{ color: "blue" }} />
       </IconButton>
-      <ChannelsList setChatContent={props.setChatContent} getChannelDatas={props.getChannelDatas}  />
+      <ChannelsList
+        setChatContent={props.setChatContent}
+        getChannelDatas={props.getChannelDatas}
+      />
     </Box>
   );
 }

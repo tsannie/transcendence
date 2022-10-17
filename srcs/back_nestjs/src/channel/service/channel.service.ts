@@ -183,6 +183,8 @@ export class ChannelService {
 		if (!inputed_password)
 			throw new UnauthorizedException("No password inputed");
 
+		//console.log("inputed_password", inputed_password); voir channel.entity
+		//console.log("channel_pwd", channel_password);
 		if (await bcrypt.compare(inputed_password, channel_password))
 			return true;
 		else
@@ -382,7 +384,6 @@ export class ChannelService {
 		channel.admins = channel.admins.filter( elem => elem.username !== request.target);
 		return await this.channelRepository.save(channel);
 	}
-
 
 	async joinPublicChannels(user : UserEntity, channel : ChannelEntity): Promise<ChannelEntity> {
 		this.addToUsers(channel, user);

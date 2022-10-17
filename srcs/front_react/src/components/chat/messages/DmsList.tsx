@@ -32,8 +32,7 @@ interface DmsListProps {
 
 export default function DmsList(props: DmsListProps) {
   const { dmsList, setDmData } = useContext(DmsContext);
-  const { loadMessages, setIsDm, setConvId } =
-    useContext(MessagesContext);
+  const { loadMessages, setIsDm, setConvId } = useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
 
   // find target username with conv id and user id
