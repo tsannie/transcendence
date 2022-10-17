@@ -23,7 +23,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
 
   const { getChannelsUserlist, getAvailableChannels, availableChannels } =
     useContext(ChannelsContext);
-  const { userConnected } = useContext(UserContext);
+  const { userConnected, getUser } = useContext(UserContext);
 
   function isInChannel(channelId: number): boolean {
     for (
@@ -73,6 +73,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
         //console.log("list channels =", channelsList);
         getChannelsUserlist();
         getAvailableChannels();
+        getUser();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -86,15 +87,14 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
   }
 
   async function leaveChannel(channel: IChannel) {
-    const newChannel = joinNewChannelWithoutStatus(channel);
-
     await api
-      .post("channel/leave", newChannel)
+      .post("channel/leave", channel)
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
         getChannelsUserlist();
         getAvailableChannels();
+        getUser();
       })
       .catch((res) => {
         console.log("invalid channels");
@@ -132,7 +132,11 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
             ></TextField>
           ) : (
             <ListItemIcon>
-              {channel.status === "Protected" ? <LockIcon sx={{ ml: 1.5, maxHeight: 18, maxWidth: 18}} /> : <></>}
+              {channel.status === "Protected" ? (
+                <LockIcon sx={{ ml: 1.5, maxHeight: 18, maxWidth: 18 }} />
+              ) : (
+                <></>
+              )}
             </ListItemIcon>
           )}
 

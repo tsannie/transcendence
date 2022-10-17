@@ -11,8 +11,7 @@ import { IMessage } from "../types";
 interface PromptMessageProps {}
 
 export default function PromptMessage(props: PromptMessageProps) {
-  const { convId } =
-    useContext(MessagesContext);
+  const { convId } = useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
   const { isDm } = useContext(MessagesContext);
   const [currentMessage, setCurrentMessage] = useState("");
