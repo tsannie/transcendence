@@ -2,7 +2,7 @@ import { REDIRECT_LINK_AUTH } from "../../../const/const";
 import './login.style.scss'
 import {ReactComponent as FTLogo} from "../../../assets/img/42_Logo.svg";
 
-export default function ButtonLogin(props: any) {
+export default function ButtonLogin() {
 
   function linkLog(event: any) {
     event.preventDefault();

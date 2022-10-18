@@ -12,9 +12,7 @@ import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { useLocation } from "react-router-dom"
 import { SnackbarContext, SnackbarContextType } from "../../contexts/SnackbarContext";
 
-
-
-export default function Sidebar(props: any) {
+export default function Sidebar() {
   const { logout } = useContext(AuthContext) as AuthContextType;
   const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
   useContext(SnackbarContext) as SnackbarContextType;
@@ -30,7 +28,6 @@ export default function Sidebar(props: any) {
       });
   }
 
-  //<img src={HomeIcon} className={path === '/' ? 'selected' : ''}></img>
   return (
     <div className="sidebar">
       <nav className="sidebar__icon">
