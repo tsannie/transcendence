@@ -1,0 +1,28 @@
+
+!!!
+Edit username
+Friend system
+Game
+  . interface in front
+  . responsive game
+  . matchmaking
+  . power-ups
+  . map
+  . specs
+
+!!
+Profile page with:
+  . interface in front
+  . stats
+  . add friend button
+  . rank
+  . lvl
+  . achivements
+  . status (onfline/offline/ingame/...)
+  . match history
+  . block user
+/profile/{username} can be possible
+
+!
+404 page or redirect ?
+Edit avatar
