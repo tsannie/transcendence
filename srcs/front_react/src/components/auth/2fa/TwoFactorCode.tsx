@@ -3,14 +3,18 @@ import { Navigate } from "react-router-dom";
 import ReactCodeInput from "react-verification-code-input";
 import { api } from "../../../const/const";
 import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
+import { SnackbarContext, SnackbarContextType } from "../../../contexts/SnackbarContext";
 import './twofactor.style.scss'
 
 
 export default function TwoFactorCode() {
   const [check, setCheck] = useState(false);
-  const [openError, setOpenError] = useState(false);
 
   const { login } = useContext(AuthContext) as AuthContextType;
+
+  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
+  useContext(SnackbarContext) as SnackbarContextType;
+
 
   const inputRef = useRef<ReactCodeInput>(null);
 
@@ -28,14 +32,18 @@ export default function TwoFactorCode() {
 
   const handleOnComplete = (up: string) => {
     setCheck(true);
-    console.log('up', up);
 
     api.post("/2fa/auth2fa", { token: up }).then((res) => {
       login(res.data);
+      setSeverity("success");
+      setMessage("success login");
+      setOpenSnackbar(true);
     }).catch((res) => {
       clearInput();
       setCheck(false);
-      setOpenError(true);
+      setSeverity("error");
+      setMessage("invalid token");
+      setOpenSnackbar(true);
     });
   };
 
