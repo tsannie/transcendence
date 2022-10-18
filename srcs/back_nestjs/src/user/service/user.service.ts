@@ -8,6 +8,14 @@ import * as fs from 'fs';
 import { resolve } from 'path';
 
 export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
+export const AVATAR_SIZE: string[] = ["medium", "small"];
+export const MEDIUM_PIC: number = 512;
+export const SMALL_PIC: number = 128;
+
+export interface IAvatarOptions {
+	  size: string;
+}
+
 
 @Injectable()
 export class UserService {
@@ -143,44 +151,39 @@ export class UserService {
 		requester.banned = requester.banned.filter( banned_guys => banned_guys.username !== target );
 		return await this.allUser.save(requester);
 	}
-
-	async deleteAvatar(user: UserEntity) {
-		if (user.avatar)
-		{
-			let avatar = user.avatar;
-			user.avatar = null;
-			try
-			{
-				fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}`);
-			}
-			catch (err)
-			{
-				throw new UnprocessableEntityException(`Cannot delete old avatar from server.`);
-			}
-			return await this.avatarRepository.remove(avatar);
-		}
-	}
-
-	async addAvatar(file: any, user: UserEntity) : Promise<any> {
-		if (user.avatar)
-			await this.deleteAvatar(user);
-
-		let resized = await sharp(file.buffer)
-		.resize(512, 512)
-		.toFile(`${AVATAR_DEST}/${user.id}.jpg`)
+	
+	/* This function is responsible of resizing images in a square shape according to the inputed format
+	and save it locally in a jpeg format. Eamples : "1_512.jpg" or "12_128.jpg" */
+	async resizeImage(size: number, file: Express.Multer.File, user: UserEntity){
+		await sharp(file.buffer)
+		.resize(size, size)
+		.toFile(`${AVATAR_DEST}/${user.id}_${size}.jpg`)
 		.catch( err =>
 				{
 					throw new UnprocessableEntityException(`Cannot resize avatar for user ${user.username}.`)
 				}
-		);
+			);
+	}
 
+	/* This function add avatar after resizing it two times in the form of static .jpg files and 
+	register the keyname to access these files later in db. Size of those pictures can be changed
+	a bit higher in this file (MEDIUM_PIC and SMALL_PIC)*/
+	async addAvatar(file: Express.Multer.File, user: UserEntity) : Promise<AvatarEntity> {
+		if (user.avatar)
+			await this.deleteAvatar(user);
+
+		await this.resizeImage( MEDIUM_PIC, file, user);
+		await this.resizeImage( SMALL_PIC, file, user);
+		
 		let avatar = new AvatarEntity();
-		avatar.filename = `${user.id}.jpg`;
+		avatar.filename = `${user.id}`;
 		avatar.user = user;
 		return await this.avatarRepository.save(avatar);
 	}
 
-	async getAvatar(inputed_id: number) : Promise<string> {
+	/* This function is querying the DB to find the name of the file then send the wright path according to
+	request of user ("medium" or "small") */
+	async getAvatar(inputed_id: number, avatarOptions: IAvatarOptions) : Promise<string> {
 		let avatar = await this.avatarRepository
 		.createQueryBuilder("avatar")
 		.leftJoin("avatar.user", "user")
@@ -189,8 +192,30 @@ export class UserService {
 		.getOne()
 
 		if (!avatar)
-			throw new UnprocessableEntityException("Cannot find any avatar correspondingn to that id");
+			throw new UnprocessableEntityException("Cannot find any avatar corresponding to that id");
 
-		return `${AVATAR_DEST}/${avatar.filename}`;
+		if (avatarOptions.size === "medium")
+			return `${AVATAR_DEST}/${avatar.filename}_${MEDIUM_PIC}.jpg`;
+		else if (avatarOptions.size === "small")
+			return `${AVATAR_DEST}/${avatar.filename}_${SMALL_PIC}.jpg`;
+		}
+
+	/* This function delete the avatars of the user*/
+	async deleteAvatar(user: UserEntity) : Promise<AvatarEntity> {
+		if (user.avatar)
+		{
+			let avatar = user.avatar;
+			user.avatar = null;
+			try
+			{
+				fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}_${MEDIUM_PIC}.jpg`);
+				fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}_${SMALL_PIC}.jpg`);
+			}
+			catch (err)
+			{
+				throw new UnprocessableEntityException(`Cannot delete old avatar from server.`);
+			}
+			return await this.avatarRepository.remove(avatar);
+		}
 	}
 }
