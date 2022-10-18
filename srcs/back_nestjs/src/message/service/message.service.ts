@@ -21,7 +21,6 @@ export class MessageService {
   constructor(
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
-
     private userService: UserService,
     private dmService: DmService,
     private channelService: ChannelService,
@@ -77,6 +76,29 @@ export class MessageService {
       .getMany();
   }
 
+  /* Load last message from a dm or a channel */
+  async loadLastMessage(
+    type: string,
+    inputed_id: number,
+    user: UserEntity,
+  ): Promise<MessageEntity> {
+    this.checkUserValidity(type, inputed_id, user);
+
+    return await this.allMessages
+      .createQueryBuilder('message')
+      .select('message.uuid')
+      .addSelect('message.createdAt')
+      .addSelect('message.content')
+      .leftJoin('message.author', 'author')
+      .addSelect('author.username')
+      .leftJoin(`message.${type}`, `${type}`)
+      .addSelect(`${type}.id`)
+      .where(`message.${type}.id = :id`, { id: inputed_id })
+      .orderBy('message.createdAt', 'DESC')
+      .take(1)
+      .getOne();
+  }
+
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
   async addMessagetoChannel(data: IMessage): Promise<MessageEntity> {
@@ -124,14 +146,19 @@ export class MessageService {
     const dm = await this.dmService.getDmById(data.id);
 
     if (dm) {
-      console.log('dm.users', dm.users);
       for (const dmUser of dm.users) {
         const user = await this.userService.findByName(dmUser.username, {
           connections: true,
+          dms: true,
+          channels: true,
+          admin_of: true,
+          owner_of: true,
         });
 
         for (const connection of user.connections) {
-          socket.to(connection.socketId).emit('message', data);
+          const lastMessage = await this.loadLastMessage('dm', dm.id, user);
+
+          socket.to(connection.socketId).emit('message', lastMessage);
         }
       }
     }
@@ -162,8 +189,11 @@ export class MessageService {
         });
 
         for (const connection of user.connections) {
-          socket.to(connection.socketId).emit('message', data);
+          const lastMessage = await this.loadLastMessage('channel', channel.id, user);
+
+          socket.to(connection.socketId).emit('message', lastMessage);
         }
+        //  TODO --> concatenate array of users, before emitting  ----- > let users = [...owner_of, ...admin_of, ...users]
       }
     }
   }
@@ -171,13 +201,15 @@ export class MessageService {
   async emitMessageToAdminInChannel(channel: ChannelEntity, socket: Server, data: IMessage) {
      if (channel.admins) {
         for (const channelAdmin of channel.admins) {
-          const user = await this.userService.findByName(
+          const admin = await this.userService.findByName(
             channelAdmin.username,
             { connections: true },
           );
 
-          for (const connection of user.connections) {
-            socket.to(connection.socketId).emit('message', data);
+          for (const connection of admin.connections) {
+            const lastMessage = await this.loadLastMessage('channel', channel.id, admin);
+
+            socket.to(connection.socketId).emit('message', lastMessage);
           }
         }
       }
@@ -190,7 +222,9 @@ export class MessageService {
 
     if (owner) {
       for (const connection of owner.connections) {
-        socket.to(connection.socketId).emit('message', data);
+        const lastMessage = await this.loadLastMessage('channel', channel.id, owner);
+
+        socket.to(connection.socketId).emit('message', lastMessage);
       }
     }
   }

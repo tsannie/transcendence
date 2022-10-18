@@ -9,6 +9,7 @@ import { ChatContent } from "../Chat";
 import { api } from "../../../const/const";
 import { DmsContext } from "../../../contexts/DmsContext";
 import DmsList from "./DmsList";
+import { UserContext } from "../../../contexts/UserContext";
 
 interface DmProps {
   setChatContent: (chatContent: ChatContent) => void;
@@ -17,10 +18,12 @@ interface DmProps {
 export default function Dms(props: DmProps) {
   const [newDm, setNewDm] = useState(false);
   const { getDmsList } = useContext(DmsContext);
+  const { getAllUsers } = useContext(UserContext);
 
   function setDm() {
     //setAnchorEl(event.currentTarget);
     setNewDm(true);
+    getAllUsers();
     props.setChatContent(ChatContent.NEW_DM);
   }
 
