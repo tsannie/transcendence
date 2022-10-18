@@ -60,7 +60,7 @@ export class MessageService {
   ): Promise<MessageEntity[]> {
     this.checkUserValidity(type, inputed_id, user);
 
-    return await this.allMessages
+    const messages = await this.allMessages
       .createQueryBuilder('message')
       .select('message.uuid')
       .addSelect('message.createdAt')
@@ -70,10 +70,12 @@ export class MessageService {
       .leftJoin(`message.${type}`, `${type}`)
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
-      .orderBy('message.createdAt', 'DESC')
+      .orderBy('message.createdAt', 'ASC')
       .skip(offset * LOADED_MESSAGES)
       .take(LOADED_MESSAGES)
       .getMany();
+
+    return messages;
   }
 
   /* Load last message from a dm or a channel */
@@ -174,7 +176,7 @@ export class MessageService {
     }
   }
 
-  async emitMessageToAllUsersInChannel(channel: ChannelEntity , socket: Server) {
+  async emitMessageToAllUsersInChannel(channel: ChannelEntity, socket: Server) {
     let users = [...channel.users, ...channel.admins, channel.owner];
 
     if (users) {
@@ -188,7 +190,11 @@ export class MessageService {
         });
 
         for (const connection of user.connections) {
-          const lastMessage = await this.loadLastMessage('channel', channel.id, user);
+          const lastMessage = await this.loadLastMessage(
+            'channel',
+            channel.id,
+            user,
+          );
 
           socket.to(connection.socketId).emit('message', lastMessage);
         }

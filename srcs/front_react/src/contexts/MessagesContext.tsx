@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createContext } from "react";
 import { IMessage, IMessageReceived } from "../components/chat/types";
 import { api } from "../const/const";
@@ -30,86 +36,102 @@ interface MessagesContextProps {
 }
 
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
-  const [messagesList, setMessagesList] = useState<any[]>([]);
   const [isDm, setIsDm] = useState(true);
-  const [convId, setConvId] = useState(0);
+  // const [messagesList, setMessagesList] = useState<any[]>([]);
+  // const [convId, setConvId] = useState(0);
+
+  console.log('zigounette')
+  const [messageState, setMessageState] = useState<{
+    currentConvId: number;
+    messages: any[];
+  }>({
+    currentConvId: 0,
+    messages: [],
+  });
   const socket = useContext(SocketContext);
+
+  const setMessages = useCallback(
+    (newMessageList: any) =>
+      setMessageState((oldMessageState) => ({
+        ...oldMessageState,
+        messages: newMessageList,
+      })),
+    []
+  );
+
+  const setCurrentConv = useCallback(
+    (newConvId: any) =>
+      setMessageState((oldMessageState) => ({
+        ...oldMessageState,
+        currentConvId: newConvId,
+      })),
+    []
+  );
 
   async function loadMessages(id: number, isDm: boolean) {
     if (isDm === true) {
-      await api
+      const messageList = await api
         .get("message/dm", {
           params: {
             id: id, // id du dm
             offset: 0,
           },
         })
-        .then((res) => {
-          //console.log("msg data = ", res.data);
-          setMessagesList(res.data);
-        })
-        .catch((res) => {
-          console.log("invalid messages");
-          console.log(res);
-        });
-    } else {
-      await api
-        .get("message/channel", {
-          params: {
-            id: id, // id du channel
-            offset: 0,
-          },
-        })
-        .then((res) => {
-          console.log("channel data = ", res.data);
-          setMessagesList(res.data);
-        })
-        .catch((res) => {
-          console.log("invalid messages");
-          console.log(res);
-        });
+
+      setMessages(messageList.data)
     }
+
+    await api
+      .get("message/channel", {
+        params: {
+          id: id, // id du channel
+          offset: 0,
+        },
+      })
+      .then((res) => {
+        console.log("channel data = ", res.data);
+        setMessages(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid messages");
+        console.log(res);
+      });
   }
 
   useEffect(() => {
     socket.on("message", (data) => {
-      //console.log("message received with data = ", data);
-      let id;
-
-      if (data.dm)
-        id = data.dm.id;
-      else
-        id = data.channel.id;
-
-      //console.log("id = ", id);
-      //console.log("convId = ", convId);
       const newMsg: IMessageReceived = {
         author: data.author,
-        id: id,
+        convId: data.dm ? data.dm.id : data.channel.id,
         uuid: data.uuid,
         content: data.content,
         createdAt: data.createdAt,
       };
 
-      // marche pas car convid est pas encore set quand le message arrive
-      // TODO: regler le bug que quand je reload le front ici, ca ne recharge pas les messages de l'ancienne conv
-      //console.log("convId = ", convId);
-      //if (id === convId) {
-        setMessagesList((messagesList) => [newMsg, ...messagesList]);
-      //}
+      setMessageState((oldMessageState) => {
+        console.log('--- OLD STATE ---', oldMessageState, newMsg)
+        if (oldMessageState.currentConvId === newMsg.convId) {
+          return {
+            ...oldMessageState,
+            messages: [...oldMessageState.messages, newMsg],
+          };
+        }
+
+        return oldMessageState;
+      });
     });
   }, [socket]);
 
   return (
     <MessagesContext.Provider
       value={{
-        messagesList,
-        setMessagesList,
+        messagesList: messageState.messages,
+        setMessagesList: setMessages,
         loadMessages,
         isDm,
         setIsDm,
-        convId,
-        setConvId,
+        convId: messageState.currentConvId,
+        setConvId: setCurrentConv,
       }}
     >
       {children}

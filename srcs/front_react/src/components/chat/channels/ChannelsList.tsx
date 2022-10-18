@@ -34,7 +34,7 @@ export default function ChannelsList(props: ChannelsListProps) {
   const [channelPassword, setChannelPassword] = useState("");
   const [channelExistsError, setChannelExistsError] = useState("");
   const { channelsList } = useContext(ChannelsContext);
-  const { loadMessages, isDm, setIsDm, setConvId } =
+  const { loadMessages, isDm, setIsDm, convId, setConvId } =
     useContext(MessagesContext);
 
   function handleClick(channel: IChannel) {
