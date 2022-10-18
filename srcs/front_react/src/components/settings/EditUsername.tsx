@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useState } from "react";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import EditIcon from "../../assets/img/icon/edit.svg";
-import VerifIcon from "../../assets/img/icon/circle_check.svg";
+import {ReactComponent as EditIcon} from "../../assets/img/icon/edit.svg";
+import {ReactComponent as VerifIcon} from "../../assets/img/icon/circle_check.svg";
 import { api } from "../../const/const";
 import {
   SnackbarContext,
@@ -53,13 +53,13 @@ function EditUsername() {
             value={newUsername}
             onChange={handleUsernameChange}
           ></input>
-          <img src={VerifIcon} onClick={handleVerifyUsername}></img>
+          <VerifIcon onClick={handleVerifyUsername}/>
         </Fragment>
       )}
       {editUsername === false && (
         <Fragment>
           <span>{user?.username}</span>
-          <img src={EditIcon} onClick={handleUsername}></img>
+          <EditIcon onClick={handleUsername} />
         </Fragment>
       )}
     </div>

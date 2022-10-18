@@ -1,6 +1,6 @@
 import React from "react";
 import TestProfile from "../../assets/quatennens.jpg";
-import EditIcon from "../../assets/img/icon/circle_chev_up.svg";
+import {ReactComponent as UploadIcon} from "../../assets/img/icon/up.svg";
 import './settings.style.scss';
 
 export default function SettingsPicture() {
@@ -17,7 +17,7 @@ export default function SettingsPicture() {
           type="file"
           id="select-image"
         />
-        <img src={EditIcon} className="settings__picture__edit"></img>
+        <UploadIcon className="settings__picture__edit"/>
       </label>
 
     </div>

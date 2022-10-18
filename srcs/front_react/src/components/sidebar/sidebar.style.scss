@@ -1,3 +1,5 @@
+@import '../../const.style.scss';
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -15,36 +17,38 @@
   flex-direction: column;
   align-items: center;
   border-style: dashed;
-  border-color: white;
-  img {
+
+  svg {
+    border-style: dashed;
+    border-radius: 50%;
+    border-color: transparent;
+
+    transition: 0.3s;
     width: calc(40 * var(--res));
     padding: calc(3 * var(--res));
     border-width: calc(3 * var(--res)) !important;
-    cursor: pointer;
     margin-bottom: calc(20 * var(--res));
     margin-top: calc(20 * var(--res));
-    transition: 0.3s;
-    border-radius: 50%;
-    border-style: dashed;
-    border-color: transparent;
-    // fill svg icon color
   }
-  img:hover {
+
+  :hover {
     filter: invert(40%);
   }
 
-  img:active {
+  :active {
     filter: invert(70%);
   }
 
   .selected {
-    border-color: white;
+    border-color: $white-color;
+
     animation: gelatine 0.4s ease;
     @keyframes gelatine {
       from, to { transform: scale(1, 1); }
       25% { transform: scale(0.9, 1.1); }
       50% { transform: scale(1.1, 0.9); }
       75% { transform: scale(0.95, 1.05); }
-  };
-}
+    };
+  }
+
 }

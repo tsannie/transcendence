@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import HomeIcon from "../../assets/img/icon/home.svg";
-import ChatIcon from "../../assets/img/icon/chat.svg";
-import GameIcon from "../../assets/img/icon/play.svg";
-import SettingsIcon from "../../assets/img/icon/settings.svg";
-import LogOutIcon from "../../assets/img/icon/logout.svg";
-import ProfileIcon from "../../assets/img/icon/user.svg";
+import {ReactComponent as HomeIcon} from "../../assets/img/icon/home.svg";
+import {ReactComponent as ChatIcon} from "../../assets/img/icon/chat.svg";
+import {ReactComponent as GameIcon} from "../../assets/img/icon/play.svg";
+import {ReactComponent as SettingsIcon} from "../../assets/img/icon/settings.svg";
+import {ReactComponent as LogOutIcon} from "../../assets/img/icon/logout.svg";
+import {ReactComponent as ProfileIcon} from "../../assets/img/icon/user.svg";
 import { api, COOKIE_NAME } from "../../const/const";
 import "./sidebar.style.scss";
 import { Link } from "react-router-dom";
@@ -30,25 +30,26 @@ export default function Sidebar(props: any) {
       });
   }
 
+  //<img src={HomeIcon} className={path === '/' ? 'selected' : ''}></img>
   return (
     <div className="sidebar">
       <nav className="sidebar__icon">
         <Link to="/">
-          <img src={HomeIcon} className={path === '/' ? 'selected' : ''}></img>
+          <HomeIcon className={path === '/' ? 'selected' : ''}/>
         </Link>
         <Link to="/profile">
-          <img src={ProfileIcon} className={path === '/profile' ? 'selected' : ''}></img>
+          <ProfileIcon className={path === '/profile' ? 'selected' : ''}/>
         </Link>
         <Link to="/chat">
-          <img src={ChatIcon} className={path === '/chat' ? 'selected' : ''}></img>
+          <ChatIcon className={path === '/chat' ? 'selected' : ''}/>
         </Link>
         <Link to="/game">
-          <img src={GameIcon} className={path === '/game' ? 'selected' : ''}></img>
+          <GameIcon className={path === '/game' ? 'selected' : ''}/>
         </Link>
         <Link to="/settings">
-          <img src={SettingsIcon} className={path === '/settings' ? 'selected' : ''}></img>
+          <SettingsIcon className={path === '/settings' ? 'selected' : ''}/>
         </Link>
-        <img src={LogOutIcon} onClick={handleLogout}></img>
+        <LogOutIcon onClick={handleLogout} className=''/>
       </nav>
     </div>
   );
