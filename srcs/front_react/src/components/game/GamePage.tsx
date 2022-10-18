@@ -1,10 +1,9 @@
 import React from 'react';
-import Pong from './Pong';
 
 function GamePage() {
   return (
     <div>
-      <Pong/>
+      GAME
     </div>
   );
 }
