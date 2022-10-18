@@ -13,9 +13,15 @@ import * as fs from 'fs';
 import { resolve } from 'path';
 
 export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
-export const AVATAR_SIZE: string[] = ["medium", "small"];
-export const MEDIUM_PIC: number = 512;
-export const SMALL_PIC: number = 128;
+
+/* 1) If you wanna add a size, you put here a name to that size + a value in number type... */
+export const SMALL_PIC_SIZE: number = 128;
+export const MEDIUM_PIC_SIZE: number = 512;
+
+/* 2) ...and then you add it to the map, with a string that will be used through the controller*/
+export const AVATAR_SIZES: Map<string, number> = new Map<string, number>();
+AVATAR_SIZES.set("small", SMALL_PIC_SIZE);
+AVATAR_SIZES.set("medium", MEDIUM_PIC_SIZE);
 
 export interface IAvatarOptions {
 	  size: string;
@@ -179,6 +185,7 @@ export class UserService {
 		return await this.allUser.save(requester);
 	}
 	
+  /* This function creates the directory needed to register photos if it doesn't exist */
   createDirectory() {
     if (!fs.existsSync(AVATAR_DEST))
       fs.mkdirSync(AVATAR_DEST, {recursive: true})
@@ -206,8 +213,8 @@ export class UserService {
 		if (user.avatar)
 			await this.deleteAvatar(user);
 
-		await this.resizeImage( MEDIUM_PIC, file, user);
-		await this.resizeImage( SMALL_PIC, file, user);
+    /* This apply the resizing function to all type of size available */
+		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, file, user) });
 		
 		let avatar = new AvatarEntity();
 		avatar.filename = `${user.id}`;
@@ -218,7 +225,7 @@ export class UserService {
 	/* This function is querying the DB to find the name of the file then send the wright path according to
 	request of user ("medium" or "small") */
 	async getAvatar(inputed_id: number, avatarOptions: IAvatarOptions) : Promise<string> {
-		let avatar = await this.avatarRepository
+    let avatar = await this.avatarRepository
 		.createQueryBuilder("avatar")
 		.leftJoin("avatar.user", "user")
 		.addSelect("user.id")
@@ -228,10 +235,7 @@ export class UserService {
 		if (!avatar)
 			throw new UnprocessableEntityException("Cannot find any avatar corresponding to that id");
 
-		if (avatarOptions.size === "medium")
-			return `${AVATAR_DEST}/${avatar.filename}_${MEDIUM_PIC}.jpg`;
-		else if (avatarOptions.size === "small")
-			return `${AVATAR_DEST}/${avatar.filename}_${SMALL_PIC}.jpg`;
+		return `${AVATAR_DEST}/${avatar.filename}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
 		}
 
 	/* This function delete the avatars of the user*/
@@ -242,8 +246,8 @@ export class UserService {
 			user.avatar = null;
 			try
 			{
-				fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}_${MEDIUM_PIC}.jpg`);
-				fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}_${SMALL_PIC}.jpg`);
+        /* This function apply a deletion function to every size available on nest server */
+				AVATAR_SIZES.forEach( (size) => {fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}_${size}.jpg`);})
 			}
 			catch (err)
 			{
