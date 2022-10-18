@@ -3,6 +3,8 @@ import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
 import { TargetNameDto, TargetIdDto, AvatarDto } from '../dto/target.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateResult } from 'typeorm';
+import { NewUsernameDto } from '../models/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express } from 'express'
 import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/filevalidation.validator';
@@ -12,19 +14,21 @@ import { AvatarEntity } from '../models/avatar.entity';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  // edit username
+  @Post('edit-username')
+  @UseGuards(JwtTwoFactorGuard)
+  async editUsername(@Request() req, @Body() newUsername: NewUsernameDto): Promise<UpdateResult> {
+    return await this.userService.editUsername(req.user.id, newUsername.username);
+  }
+
   @Get()
-  async getAllUser():  Promise<UserEntity[]> {
+  async getAllUser(): Promise<UserEntity[]> {
     return await this.userService.getAllUser();
   }
 
   @Delete()
   async cleanAllUser(): Promise<void> {
     return await this.userService.cleanAllUser();
-  }
-
-  @Get('edit')
-  async editUsername() {
-    return await this.userService.editUser();
   }
 
 	@UseGuards( JwtTwoFactorGuard )
