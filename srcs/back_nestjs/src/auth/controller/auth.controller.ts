@@ -52,7 +52,7 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(JwtTwoFactorGuard)
+  @UseGuards(JwtGuard)
   @Get('logout')
   async logout(@Request() req) {
     req.res.clearCookie(process.env.COOKIE_NAME);
