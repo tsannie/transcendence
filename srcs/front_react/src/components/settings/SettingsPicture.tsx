@@ -9,7 +9,6 @@ import { SnackbarContext, SnackbarContextType } from "../../contexts/SnackbarCon
 import './settings.style.scss';
 
 export default function SettingsPicture() {
-  const [profilePicture, setProfilePicture] = useState("");
 
   const { user } = useContext(AuthContext) as AuthContextType;
   const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
@@ -35,23 +34,9 @@ export default function SettingsPicture() {
     }
   }
 
-  useEffect(() => {
-    const data = {
-      id: user?.id,
-      size: 'medium'
-    };
-    api.get('/user/avatar', {
-      params: data,
-      responseType: "arraybuffer",
-    }).then((res) => {
-      const base64 = Buffer.from(res.data, "utf8").toString("base64");
-      setProfilePicture(base64);
-    });
-  }, []);
-
   return (
     <div className="settings__picture">
-      <img src={`data:;base64,${profilePicture}`} className="settings__picture__profile"></img>
+      <img src={user?.profile_picture} className="settings__picture__profile"></img>
       <label htmlFor="select-image" >
         <input
           accept="image/jpg image/jpeg image/png"

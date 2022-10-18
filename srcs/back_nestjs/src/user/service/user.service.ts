@@ -215,14 +215,11 @@ export class UserService {
 
     /* This apply the resizing function to all type of size available */
 		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, file, user) });
-<<<<<<< HEAD
-=======
-	
+
     //TODO, does this work ??
     user.profile_picture = `${process.env.BACK_URL}/user/avatar?id=${user.id}&size=medium`;
     await this.allUser.save(user);
   //
->>>>>>> 38ae4c0a ([+] added a field url_profile_pic for @theosannie)
 
 		let avatar = new AvatarEntity();
 		avatar.filename = `${user.id}`;
