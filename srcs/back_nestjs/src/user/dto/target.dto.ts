@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
-import { IsDefined, IsNotEmpty, IsString } from "class-validator";
-import { Equal } from "typeorm";
+import { IsDefined, IsIn, IsNotEmpty, IsString } from "class-validator";
+import { AVATAR_SIZES } from "../service/user.service";
+
 
 export class TargetNameDto {
     @IsDefined()
@@ -20,5 +21,6 @@ export class AvatarDto extends TargetIdDto {
     @IsDefined()
     @IsNotEmpty()
     @IsString()
+    @IsIn(Array.from(AVATAR_SIZES.keys()))
     size: string;
 }
