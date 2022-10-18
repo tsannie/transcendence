@@ -130,6 +130,23 @@ export class ChannelService {
 		return user;
 	}
 
+	async getProtectedChannel(channel_name : string, inputed_relations : FindOptionsRelations<ChannelEntity>) : Promise<ChannelEntity> {
+		console.log("NAME =", channel_name);
+		console.log("RELATIONS = ", inputed_relations);
+		let result =  await this.channelRepository.findOne( {
+			where: {
+				name: channel_name,
+			},
+			relations: inputed_relations,
+			select: {
+				id: true,
+				password: true,
+			}
+		})
+		console.log(result);
+		return result;
+	}
+
 	async getChannel(channel_name : string, inputed_relations : FindOptionsRelations<ChannelEntity> = undefined) : Promise<ChannelEntity> {
 		let returned_channel;
 
@@ -260,7 +277,7 @@ export class ChannelService {
 		if (this.isOwner(requested_channel.name, user) || this.isAdmin(requested_channel.name, user) || this.isMember(requested_channel.name, user))
 			throw new UnprocessableEntityException("User is already member or owner of the channel.")
 
-		let channel = await this.getChannel(requested_channel.name, {owner: true, users: true, banned: true});
+		let channel = await this.getProtectedChannel(requested_channel.name, {owner: true, users: true, banned: true});
 		this.verifyBanned(channel, user.username);
 
 		if (channel.status === 'Protected') {
@@ -276,7 +293,7 @@ export class ChannelService {
 		if (this.isOwner(channel_requested.name, user))
 			throw new ForbiddenException("Only the owner of the channel can add a password");
 
-		let channel = await this.getChannel(channel_requested.name, {owner: true});
+		let channel = await this.getProtectedChannel(channel_requested.name, {owner: true});
 
 		if (channel.status === "Protected")
 			await this.checkPassword(channel_requested.current_password, channel.password);
@@ -290,7 +307,7 @@ export class ChannelService {
 		if (this.isOwner(channel_requested.name, user))
 			throw new ForbiddenException("Only the owner of the channel can delete a password");
 
-		let channel = await this.getChannel(channel_requested.name, {owner: true});
+		let channel = await this.getProtectedChannel(channel_requested.name, {owner: true});
 
 		if (channel.status === "Private" || channel.status === "Public")
 			throw new UnprocessableEntityException(`Cannot perform that action of this server type: ${channel.status}`)
