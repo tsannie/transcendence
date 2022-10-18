@@ -26,7 +26,10 @@ export default function TwoFactorCode() {
   }
 
   const handleCancel = () => {
-    // TODO logout route
+    api.get('/auth/logout')
+    .then(res => {
+      window.location.reload();
+    });
   }
 
 
