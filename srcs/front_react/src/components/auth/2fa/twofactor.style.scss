@@ -1,3 +1,4 @@
+@import '../../../const.style.scss';
 
 .twoFactor {
   display: flex;
@@ -16,7 +17,7 @@
   width: 100% !important;
   margin-bottom: 0.3vw;
   ::placeholder {
-    color: white; // TODO const
+    color: $white-color;
     font-size: 3.5vw;
   }
   input {
