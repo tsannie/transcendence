@@ -21,6 +21,8 @@ export class AvatarDto extends TargetIdDto {
     @IsDefined()
     @IsNotEmpty()
     @IsString()
+    /* This checks, in the array loaded from user.service, that the key requested through the DTO is 
+    in the list of available sizes */
     @IsIn(Array.from(AVATAR_SIZES.keys()))
     size: string;
 }
