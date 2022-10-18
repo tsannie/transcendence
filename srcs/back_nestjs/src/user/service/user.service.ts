@@ -179,10 +179,17 @@ export class UserService {
 		return await this.allUser.save(requester);
 	}
 	
+  createDirectory() {
+    if (!fs.existsSync(AVATAR_DEST))
+      fs.mkdirSync(AVATAR_DEST, {recursive: true})
+  }
+
 	/* This function is responsible of resizing images in a square shape according to the inputed format
 	and save it locally in a jpeg format. Eamples : "1_512.jpg" or "12_128.jpg" */
 	async resizeImage(size: number, file: Express.Multer.File, user: UserEntity){
-		await sharp(file.buffer)
+		this.createDirectory();
+  
+    await sharp(file.buffer)
 		.resize(size, size)
 		.toFile(`${AVATAR_DEST}/${user.id}_${size}.jpg`)
 		.catch( err =>
