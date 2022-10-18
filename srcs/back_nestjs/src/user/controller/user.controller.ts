@@ -49,7 +49,7 @@ export class UserController {
   async addAvatar( @UploadedFile( new ParseFilePipe({
     validators: [
       new MaxFileSizeValidator( { maxSize: 5000000} ),
-      new AvatarFormatValidator( {format: ['jpeg', 'png']} ),
+      new AvatarFormatValidator( {format: ['jpg', 'jpeg', 'png']} ),
     ]
    })) file: Express.Multer.File, @Request() req) : Promise<AvatarEntity> {
     return await this.userService.addAvatar(file, req.user);
@@ -57,7 +57,7 @@ export class UserController {
 
   @UseGuards( JwtTwoFactorGuard )
   @Get("avatar")
-  async getAvatar(@Query() data : AvatarDto, @Res() res) : Promise<any> {
+  async getAvatar(@Query() data : AvatarDto, @Res() res) : Promise<void> {
 	  res.sendFile(await this.userService.getAvatar(data.id, {size: data.size}));
 }
 

@@ -184,7 +184,7 @@ export class UserService {
 		requester.banned = requester.banned.filter( banned_guys => banned_guys.username !== target );
 		return await this.allUser.save(requester);
 	}
-	
+
   /* This function creates the directory needed to register photos if it doesn't exist */
   createDirectory() {
     if (!fs.existsSync(AVATAR_DEST))
@@ -195,7 +195,7 @@ export class UserService {
 	and save it locally in a jpeg format. Eamples : "1_512.jpg" or "12_128.jpg" */
 	async resizeImage(size: number, file: Express.Multer.File, user: UserEntity){
 		this.createDirectory();
-  
+
     await sharp(file.buffer)
 		.resize(size, size)
 		.toFile(`${AVATAR_DEST}/${user.id}_${size}.jpg`)
@@ -206,7 +206,7 @@ export class UserService {
 			);
 	}
 
-	/* This function add avatar after resizing it two times in the form of static .jpg files and 
+	/* This function add avatar after resizing it two times in the form of static .jpg files and
 	register the keyname to access these files later in db. Size of those pictures can be changed
 	a bit higher in this file (MEDIUM_PIC and SMALL_PIC)*/
 	async addAvatar(file: Express.Multer.File, user: UserEntity) : Promise<AvatarEntity> {
@@ -215,7 +215,7 @@ export class UserService {
 
     /* This apply the resizing function to all type of size available */
 		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, file, user) });
-		
+
 		let avatar = new AvatarEntity();
 		avatar.filename = `${user.id}`;
 		avatar.user = user;
