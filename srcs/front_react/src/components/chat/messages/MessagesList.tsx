@@ -5,7 +5,7 @@ import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { SocketContext } from "../../../contexts/SocketContext";
 import { UserContext } from "../../../contexts/UserContext";
-import { IMessage } from "../types";
+import { IMessage, IMessageReceived } from "../types";
 
 interface MessagesListProps {}
 
@@ -13,10 +13,38 @@ export default function MessagesList(props: MessagesListProps) {
   const { messagesList } = useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
   const { convId } = useContext(MessagesContext);
+  const socket = useContext(SocketContext);
+  //const [messagesList, setMessagesList] = useState<IMessageReceived[]>([]);
+
+  /* useEffect(() => {
+    socket.on("message", (data) => {
+      console.log("message received with data = ", data);
+      let id;
+
+      if (data.dm)
+        id = data.dm.id;
+      else
+        id = data.channel.id;
+
+      console.log("id = ", id);
+      console.log("convId = ", convId);
+      const newMsg: IMessageReceived = {
+        author: data.author,
+        id: id,
+        uuid: data.uuid,
+        content: data.content,
+        createdAt: data.createdAt,
+      };
+
+      if (id === convId) {
+        props.setMessagesList((messagesList: any[]) => [newMsg, ...messagesList]);
+      }
+    });
+  }, []); */
 
   return (
     <List key={convId} sx={{ position: "relative" }}>
-      {[...messagesList].reverse().map((messageData: IMessage) => {
+      {[...messagesList].reverse().map((messageData: IMessageReceived) => {
         if (userConnected.username === messageData.author.username)
           return (
             <ListItem

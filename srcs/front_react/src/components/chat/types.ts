@@ -6,6 +6,14 @@ export interface IMessage {
   isDm: boolean;
 }
 
+export interface IMessageReceived {
+  uuid: string;
+  id: number;
+  author: any; // IUser en theorie
+  content: string;
+  createdAt: Date;
+}
+
 export interface ICreateChannel {
   name: string;
   password: string;
