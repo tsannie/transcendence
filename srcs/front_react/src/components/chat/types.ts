@@ -8,7 +8,7 @@ export interface IMessage {
 
 export interface IMessageReceived {
   uuid: string;
-  id: number;
+  convId: number;
   author: any; // IUser en theorie
   content: string;
   createdAt: Date;
