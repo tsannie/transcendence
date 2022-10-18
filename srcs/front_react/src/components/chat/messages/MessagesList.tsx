@@ -43,9 +43,9 @@ export default function MessagesList(props: MessagesListProps) {
   }, []); */
 
   return (
-    <List key={convId} sx={{ position: "relative" }}>
-      {[...messagesList].reverse().map((messageData: IMessageReceived) => {
-        if (userConnected.username === messageData.author.username)
+    <List sx={{ position: "relative" }}>
+      {messagesList.map((messageData: IMessageReceived) => {
+        if (userConnected.username === messageData.author.username) {
           return (
             <ListItem
               sx={{
@@ -61,11 +61,13 @@ export default function MessagesList(props: MessagesListProps) {
                 p: 1,
                 right: 0,
               }}
-              key={messageData.uuid}
+              //key={messageData.uuid}
             >
               {messageData.content}
             </ListItem>
           );
+        }
+
         return (
           <ListItem
             sx={{
@@ -81,7 +83,7 @@ export default function MessagesList(props: MessagesListProps) {
               p: 1,
               left: 0,
             }}
-            key={messageData.uuid}
+            //key={messageData.uuid}
           >
             {messageData.content}
           </ListItem>
