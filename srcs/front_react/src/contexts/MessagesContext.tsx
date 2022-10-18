@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { createContext } from "react";
-import { IMessage } from "../components/chat/types";
+import { IMessage, IMessageReceived } from "../components/chat/types";
 import { api } from "../const/const";
 import { SocketContext } from "./SocketContext";
 import { UserContext } from "./UserContext";
 
 export type MessagesContextType = {
-  messagesList: IMessage[];
-  setMessagesList: (messagesList: IMessage[]) => void;
+  messagesList: IMessageReceived[];
+  setMessagesList: (messagesList: any[]) => void;
   loadMessages: (targetId: number, isDm: boolean) => void;
   isDm: boolean;
   setIsDm: (isDm: boolean) => void;
@@ -30,7 +30,7 @@ interface MessagesContextProps {
 }
 
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
-  const [messagesList, setMessagesList] = useState<IMessage[]>([]);
+  const [messagesList, setMessagesList] = useState<any[]>([]);
   const [isDm, setIsDm] = useState(true);
   const [convId, setConvId] = useState(0);
   const socket = useContext(SocketContext);
@@ -73,10 +73,32 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   useEffect(() => {
     socket.on("message", (data) => {
-      //console.log("message received from server !!!!!!");
-      setMessagesList((messagesList) => [data, ...messagesList]);
+      //console.log("message received with data = ", data);
+      let id;
+
+      if (data.dm)
+        id = data.dm.id;
+      else
+        id = data.channel.id;
+
+      //console.log("id = ", id);
+      //console.log("convId = ", convId);
+      const newMsg: IMessageReceived = {
+        author: data.author,
+        id: id,
+        uuid: data.uuid,
+        content: data.content,
+        createdAt: data.createdAt,
+      };
+
+      // marche pas car convid est pas encore set quand le message arrive
+      // TODO: regler le bug que quand je reload le front ici, ca ne recharge pas les messages de l'ancienne conv
+      //console.log("convId = ", convId);
+      //if (id === convId) {
+        setMessagesList((messagesList) => [newMsg, ...messagesList]);
+      //}
     });
-  }, []);
+  }, [socket]);
 
   return (
     <MessagesContext.Provider

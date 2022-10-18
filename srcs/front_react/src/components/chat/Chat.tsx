@@ -1,6 +1,6 @@
 import { Box, Grid, Popover, Typography } from "@mui/material";
 import { useState } from "react";
-import { IChannel } from "./types";
+import { IChannel, IMessageReceived } from "./types";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
 import { api, COOKIE_NAME } from "../../const/const";
@@ -25,6 +25,8 @@ export default function Chat(props: ChatProps) {
     ChatContent.NEW_CHANNELS
   );
   const [channelData, setChannelData] = useState<IChannel>();
+  console.log("chatContent", chatContent);
+  //const [messagesList, setMessagesList] = useState<IMessageReceived[]>([]);
 
   async function getChannelDatas(channelName: string) {
     try {
@@ -38,6 +40,42 @@ export default function Chat(props: ChatProps) {
       console.log("invalid get channels datas");
     }
   }
+
+  /* async function loadMessages(id: number, isDm: boolean) {
+    if (isDm === true) {
+      await api
+        .get("message/dm", {
+          params: {
+            id: id, // id du dm
+            offset: 0,
+          },
+        })
+        .then((res) => {
+          //console.log("msg data = ", res.data);
+          setMessagesList(res.data);
+        })
+        .catch((res) => {
+          console.log("invalid messages");
+          console.log(res);
+        });
+    } else {
+      await api
+        .get("message/channel", {
+          params: {
+            id: id, // id du channel
+            offset: 0,
+          },
+        })
+        .then((res) => {
+          console.log("channel data = ", res.data);
+          setMessagesList(res.data);
+        })
+        .catch((res) => {
+          console.log("invalid messages");
+          console.log(res);
+        });
+    }
+  } */
 
   return (
     <ChatProvider>
