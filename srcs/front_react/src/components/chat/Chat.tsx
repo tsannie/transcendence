@@ -19,12 +19,7 @@ export enum ChatContent {
   MESSAGES,
 }
 
-interface ChatProps {
-  getAllUsers: () => Promise<void>;
-  users: any[];
-}
-
-export default function Chat(props: ChatProps) {
+export default function Chat(props: any) {
   const [username, setUsername] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [messagesList, setMessagesList] = useState<IMessage[]>([]);

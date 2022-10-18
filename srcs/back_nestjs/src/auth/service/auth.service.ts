@@ -18,7 +18,8 @@ export class AuthService {
   ) {}
 
   async validateUser(profile42: any): Promise<any> {
-    const user = await this.userService.findByName(profile42.username);
+    console.log(profile42);
+    const user = await this.userService.findByMail(profile42.emails[0].value);
     if (user)
       return user;
     return this.register({
