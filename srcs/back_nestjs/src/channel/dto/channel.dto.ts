@@ -1,17 +1,15 @@
-import { Contains, IsDefined, IsNotEmpty } from "class-validator";
-import { CreateDateColumn } from "typeorm";
+import { Type } from "class-transformer";
+import { IsDefined, IsNotEmpty, IsOptional, IsString, Min } from "class-validator";
 
 export class ChannelDto {
 
   @IsDefined()
   @IsNotEmpty()
+  @IsString()
   name: string;
 
-  @IsDefined()
+  @IsOptional()
   @IsNotEmpty()
-  status: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  ownerid: string;
+  @IsString()
+  password: string;
 }

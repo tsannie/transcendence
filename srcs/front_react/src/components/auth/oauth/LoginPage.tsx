@@ -5,8 +5,7 @@ import { api, COOKIE_NAME } from "../../../const/const";
 import ButtonLogin from "./ButtonLogin";
 import './login.style.scss'
 
-
-export default function LoginPage(props: any) {
+export default function LoginPage() {
   const [is2FA, setIs2FA] = useState(false);
   const [isAlreadyLog, setIsAlreadyLog] = useState(false);
 
@@ -34,7 +33,7 @@ export default function LoginPage(props: any) {
         <h1>transcendence</h1>
       </div>
       <div className="loginBox">
-        <ButtonLogin isLogin={props.isLogin} setIsLogin={props.setIsLogin} />
+        <ButtonLogin />
       </div>
     </div>
 

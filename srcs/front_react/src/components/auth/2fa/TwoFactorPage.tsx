@@ -7,7 +7,7 @@ import '../oauth/login.style.scss'
 import TwoFactorCode from "./TwoFactorCode";
 
 
-export default function TwoFactorPage(props: any) {
+export default function TwoFactorPage() {
 
   const [is2FA, setIs2FA] = useState(true);
   const [isAlreadyLog, setIsAlreadyLog] = useState(false);

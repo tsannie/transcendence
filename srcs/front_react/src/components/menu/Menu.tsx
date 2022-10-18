@@ -8,7 +8,7 @@ export default function Menu() {
 
   return (
     <div className="menu">
-      <Sidebar setSelected={setSelected} selected={selected}/>
+      <Sidebar />
       <div className="content">
         { selected == 'home' &&
           <h1>home</h1>

@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import ReactCodeInput from "react-verification-code-input";
 import { api } from "../../../const/const";
 import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
-import InvalidSnackbar from "./InvalidSnackbar";
 import './twofactor.style.scss'
 
 
@@ -51,7 +50,6 @@ export default function TwoFactorCode() {
         ref={inputRef}
       />
       <button onClick={handleCancel} >cancel</button>
-      <InvalidSnackbar openError={openError} setOpenError={setOpenError}/>
     </div>
   );
 }

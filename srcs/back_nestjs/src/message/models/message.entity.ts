@@ -1,29 +1,31 @@
-//import { RoomEntity } from "src/room/models/room.entity";
+import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
+import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
 export class MessageEntity {
-  @PrimaryColumn({ unique: true })
-  id: string;
+	@PrimaryGeneratedColumn("uuid")
+	uuid: string;
 
-  @Column()
-  room: string;
+	@CreateDateColumn()
+	createdAt?: Date;
 
-  @Column()
-  author: string;
+	@Column()
+	content: string;
 
-  @Column()
-  content: string;
+	@ManyToOne( () => UserEntity )
+	author: UserEntity;
 
-  @Column()
-  time: string;
+	@ManyToOne( () => DmEntity, (dm) => dm.messages, {onDelete: 'CASCADE'} )
+	dm?: DmEntity;
 
-  //@ManyToOne(() => RoomEntity, (room) => room.messages)
-  //room: RoomEntity
+	@ManyToOne( () => ChannelEntity, (channel) => channel.messages, {onDelete: 'CASCADE'} )
+	channel?: ChannelEntity;
 }

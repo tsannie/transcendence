@@ -1,45 +1,68 @@
-import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
+import {
+  Button,
+  Grid,
+  Menu,
+  MenuItem,
+  Popover,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { set } from "react-hook-form";
+import { Socket } from "socket.io-client";
+import { api } from "../../const/const";
+import { ChatContent } from "./Chat";
+import { SocketContext } from "./SocketContext";
+import { IChannel, IDm, IMessage } from "./types";
 
-export default function ChatUserlist(props: any) {
+interface ChatUserListProps {
+  setMessagesList: (messagesList: IMessage[]) => void;
+  setTargetUsername: (targetUsername: string) => void;
+  setEnumState: (enumState: ChatContent) => void;
+  users: any[];
+  getAllUsers: () => Promise<void>;
+}
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+export default function ChatUserlist(props: ChatUserListProps) {
+
+  const socket = useContext(SocketContext);
 
   function handleClick(event: React.MouseEvent<HTMLElement>) {
     event.preventDefault();
-    setAnchorEl(event.currentTarget);
-  };
-
-  function handleClose() {
-    setAnchorEl(null);
+    createNewConv(event.currentTarget.innerHTML);
   }
 
-  function handleProfile() {
-    console.log('handle profile');
-    setAnchorEl(null);
+  async function createDm(targetUsername: IDm) {
+    console.log("create dm");
+    await api
+      .post("dm/createDm", targetUsername)
+      .then((res) => {
+        console.log("dm created with success");
+        console.log(targetUsername);
+        console.log(res.data.messages);
+        //socket.emit("getConv", res.data);
+        props.setMessagesList(res.data.messages);
+      })
+      .catch((res) => {
+        console.log("invalid create dm");
+        console.log(res);
+      });
   }
 
-  function handleInvite() {
-    console.log('handle invite');
-    setAnchorEl(null);
-  }
+  async function createNewConv(targetUsername: string) {
+    let newDm: IDm = {
+      target: targetUsername,
+    };
 
-  function handleNewMessage() {
-    console.log('handle new message');
-    setAnchorEl(null);
-    props.setIsNewMessage(true);
+    console.log(newDm);
+    console.log("handle new message");
+    createDm(newDm);
+    props.setEnumState(ChatContent.MESSAGES);
+    props.setTargetUsername(targetUsername);
   }
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-      }}
-    >
+    <>
       <Typography
         sx={{
           fontWeight: "bold",
@@ -49,20 +72,11 @@ export default function ChatUserlist(props: any) {
       >
         Users
       </Typography>
-      <Box>
-        <Box onContextMenu={handleClick}>
-          {/* I have delete UserList sign tsannie */}
-        </Box>
-        <Menu
-          open={open}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-        >
-          <MenuItem onClick={handleProfile}>Profile</MenuItem>
-          <MenuItem onClick={handleNewMessage}>New Message</MenuItem>
-          <MenuItem onClick={handleInvite}>Invite to play</MenuItem>
-        </Menu>
-      </Box>
-    </Box>
+      {/* <UserList
+        handleClick={handleClick}
+        users={props.users}
+        getAllUsers={props.getAllUsers}
+      /> */}
+    </>
   );
 }
