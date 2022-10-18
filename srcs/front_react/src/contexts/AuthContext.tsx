@@ -5,7 +5,7 @@ export type User = {
   username: string;
   email: string;
   enabled2FA: boolean;
-  //profilePicture: string;
+  profile_picture: string;
 }
 
 export type AuthContextType = {
