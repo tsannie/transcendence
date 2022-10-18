@@ -8,12 +8,12 @@ import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
 import Settings from "./components/settings/Settings";
 import Home from "./components/home/Home";
-import Chat from "./components/chat/Chat";
 import Profile from "./components/profile/Profile";
 import { AnimatePresence } from "framer-motion"; // TODO delete ?
 import Background from "./components/background/Background";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 import GamePage from "./components/game/GamePage";
+import Chat from "./components/chat/Chat";
 
 export default function App() {
   return (
