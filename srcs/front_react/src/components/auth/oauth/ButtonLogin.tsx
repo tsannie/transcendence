@@ -1,6 +1,6 @@
 import { REDIRECT_LINK_AUTH } from "../../../const/const";
 import './login.style.scss'
-import FTLogo from "../../../assets/42_Logo_white.png";
+import {ReactComponent as FTLogo} from "../../../assets/img/42_Logo.svg";
 
 export default function ButtonLogin(props: any) {
 
@@ -17,8 +17,8 @@ export default function ButtonLogin(props: any) {
       </div>
       <div className="login-list__content">
         <button onClick={linkLog}>
-          <img src={FTLogo}/>
-          <p>Continue with 42</p>
+          <FTLogo className="login-list__content__logo"/>
+          <span>Continue with 42</span>
         </button>
       </div>
     </div>

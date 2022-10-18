@@ -1,3 +1,5 @@
+@import '../../const.style.scss';
+
 $number_ball: 11;
 
 .bg {
@@ -30,7 +32,7 @@ $number_ball: 11;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: white;
+    background-color: $white-color;
   }
   @for $i from 1 through $number_ball {
     &:nth-of-type(#{$i}) {
