@@ -20,6 +20,7 @@ import { DmController } from './dm/controller/dm.controller';
 import { DmService } from './dm/service/dm.service';
 import { DmModule } from './dm/dm.module';
 import { DmEntity } from './dm/models/dm.entity';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DmEntity } from './dm/models/dm.entity';
       synchronize: true, //TODO deploiement false
     }),
     TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity]),
+    HttpModule,
     UserModule,
     AuthModule,
     PassportModule,
