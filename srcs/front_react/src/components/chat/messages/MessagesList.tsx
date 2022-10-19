@@ -7,40 +7,11 @@ import { SocketContext } from "../../../contexts/SocketContext";
 import { UserContext } from "../../../contexts/UserContext";
 import { IMessage, IMessageReceived } from "../types";
 
-interface MessagesListProps {}
+interface MessagesListProps { }
 
 export default function MessagesList(props: MessagesListProps) {
   const { messagesList } = useContext(MessagesContext);
   const { userConnected } = useContext(UserContext);
-  const { convId } = useContext(MessagesContext);
-  const socket = useContext(SocketContext);
-  //const [messagesList, setMessagesList] = useState<IMessageReceived[]>([]);
-
-  /* useEffect(() => {
-    socket.on("message", (data) => {
-      console.log("message received with data = ", data);
-      let id;
-
-      if (data.dm)
-        id = data.dm.id;
-      else
-        id = data.channel.id;
-
-      console.log("id = ", id);
-      console.log("convId = ", convId);
-      const newMsg: IMessageReceived = {
-        author: data.author,
-        id: id,
-        uuid: data.uuid,
-        content: data.content,
-        createdAt: data.createdAt,
-      };
-
-      if (id === convId) {
-        props.setMessagesList((messagesList: any[]) => [newMsg, ...messagesList]);
-      }
-    });
-  }, []); */
 
   return (
     <List sx={{ position: "relative" }}>
@@ -61,13 +32,12 @@ export default function MessagesList(props: MessagesListProps) {
                 p: 1,
                 right: 0,
               }}
-              //key={messageData.uuid}
+              key={messageData.uuid}
             >
               {messageData.content}
             </ListItem>
           );
         }
-
         return (
           <ListItem
             sx={{
@@ -83,7 +53,7 @@ export default function MessagesList(props: MessagesListProps) {
               p: 1,
               left: 0,
             }}
-            //key={messageData.uuid}
+            key={messageData.uuid}
           >
             {messageData.content}
           </ListItem>
