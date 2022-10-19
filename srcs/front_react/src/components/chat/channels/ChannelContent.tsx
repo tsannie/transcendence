@@ -7,10 +7,10 @@ import MessagesList from "../messages/MessagesList";
 import { IChannel } from "../types";
 import AdminsActions from "./admins/AdminsActions";
 import InfosChannels from "./InfosChannels";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { UserContext } from "../../../contexts/UserContext";
+import ChannelMoreInfos from "./ChannelMoreInfos";
 
 interface ChannelContentProps {
   getChannelDatas: any;
@@ -18,44 +18,8 @@ interface ChannelContentProps {
 }
 
 export default function ChannelContent(props: ChannelContentProps) {
-  const [openMoreInfos, setOpenMoreInfos] = useState(false);
-  const { getChannelsUserlist } = useContext(ChannelsContext);
 
-  function handleClick(event: any) {
-    console.log("more infos (delete channel)");
-    setOpenMoreInfos(!openMoreInfos);
-  }
-
-  function joinNewChannelWithoutStatus(channel: any) {
-    const newChannel = {
-      name: channel.data.name,
-    };
-    console.log(newChannel);
-
-    return newChannel;
-  }
-
-  async function deleteChannel(channel: any) {
-    const newChannel = joinNewChannelWithoutStatus(channel);
-
-    console.log(channel);
-    await api
-      .post("channel/delete", newChannel)
-      .then((res) => {
-        console.log("channel left with success");
-        console.log(channel);
-        getChannelsUserlist();
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-        console.log(res);
-      });
-    setOpenMoreInfos(false);
-  }
-
-  console.log("channel data", props.channelData);
-
-  if (props.channelData !== undefined)
+  if (props.channelData !== undefined) {
     return (
       <Grid container>
         {props.channelData.status !== "public" && (
@@ -70,22 +34,9 @@ export default function ChannelContent(props: ChannelContentProps) {
                 </Typography>
               </Grid>
               {props.channelData.status === "owner" && (
-                <Grid item>
-                  <IconButton onClick={handleClick}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                  {openMoreInfos && (
-                    <Button
-                      sx={{
-                        color: "red",
-                        ml: "1vh",
-                      }}
-                      onClick={() => deleteChannel(props.channelData)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                </Grid>
+                <ChannelMoreInfos
+                  channelData={props.channelData}
+                />
               )}
             </Box>
             <Conv />
@@ -99,5 +50,6 @@ export default function ChannelContent(props: ChannelContentProps) {
         </Grid>
       </Grid>
     );
+  }
   return <></>;
 }
