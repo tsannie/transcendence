@@ -24,9 +24,17 @@ export class GameService {
     });
   }
 
+  async gameStarted(room_name: string): Promise<GameEntity> {
+    const game = await this.findByName(room_name);
+
+    
+
+    return this.all_game.save(game);
+  }
+
   async joinFastRoom(room: string): Promise<GameEntity> {
 
-    var room_game;
+    let room_game;
     const size = await this.all_game.count();
     if (size != 0) {
       const all_rooms = await this.all_game.find();
@@ -35,11 +43,18 @@ export class GameService {
           room_game = room_db;
         }
       });
-    } else {
+      //console.log("1ICCCCCIII")
+
+    } 
+    if (!room_game) {
       room_game = new GameEntity();
       room_game.fast_play = true;
       room_game.room_name = randomUUID();
+
+      //console.log("2ICCCCCIII")
     }
+   // console.log("3ICCCCCIII")
+
     return room_game;
   }
 
