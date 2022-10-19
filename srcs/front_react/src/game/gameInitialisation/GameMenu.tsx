@@ -37,10 +37,10 @@ export default function GameMenu(props: any) {
       props.setRoom(theroom.room_name);
       if (theroom.p2 === socket.id) {
         props.setop_id(theroom.p1);
-        props.setim_right(true);
+        props.setim_p2(true);
       } else if (theroom.p1 === socket.id) {
         props.setop_id(theroom.p2);
-        props.setim_right(false);
+        props.setim_p2(false);
       }
     });
     props.setisFull("");
