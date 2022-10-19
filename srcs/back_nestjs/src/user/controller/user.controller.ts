@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Query, Request, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Query, Request, Res, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
 import { TargetNameDto, TargetIdDto, AvatarDto } from '../dto/target.dto';
@@ -8,7 +8,6 @@ import { NewUsernameDto } from '../models/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express } from 'express'
 import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/filevalidation.validator';
-import { AvatarEntity } from '../models/avatar.entity';
 
 @Controller('user')
 export class UserController {
@@ -31,39 +30,40 @@ export class UserController {
     return await this.userService.cleanAllUser();
   }
 
-	@UseGuards( JwtTwoFactorGuard )
   @Post("banUser")
+	@UseGuards( JwtTwoFactorGuard )
   async banUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
     return await this.userService.banUser(body.target, req.user);
   }
 
-  @UseGuards( JwtTwoFactorGuard )
   @Post("unBanUser")
+  @UseGuards( JwtTwoFactorGuard )
   async unBanUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
     return await this.userService.unBanUser(body.target, req.user);
   }
 
-  @UseGuards( JwtTwoFactorGuard )
   @Post("addAvatar")
+  @UseGuards( JwtTwoFactorGuard )
   @UseInterceptors( FileInterceptor('avatar') )
   async addAvatar( @UploadedFile( new ParseFilePipe({
     validators: [
       new MaxFileSizeValidator( { maxSize: 5000000} ),
       new AvatarFormatValidator( {format: ['jpg', 'jpeg', 'png']} ),
     ]
-   })) file: Express.Multer.File, @Request() req) : Promise<AvatarEntity> {
+   })) file: Express.Multer.File, @Request() req) : Promise<UserEntity> {
     return await this.userService.addAvatar(file, req.user);
   }
 
-  @UseGuards( JwtTwoFactorGuard )
   @Get("avatar")
+  @UseGuards( JwtTwoFactorGuard )
+  @UsePipes(new ValidationPipe( { transform: true}))
   async getAvatar(@Query() data : AvatarDto, @Res() res) : Promise<void> {
 	  res.sendFile(await this.userService.getAvatar(data.id, {size: data.size}));
 }
 
-  @UseGuards( JwtTwoFactorGuard )
-  @Post("deleteAvatar")
-  async deleteAvatar(@Request() req) : Promise<AvatarEntity> {
-    return await this.userService.deleteAvatar(req.user);
+@Post("deleteAvatar")
+@UseGuards( JwtTwoFactorGuard )
+  deleteAvatar(@Request() req) {
+    return this.userService.deleteAvatar(req.user);
   }
 }
