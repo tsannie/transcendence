@@ -1,6 +1,5 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AvatarEntity } from '../models/avatar.entity';
 import {
   FindOneOptions,
   FindOptionsRelations,
@@ -10,7 +9,6 @@ import {
 import { UserEntity } from '../models/user.entity';
 import * as sharp from 'sharp';
 import * as fs from 'fs';
-import { resolve } from 'path';
 
 export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
 
@@ -34,8 +32,6 @@ export class UserService {
 	@InjectRepository(UserEntity)
 	private allUser: Repository<UserEntity>,
 
-	@InjectRepository(AvatarEntity)
-	private avatarRepository: Repository<AvatarEntity>,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -209,56 +205,46 @@ export class UserService {
 	/* This function add avatar after resizing it two times in the form of static .jpg files and
 	register the keyname to access these files later in db. Size of those pictures can be changed
 	a bit higher in this file (MEDIUM_PIC and SMALL_PIC)*/
-	async addAvatar(file: Express.Multer.File, user: UserEntity) : Promise<AvatarEntity> {
-		if (user.avatar)
-			await this.deleteAvatar(user);
+	async addAvatar(file: Express.Multer.File, user: UserEntity) : Promise<UserEntity> {
+		if (user.profile_picture)
+			this.deleteAvatar(user);
 
     /* This apply the resizing function to all type of size available */
 		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, file, user) });
-
-    //TODO, does this work ??
-    user.profile_picture = `${process.env.BACK_URL}/user/avatar?id=${user.id}&size=medium`;
-    await this.allUser.save(user);
-  //
-
-		let avatar = new AvatarEntity();
-		avatar.filename = `${user.id}`;
-		avatar.user = user;
-		return await this.avatarRepository.save(avatar);
+	
+    user.profile_picture = `${process.env.BACK_URL}/user/avatar?id=${user.id}`;
+    return await this.allUser.save(user);
 	}
 
 	/* This function is querying the DB to find the name of the file then send the wright path according to
 	request of user ("medium" or "small") */
 	async getAvatar(inputed_id: number, avatarOptions: IAvatarOptions) : Promise<string> {
-    let avatar = await this.avatarRepository
-		.createQueryBuilder("avatar")
-		.leftJoin("avatar.user", "user")
-		.addSelect("user.id")
+    let user = await this.allUser
+		.createQueryBuilder("user")
+		.select("user.id")
 		.where("user.id = :id", { id: inputed_id })
 		.getOne()
 
-		if (!avatar)
-			throw new UnprocessableEntityException("Cannot find any avatar corresponding to that id");
+		if (!user)
+			throw new UnprocessableEntityException("Cannot find user corresponding to that id");
 
-		return `${AVATAR_DEST}/${avatar.filename}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
+		return `${AVATAR_DEST}/${user.id}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
 		}
 
 	/* This function delete the avatars of the user*/
-	async deleteAvatar(user: UserEntity) : Promise<AvatarEntity> {
-		if (user.avatar)
+	deleteAvatar(user: UserEntity) {
+		if (user.profile_picture)
 		{
-			let avatar = user.avatar;
-			user.avatar = null;
 			try
 			{
         /* This function apply a deletion function to every size available on nest server */
-				AVATAR_SIZES.forEach( (size) => {fs.unlinkSync(`${AVATAR_DEST}/${avatar.filename}_${size}.jpg`);})
+				AVATAR_SIZES.forEach( (size) => {fs.unlinkSync(`${AVATAR_DEST}/${user.id}_${size}.jpg`);})
+        user.profile_picture = null;
 			}
 			catch (err)
 			{
 				throw new UnprocessableEntityException(`Cannot delete old avatar from server.`);
 			}
-			return await this.avatarRepository.remove(avatar);
 		}
 	}
 }
