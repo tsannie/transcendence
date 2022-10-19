@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsDefined, IsIn, IsNotEmpty, IsString } from "class-validator";
+import { IsDefined, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { AVATAR_SIZES } from "../service/user.service";
 
 
@@ -18,11 +18,15 @@ export class TargetIdDto {
 }
 
 export class AvatarDto extends TargetIdDto {
-    @IsDefined()
+    @IsOptional()
     @IsNotEmpty()
     @IsString()
     /* This checks, in the array loaded from user.service, that the key requested through the DTO is 
-    in the list of available sizes */
+    in the list of available sizes 
+    avatar sizes are [
+        "medium",
+        "small",
+    ]*/
     @IsIn(Array.from(AVATAR_SIZES.keys()))
-    size: string;
+    size: string = "medium";
 }

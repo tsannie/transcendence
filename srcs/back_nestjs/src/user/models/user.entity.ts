@@ -12,7 +12,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { AvatarEntity } from './avatar.entity';
 
 @Entity()
 export class UserEntity {
@@ -57,8 +56,4 @@ export class UserEntity {
 
   @Column( {nullable: true})
   profile_picture?:string;
-
-  //TODO should i keep the avatarEntity architecture, or is it overkill?
-  @OneToOne( () => AvatarEntity, (avatar) => avatar.user, { eager: true, nullable: true, /* cascade: ["remove"]*/}  )
-  avatar?: AvatarEntity;
 }
