@@ -37,7 +37,7 @@ export function GameWaitPlayerReady(props: any) {
       socket.emit("readyGameRoom", props.room);
       console.log("witchmap = ", witchmap);
       console.log("wichpower = ", wichpower);
-      if (props.im_right === false)
+      if (props.im_p2 === false)
       {
         socket.emit("readyGameMapPower", data);
       }
@@ -203,7 +203,7 @@ export function GameWaitPlayerReady(props: any) {
   }
 
 
-  if (props.im_right === false) {
+  if (props.im_p2 === false) {
   return (
     <div className="readytoplay">
       <h2> you are : {props.my_id} </h2>

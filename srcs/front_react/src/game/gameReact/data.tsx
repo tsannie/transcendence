@@ -28,14 +28,14 @@ export default {
     col_now_paddle: false,
   },
   
-  paddleProps_left: {
+  paddleProps_p1: {
     height: 100,
     width: 20,
     color: "white",
     x: 100,
     y: 5,
   },
-  paddleProps_right: {
+  paddleProps_p2: {
     height: 100,
     width: 20,
     color: "white",
@@ -43,12 +43,12 @@ export default {
     y: 5,
   },
 
-  player_left: {
+  player_p1: {
     name: "data_null",
     score: 0,
     won: false,
   },
-  player_right: {
+  player_p2: {
     name: "data_null",
     score: 0,
     won: false,

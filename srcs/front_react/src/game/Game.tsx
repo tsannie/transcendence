@@ -1,6 +1,6 @@
 import React, { createRef, useEffect, useState } from "react";
 import io from "socket.io-client";
-import { GamePlayer_Left_right } from "./gameReact/GameReact";
+import { GamePlayer_p1_p2 } from "./gameReact/GameReact";
 import { GameSpectator } from "./gameSpectator/GameSpectator";
 import GameMenu from "./gameInitialisation/GameMenu";
 import { GameWaitPlayerReady } from "./gameInitialisation/GameWaitPlayer";
@@ -11,10 +11,10 @@ import data from "./gameReact/data";
 export let {
   ballObj,
   gameSpecs,
-  player_left,
-  player_right,
-  paddleProps_left,
-  paddleProps_right,
+  player_p1,
+  player_p2,
+  paddleProps_p1,
+  paddleProps_p2,
 } = data;
 
 export const socket = io("http://localhost:4000/game");
@@ -40,7 +40,7 @@ export default function Game() {
   const [room, setRoom] = useState("");
   const [my_id, setmy_id] = useState(socket.id);
   const [op_id, setop_id] = useState("2");
-  const [im_right, setim_right] = useState(false);
+  const [im_p2, setim_p2] = useState(false);
   const [islookingroom, setisLookingRoom] = useState(false);
   const [isfull, setisFull] = useState("");
   const [isinroom, setisinroom] = useState(false);
@@ -53,13 +53,13 @@ export default function Game() {
   // useEffect reinint the game when the player leave the room or the game is over or the player give up
 
   function reinit_game(){
-    player_left.name = "null";
-    player_left.score = 0;
-    player_left.won = false;
+    player_p1.name = "null";
+    player_p1.score = 0;
+    player_p1.won = false;
 
-    player_right.name = "null";
-    player_right.score = 0;
-    player_right.won = false;
+    player_p2.name = "null";
+    player_p2.score = 0;
+    player_p2.won = false;
 
     ballObj.init_ball_pos = false;
     ballObj.first_col = false;
@@ -96,7 +96,7 @@ export default function Game() {
       setgamestart(false);
       setimready(false);
       setopready(false);
-      setim_right(false);
+      setim_p2(false);
       reinit_game();
       socket.emit("leaveGameRoom", room);
       setRoom("");
@@ -113,11 +113,11 @@ export default function Game() {
 
   if (gamestart === true) {
     return (
-      <GamePlayer_Left_right
+      <GamePlayer_p1_p2
         setRoom={setRoom}
         my_id={my_id}
         op_id={op_id}
-        im_right={im_right}
+        im_p2={im_p2}
         imready={imready}
         opready={opready}
         setimready={setimready}
@@ -132,7 +132,7 @@ export default function Game() {
       <GameWaitPlayerReady
         my_id={my_id}
         room={room}
-        im_right={im_right}
+        im_p2={im_p2}
         deleteGameRoom={deleteGameRoom}
         opready={opready}
         imready={imready}
@@ -177,7 +177,7 @@ export default function Game() {
         setnbrconnect={setnbrconnect}
         setisinroom={setisinroom}
         setop_id={setop_id}
-        setim_right={setim_right}
+        setim_p2={setim_p2}
         setisLookingRoom={setisLookingRoom}
         setisFull={setisFull}
         setmy_id={setmy_id}

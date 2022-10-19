@@ -7,10 +7,10 @@ import {
 
 import {
   BallMouv,
-  BallCol_right,
-  BallCol_left,
-  PaddleMouv_left,
-  PaddleMouv_right,
+  BallCol_p2,
+  BallCol_p1,
+  PaddleMouv_p1,
+  PaddleMouv_p2,
   draw_line,
   draw_score,
   draw_loading,
@@ -21,10 +21,10 @@ import data from "../gameReact/data";
 export let {
   ballObj,
   gameSpecs,
-  player_left,
-  player_right,
-  paddleProps_left,
-  paddleProps_right,
+  player_p1,
+  player_p2,
+  paddleProps_p1,
+  paddleProps_p2,
 } = data;
 
 let first_sinc = false;
@@ -75,30 +75,30 @@ export function GameSpectator(props: any) {
       ballObj.first_col = theroom.set.ball.first_col;
       gameSpecs.power = theroom.power;
 
-      player_left.score = theroom.set.set_p1.score;
-      player_right.score = theroom.set.set_p2.score;
+      player_p1.score = theroom.set.set_p1.score;
+      player_p2.score = theroom.set.set_p2.score;
 
       first_sinc = true;
       setpower(theroom.power);
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
-      paddleProps_left.x = theroom.set.p1_paddle_obj.x;
-      paddleProps_left.y = theroom.set.p1_paddle_obj.y;
+      paddleProps_p1.x = theroom.set.p1_paddle_obj.x;
+      paddleProps_p1.y = theroom.set.p1_paddle_obj.y;
     });
     socket.on("mouvPaddleRight_spec", (theroom: any) => {
-      paddleProps_right.x = theroom.set.p2_paddle_obj.x;
-      paddleProps_right.y = theroom.set.p2_paddle_obj.y;
+      paddleProps_p2.x = theroom.set.p2_paddle_obj.x;
+      paddleProps_p2.y = theroom.set.p2_paddle_obj.y;
     });
     socket.on("setDataPlayerLeft_spec", (theroom: any) => {
-      player_left.score = theroom.set.set_p1.score;
-      player_left.won = theroom.set.set_p1.won;
-      player_left.name = theroom.set.set_p1.name;
+      player_p1.score = theroom.set.set_p1.score;
+      player_p1.won = theroom.set.set_p1.won;
+      player_p1.name = theroom.set.set_p1.name;
       setp1id(theroom.set.set_p1.name);
     });
     socket.on("setDataPlayerRight_spec", (theroom: any) => {
-      player_right.score = theroom.set.set_p2.score;
-      player_right.won = theroom.set.set_p2.won;
-      player_right.name = theroom.set.set_p2.name;
+      player_p2.score = theroom.set.set_p2.score;
+      player_p2.won = theroom.set.set_p2.won;
+      player_p2.name = theroom.set.set_p2.name;
       setp2id(theroom.set.set_p2.name);
     });
     socket.on("startGame_spec", (theroom: any) => {
@@ -107,8 +107,8 @@ export function GameSpectator(props: any) {
       setThisRoom(theroom.room_name);
     });
     socket.on("player_give_upem_spec", (theroom: any) => {
-      player_right.won = theroom.set.set_p2.won;
-      player_left.won = theroom.set.set_p1.won;
+      player_p2.won = theroom.set.set_p2.won;
+      player_p1.won = theroom.set.set_p1.won;
     });
     if (props.Specthegame === true && emit_to_get_room === true) {
       socket.emit("Specthegame", props.Room_name_spec);
@@ -125,23 +125,23 @@ export function GameSpectator(props: any) {
         ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       if (ctx) {
         /* ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (player_left.won === false && player_right.won === false) {
+        if (player_p1.won === false && player_p2.won === false) {
           draw_line(ctx, ballObj, canvas.height, canvas.width);
-          draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
+          draw_score(ctx, player_p1, player_p2, canvas.height, canvas.width);
           if (first_sinc === true) {
             if (gameSpecs.power === 4 || gameSpecs.power === 5
             || gameSpecs.power === 6 || gameSpecs.power === 7)
               draw_smasher(ctx, gameSpecs, ballObj, canvas.height, canvas.width);
             BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, power);
-            BallCol_left(ctx, gameSpecs, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
-            BallCol_right(ctx, gameSpecs, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
-            PaddleMouv_left(ctx, canvas, paddleProps_left);
-            PaddleMouv_right(ctx, canvas, paddleProps_right);
+            BallCol_p1(ctx, gameSpecs, player_p2, ballObj, paddleProps_p1, canvas.height, canvas.width);
+            BallCol_p2(ctx, gameSpecs, player_p1, ballObj, paddleProps_p2, canvas.height, canvas.width);
+            PaddleMouv_p1(ctx, canvas, paddleProps_p1);
+            PaddleMouv_p2(ctx, canvas, paddleProps_p2);
           }
           else
             draw_loading(ctx, canvas.height, canvas.width);
         } else {
-          draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
+          draw_score(ctx, player_p1, player_p2, canvas.height, canvas.width);
           cancelAnimationFrame(requestAnimationFrameId);
         } */
       }
@@ -156,13 +156,13 @@ export function GameSpectator(props: any) {
     emit_to_get_room = true;
     props.setSpecthegame(false);
     props.setisLookingRoom(true);
-    player_left.name = "null";
-    player_left.score = 0;
-    player_left.won = false;
+    player_p1.name = "null";
+    player_p1.score = 0;
+    player_p1.won = false;
 
-    player_right.name = "null";
-    player_right.score = 0;
-    player_right.won = false;
+    player_p2.name = "null";
+    player_p2.score = 0;
+    player_p2.won = false;
 
     ballObj.init_ball_pos = false;
     ballObj.first_col = false;
