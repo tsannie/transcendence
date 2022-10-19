@@ -184,64 +184,64 @@ export function GamePlayer_p1_p2(props: any) {
       //console.log("GET DATA SEND THE GAME");
 
 
-      console.log("lowerSize = ", lowerSize);
+      //console.log("lowerSize = ", lowerSize);
 
 
 
 
-      if (!game.set) {
+      if (!game) {
         console.log("NO SET front");
         return;
       }
       //setIBall(game.ball);
-      if (!game.set.ball)
+      if (!game.ball)
         console.log("NO BALL");
 
-      if (!game.set.p1_paddle_obj)
+      if (!game.p1_paddle_obj)
         console.log("NO PADDLE_p1");
-      if (!game.set.p2_paddle_obj)
+      if (!game.p2_paddle_obj)
         console.log("NO PADDLE_p2");
 
 
-      if (!game.set.set_p2)
+      if (!game.set_p2)
         console.log("NO PLAYER_p1");
-      if (!game.set.set_p1)
+      if (!game.set_p1)
         console.log("NO PLAYER_p2");
 
 
-/*       IPlayer_p1 = game.set.set_p1;
-      IPlayer_p2 = game.set.set_p2; */
+/*       IPlayer_p1 = game.set_p1;
+      IPlayer_p2 = game.set_p2; */
 
 
 
-      IPaddle_p1 = game.set.p1_paddle_obj;
+      IPaddle_p1 = game.p1_paddle_obj;
 
-/*       IPaddle_p1.x = game.set.p1_paddle_obj.x;
-      IPaddle_p1.y = game.set.p1_paddle_obj.y;
+/*       IPaddle_p1.x = game.p1_paddle_obj.x;
+      IPaddle_p1.y = game.p1_paddle_obj.y;
       
       
-      IPaddle_p1.width = game.set.p1_paddle_obj.width;
-      IPaddle_p1.height = game.set.p1_paddle_obj.height; */
+      IPaddle_p1.width = game.p1_paddle_obj.width;
+      IPaddle_p1.height = game.p1_paddle_obj.height; */
       
       const ratio_width = lowerSize / canvas_back_height;
       const ratio_height = (lowerSize / (ratio)) / (canvas_back_height / ratio);
 
-      IPaddle_p1.x = game.set.p1_paddle_obj.x * ratio_width;
-      IPaddle_p1.y = game.set.p1_paddle_obj.y * ratio_height;
+      IPaddle_p1.x = game.p1_paddle_obj.x * ratio_width;
+      IPaddle_p1.y = game.p1_paddle_obj.y * ratio_height;
   
-      IPaddle_p1.width = game.set.p1_paddle_obj.width * ratio_width;
-      IPaddle_p1.height = game.set.p1_paddle_obj.height * ratio_height;
+      IPaddle_p1.width = game.p1_paddle_obj.width * ratio_width;
+      IPaddle_p1.height = game.p1_paddle_obj.height * ratio_height;
 
       
       
       
-      IPaddle_p2 = game.set.p2_paddle_obj;
+      IPaddle_p2 = game.p2_paddle_obj;
 
-      IPaddle_p2.x = game.set.p2_paddle_obj.x * ratio_width;
-      IPaddle_p2.y = game.set.p2_paddle_obj.y * ratio_height;
+      IPaddle_p2.x = game.p2_paddle_obj.x * ratio_width;
+      IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height;
     
-      IPaddle_p2.width = game.set.p2_paddle_obj.width * ratio_width;
-      IPaddle_p2.height = game.set.p2_paddle_obj.height * ratio_height;
+      IPaddle_p2.width = game.p2_paddle_obj.width * ratio_width;
+      IPaddle_p2.height = game.p2_paddle_obj.height * ratio_height;
 
       //console.log("IPaddle_p1 = ", IPaddle_p1);
 
