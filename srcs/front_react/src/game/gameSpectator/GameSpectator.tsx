@@ -120,11 +120,11 @@ export function GameSpectator(props: any) {
     const render = () => {
       requestAnimationFrameId = requestAnimationFrame(render);
       let canvas: any = props.canvasRef.current;
-      var ctx = null;
+      let ctx = null;
       if (canvas)
         ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        /* ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (player_left.won === false && player_right.won === false) {
           draw_line(ctx, ballObj, canvas.height, canvas.width);
           draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
@@ -143,7 +143,7 @@ export function GameSpectator(props: any) {
         } else {
           draw_score(ctx, player_left, player_right, canvas.height, canvas.width);
           cancelAnimationFrame(requestAnimationFrameId);
-        }
+        } */
       }
     };
     render();

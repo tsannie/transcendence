@@ -1,6 +1,5 @@
 export function draw_line(
   ctx: any,
-  ballObj: any,
   canvas_height: number,
   canvas_width: number
 ) {
@@ -195,7 +194,7 @@ export function BallCol_left(
     ballObj.y + ballObj.rad >= paddleProps.y &&
     ballObj.y - ballObj.rad <= paddleProps.y + paddleProps.height
   ) {
-    var res = paddleProps.y + paddleProps.height - ballObj.y;
+    let res = paddleProps.y + paddleProps.height - ballObj.y;
     ballObj.ingame_dy = -(res / 10 - paddleProps.height / 20);
     
     gameSpecs.smash = 1;
@@ -232,7 +231,7 @@ export function BallCol_right(
     ballObj.y + ballObj.rad >= paddleProps.y &&
     ballObj.y - ballObj.rad <= paddleProps.y + paddleProps.height
   ) {
-    var res = paddleProps.y + paddleProps.height - ballObj.y;
+    let res = paddleProps.y + paddleProps.height - ballObj.y;
     ballObj.ingame_dy = -(res / 10 - paddleProps.height / 20);
 
     gameSpecs.smash = 1;
@@ -337,4 +336,27 @@ export function PaddleMouv_right(ctx: any, canvas: any, paddleProps: any) {
   if (paddleProps.y <= 0) paddleProps = 0;
   else if (paddleProps.y + paddleProps.height >= canvas.height)
     paddleProps.y = canvas.height - paddleProps.height;
+}
+
+
+export function draw_paddle(ctx: any , IPaddle : any, height : any, width : any){
+
+  //console.log (IPaddle);
+
+  ctx.beginPath();
+  ctx.rect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
+  ctx.fillStyle = "yellow";
+  ctx.lineWidth = 1;
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "blue";
+  ctx.strokeRect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
+  ctx.fill();
+}
+
+export function draw_ball(ctx: any , IBall : any, height : any, width : any){
+
+  let data = new Ball(IBall.x, IBall.y, IBall.rad);
+
+  ctx.fillStyle = "white";
+  data.draw(ctx);
 }

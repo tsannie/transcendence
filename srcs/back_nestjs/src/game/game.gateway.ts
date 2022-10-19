@@ -74,7 +74,9 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('createGameRoom')
   async CreateRoom(client: Socket, room: string) {
     
-    var room_game: GameEntity;
+    let room_game: GameEntity;
+
+
     if (room === '')
       room_game = await this.gameService.joinFastRoom(room);
     else
@@ -128,9 +130,11 @@ export class GameGateway implements OnGatewayInit {
       room_game.p1_ready = true;
     else if (room_game.p2 === client.id)
       room_game.p2_ready = true;
+
+    console.log("PRETETTT NOTMw");
     if (room_game.p2_ready === true && room_game.p1_ready === true) {
       room_game.game_started = true;
-      room_game.thedate = new Date();
+
       ////send withc power and witch map before the second player 
       ////can touth ready and if player ready cant change power and map 
       client.emit('readyGame', room_game);
@@ -145,6 +149,7 @@ export class GameGateway implements OnGatewayInit {
 
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
+    console.log("INNIT ALL ROOM= ", room)
 
     if (!room_game.set) {
       room_game.set = new SetEntity();
@@ -233,18 +238,17 @@ export class GameGateway implements OnGatewayInit {
     let room: string;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
+
     if (room_game) {
-      for (const [key, value] of Object.entries(room_game)) {
-        room = value.room_name;
-        if ((value.p1 === client.id || value.p2 === client.id) && value.game_started === false)
-          this.LeaveRoom(client, room);
-        if (value.p1 === client.id && value.nbr_co === 2 && value.game_started === true)
-          this.PlayerGiveUp(client, room);
-        else if (value.p2 === client.id && value.nbr_co === 2 && value.game_started === true)
-          this.PlayerGiveUp(client, room); 
-        else if (value.p1 === client.id || value.p2 === client.id)
-          this.EndOfTheGame(client, room);
-      }
+      room = room_game.room_name;
+      if ((room_game.p1 === client.id || room_game.p2 === client.id) && room_game.game_started === false)
+        this.LeaveRoom(client, room);
+      if (room_game.p1 === client.id && room_game.nbr_co === 2 && room_game.game_started === true)
+        this.PlayerGiveUp(client, room);
+      else if (room_game.p2 === client.id && room_game.nbr_co === 2 && room_game.game_started === true)
+        this.PlayerGiveUp(client, room); 
+      else if (room_game.p1 === client.id || room_game.p2 === client.id)
+        this.EndOfTheGame(client, room);
     }
   }
 
@@ -289,41 +293,111 @@ export class GameGateway implements OnGatewayInit {
   //////////////// PADDLE DATA
   ///////////////////////////////////////////////
 
+
   @SubscribeMessage('paddleMouvLeft')
   async Paddle_mouv_left(client: Socket, data: any) {
-    var room = data.room;
+    let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
+   // console.log("paddleMouvLeft!!!!!!");
 
     if (!room_game)
       return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + room + ']');
 
-    room_game.set.p1_paddle_obj.x = data.pd.x;
-    room_game.set.p1_paddle_obj.y = data.pd.y;
+/*       room_game.set.set_p1.canvas_width = data.canvas_width;
+      room_game.set.set_p1.canvas_height = data.canvas_height; */
 
-    if (room_game.spectator >= 1 && client.id === room_game.p1) {
+
+      room_game.set.p1_paddle_obj.x = 20;
+      room_game.set.p1_paddle_obj.y = data.paddle_y;
+      room_game.set.p1_paddle_obj.width = 20;
+      room_game.set.p1_paddle_obj.height = 100;
+  
+
+    await this.all_game.save(room_game);
+    client.to(room).emit('send_the_game', room_game);
+    client.emit('send_the_game', room_game);
+
+/*     if (room_game.spectator >= 1 && client.id === room_game.p1) {
       client.to(room).emit('mouvPaddleLeft_spec', room_game);
     }
     client.emit('mouvPaddleLeft', room_game);
-    client.to(room).emit('mouvPaddleLeft', room_game);
+    client.to(room).emit('mouvPaddleLeft', room_game); */
     return;
   }
 
   @SubscribeMessage('paddleMouvRight')
   async Paddle_mouv_right(client: Socket, data: any) {
-    var room = data.room;
+    let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
     if (!room_game) {
       return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + room + ']');
     }
-    room_game.set.p2_paddle_obj.x = data.pd.x;
-    room_game.set.p2_paddle_obj.y = data.pd.y;
-    if (room_game.spectator >= 1 && client.id === room_game.p2) {
+    //console.log("data.paddle_y : " + data.paddle_y);
+
+
+
+/*     room_game.set.set_p2.canvas_width = data.canvas_width;
+    room_game.set.set_p2.canvas_height = data.canvas_height;  */
+
+
+
+    room_game.set.p2_paddle_obj.x = 200;
+    room_game.set.p2_paddle_obj.y = data.paddle_y;
+    room_game.set.p2_paddle_obj.width = 20;
+    room_game.set.p2_paddle_obj.height = 100;
+
+
+/*     room_game.set.p2_paddle_obj.x = room_game.canvas_width - 40;
+    room_game.set.p2_paddle_obj.y = data.paddle_y;
+    room_game.set.p2_paddle_obj.width = room_game.canvas_width / 80;
+    room_game.set.p2_paddle_obj.height = room_game.canvas_height / 8; */
+    client.to(room).emit('send_the_game', room_game);
+    client.emit('send_the_game', room_game);
+
+    await this.all_game.save(room_game);
+
+/*     if (room_game.spectator >= 1 && client.id === room_game.p2) {
       client.to(room).emit('mouvPaddleRight_spec', room_game);
     }
     client.emit('mouvPaddleRight', room_game);
-    client.to(room).emit('mouvPaddleRight', room_game);
+    client.to(room).emit('mouvPaddleRight', room_game); */
+    return;
+  }
+
+  @SubscribeMessage('change_size_player_right')
+  async change_size_player_right(client: Socket, data: any) {
+/*     let room = data.room;
+    const room_game = await this.all_game.findOneBy({ room_name: room });
+
+    if (!room_game) {
+      return console.log(' GET SIZE CHAN !!!!! NO ROOM !!!! [' + room + ']');
+    }
+    console.log("GET SIZE CHANGED");
+
+   // room_game.set.p2_paddle_obj.x = data.canvas_width - 40;
+    await this.all_game.save(room_game); */
+    return;
+  }
+
+  @SubscribeMessage('change_size_player_left')
+  async change_size_player_left(client: Socket, data: any) {
+/*     let room = data.room;
+    const room_game = await this.all_game.findOneBy({ room_name: room });
+
+    if (room_game.canvas_height === 0)
+      room_game.canvas_height = data.canvas_height;
+    if (room_game.canvas_width === 0)
+      room_game.canvas_width = data.canvas_width;
+
+    if (!room_game) {
+      return console.log(' GET SIZE CHAN !!!!! NO ROOM !!!! [' + room + ']');
+    }
+    console.log("GET SIZE CHANGED");
+
+    room_game.set.p1_paddle_obj.x = 20;
+    await this.all_game.save(room_game); */
     return;
   }
 
@@ -333,7 +407,7 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('sincBall')
   async sinc_ball(client: Socket, data: any) {
-    var room = data.room;
+    let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
 
@@ -382,7 +456,7 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('playerActyLeft')
   async Player_actu_left(client: Socket, data: any) {
-    var room = data.room;
+    let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
     if (!room_game)
@@ -401,9 +475,9 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('playerActyRight')
   async Player_actu_right(client: Socket, data: any) {
 
+    let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
-    var room = data.room;
     if (!room_game)
       return ;
     room_game.set.set_p2.score = data.score;
@@ -415,5 +489,64 @@ export class GameGateway implements OnGatewayInit {
     client.to(room).emit('setDataPlayerRight', room_game);
     client.emit('setDataPlayerRight', room_game);
     return ;
+  }
+
+  ///////////////////////////////////////////////
+  ////////////// SINC ALL GAME AT ALL TIM
+  ///////////////////////////////////////////////
+
+
+  @SubscribeMessage('send_the_game')
+  async send_the_game(client: Socket, room: string) {
+    const room_game = await this.all_game.findOneBy({ room_name: room });
+    if (!room_game)
+    {console.log("NO ROOM GAME", room)
+    return ;
+    }
+    //console.log("room==========", room);
+   // console.log("SEND THE GAME");
+    //room_game.set.set_p1.score = data.score;
+    //console.log("room_Game.set.p1_paddle_obj.x = " + room_game.set.p1_paddle_obj.x);
+    //console.log("room_Game.set.p2_paddle_obj.y = " + room_game.set.p2_paddle_obj.y);
+
+    //console.log("im right = ", data.im_right);
+     if (room_game.set) {
+      if (room_game.set.ball) {
+        room_game.set.ball.x += 2//room_game.set.ball.first_dx;
+        room_game.set.ball.y += 2//room_game.set.ball.first_dy;
+        await this.all_game.save(room_game);
+      }
+      else
+        console.log("no ball")
+    } 
+    else
+      console.log("NO set");
+    //console.log("xx");
+    //BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, power);
+    //BallCol_left(ctx, gameSpecs, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
+    //BallCol_right(ctx, gameSpecs, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
+    //console.log("emit boucle")
+    //if (room_game.spectator >= 1)
+      //client.to(room).emit('sincTheGame_spec', room_game);
+      
+/*     if (data.im_right === true) {
+      room_game.set.p1_paddle_obj.x = 20;
+      room_game.set.p1_paddle_obj.y = data.paddle_y;
+      room_game.set.p1_paddle_obj.width = room_game.set.set_p1.canvas_width / 80;
+      room_game.set.p1_paddle_obj.height = room_game.set.set_p1.canvas_height / 8;
+    
+    }
+    else if (data.im_right === false) {
+
+      
+      room_game.set.p2_paddle_obj.x = room_game.set.set_p1.canvas_width - 40;
+      room_game.set.p2_paddle_obj.y = data.paddle_y;
+      room_game.set.p2_paddle_obj.width = room_game.set.set_p1.canvas_width / 80;
+      room_game.set.p2_paddle_obj.height = room_game.set.set_p1.canvas_height / 8;
+
+    }
+ */
+    client.to(room).emit('send_the_game', room_game);
+    client.emit('send_the_game', room_game);
   }
 }

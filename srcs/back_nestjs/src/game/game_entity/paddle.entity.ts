@@ -11,12 +11,9 @@ export class PaddleEntity {
   @Column({ nullable: true, type: 'float' })
   y: number;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true, type: 'float' })
   width: number;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true, type: 'float' })
   height: number;
-
-  @Column({ default: 'white' })
-  color: string = 'white';
 }

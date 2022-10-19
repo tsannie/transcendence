@@ -12,6 +12,13 @@ export class GameEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
+/*   @Column({ nullable: true, default: 0 , type: 'float'})
+  canvas_height: number = 0;
+
+  @Column({ nullable: true, default: 0 , type: 'float'})
+  canvas_width: number = 0; */
+
+
   @Column({ nullable: true })
   room_name: string;
 
