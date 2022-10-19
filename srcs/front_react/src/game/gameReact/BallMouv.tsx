@@ -18,7 +18,7 @@ export function draw_line(
 //// DRAW
 ////////////////////////
 
-export function draw_game_ended(im_right: boolean, ctx: any, player_left: any, player_right: any, canvas_height: number, canvas_width: number)
+export function draw_game_ended(im_p2: boolean, ctx: any, player_p1: any, player_p2: any, canvas_height: number, canvas_width: number)
 {
   ctx.beginPath();
   ctx.rect(0, 0, canvas_width, canvas_height);
@@ -28,9 +28,9 @@ export function draw_game_ended(im_right: boolean, ctx: any, player_left: any, p
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
   ctx.fillText("Game Ended", canvas_width / 2, canvas_height / 2);
-  if (player_left.won === true && im_right === false)
+  if (player_p1.won === true && im_p2 === false)
     ctx.fillText("YOU Won !", canvas_width / 2, canvas_height / 2 + 50);
-  else if (player_right.won === true && im_right === true)
+  else if (player_p2.won === true && im_p2 === true)
     ctx.fillText("YOU Won !!", canvas_width / 2, canvas_height / 2 + 50);
   else
     ctx.fillText("YOU Lost", canvas_width / 2, canvas_height / 2 + 50);
@@ -62,8 +62,8 @@ export function draw_giveup(
 
 export function draw_score(
   ctx: any,
-  player_left: any,
-  player_right: any,
+  player_p1: any,
+  player_p2: any,
   canvas_height: number,
   canvas_width: number
 ) {
@@ -74,20 +74,20 @@ export function draw_score(
   ctx.textAlign = "center";
 
   ctx.fillText(
-    player_left.score.toString() + "     " + player_right.score.toString(),
+    player_p1.score.toString() + "     " + player_p2.score.toString(),
     canvas_width / 2,
     canvas_height / 4
   );
 
-  if (player_left.won === 1)
+  if (player_p1.won === 1)
     ctx.fillText(
-      player_left.name + " WON !!!",
+      player_p1.name + " WON !!!",
       canvas_width / 2,
       canvas_height / 2
     );
-  else if (player_right.won === 1)
+  else if (player_p2.won === 1)
     ctx.fillText(
-      player_right.name + " WON !!!",
+      player_p2.name + " WON !!!",
       canvas_width / 2,
       canvas_height / 2
     );
@@ -171,22 +171,22 @@ export function BallMouv(
     ballObj.ball_way_y *= -1;
 }
 
-export function BallCol_left(
+export function BallCol_p1(
   ctx: any,
   gameSpecs: any,
-  player_right: any,
+  player_p2: any,
   ballObj: any,
   paddleProps: any,
   canvas_height: number,
   canvas_width: number
 ) {
-  if (player_right.score >= 10) {
-    player_right.won = true;
+  if (player_p2.score >= 10) {
+    player_p2.won = true;
   }
   else if (ballObj.x - ballObj.rad <= - (ballObj.rad * 3)) {
     ballObj.init_ball_pos = false;
     ballObj.first_col = false;
-    player_right.score += 1;
+    player_p2.score += 1;
   }
   else if ( ballObj.col_paddle === false &&
     ballObj.x - ballObj.rad <= paddleProps.x + paddleProps.width &&
@@ -208,22 +208,22 @@ export function BallCol_left(
 
 }
 
-export function BallCol_right(
+export function BallCol_p2(
   ctx: any,
   gameSpecs: any,
-  player_left: any,
+  player_p1: any,
   ballObj: any,
   paddleProps: any,
   canvas_height: number,
   canvas_width: number
 ) {
-  if (player_left.score >= 10) {
-    player_left.won = true;
+  if (player_p1.score >= 10) {
+    player_p1.won = true;
   }
   else if (ballObj.x + ballObj.rad >= canvas_width + (ballObj.rad * 3)) {
     ballObj.init_ball_pos = false;
     ballObj.first_col = false;
-    player_left.score += 1;
+    player_p1.score += 1;
   }
   else if ( ballObj.col_paddle === false &&
     ballObj.x + ballObj.rad >= paddleProps.x &&
@@ -269,7 +269,7 @@ class Ball {
 //// PADDLE FUNCTIONS
 ////////////////////////
 
-export function PaddleMouv_left(ctx: any, canvas: any, paddleProps: any) {
+export function PaddleMouv_p1(ctx: any, canvas: any, paddleProps: any) {
   class Paddle {
     x: number;
     y: number;
@@ -304,7 +304,7 @@ export function PaddleMouv_left(ctx: any, canvas: any, paddleProps: any) {
     paddleProps.y = canvas.height - paddleProps.height;
 }
 
-export function PaddleMouv_right(ctx: any, canvas: any, paddleProps: any) {
+export function PaddleMouv_p2(ctx: any, canvas: any, paddleProps: any) {
   class Paddle {
     x: number;
     y: number;

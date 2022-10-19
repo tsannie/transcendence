@@ -1,9 +1,9 @@
 import { Button, Grid, Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { socket } from "../Game";
-import { paddleProps_right } from "../Game";
+import { paddleProps_p2 } from "../Game";
 
-export function GamePlayer_right(props: any) {
+export function GamePlayer_p2(props: any) {
 
   // Mouve the paddle right with the mouse and send the data to the server to send it to the other player
 
@@ -28,7 +28,7 @@ export function GamePlayer_right(props: any) {
         canvas_height : lowerSize / screen_ratio,
         canvas_width : lowerSize,
       };
-      //socket.emit("change_size_player_right", data);
+      //socket.emit("change_size_player_p2", data);
 
     }
   }, [windowDimenion])
@@ -41,7 +41,7 @@ export function GamePlayer_right(props: any) {
     x: number;
     y: number;
   }
-/*   paddleProps_right: {
+/*   paddleProps_p2: {
     height: 100,
     width: 20,
     color: "white",
@@ -49,8 +49,8 @@ export function GamePlayer_right(props: any) {
     y: 5,
   }, */
 
-  function mouv_paddle_right(e: any) {
-    if (props.opready === true && props.im_right === true) {
+  function mouv_paddle_p2(e: any) {
+    if (props.opready === true && props.im_p2 === true) {
       let x: number;
       x = e.clientY;
 
@@ -79,7 +79,7 @@ export function GamePlayer_right(props: any) {
         ref={props.canvasRef}
         height={lowerSize / screen_ratio}
         width={lowerSize}
-        onMouseMove={(e) => mouv_paddle_right(e)}
+        onMouseMove={(e) => mouv_paddle_p2(e)}
         style={{ backgroundColor: "black" }}
         ></canvas>
 

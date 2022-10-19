@@ -21,11 +21,11 @@ interface IPlayer {
 export interface IGame {
   ballObj: IBallObj;
 
-  paddleProps_left: IPaddleProps;
-  paddleProps_right: IPaddleProps;
+  paddleProps_p1: IPaddleProps;
+  paddleProps_p2: IPaddleProps;
   
-  player_left: IPlayer;
-  player_right: IPlayer;
+  player_p1: IPlayer;
+  player_p2: IPlayer;
 }
 
 //export default IGame;

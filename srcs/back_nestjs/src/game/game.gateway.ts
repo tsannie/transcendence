@@ -9,6 +9,7 @@ import {
 import { Server } from 'http';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
+import { canvas_back_height } from './const/const';
 import { BallEntity } from './game_entity/ball.entity';
 import { GameEntity } from './game_entity/game.entity';
 import { PaddleEntity } from './game_entity/paddle.entity';
@@ -295,7 +296,7 @@ export class GameGateway implements OnGatewayInit {
 
 
   @SubscribeMessage('paddleMouvLeft')
-  async Paddle_mouv_left(client: Socket, data: any) {
+  async Paddle_mouv_p1(client: Socket, data: any) {
     let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
@@ -308,10 +309,10 @@ export class GameGateway implements OnGatewayInit {
       room_game.set.set_p1.canvas_height = data.canvas_height; */
 
 
-      room_game.set.p1_paddle_obj.x = 20;
+      room_game.set.p1_paddle_obj.x = 50;
       room_game.set.p1_paddle_obj.y = data.paddle_y;
-      room_game.set.p1_paddle_obj.width = 20;
-      room_game.set.p1_paddle_obj.height = 100;
+      room_game.set.p1_paddle_obj.width = 80;
+      room_game.set.p1_paddle_obj.height = 200;
   
 
     await this.all_game.save(room_game);
@@ -327,7 +328,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   @SubscribeMessage('paddleMouvRight')
-  async Paddle_mouv_right(client: Socket, data: any) {
+  async Paddle_mouv_p2(client: Socket, data: any) {
     let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
@@ -336,17 +337,24 @@ export class GameGateway implements OnGatewayInit {
     }
     //console.log("data.paddle_y : " + data.paddle_y);
 
+    // 1626
+    // 1626 / (16/9) = 1080
+/* 1000/ (16/9) = 562.5
 
+1000 / 2000 = 0.5
+
+562.5 / 1052 = 0.534 */
 
 /*     room_game.set.set_p2.canvas_width = data.canvas_width;
     room_game.set.set_p2.canvas_height = data.canvas_height;  */
 
 
-
-    room_game.set.p2_paddle_obj.x = 200;
+//2000/(19/9) = 1052.6315789473684
+  
+    room_game.set.p2_paddle_obj.x = canvas_back_height - 50 - 80;
     room_game.set.p2_paddle_obj.y = data.paddle_y;
-    room_game.set.p2_paddle_obj.width = 20;
-    room_game.set.p2_paddle_obj.height = 100;
+    room_game.set.p2_paddle_obj.width = 80;
+    room_game.set.p2_paddle_obj.height = 200;
 
 
 /*     room_game.set.p2_paddle_obj.x = room_game.canvas_width - 40;
@@ -366,8 +374,8 @@ export class GameGateway implements OnGatewayInit {
     return;
   }
 
-  @SubscribeMessage('change_size_player_right')
-  async change_size_player_right(client: Socket, data: any) {
+  @SubscribeMessage('change_size_player_p2')
+  async change_size_player_p2(client: Socket, data: any) {
 /*     let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
@@ -381,8 +389,8 @@ export class GameGateway implements OnGatewayInit {
     return;
   }
 
-  @SubscribeMessage('change_size_player_left')
-  async change_size_player_left(client: Socket, data: any) {
+  @SubscribeMessage('change_size_player_p1')
+  async change_size_player_p1(client: Socket, data: any) {
 /*     let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
@@ -455,7 +463,7 @@ export class GameGateway implements OnGatewayInit {
   ///////////////////////////////////////////////
 
   @SubscribeMessage('playerActyLeft')
-  async Player_actu_left(client: Socket, data: any) {
+  async Player_actu_p1(client: Socket, data: any) {
     let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
@@ -473,7 +481,7 @@ export class GameGateway implements OnGatewayInit {
   }
 
   @SubscribeMessage('playerActyRight')
-  async Player_actu_right(client: Socket, data: any) {
+  async Player_actu_p2(client: Socket, data: any) {
 
     let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
@@ -509,7 +517,7 @@ export class GameGateway implements OnGatewayInit {
     //console.log("room_Game.set.p1_paddle_obj.x = " + room_game.set.p1_paddle_obj.x);
     //console.log("room_Game.set.p2_paddle_obj.y = " + room_game.set.p2_paddle_obj.y);
 
-    //console.log("im right = ", data.im_right);
+    //console.log("im right = ", data.im_p2);
      if (room_game.set) {
       if (room_game.set.ball) {
         room_game.set.ball.x += 2//room_game.set.ball.first_dx;
@@ -523,20 +531,20 @@ export class GameGateway implements OnGatewayInit {
       console.log("NO set");
     //console.log("xx");
     //BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, power);
-    //BallCol_left(ctx, gameSpecs, player_right, ballObj, paddleProps_left, canvas.height, canvas.width);
-    //BallCol_right(ctx, gameSpecs, player_left, ballObj, paddleProps_right, canvas.height, canvas.width);
+    //BallCol_p1(ctx, gameSpecs, player_p2, ballObj, paddleProps_p1, canvas.height, canvas.width);
+    //BallCol_p2(ctx, gameSpecs, player_p1, ballObj, paddleProps_p2, canvas.height, canvas.width);
     //console.log("emit boucle")
     //if (room_game.spectator >= 1)
       //client.to(room).emit('sincTheGame_spec', room_game);
       
-/*     if (data.im_right === true) {
+/*     if (data.im_p2 === true) {
       room_game.set.p1_paddle_obj.x = 20;
       room_game.set.p1_paddle_obj.y = data.paddle_y;
       room_game.set.p1_paddle_obj.width = room_game.set.set_p1.canvas_width / 80;
       room_game.set.p1_paddle_obj.height = room_game.set.set_p1.canvas_height / 8;
     
     }
-    else if (data.im_right === false) {
+    else if (data.im_p2 === false) {
 
       
       room_game.set.p2_paddle_obj.x = room_game.set.set_p1.canvas_width - 40;
