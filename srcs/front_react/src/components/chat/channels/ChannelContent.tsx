@@ -36,6 +36,7 @@ export default function ChannelContent(props: ChannelContentProps) {
               {props.channelData.status === "owner" && (
                 <ChannelMoreInfos
                   channelData={props.channelData}
+                  getChannelDatas={props.getChannelDatas}
                 />
               )}
             </Box>

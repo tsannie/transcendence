@@ -23,12 +23,12 @@ export type MessagesContextType = {
 
 export const MessagesContext = createContext<MessagesContextType>({
   messagesList: [],
-  setMessagesList: () => {},
-  loadMessages: () => {},
+  setMessagesList: () => { },
+  loadMessages: () => { },
   isDm: true,
-  setIsDm: () => {},
+  setIsDm: () => { },
   convId: 0,
-  setConvId: () => {},
+  setConvId: () => { },
 });
 
 interface MessagesContextProps {
@@ -37,10 +37,6 @@ interface MessagesContextProps {
 
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [isDm, setIsDm] = useState(true);
-  // const [messagesList, setMessagesList] = useState<any[]>([]);
-  // const [convId, setConvId] = useState(0);
-
-  console.log('zigounette')
   const [messageState, setMessageState] = useState<{
     currentConvId: number;
     messages: any[];
@@ -70,32 +66,35 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   async function loadMessages(id: number, isDm: boolean) {
     if (isDm === true) {
-      const messageList = await api
-        .get("message/dm", {
+      try {
+        const messageList = await api.get("message/dm", {
           params: {
             id: id, // id du dm
             offset: 0,
           },
-        })
-
-      setMessages(messageList.data)
-    }
-
-    await api
-      .get("message/channel", {
-        params: {
-          id: id, // id du channel
-          offset: 0,
-        },
-      })
-      .then((res) => {
-        console.log("channel data = ", res.data);
-        setMessages(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid messages");
+        });
+        setMessages(messageList.data);
+      } catch (res) {
         console.log(res);
-      });
+      }
+    }
+    else {
+      await api
+        .get("message/channel", {
+          params: {
+            id: id, // id du channel
+            offset: 0,
+          },
+        })
+        .then((res) => {
+          console.log("channel data = ", res.data);
+          setMessages(res.data);
+        })
+        .catch((res) => {
+          console.log("invalid messages");
+          console.log(res);
+        });
+    }
   }
 
   useEffect(() => {
@@ -109,7 +108,6 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
       };
 
       setMessageState((oldMessageState) => {
-        console.log('--- OLD STATE ---', oldMessageState, newMsg)
         if (oldMessageState.currentConvId === newMsg.convId) {
           return {
             ...oldMessageState,
