@@ -14,7 +14,7 @@ import {
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id?: number;  // TODO remove ? ith new object
 
   @Column({ unique: true })
   username: string;

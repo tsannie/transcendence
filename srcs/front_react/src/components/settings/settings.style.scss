@@ -1,0 +1,108 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  border-style: dashed;
+  padding: 2%;
+
+  input {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    &:focus {
+      outline: none !important;
+    }
+    border: dashed;
+    background: transparent;
+    width: 25%;
+  }
+
+  img {
+    width: calc(220 * var(--res));    // TODO depace to qr code div
+    //filter: invert(100%);
+  }
+  h2 {
+    margin-bottom: 0;
+    margin-top: 2vh;
+  }
+  p {
+    margin-bottom: 0vh;
+    margin-top: 0.6vh;
+  }
+  button, input {
+    margin-top: 0vh;
+  }
+}
+
+.settings__editable {
+  display: flex;
+  align-items: center;
+  svg {
+    margin-left: calc(5 * var(--res));
+    cursor: pointer;
+    width: calc(25 * var(--res));
+  }
+  svg:hover {
+    filter: invert(40%);
+  }
+
+  svg:active {
+    filter: invert(70%);
+  }
+}
+
+.settings__picture {
+  position: relative;
+  img, svg {
+    border-style: dashed;
+    border-radius: 50%;
+    width: calc(128 * var(--res));
+    height: calc(128 * var(--res));
+    object-fit: cover;
+    transition: .3s ease;
+    z-index: 0;
+  }
+  input {
+    display:none;
+  }
+}
+
+.settings__picture__profile {
+  opacity: 1;
+  display: block;
+}
+
+.settings__picture__edit {
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  z-index: 99;
+}
+
+.settings__picture:hover .settings__picture__profile {
+  opacity: 0.20;
+}
+
+.settings__picture:hover .settings__picture__edit {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.settings__title {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.settings__2fa__validation {
+  display: flex;
+  button {
+    margin-left: 2vw;
+  }
+  input {
+    text-align: center;
+  }
+}
+
