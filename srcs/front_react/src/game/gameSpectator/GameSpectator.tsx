@@ -89,13 +89,13 @@ export function GameSpectator(props: any) {
       paddleProps_p2.x = theroom.set.p2_paddle_obj.x;
       paddleProps_p2.y = theroom.set.p2_paddle_obj.y;
     });
-    socket.on("setDataPlayerLeft_spec", (theroom: any) => {
+    socket.on("setDataP1_spec", (theroom: any) => {
       player_p1.score = theroom.set.set_p1.score;
       player_p1.won = theroom.set.set_p1.won;
       player_p1.name = theroom.set.set_p1.name;
       setp1id(theroom.set.set_p1.name);
     });
-    socket.on("setDataPlayerRight_spec", (theroom: any) => {
+    socket.on("setDataP2_spec", (theroom: any) => {
       player_p2.score = theroom.set.set_p2.score;
       player_p2.won = theroom.set.set_p2.won;
       player_p2.name = theroom.set.set_p2.name;
