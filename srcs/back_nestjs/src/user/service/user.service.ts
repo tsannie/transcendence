@@ -124,7 +124,7 @@ export class UserService {
       relations: {
         owner_of: true,
         channels: true,
-        banned: true,
+        blocked: true,
         admin_of: true,
       },
     });
@@ -153,7 +153,7 @@ export class UserService {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 
-  async banUser(target: string, requester: UserEntity): Promise<UserEntity> {
+  async blockUser(target: string, requester: UserEntity): Promise<UserEntity> {
     if (target === requester.username)
       throw new UnprocessableEntityException(`Cannot ban yourself.`);
     let toBan = await this.findByName(target);
@@ -162,24 +162,24 @@ export class UserService {
         `Cannot find a ${target} in database.`,
       );
     else {
-      if (!requester.banned) requester.banned = [toBan];
+      if (!requester.blocked) requester.blocked = [toBan];
       else {
-        if (requester.banned.find((elem) => elem.username === target))
+        if (requester.blocked.find((elem) => elem.username === target))
           throw new UnprocessableEntityException(
-            `You've already banned ${target}`,
+            `You've already blocked ${target}`,
           );
-        else requester.banned.push(toBan);
+        else requester.blocked.push(toBan);
       }
     }
     return await this.allUser.save(requester);
   }
 
-	async unBanUser(target: string, requester: UserEntity) : Promise<UserEntity> {
+	async unBlockUser(target: string, requester: UserEntity) : Promise<UserEntity> {
 		if (target === requester.username)
 			throw new UnprocessableEntityException(`Cannot unban yourself.`);
-		if (!requester.banned || !requester.banned.find( banned_guys => banned_guys.username === target))
-			throw new UnprocessableEntityException(`${target} is not banned.`);
-		requester.banned = requester.banned.filter( banned_guys => banned_guys.username !== target );
+		if (!requester.blocked || !requester.blocked.find( blocked_guys => blocked_guys.username === target))
+			throw new UnprocessableEntityException(`${target} is not blocked.`);
+		requester.blocked = requester.blocked.filter( blocked_guys => blocked_guys.username !== target );
 		return await this.allUser.save(requester);
 	}
 
