@@ -46,16 +46,20 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.profile__header__search__item {
+  display: flex;
+  border-style: dashed;
+  width: 80%;
+
   svg {
     width: calc(35 * var(--res));
   }
 
-  .profile__header__search__item {
-    display: flex;
-    border-style: dashed;
-    width: 80%;
-    input {
-      width: 100%;
-    }
+  input {
+    width: 100%;
+    border-style: none;
   }
 }
+
