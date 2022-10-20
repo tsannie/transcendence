@@ -29,8 +29,26 @@ function Profile() {
           </div>
         </div>
       </div>
+      <hr />
       <div className="profile__stats">
-        <div className="profile__stats__item"></div>
+
+        <div className="profile__stats__item">
+          <h3>0</h3>
+          <span>Matches</span>
+        </div>
+        <div className="profile__stats__item">
+          <h3>0</h3>
+          <span>Win Rate</span>
+        </div>
+        <div className="profile__stats__item">
+          <h3>0</h3>
+          <span>Rank</span>
+        </div>
+        <div className="profile__stats__item">
+          <h3>0</h3>
+          <span>Classement</span>
+        </div>
+
       </div>
       <div className="profile__body"></div>
     </div>
