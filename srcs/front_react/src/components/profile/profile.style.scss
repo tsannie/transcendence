@@ -63,3 +63,19 @@
   }
 }
 
+.profile__stats {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile__stats__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-style: dashed;
+  width: 30%;
+  margin: calc(10 * var(--res));
+  font-size: calc(30 * var(--res));
+}
+

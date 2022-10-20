@@ -29,4 +29,9 @@
     0% { transform: scale(0); }
     100% { transform: scale(1); }
   }
+
+  hr {
+    width: 97%;
+    border-style: none none dashed;
+  }
 }
