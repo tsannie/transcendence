@@ -1,46 +1,24 @@
 import { Box, Button, Grid, radioClasses } from "@mui/material";
 import { useEffect, useState } from "react";
+import { screen_ratio } from "../const/const";
 import { socket } from "../Game";
 import { paddleProps_p1 } from "../Game";
 
+
 export function GamePlayer_p1(props: any) {
-
-  const [windowDimenion, detectHW] = useState({winWidth: window.innerWidth, winHeight: window.innerHeight,})
-  const [lowerSize, setLowerSize] = useState((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth));
-  const screen_ratio = 16/9;
-
-  const detectSize = () => {
-    detectHW({
-      winWidth: window.innerWidth,
-      winHeight: window.innerHeight,
-    })
-  }
-
-  useEffect(() => {
-    window.addEventListener('resize', detectSize)
-    return () => {
-      window.removeEventListener('resize', detectSize)
-      setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
-      let data = {
-        room: props.room,
-        canvas_height : lowerSize / screen_ratio,
-        canvas_width : lowerSize,
-      };
-     // socket.emit("change_size_player_p1", data);
-    }
-  }, [windowDimenion])
-  
 
   // Mouve the paddle left with the mouse and send the data to the server to send it to the other player
   function mouv_paddle_p1(e: any) {
     if (props.opready === true && props.im_p2 === false) {
-      let x: number;
-      x = e.clientY;
+      let pos_paddle_y: number;
+      let pos_paddle_y_ratio: number;
+
+      pos_paddle_y = e.clientY //* (lowerSize / screen_ratio);
 
       let data = {
         room: props.room,
-        paddle_y : x,
-        lowerSize : lowerSize,
+        paddle_y : pos_paddle_y,
+        lowerSize : props.plowerSize,
       };
       socket.emit("paddleMouvLeft", data);
     }
@@ -48,20 +26,20 @@ export function GamePlayer_p1(props: any) {
 
 
   return (
-    <Grid
-      container
+    <div
+/*       container
       spacing={0}
       direction="column"
       alignItems="center"
       justifyContent="center"
-      style={{ minHeight: "50vmin" }}
+      style={{ minHeight: "50vmin" }} */
     >
 
       <canvas
         id="canvas"
         ref={props.canvasRef}
-        height={lowerSize / screen_ratio}
-        width={lowerSize}
+        height={props.plowerSize / screen_ratio}
+        width={props.plowerSize}
         onMouseMove={(e) => mouv_paddle_p1(e)}
         style={{ backgroundColor: "black" }}
         ></canvas>
@@ -93,6 +71,6 @@ export function GamePlayer_p1(props: any) {
               <h1 style={{ color: "black", textAlign: "center" }}> VS </h1>
               <h2 style={{ color: "red", textAlign: "right" }}>{props.op_id}</h2>
             </Box> */}
-    </Grid>
+    </div>
   );
 }
