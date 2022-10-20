@@ -16,6 +16,8 @@ interface AdminsActionsProps {
   userTargeted: any;
   getChannelDatas: any;
   channelData: any;
+  setBannedOpen: any;
+  setUsersOpen: any;
 }
 
 export default function AdminsActions(props: AdminsActionsProps) {
@@ -54,12 +56,14 @@ export default function AdminsActions(props: AdminsActionsProps) {
             userTargeted={props.userTargeted}
             getChannelDatas={props.getChannelDatas}
             channelData={props.channelData}
+            setUsersOpen={props.setUsersOpen}
           />
         ) : (
           <UnbanUser
             userTargeted={props.userTargeted}
             getChannelDatas={props.getChannelDatas}
             channelData={props.channelData}
+            setBannedOpen={props.setBannedOpen}
           />
         )}
       </ListItem>

@@ -9,12 +9,14 @@ interface UnbanUserProps {
   userTargeted: any;
   getChannelDatas: any;
   channelData: any;
+  setBannedOpen: any;
 }
 
 export default function UnbanUser(props: UnbanUserProps) {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     unbanUser(props.userTargeted, props.channelData);
     props.getChannelDatas(props.channelData.data.name);
+    props.setBannedOpen(false);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
