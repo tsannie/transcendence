@@ -10,6 +10,7 @@ interface BanUserProps {
   userTargeted: any;
   getChannelDatas: any;
   channelData: any;
+  setUsersOpen: any;
 }
 
 export default function BanUser(props: BanUserProps) {
@@ -19,6 +20,7 @@ export default function BanUser(props: BanUserProps) {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     banUser(props.userTargeted, props.channelData);
     props.getChannelDatas(props.channelData.data.name);
+    props.setUsersOpen(false);
     getUser();
   }
 

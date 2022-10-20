@@ -16,6 +16,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { UserContext } from "../../../contexts/UserContext";
+import UnbanUser from "./admins/UnbanUser";
 
 interface InfosChannelsProps {
   getChannelDatas: any;
@@ -23,18 +24,20 @@ interface InfosChannelsProps {
 }
 
 export default function InfosChannels(props: InfosChannelsProps) {
-  const [channelId, setChannelId] = useState(0);
-  const [displayAdminActions, setDisplayAdminActions] = useState(false);
-  const [open, setOpen] = React.useState(true);
-  //const { channelData } = useContext(ChannelsContext);
-  const { userConnected } = useContext(UserContext);
+  const [adminsOpen, setAdminsOpen] = useState(false);
+  const [usersOpen, setUsersOpen] = useState(false);
+  const [bannedOpen, setBannedOpen] = useState(false);
 
-  function handleClick(event: any) {
+  function handleClickAdmins() {
+    setAdminsOpen(!adminsOpen);
+  }
+  function handleClickUsers() {
     console.log("click on user who i wnat to ban, mute etc");
     console.log("channel", props.channelData);
-    setDisplayAdminActions(true);
-    //props.getChannelsUserlist();
-    setOpen(!open);
+    setUsersOpen(!usersOpen);
+  }
+  function handleClickBanned() {
+    setBannedOpen(!bannedOpen);
   }
 
   return (
@@ -43,18 +46,9 @@ export default function InfosChannels(props: InfosChannelsProps) {
         <List>
           Owner
           <ListItem key={props.channelData.data.name}>
-            <ListItemButton
-              onClick={handleClick}
-              disabled={
-                userConnected.username !== props.channelData.data.owner.username
-              }
-            >
-              {
-                <ListItemText>
-                  {props.channelData.data.owner.username}
-                </ListItemText>
-              }
-            </ListItemButton>
+            <ListItemText>
+              {props.channelData.data.owner.username}
+            </ListItemText>
           </ListItem>
         </List>
       </Grid>
@@ -65,17 +59,19 @@ export default function InfosChannels(props: InfosChannelsProps) {
           {props.channelData.data.admins.map((user: any) => (
             <ListItem key={user.username}>
               <ListItemButton
-                onClick={handleClick}
+                onClick={handleClickAdmins}
                 disabled={props.channelData.status !== "owner"}
               >
                 <ListItemText primary={user.username}></ListItemText>
-                {open ? <ExpandLess /> : <ExpandMore />}
+                {adminsOpen ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-              <Collapse in={open} timeout="auto" unmountOnExit>
+              <Collapse in={adminsOpen} timeout="auto" unmountOnExit>
                 <AdminsActions
                   userTargeted={user}
                   getChannelDatas={props.getChannelDatas}
                   channelData={props.channelData}
+                  setBannedOpen={setBannedOpen}
+                  setUsersOpen={setUsersOpen}
                 />
               </Collapse>
             </ListItem>
@@ -89,20 +85,22 @@ export default function InfosChannels(props: InfosChannelsProps) {
           {props.channelData.data.users.map((user: any) => (
             <ListItem key={user.username}>
               <ListItemButton
-                onClick={handleClick}
+                onClick={handleClickUsers}
                 disabled={
                   props.channelData.status !== "owner" &&
                   props.channelData.status !== "admin"
                 }
               >
                 <ListItemText primary={user.username}></ListItemText>
-                {open ? <ExpandLess /> : <ExpandMore />}
+                {usersOpen ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-              <Collapse in={!open} timeout="auto" unmountOnExit>
+              <Collapse in={usersOpen} timeout="auto" unmountOnExit>
                 <AdminsActions
                   userTargeted={user}
                   getChannelDatas={props.getChannelDatas}
                   channelData={props.channelData}
+                  setBannedOpen={setBannedOpen}
+                  setUsersOpen={setUsersOpen}
                 />
               </Collapse>
             </ListItem>
@@ -110,28 +108,31 @@ export default function InfosChannels(props: InfosChannelsProps) {
         </List>
       </Grid>
       {props.channelData.data.banned &&
-      props.channelData.data.banned.length > 0 ? (
+        props.channelData.data.banned.length > 0 ? (
         <Grid item>
           <List>
             Banned
             {props.channelData.data.banned.map((user: any) => (
               <ListItem key={user.username}>
                 <ListItemButton
-                  onClick={handleClick}
+                  onClick={handleClickBanned}
                   disabled={
                     props.channelData.status !== "owner" &&
                     props.channelData.status !== "admin"
                   }
                 >
                   <ListItemText primary={user.username}></ListItemText>
-                  {open ? <ExpandLess /> : <ExpandMore />}
+                  {bannedOpen ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
-                <Collapse in={!open} timeout="auto" unmountOnExit>
-                  <AdminsActions
-                    userTargeted={user}
-                    getChannelDatas={props.getChannelDatas}
-                    channelData={props.channelData}
-                  />
+                <Collapse in={bannedOpen} timeout="auto" unmountOnExit>
+                  <ListItem>
+                    <UnbanUser
+                      userTargeted={user}
+                      getChannelDatas={props.getChannelDatas}
+                      channelData={props.channelData}
+                      setBannedOpen={setBannedOpen}
+                    />
+                  </ListItem>
                 </Collapse>
               </ListItem>
             ))}

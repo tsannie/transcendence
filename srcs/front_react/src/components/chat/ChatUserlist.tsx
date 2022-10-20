@@ -28,6 +28,7 @@ interface ChatUserListProps {
 export default function ChatUserlist(props: ChatUserListProps) {
   const { userConnected, users } = useContext(UserContext);
   const { getDmsList } = useContext(DmsContext);
+  const { loadMessages } = useContext(MessagesContext);
 
   function handleClick(username: string) {
     createNewConv(username);
@@ -40,7 +41,9 @@ export default function ChatUserlist(props: ChatUserListProps) {
       .then((res) => {
         console.log("dm created with success");
         console.log(targetUsername);
+        console.log("dm created = ", res.data);
         getDmsList();
+        loadMessages(res.data.id, true);
       })
       .catch((res) => {
         console.log("invalid create dm");
