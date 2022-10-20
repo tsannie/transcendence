@@ -9,6 +9,8 @@ import {
 import { UserEntity } from '../models/user.entity';
 import * as sharp from 'sharp';
 import * as fs from 'fs';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map } from 'rxjs';
 
 export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
 
@@ -31,7 +33,7 @@ export class UserService {
   constructor(
 	@InjectRepository(UserEntity)
 	private allUser: Repository<UserEntity>,
-
+  private readonly httpService: HttpService,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -189,10 +191,10 @@ export class UserService {
 
 	/* This function is responsible of resizing images in a square shape according to the inputed format
 	and save it locally in a jpeg format. Eamples : "1_512.jpg" or "12_128.jpg" */
-	async resizeImage(size: number, file: Express.Multer.File, user: UserEntity){
+	async resizeImage(size: number, bufferized_img: Buffer, user: UserEntity){
 		this.createDirectory();
 
-    await sharp(file.buffer)
+    await sharp(bufferized_img)
 		.resize(size, size)
 		.toFile(`${AVATAR_DEST}/${user.id}_${size}.jpg`)
 		.catch( err =>
@@ -202,16 +204,25 @@ export class UserService {
 			);
 	}
 
+  async add42DefaultAvatar(url: string, user: UserEntity) : Promise<void | UserEntity>{
+    this.httpService.get(url, { responseType: 'arraybuffer'})
+      .subscribe(
+        async (response) => {
+            return await this.addAvatar(Buffer.from(response.data), user);
+          }
+      )
+  }
+
 	/* This function add avatar after resizing it two times in the form of static .jpg files and
 	register the keyname to access these files later in db. Size of those pictures can be changed
 	a bit higher in this file (MEDIUM_PIC and SMALL_PIC)*/
-	async addAvatar(file: Express.Multer.File, user: UserEntity) : Promise<UserEntity> {
+	async addAvatar(bufferized_img: Buffer, user: UserEntity) : Promise<UserEntity> {
 		if (user.profile_picture)
 			this.deleteAvatar(user);
 
     /* This apply the resizing function to all type of size available */
-		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, file, user) });
-	
+		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, bufferized_img, user) });
+  
     user.profile_picture = `${process.env.BACK_URL}/user/avatar?id=${user.id}`;
     return await this.allUser.save(user);
 	}
@@ -227,8 +238,8 @@ export class UserService {
 
 		if (!user)
 			throw new UnprocessableEntityException("Cannot find user corresponding to that id");
-
-		return `${AVATAR_DEST}/${user.id}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
+    else
+		  return `${AVATAR_DEST}/${user.id}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
 		}
 
 	/* This function delete the avatars of the user*/
@@ -239,7 +250,6 @@ export class UserService {
 			{
         /* This function apply a deletion function to every size available on nest server */
 				AVATAR_SIZES.forEach( (size) => {fs.unlinkSync(`${AVATAR_DEST}/${user.id}_${size}.jpg`);})
-        user.profile_picture = null;
 			}
 			catch (err)
 			{
