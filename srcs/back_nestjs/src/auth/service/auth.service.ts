@@ -34,7 +34,6 @@ export class AuthService {
 
   async getCookie(user: any, isSecondFactor = false): Promise<IToken> { // TODO replace by the entity ??
     const payload: IPayload = {
-      username: user.username,
       sub: user.id, // sub for jwt norm
       isSecondFactor: isSecondFactor,
     };
