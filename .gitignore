@@ -4,3 +4,6 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+srcs/back_nestjs/dist
+srcs/back_nestjs/node_modules
+srcs/back_nestjs/datas
