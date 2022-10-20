@@ -14,11 +14,12 @@ import {
   draw_ball,
 } from "./BallMouv";
 
-import { GamePlayer_p1 } from "./GamePlayerLeft";
-import { GamePlayer_p2 } from "./GamePlayerRight";
+import { GamePlayer_p1 } from "./GameP1";
+import { GamePlayer_p2 } from "./GameP2";
 /* import { ballObj, gameSpecs, paddleProps_p1, paddleProps_p2, player_p1, player_p2 } from "../Game"; */
 import { ContactSupport } from "@material-ui/icons";
-import { canvas_back_height } from "../const/const";
+import { canvas_back_height, screen_ratio } from "../const/const";
+import { GamePlayer_all } from "./GamePlayer_all";
 
 interface IBall {
   x: number;
@@ -44,8 +45,7 @@ interface IPlayer {
 export function GamePlayer_p1_p2(props: any) {
   const [power, setpower] = useState(0);
   const [date, setdate] = useState(new Date());
-  const [lowerSize, setLowerSize] = useState((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth));
-/* 
+  /* 
   const [IPaddle_p1, setIPaddle_p1] = useState<IPaddle>({ x: 0, y: 0 });
   const [IPaddle_p2, setIPaddle_p2] = useState<IPaddle>({ x: 0, y: 0 });
 
@@ -56,10 +56,9 @@ export function GamePlayer_p1_p2(props: any) {
 
   let IPlayer_p1 : IPlayer = { name: "", score: 0, won: false };
   let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false };
-  const ratio = 16/9;
   let IPaddle_p1 : IPaddle = { x: 0, y: 0, height: 0, width: 0 };
   let IPaddle_p2 : IPaddle = { x: 0, y: 0, height: 0, width: 0 };
-
+  
   let IBall : IBall = { x: 0, y: 0, rad: 0};
 
    enum powerEnum {
@@ -73,6 +72,23 @@ export function GamePlayer_p1_p2(props: any) {
     speed_bigball_smach = 7,
   }
   
+  const [lowerSize, setLowerSize] = useState((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth));
+  const [HW, setdetectHW] = useState({winWidth: window.innerWidth, winHeight: window.innerHeight,})
+  const detectSize = () => {
+    setdetectHW({
+      winWidth: window.innerWidth,
+      winHeight: window.innerHeight,
+    })
+  }
+  useEffect(() => {
+    window.addEventListener('resize', detectSize)
+    return () => {
+      window.removeEventListener('resize', detectSize)
+      setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
+      //console.log("+++setLowerSize", lowerSize);
+    }
+  }, [HW])
+
   let x = 0;
   let u = 0;
 /*   useEffect(() => {
@@ -122,12 +138,12 @@ export function GamePlayer_p1_p2(props: any) {
       paddleProps_p2.x = theroom.set.p2_paddle_obj.x;
       paddleProps_p2.y = theroom.set.p2_paddle_obj.y;
     });
-    socket.on("setDataPlayerLeft", (theroom: any) => {
+    socket.on("setDataP1", (theroom: any) => {
       player_p1.score = theroom.set.set_p1.score;
       player_p1.won = theroom.set.set_p1.won;
       player_p1.name = theroom.set.set_p1.name;
     });
-    socket.on("setDataPlayerRight", (theroom: any) => {
+    socket.on("setDataP2", (theroom: any) => {
       player_p2.score = theroom.set.set_p2.score;
       player_p2.won = theroom.set.set_p2.won;
       player_p2.name = theroom.set.set_p2.name;
@@ -182,10 +198,8 @@ export function GamePlayer_p1_p2(props: any) {
   useEffect(() => {
     socket.on("send_the_game", (game: any) => {
       //console.log("GET DATA SEND THE GAME");
-
-
-      //console.log("lowerSize = ", lowerSize);
-
+      let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
+      console.log("XlowerSize", XlowerSize);
 
 
 
@@ -223,18 +237,18 @@ export function GamePlayer_p1_p2(props: any) {
       IPaddle_p1.width = game.p1_paddle_obj.width;
       IPaddle_p1.height = game.p1_paddle_obj.height; */
       
-      const ratio_width = lowerSize / canvas_back_height;
-      const ratio_height = (lowerSize / (ratio)) / (canvas_back_height / ratio);
+      const ratio_width = XlowerSize / canvas_back_height;
+      const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height / screen_ratio);
 
       IPaddle_p1.x = game.p1_paddle_obj.x * ratio_width;
-      IPaddle_p1.y = game.p1_paddle_obj.y * ratio_height;
+      IPaddle_p1.y = game.p1_paddle_obj.y //* ratio_height;
   
       IPaddle_p1.width = game.p1_paddle_obj.width * ratio_width;
       IPaddle_p1.height = game.p1_paddle_obj.height * ratio_height;
 
-      
-      
-      
+  
+
+
       IPaddle_p2 = game.p2_paddle_obj;
 
       IPaddle_p2.x = game.p2_paddle_obj.x * ratio_width;
@@ -337,31 +351,13 @@ export function GamePlayer_p1_p2(props: any) {
   }
   ////////////////////////////////////////////////////
 
-  if (props.im_p2 === true) {
-    return (
-      <GamePlayer_p2
-        setRoom={props.setRoom}
-        canvasRef={props.canvasRef}
-        deleteGameRoom={props.deleteGameRoom}
-        deleteGameRoom_ingame={deleteGameRoom_ingame}
-        im_p2={props.im_p2}
-        opready={props.opready}
-        im_ready={props.im_ready}
-        my_id={props.my_id}
-        op_id={props.op_id}
-        room={props.room}
-      />
-    );
-  }
   return (
-    <GamePlayer_p1
-      setRoom={props.setRoom}
+    <GamePlayer_all
       canvasRef={props.canvasRef}
-      deleteGameRoom={props.deleteGameRoom}
+      plowerSize={lowerSize}
       deleteGameRoom_ingame={deleteGameRoom_ingame}
-      im_p2={props.im_p2}
       opready={props.opready}
-      im_ready={props.im_ready}
+      im_p2={props.im_p2}
       my_id={props.my_id}
       op_id={props.op_id}
       room={props.room}

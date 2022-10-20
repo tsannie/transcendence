@@ -303,39 +303,39 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('paddleMouvLeft')
   async Paddle_mouv_p1(client: Socket, data: any) {
-    let room = data.room;
-    const room_game = await this.all_game.findOneBy({ room_name: room });
+    //let room = data.room;
+    const room_game = await this.all_game.findOneBy({ room_name: data.room });
     if (!room_game)
-      return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + room + ']');
+      return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + data.room + ']');
 
     room_game.set.p1_paddle_obj.y = data.paddle_y;
   
     await this.all_game.save(room_game);
 
-    client.to(room).emit('send_the_game', room_game.set);
+    client.to(data.room).emit('send_the_game', room_game.set);
     client.emit('send_the_game', room_game.set);
     return;
   }
 
   @SubscribeMessage('paddleMouvRight')
   async Paddle_mouv_p2(client: Socket, data: any) {
-    let room = data.room;
-    const room_game = await this.all_game.findOneBy({ room_name: room });
+   // let room = data.room;
+    const room_game = await this.all_game.findOneBy({ room_name: data.room });
     if (!room_game)
-      return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + room + ']');
+      return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + data.room + ']');
 
     room_game.set.p2_paddle_obj.y = data.paddle_y;
 
     await this.all_game.save(room_game);
 
-    client.to(room).emit('send_the_game', room_game.set);
+    client.to(data.room).emit('send_the_game', room_game.set);
     client.emit('send_the_game', room_game.set);
     return;
   }
-
+/* 
   @SubscribeMessage('change_size_player_p2')
   async change_size_player_p2(client: Socket, data: any) {
-/*     let room = data.room;
+    let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
     if (!room_game) {
@@ -344,13 +344,15 @@ export class GameGateway implements OnGatewayInit {
     console.log("GET SIZE CHANGED");
 
    // room_game.set.p2_paddle_obj.x = data.canvas_width - 40;
-    await this.all_game.save(room_game); */
+    await this.all_game.save(room_game);
+    client.to(room).emit('send_the_game', room_game);
+    client.emit('send_the_game', room_game);
     return;
   }
 
   @SubscribeMessage('change_size_player_p1')
   async change_size_player_p1(client: Socket, data: any) {
-/*     let room = data.room;
+    let room = data.room;
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
     if (room_game.canvas_height === 0)
@@ -364,9 +366,9 @@ export class GameGateway implements OnGatewayInit {
     console.log("GET SIZE CHANGED");
 
     room_game.set.p1_paddle_obj.x = 20;
-    await this.all_game.save(room_game); */
+    await this.all_game.save(room_game);
     return;
-  }
+  } */
 
   ////////////////////////////////////////////////
   ////////////////  BALL DATA 
@@ -433,9 +435,9 @@ export class GameGateway implements OnGatewayInit {
 
     await this.all_game.save(room_game);
     if (room_game.spectator >= 1 && client.id === room_game.p1)
-      client.to(room).emit('setDataPlayerLeft_spec', room_game);
-    client.to(room).emit('setDataPlayerLeft', room_game);
-    client.emit('setDataPlayerLeft', room_game);
+      client.to(room).emit('setDataP1_spec', room_game);
+    client.to(room).emit('setDataP1', room_game);
+    client.emit('setDataP1', room_game);
     return;
   }
 
@@ -452,9 +454,9 @@ export class GameGateway implements OnGatewayInit {
     
     await this.all_game.save(room_game);
     if (room_game.spectator >= 1 && client.id === room_game.p2)
-      client.to(room).emit('setDataPlayerRight_spec', room_game);
-    client.to(room).emit('setDataPlayerRight', room_game);
-    client.emit('setDataPlayerRight', room_game);
+      client.to(room).emit('setDataP2_spec', room_game);
+    client.to(room).emit('setDataP2', room_game);
+    client.emit('setDataP2', room_game);
     return ;
   }
 
