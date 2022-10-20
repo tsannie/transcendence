@@ -1,96 +1,53 @@
-import { useState } from "react";
-import Chat from "../chat/Chat";
-import LogoIcon from "../../assets/logo-project.png";
-//import HomeIcon from "../../assets/home.png";
-//import ProfileIcon from "../../assets/profile.png";
-//import GameIcon from "../../assets/game.png";
-import ChatIcon from "../../assets/chat.png";
-import SettingsIcon from "../../assets/settings.png";
-import ExitIcon from "../../assets/exit.png";
-import { Box } from "@mui/system";
-import { Grid, IconButton } from "@mui/material";
-import { COOKIE_NAME } from "../../const/const";
-import HomeIcon from '@mui/icons-material/Home';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import LogoutIcon from '@mui/icons-material/Logout';
-import MessageIcon from '@mui/icons-material/Message';
+import { useContext, useEffect, useState } from "react";
+import {ReactComponent as HomeIcon} from "../../assets/img/icon/home.svg";
+import {ReactComponent as ChatIcon} from "../../assets/img/icon/chat.svg";
+import {ReactComponent as GameIcon} from "../../assets/img/icon/play.svg";
+import {ReactComponent as SettingsIcon} from "../../assets/img/icon/settings.svg";
+import {ReactComponent as LogOutIcon} from "../../assets/img/icon/logout.svg";
+import {ReactComponent as ProfileIcon} from "../../assets/img/icon/user.svg";
+import { api, COOKIE_NAME } from "../../const/const";
+import "./sidebar.style.scss";
+import { Link } from "react-router-dom";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
+import { useLocation } from "react-router-dom"
+import { SnackbarContext, SnackbarContextType } from "../../contexts/SnackbarContext";
 
-interface SidebarProps {
-  setIsLogin: (isLogin: boolean) => void;
-  setInputChat: (inputChat: boolean) => void;
-}
+export default function Sidebar() {
+  const { logout } = useContext(AuthContext) as AuthContextType;
+  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
+  useContext(SnackbarContext) as SnackbarContextType;
+  const path = useLocation().pathname;
 
-export default function Sidebar(props: any) {
-  //const [displayGame, setDisplayGame] = useState(false);
-  //const [displaySettings, setDisplaySettings] = useState(false);
-  // chat icon color: #610D7E
-
-  // to do: passer d'icone en icone en remettant tous les autres state a false
-
-  function logout() { // TODO route api logout
-    document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
-    props.setIsLogin(false);
-    props.setIs2FA(false);
-    window.location.reload();
-  };
-
-  function resetInput() {
-    props.setInputChat(false);
-    props.setInputSettings(false);
-  }
-
-  function selectInput(propsName: string) {
-    resetInput();
-    switch (propsName) {
-      case "Chat":
-        props.setInputChat(true);
-        break;
-      case "Settings":
-        props.setInputSettings(true);
-        break;
-    }
+  const handleLogout = () => {
+    api.get('/auth/logout')
+      .then(res => {
+        setMessage('bye bye');
+        setSeverity('info');
+        setOpenSnackbar(true);
+        logout();
+      });
   }
 
   return (
-    <Grid
-      spacing={10}
-      alignItems="center"
-      container
-      direction="column"
-      position="fixed"
-      sx={{
-        maxWidth: "fit-content",
-        maxHeight: "fit-content",
-      }}
-    >
-      <Grid item sx={{}}>
-        <img src={LogoIcon}></img>
-      </Grid>
-      <Grid item sx={{}}>
-        <IconButton aria-label="home">
-          <HomeIcon />
-        </IconButton>
-      </Grid>
-      <Grid item sx={{}}>
-        <IconButton aria-label="profile">
-          <AccountCircleIcon />
-        </IconButton>
-      </Grid>
-      <Grid item sx={{}}>
-        <IconButton aria-label="game">
-          <SportsEsportsIcon />
-        </IconButton>
-      </Grid>
-      <Grid item sx={{}}>
-        <img src={ChatIcon} onClick={() => selectInput('Chat')}></img>
-      </Grid>
-      <Grid item sx={{}}>
-        <img src={SettingsIcon} onClick={() => selectInput('Settings')}></img>
-      </Grid>
-      <Grid item sx={{}}>
-        <img src={ExitIcon} onClick={logout}></img>
-      </Grid>
-    </Grid>
+    <div className="sidebar">
+      <nav className="sidebar__icon">
+        <Link to="/">
+          <HomeIcon className={path === '/' ? 'selected' : ''}/>
+        </Link>
+        <Link to="/profile">
+          <ProfileIcon className={path === '/profile' ? 'selected' : ''}/>
+        </Link>
+        <Link to="/chat">
+          <ChatIcon className={path === '/chat' ? 'selected' : ''}/>
+        </Link>
+        <Link to="/game">
+          <GameIcon className={path === '/game' ? 'selected' : ''}/>
+        </Link>
+        <Link to="/settings">
+          <SettingsIcon className={path === '/settings' ? 'selected' : ''}/>
+        </Link>
+        <LogOutIcon onClick={handleLogout} className=''/>
+      </nav>
+    </div>
   );
 }
