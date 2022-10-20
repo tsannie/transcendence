@@ -51,7 +51,7 @@ export class UserController {
       new AvatarFormatValidator( {format: ['jpg', 'jpeg', 'png']} ),
     ]
    })) file: Express.Multer.File, @Request() req) : Promise<UserEntity> {
-    return await this.userService.addAvatar(file, req.user);
+    return await this.userService.addAvatar(file.buffer, req.user);
   }
 
   @Get("avatar")
