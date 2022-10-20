@@ -204,13 +204,9 @@ export class UserService {
 			);
 	}
 
-  async add42DefaultAvatar(url: string, user: UserEntity) : Promise<void | UserEntity>{
-    this.httpService.get(url, { responseType: 'arraybuffer'})
-      .subscribe(
-        async (response) => {
-            return await this.addAvatar(Buffer.from(response.data), user);
-          }
-      )
+  async add42DefaultAvatar(url: string, user: UserEntity) : Promise<void | UserEntity>{    
+    let response = await lastValueFrom(this.httpService.get(url, { responseType: 'arraybuffer'}))
+    return await this.addAvatar(Buffer.from(response.data), user);
   }
 
 	/* This function add avatar after resizing it two times in the form of static .jpg files and
@@ -250,6 +246,7 @@ export class UserService {
 			{
         /* This function apply a deletion function to every size available on nest server */
 				AVATAR_SIZES.forEach( (size) => {fs.unlinkSync(`${AVATAR_DEST}/${user.id}_${size}.jpg`);})
+        user.profile_picture = null;
 			}
 			catch (err)
 			{
