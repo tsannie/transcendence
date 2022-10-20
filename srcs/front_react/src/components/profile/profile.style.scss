@@ -1,0 +1,61 @@
+.profile {
+  display: flex;
+  flex-direction: column;
+  border-style: dashed;
+  padding: 2%;
+  width: 80%;
+  max-width: 1200px;
+}
+
+.profile__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile__header__user {
+  display: flex;
+}
+
+.profile__header__user__info {
+  display: flex;
+  flex-direction: column;
+
+  margin-left: calc(30 * var(--res));
+}
+
+.profile__header__user__info__elo {
+  display: flex;
+  align-items: center;
+  svg {
+    width: calc(35 * var(--res));
+  }
+  span {
+    margin-left: calc(10 * var(--res));
+  }
+}
+
+.profile__header__user__avatar {
+  img {
+    border-style: dashed;
+    border-radius: 50%;
+    width: calc(200 * var(--res));
+  }
+}
+
+.profile__header__search {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  svg {
+    width: calc(35 * var(--res));
+  }
+
+  .profile__header__search__item {
+    display: flex;
+    border-style: dashed;
+    width: 80%;
+    input {
+      width: 100%;
+    }
+  }
+}
