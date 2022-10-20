@@ -40,5 +40,19 @@ body {
       filter: invert(70%);
     }
   }
+
+  input {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    &:focus {
+      outline: none !important;
+    }
+    border-style: dashed;
+    background: transparent;
+  }
+
 }
 

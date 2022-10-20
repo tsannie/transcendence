@@ -5,16 +5,6 @@
   padding: 2%;
 
   input {
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    &:focus {
-      outline: none !important;
-    }
-    border: dashed;
-    background: transparent;
     width: 25%;
   }
 
