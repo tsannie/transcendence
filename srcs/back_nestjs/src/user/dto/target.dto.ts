@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsDefined, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDefined, IsIn, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { AVATAR_SIZES } from "../service/user.service";
 
 
