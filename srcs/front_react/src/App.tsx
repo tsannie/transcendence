@@ -14,35 +14,38 @@ import Background from "./components/background/Background";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 import GamePage from "./components/game/GamePage";
 import Chat from "./components/chat/Chat";
+import { SocketProvider } from "./contexts/SocketContext";
 
 export default function App() {
   return (
     <div className="bg">
       <Background />
       <div className="app">
-        <SnackbarProvider>
-          <Routes>
-            {/* Auth Routes (public) */}
-            <Route path="/auth" element={<LoginPage />} />
-            <Route path="/2fa" element={<TwoFactorPage />} />
+        <SocketProvider>
+          <SnackbarProvider>
+            <Routes>
+              {/* Auth Routes (public) */}
+              <Route path="/auth" element={<LoginPage />} />
+              <Route path="/2fa" element={<TwoFactorPage />} />
 
-            {/* Main Routes (private) */}
-            <Route path="/" element={<PrivateRoute component={Home} />} />
-            <Route
-              path="/profile"
-              element={<PrivateRoute component={Profile} />}
-            />
-            <Route path="/chat" element={<PrivateRoute component={Chat} />} />
-            <Route
-              path="/game"
-              element={<PrivateRoute component={GamePage} />}
-            />
-            <Route
-              path="/settings"
-              element={<PrivateRoute component={Settings} />}
-            />
-          </Routes>
-        </SnackbarProvider>
+              {/* Main Routes (private) */}
+              <Route path="/" element={<PrivateRoute component={Home} />} />
+              <Route
+                path="/profile"
+                element={<PrivateRoute component={Profile} />}
+              />
+              <Route path="/chat" element={<PrivateRoute component={Chat} />} />
+              <Route
+                path="/game"
+                element={<PrivateRoute component={GamePage} />}
+              />
+              <Route
+                path="/settings"
+                element={<PrivateRoute component={Settings} />}
+              />
+            </Routes>
+          </SnackbarProvider>
+        </SocketProvider>
       </div>
     </div>
   );
