@@ -16,7 +16,7 @@ export function GamePlayer_all(props: any) {
       let data = {
         room: props.room,
         paddle_y : pos_paddle_y,
-        front_canvas_width: props.plowerSize,
+        front_canvas_height: props.plowerSize / screen_ratio,
       };
       if (props.im_p2 === true) 
         socket.emit("paddleMouvRight", data)

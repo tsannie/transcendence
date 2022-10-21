@@ -313,7 +313,7 @@ export class GameGateway implements OnGatewayInit {
 
 
    
-   room_game.set.p1_paddle_obj.y = (data.paddle_y* canvas_back_width) / data.front_canvas_width;
+    room_game.set.p1_paddle_obj.y = (data.paddle_y * canvas_back_height) / data.front_canvas_height;
    room_game.set.p1_paddle_obj.f_y = data.paddle_y; 
    //console.log("\n\n============== : " + room_game.set.p1_paddle_obj.y)
     //console.log("paddleMouvLeft : " + data.paddle_y);
@@ -333,7 +333,7 @@ export class GameGateway implements OnGatewayInit {
       return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + data.room + ']');
 
 
-    room_game.set.p2_paddle_obj.y = (data.paddle_y * canvas_back_width) / data.front_canvas_width;
+    room_game.set.p2_paddle_obj.y = (data.paddle_y * canvas_back_height) / data.front_canvas_height;
     room_game.set.p2_paddle_obj.f_y = data.paddle_y; 
 
     console.log("room_game.set.p2_paddle_obj.y : " + room_game.set.p2_paddle_obj.f_y);
