@@ -7,18 +7,15 @@ import { paddleProps_p1 } from "../Game";
 
 export function GamePlayer_all(props: any) {
 
-  // Mouve the paddle left with the mouse and send the data to the server to send it to the other player
+  // Mouve the paddle with the mouse and send the data to the server to send it to the other player
   function mouv_paddle(e: any) {
     if (props.opready === true) {
       let pos_paddle_y: number;
-      let pos_paddle_y_ratio: number;
-
-      pos_paddle_y = e.clientY //* (lowerSize / screen_ratio);
+      pos_paddle_y = e.clientY
 
       let data = {
         room: props.room,
         paddle_y : pos_paddle_y,
-        lowerSize : props.plowerSize,
       };
       if (props.im_p2 === true) 
         socket.emit("paddleMouvRight", data)
