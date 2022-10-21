@@ -4,10 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MessageModule } from './message/message.module';
-import { MessageController } from './message/controller/message.controller';
 import { MessageService } from './message/service/message.service';
 import { UserModule } from './user/user.module';
-//import { AuthResolver } from './auth/auth.resolver';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/service/auth.service';
 import { UserService } from './user/service/user.service';
@@ -15,8 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { MessageEntity } from './message/models/message.entity';
-import { ChannelController } from './channel/controller/channel.controller';
-import { ChannelService } from './channel/service/channel.service';
 import { ChannelModule } from './channel/channel.module';
 import { TwoFactorService } from './two-factor/service/two-factor.service';
 import { TwoFactorController } from './two-factor/controller/two-factor.controller';
@@ -25,6 +21,7 @@ import { DmService } from './dm/service/dm.service';
 import { DmModule } from './dm/dm.module';
 import { DmEntity } from './dm/models/dm.entity';
 import { ConnectedUserModule } from './connected-user/connected-user.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -38,6 +35,7 @@ import { ConnectedUserModule } from './connected-user/connected-user.module';
       synchronize: true, //TODO deploiement false
     }),
     TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity]),
+    HttpModule,
     UserModule,
     AuthModule,
     PassportModule,
@@ -54,7 +52,7 @@ import { ConnectedUserModule } from './connected-user/connected-user.module';
     UserService,
     TwoFactorService,
     DmService,
-    MessageService
+    MessageService,
   ], // AuthResolver
 })
 export class AppModule {}

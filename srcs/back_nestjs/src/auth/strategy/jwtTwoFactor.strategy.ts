@@ -25,7 +25,7 @@ export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') 
       owner_of: true,
       admin_of: true,
       channels: true,
-      banned: true,
+      blocked: true,
       dms: true
     });
     if (!user.enabled2FA) {
