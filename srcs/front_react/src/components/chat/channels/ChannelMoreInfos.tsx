@@ -12,6 +12,7 @@ import React, { useContext, useState } from "react";
 import { api } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { SnackbarContext, SnackbarContextType } from "../../../contexts/SnackbarContext";
 
 interface ChannelMoreInfosProps {
   channelData: any;
@@ -29,6 +30,7 @@ export default function ChannelMoreInfos(props: ChannelMoreInfosProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,16 +64,20 @@ export default function ChannelMoreInfos(props: ChannelMoreInfosProps) {
     const newChannel = {
       name: channelName,
     }
-    console.log("channel name in delete = ", newChannel);
     await api
       .post("channel/delete", newChannel)
       .then((res) => {
-        console.log("channel deleted with success");
         getChannelsUserlist();
+        setSeverity("success");
+        setMessage("channel deleted");
+        setOpenSnackbar(true);
       })
       .catch((res) => {
         console.log("invalid delete channel");
         console.log(res);
+        setSeverity("error");
+        setMessage(res.response.data.message);
+        setOpenSnackbar(true);
       });
     setOpenMoreInfos(false);
   }
@@ -91,10 +97,16 @@ export default function ChannelMoreInfos(props: ChannelMoreInfosProps) {
         console.log("password modify with success");
         console.log(channel);
         props.getChannelDatas(channel.data.name);
+        setSeverity("success");
+        setMessage("password modified");
+        setOpenSnackbar(true);
       })
       .catch((res) => {
         console.log("invalid modify password");
         console.log(res);
+        setSeverity("error");
+        setMessage(res.response.data.message);
+        setOpenSnackbar(true);
       });
     setOpenMoreInfos(false);
     setCurrentPassword("");
@@ -114,10 +126,16 @@ export default function ChannelMoreInfos(props: ChannelMoreInfosProps) {
         console.log("password deleted with success");
         console.log(channel);
         props.getChannelDatas(channel.data.name);
+        setSeverity("success");
+        setMessage("password deleted");
+        setOpenSnackbar(true);
       })
       .catch((res) => {
         console.log("invalid delete password");
         console.log(res);
+        setSeverity("error");
+        setMessage(res.response.data.message);
+        setOpenSnackbar(true);
       });
     setOpenMoreInfos(false);
     setPasswordToDelete("");

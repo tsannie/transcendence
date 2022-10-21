@@ -3,6 +3,7 @@ import { Channel } from "diagnostics_channel";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
 import { UserContext } from "../../../../contexts/UserContext";
 import { IChannelActions } from "../../types";
 
@@ -16,6 +17,7 @@ interface BanUserProps {
 export default function BanUser(props: BanUserProps) {
 
   const { getUser } = useContext(UserContext);
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     banUser(props.userTargeted, props.channelData);
@@ -41,13 +43,18 @@ export default function BanUser(props: BanUserProps) {
       await api
         .post("channel/banUser", newChannel)
         .then((res) => {
-          console.log("user ban with success");
+          setSeverity("success");
+          setMessage("user banned");
+          setOpenSnackbar(true);
           props.channelData.data.banned = res.data.banned;
           props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
           console.log(res);
+          setSeverity("error");
+          setMessage(res.response.data.message);
+          setOpenSnackbar(true);
         });
     }
   }

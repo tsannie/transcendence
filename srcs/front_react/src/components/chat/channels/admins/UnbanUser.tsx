@@ -2,6 +2,7 @@ import { Button, List, ListItemButton, Popover } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
 import { UserContext } from "../../../../contexts/UserContext";
 import { IChannel, IChannelActions } from "../../types";
 
@@ -13,6 +14,9 @@ interface UnbanUserProps {
 }
 
 export default function UnbanUser(props: UnbanUserProps) {
+
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
+
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     unbanUser(props.userTargeted, props.channelData);
     props.getChannelDatas(props.channelData.data.name);
@@ -35,14 +39,18 @@ export default function UnbanUser(props: UnbanUserProps) {
       await api
         .post("channel/unBanUser", newChannel)
         .then((res) => {
-          console.log("user ban with success");
-          console.log(channel);
+          setSeverity("success");
+          setMessage("user unbanned");
+          setOpenSnackbar(true);
           props.channelData.data.banned = res.data.banned;
           props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
           console.log(res);
+          setSeverity("error");
+          setMessage(res.response.data.message);
+          setOpenSnackbar(true);
         });
     }
   }
