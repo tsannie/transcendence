@@ -28,6 +28,12 @@ enum TransitionPageLvl {
   SETTINGS = 5,
 }
 
+enum Action {
+  NULL = 0,
+  MUTE = 1,
+  BAN = 2,
+}
+
 export const TransitionProvider = ({ children }: IProps) => {
   const location = useLocation();
 
@@ -58,12 +64,18 @@ export const TransitionProvider = ({ children }: IProps) => {
 
     const newLvl = getTransitionStage(location.pathname);
 
-    if (actualLvl < newLvl) {
-      console.log("go down");
-      setTransistionStage("exit-up");
-    } else if (actualLvl > newLvl) {
-      console.log("go up");
-      setTransistionStage("exit-down");
+    console.log("newLvl:", newLvl);
+    console.log("actualLvl:", actualLvl);
+    if (newLvl !== actualLvl && actualLvl !== TransitionPageLvl.NULL) {
+      console.log("enableTransition///////////////////////////");
+        if (actualLvl < newLvl) {
+          setTransistionStage("exit-up");
+        } else if (actualLvl > newLvl) {
+          setTransistionStage("exit-down");
+        }
+    } else {
+      console.log('hello')
+      setDisplayLocation(location);
     }
     setActualLvl(newLvl);
   }, [location, displayLocation]);
