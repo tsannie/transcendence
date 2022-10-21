@@ -2,9 +2,9 @@ import { Button, List, ListItemButton, Popover } from "@mui/material";
 import { Channel } from "diagnostics_channel";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
+import { AuthContext, AuthContextType } from "../../../../contexts/AuthContext";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
 import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
-import { UserContext } from "../../../../contexts/UserContext";
 import { IChannelActions } from "../../types";
 
 interface BanUserProps {
@@ -15,8 +15,7 @@ interface BanUserProps {
 }
 
 export default function BanUser(props: BanUserProps) {
-
-  const { getUser } = useContext(UserContext);
+  const { getUser } = useContext(AuthContext) as AuthContextType;
   const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {

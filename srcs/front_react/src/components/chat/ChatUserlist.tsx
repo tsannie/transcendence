@@ -18,15 +18,15 @@ import { ChatContent } from "./Chat";
 import { SocketContext } from "../../contexts/SocketContext";
 import { IChannel, IDm, IMessage } from "./types";
 import { MessagesContext } from "../../contexts/MessagesContext";
-import { UserContext } from "../../contexts/UserContext";
 import { DmsContext } from "../../contexts/DmsContext";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
 interface ChatUserListProps {
   setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
-  const { userConnected, users } = useContext(UserContext);
+  const { user, users } = useContext(AuthContext) as AuthContextType;
   const { getDmsList } = useContext(DmsContext);
   const { loadMessages } = useContext(MessagesContext);
 
@@ -75,16 +75,16 @@ export default function ChatUserlist(props: ChatUserListProps) {
       </Typography>
       <List>
         {users.map(
-          (user) =>
-            user.id !== userConnected.id && (
+          (element) =>
+            element.id !== user?.id && (
               <ListItemButton
-                key={user.id}
-                onClick={() => handleClick(user.username)}
+                key={element.id}
+                onClick={() => handleClick(element.username)}
                 sx={{
                   width: "fit-content",
                 }}
               >
-                {user.username}
+                {element.username}
               </ListItemButton>
             )
         )}

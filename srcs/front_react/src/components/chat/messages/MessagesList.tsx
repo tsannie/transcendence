@@ -1,22 +1,22 @@
 import { List, ListItem } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { SocketContext } from "../../../contexts/SocketContext";
-import { UserContext } from "../../../contexts/UserContext";
 import { IMessage, IMessageReceived } from "../types";
 
 interface MessagesListProps { }
 
 export default function MessagesList(props: MessagesListProps) {
   const { messagesList } = useContext(MessagesContext);
-  const { userConnected } = useContext(UserContext);
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   return (
     <List sx={{ position: "relative" }}>
       {messagesList.map((messageData: IMessageReceived) => {
-        if (userConnected.username === messageData.author.username) {
+        if (user?.username === messageData.author.username) {
           return (
             <ListItem
               sx={{

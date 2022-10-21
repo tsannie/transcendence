@@ -14,8 +14,8 @@ import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { IChannel } from "../types";
 import LockIcon from "@mui/icons-material/Lock";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { UserContext } from "../../../contexts/UserContext";
 import { SnackbarContext, SnackbarContextType } from "../../../contexts/SnackbarContext";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 
 interface AvailableChannelsProps { }
 
@@ -24,21 +24,23 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
 
   const { getChannelsUserlist, getAvailableChannels, availableChannels } =
     useContext(ChannelsContext);
-  const { userConnected, getUser } = useContext(UserContext);
+  const { user, getUser } = useContext(AuthContext) as AuthContextType;
   const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
+
+  // besoin de user et owner in available channels
 
   function isInChannel(channelId: number): boolean {
 
-    if (userConnected.channels) {
-      for (const channel of userConnected.channels) {
+    if (user?.channels) {
+      for (const channel of user?.channels) {
         if (channel.id === channelId) {
           return true;
         }
       }
     }
 
-    if (userConnected.owner_of) {
-      for (const owner of userConnected.owner_of) {
+    if (user?.owner_of) {
+      for (const owner of user?.owner_of) {
         if (owner.id === channelId) {
           return true;
         }
@@ -80,7 +82,6 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
       })
       .catch((res) => {
         console.log("invalid channels");
-        console.log(res.response.data.message);
         setSeverity("error");
         setMessage(res.response.data.message);
         setOpenSnackbar(true);

@@ -155,6 +155,7 @@ export class ChannelService {
       relations: inputed_relations,
       select: {
         id: true,
+        name: true, // load this relations for error message in front
         status: true,
         password: true,
       },
@@ -319,6 +320,7 @@ export class ChannelService {
       users: true,
       banned: true,
     });
+    console.log('before verify banned name channel = ', channel);
     this.verifyBanned(channel, user.username);
 
     if (channel.status === 'Protected') {
@@ -691,6 +693,7 @@ export class ChannelService {
   }
 
   verifyBanned(channel: ChannelEntity, target: string) {
+    console.log('channel name = ', channel.name);
     if (
       channel.banned &&
       channel.banned.find((banned_guy) => banned_guy.username === target)

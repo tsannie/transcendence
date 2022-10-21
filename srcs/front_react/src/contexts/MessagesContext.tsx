@@ -9,7 +9,6 @@ import { createContext } from "react";
 import { IMessage, IMessageReceived } from "../components/chat/types";
 import { api } from "../const/const";
 import { SocketContext } from "./SocketContext";
-import { UserContext } from "./UserContext";
 
 export type MessagesContextType = {
   messagesList: IMessageReceived[];
