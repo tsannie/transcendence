@@ -1,4 +1,5 @@
 import { MessageEntity } from 'src/message/models/message.entity';
+import { BanEntity, BanMuteEntity, MuteEntity } from 'src/channel/models/ban.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
@@ -42,12 +43,18 @@ export class ChannelEntity {
 	@OneToMany( () => MessageEntity, (message) => message.channel )
 	messages: MessageEntity[];
 
-	@ManyToMany( () => UserEntity )
-	@JoinTable()
-	muted: UserEntity[];
+	// @ManyToMany( () => UserEntity )
+	// @JoinTable()
+	// muted: UserEntity[];
 
-	@ManyToMany( () => UserEntity )
-	@JoinTable()
-	banned: UserEntity[];
+	// @ManyToMany( () => UserEntity )
+	// @JoinTable()
+	// banned: UserEntity[];
+
+	@OneToMany( () => MuteEntity, (mute) => mute.channel )
+	muted: MuteEntity[];
+
+	@OneToMany( () => BanEntity, (ban) => ban.channel )
+	banned: BanEntity[];
 }
 

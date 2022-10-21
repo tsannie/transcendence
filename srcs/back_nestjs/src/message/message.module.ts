@@ -9,12 +9,14 @@ import { UserModule } from 'src/user/user.module';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { DmModule } from 'src/dm/dm.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { ChannelModule } from 'src/channel/channel.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([MessageEntity, DmEntity, UserEntity]),
     UserModule,
     AuthModule,
+    ChannelModule
   ],
   controllers: [MessageController],
   providers: [MessageService, MessageGateway],
