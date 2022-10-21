@@ -1,4 +1,4 @@
-export const canvas_back_width: number = 1080;
+export const canvas_back_width: number = 1920;
 
 export const screen_ratio: number = 16/9;
 

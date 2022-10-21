@@ -247,7 +247,7 @@ export function GamePlayer_p1_p2(props: any) {
       if (props.im_p2 === false)
         IPaddle_p1.y = game.p1_paddle_obj.f_y ;
       else 
-        IPaddle_p1.y = game.p1_paddle_obj.y  //* ratio_height;
+        IPaddle_p1.y = game.p1_paddle_obj.y  * ratio_height;
       IPaddle_p1.x = game.p1_paddle_obj.x * ratio_width;
       IPaddle_p1.width = game.p1_paddle_obj.width * ratio_width;
       IPaddle_p1.height = game.p1_paddle_obj.height * ratio_height;
@@ -263,12 +263,12 @@ export function GamePlayer_p1_p2(props: any) {
       if (props.im_p2 === true)
         IPaddle_p2.y = game.p2_paddle_obj.f_y;
       else 
-        IPaddle_p2.y = game.p2_paddle_obj.y //* ratio_height;
+        IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height;
       IPaddle_p2.x = game.p2_paddle_obj.x * ratio_width;
       IPaddle_p2.width = game.p2_paddle_obj.width * ratio_width;
       IPaddle_p2.height = game.p2_paddle_obj.height * ratio_height;
 
-      console.log("IPaddle_p1 = ", game.p2_paddle_obj.f_y);
+      console.log("ratio = ", ratio_height);
 
 
 /*
