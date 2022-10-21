@@ -1,4 +1,11 @@
-import { Get, Injectable, Logger, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Get,
+  Injectable,
+  Logger,
+  Request,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConnectedSocket,
@@ -21,7 +28,6 @@ import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { Repository } from 'typeorm';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { ConnectedUserDto } from 'src/connected-user/dto/connected-user.dto';
-
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -54,23 +60,20 @@ export class MessageGateway
     try {
       let userId = client.handshake.query.userId;
       let user: UserEntity;
-      console.log("userId = ", userId);
+      console.log('userId = ', userId);
       if (typeof userId === 'string') {
         user = await this.userService.findById(parseInt(userId));
       }
       if (!user) {
         return this.disconnect(client);
-      }
-      else {
-
+      } else {
         let connectedUser = new ConnectedUserDto();
 
         connectedUser.socketId = client.id;
         connectedUser.user = user;
         this.connectedUserService.create(connectedUser);
       }
-    }
-    catch {
+    } catch {
       return this.disconnect(client);
     }
   }
@@ -90,7 +93,7 @@ export class MessageGateway
 
   @SubscribeMessage('message')
   addMessage(@MessageBody() data: IMessage, @ConnectedSocket() client: Socket) {
-    this.logger.log("client id = ", client.id);
+    this.logger.log('client id = ', client.id);
 
     if (data.isDm === true) {
       this.messageService.addMessagetoDm(data);
