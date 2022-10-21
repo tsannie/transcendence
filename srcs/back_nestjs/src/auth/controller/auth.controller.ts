@@ -39,7 +39,7 @@ export class AuthController {
   @UseGuards(FortyTwoGuard)
   @Get('')
   @Redirect(process.env.FRONT_URL, 301)
-  async oauthFortyTwo(@Req() req) {
+  async oauthFortyTwo(@Req() req) { // TODO Interface
     const user = req.user;
     if (!user)
       throw new UnauthorizedException('User not found');
@@ -50,5 +50,12 @@ export class AuthController {
       path: '/',
     });
     return user;
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('logout')
+  async logout(@Request() req) {
+    req.res.clearCookie(process.env.COOKIE_NAME);
+    return {message: 'Logout'};
   }
 }

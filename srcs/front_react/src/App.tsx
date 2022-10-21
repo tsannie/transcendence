@@ -1,97 +1,49 @@
-import { Box, Grid } from "@mui/material";
-
-import React, { useEffect, useState } from "react";
-
-import ButtonLogin from "./Auth/ButtonLogin";
-import Chat from "./components/chat/Chat";
-import Sidebar from "./components/sidebar/Sidebar";
-import LogoIcon from "./assets/logo-project.png";
+import React from "react";
+import "./app.style.scss";
+import "./components/background/bg.style.scss";
+import "./components/menu/menu.style.scss";
+import { Route, Routes } from "react-router-dom";
+import LoginPage from "./components/auth/oauth/LoginPage";
+import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
+import { PrivateRoute } from "./components/routes/PrivateRoute";
 import Settings from "./components/settings/Settings";
-import TwoFactorCode from "./Auth/TwoFactorCode";
-import { api, COOKIE_NAME } from "./const/const";
-import { SocketProvider } from "./contexts/SocketContext";
-import { ChannelsProvider } from "./contexts/ChannelsContext";
+import Home from "./components/home/Home";
+import Profile from "./components/profile/Profile";
+import { AnimatePresence } from "framer-motion"; // TODO delete ?
+import Background from "./components/background/Background";
+import { SnackbarProvider } from "./contexts/SnackbarContext";
+import GamePage from "./components/game/GamePage";
+import Chat from "./components/chat/Chat";
 
 export default function App() {
-  const [inputChat, setInputChat] = useState(false);
-  const [inputSettings, setInputSettings] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [is2FA, setIs2FA] = useState(false);
+  return (
+    <div className="bg">
+      <Background />
+      <div className="app">
+        <SnackbarProvider>
+          <Routes>
+            {/* Auth Routes (public) */}
+            <Route path="/auth" element={<LoginPage />} />
+            <Route path="/2fa" element={<TwoFactorPage />} />
 
-  useEffect(() => {
-    if (document.cookie.includes(COOKIE_NAME)) {
-      api
-        .get("auth/isTwoFactor")
-        .then((res) => {
-          setIs2FA(res.data.isTwoFactor);
-        })
-        .catch((res) => {
-          console.log("invalid jwt");
-          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-        });
-
-      console.log("is2FA", is2FA);
-
-      if (is2FA === false) {
-        setIsLogin(true);
-      } else if (is2FA === true) {
-        api
-          .get("auth/profile")
-          .then((res) => {
-            setIsLogin(true);
-          })
-          .catch((res) => {
-            setIsLogin(false);
-          });
-      }
-    }
-  });
-
-  if (!isLogin) {
-    return (
-      <Box
-        sx={{
-          bgcolor: "rgba(0, 0, 0, 0.70)",
-          height: "100vh",
-          pt: "2vh",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <img src={LogoIcon}></img>
-        </Box>
-        {!is2FA && <ButtonLogin isLogin={isLogin} setIsLogin={setIsLogin} />}
-        {is2FA && <TwoFactorCode setIsLogin={setIsLogin} />}
-      </Box>
-    );
-  } else {
-    return (
-      <SocketProvider>
-        <Grid container>
-          <Grid item>
-            <Sidebar
-              setInputChat={setInputChat}
-              setInputSettings={setInputSettings}
-              setIsLogin={setIsLogin}
-              setIs2FA={setIs2FA}
+            {/* Main Routes (private) */}
+            <Route path="/" element={<PrivateRoute component={Home} />} />
+            <Route
+              path="/profile"
+              element={<PrivateRoute component={Profile} />}
             />
-          </Grid>
-          <Grid
-            item
-            xs={11}
-            sx={{
-              ml: "72px",
-            }}
-          >
-            {inputChat && <Chat />}
-            {inputSettings && <Settings />}
-          </Grid>
-        </Grid>
-      </SocketProvider>
-    );
-  }
+            <Route path="/chat" element={<PrivateRoute component={Chat} />} />
+            <Route
+              path="/game"
+              element={<PrivateRoute component={GamePage} />}
+            />
+            <Route
+              path="/settings"
+              element={<PrivateRoute component={Settings} />}
+            />
+          </Routes>
+        </SnackbarProvider>
+      </div>
+    </div>
+  );
 }

@@ -1,0 +1,32 @@
+.menu {
+  display: flex;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+
+  h1 {
+    font-size: calc(60 * var(--res));
+    letter-spacing: 0.3em;
+  }
+  h2 {
+    font-size: calc(35 * var(--res));
+  }
+  p {
+    font-size: calc(22 * var(--res));
+  }
+  button, input, span {
+    font-size: calc(22 * var(--res));
+  }
+  animation: grow 1s ease;
+  @keyframes grow {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+}
