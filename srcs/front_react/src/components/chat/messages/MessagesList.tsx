@@ -43,7 +43,7 @@ export default function MessagesList(props: MessagesListProps) {
             sx={{
               width: "fit-content",
               height: "fit-content",
-              backgroundColor: "#f1f1f1",
+              backgroundColor: "#3a3b3c",
               color: "black",
               fontFamily: "sans-serif",
               fontSize: 16,
