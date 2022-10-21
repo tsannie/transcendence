@@ -7,12 +7,33 @@ import {
   UpdateResult,
 } from 'typeorm';
 import { UserEntity } from '../models/user.entity';
+import * as sharp from 'sharp';
+import * as fs from 'fs';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map } from 'rxjs';
+
+export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
+
+/* 1) If you wanna add a size, you put here a name to that size + a value in number type... */
+export const SMALL_PIC_SIZE: number = 128;
+export const MEDIUM_PIC_SIZE: number = 512;
+
+/* 2) ...and then you add it to the map, with a string that will be used through the controller*/
+export const AVATAR_SIZES: Map<string, number> = new Map<string, number>();
+AVATAR_SIZES.set("small", SMALL_PIC_SIZE);
+AVATAR_SIZES.set("medium", MEDIUM_PIC_SIZE);
+
+export interface IAvatarOptions {
+	  size: string;
+}
+
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private allUser: Repository<UserEntity>,
+	@InjectRepository(UserEntity)
+	private allUser: Repository<UserEntity>,
+  private readonly httpService: HttpService,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -103,7 +124,7 @@ export class UserService {
       relations: {
         owner_of: true,
         channels: true,
-        banned: true,
+        blocked: true,
         admin_of: true,
       },
     });
@@ -132,7 +153,7 @@ export class UserService {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 
-  async banUser(target: string, requester: UserEntity): Promise<UserEntity> {
+  async blockUser(target: string, requester: UserEntity): Promise<UserEntity> {
     if (target === requester.username)
       throw new UnprocessableEntityException(`Cannot ban yourself.`);
     let toBan = await this.findByName(target);
@@ -141,40 +162,96 @@ export class UserService {
         `Cannot find a ${target} in database.`,
       );
     else {
-      if (!requester.banned) requester.banned = [toBan];
+      if (!requester.blocked) requester.blocked = [toBan];
       else {
-        if (requester.banned.find((elem) => elem.username === target))
+        if (requester.blocked.find((elem) => elem.username === target))
           throw new UnprocessableEntityException(
-            `You've already banned ${target}`,
+            `You've already blocked ${target}`,
           );
-        else requester.banned.push(toBan);
+        else requester.blocked.push(toBan);
       }
     }
     return await this.allUser.save(requester);
   }
 
-  async unBanUser(target: string, requester: UserEntity): Promise<UserEntity> {
-    if (target === requester.username)
-      throw new UnprocessableEntityException(`Cannot unban yourself.`);
-    if (
-      !requester.banned ||
-      !requester.banned.find((banned_guys) => banned_guys.username === target)
-    )
-      throw new UnprocessableEntityException(`${target} is not banned.`);
-    requester.banned = requester.banned.filter(
-      (banned_guys) => banned_guys.username !== target,
-    );
-    return await this.allUser.save(requester);
+	async unBlockUser(target: string, requester: UserEntity) : Promise<UserEntity> {
+		if (target === requester.username)
+			throw new UnprocessableEntityException(`Cannot unban yourself.`);
+		if (!requester.blocked || !requester.blocked.find( blocked_guys => blocked_guys.username === target))
+			throw new UnprocessableEntityException(`${target} is not blocked.`);
+		requester.blocked = requester.blocked.filter( blocked_guys => blocked_guys.username !== target );
+		return await this.allUser.save(requester);
+	}
+
+  /* This function creates the directory needed to register photos if it doesn't exist */
+  createDirectory() {
+    if (!fs.existsSync(AVATAR_DEST))
+      fs.mkdirSync(AVATAR_DEST, {recursive: true})
   }
 
-  async addAvatar(file: any, user: UserEntity) {
-    console.log(file);
-    return file;
-    // user.avatar = data.image;
-    // return await this.allUser.save(user);
+	/* This function is responsible of resizing images in a square shape according to the inputed format
+	and save it locally in a jpeg format. Eamples : "1_512.jpg" or "12_128.jpg" */
+	async resizeImage(size: number, bufferized_img: Buffer, user: UserEntity){
+		this.createDirectory();
+
+    await sharp(bufferized_img)
+		.resize(size, size)
+		.toFile(`${AVATAR_DEST}/${user.id}_${size}.jpg`)
+		.catch( err =>
+				{
+					throw new UnprocessableEntityException(`Cannot resize avatar for user ${user.username}.`)
+				}
+			);
+	}
+
+  async add42DefaultAvatar(url: string, user: UserEntity) : Promise<void | UserEntity>{    
+    let response = await lastValueFrom(this.httpService.get(url, { responseType: 'arraybuffer'}))
+    return await this.addAvatar(Buffer.from(response.data), user);
   }
 
-  async getAvatar(user: UserEntity) {
-    //return user.avatar;
-  }
+	/* This function add avatar after resizing it two times in the form of static .jpg files and
+	register the keyname to access these files later in db. Size of those pictures can be changed
+	a bit higher in this file (MEDIUM_PIC and SMALL_PIC)*/
+	async addAvatar(bufferized_img: Buffer, user: UserEntity) : Promise<UserEntity> {
+		if (user.profile_picture)
+			this.deleteAvatar(user);
+
+    /* This apply the resizing function to all type of size available */
+		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, bufferized_img, user) });
+  
+    user.profile_picture = `${process.env.BACK_URL}/user/avatar?id=${user.id}`;
+    return await this.allUser.save(user);
+	}
+
+	/* This function is querying the DB to find the name of the file then send the wright path according to
+	request of user ("medium" or "small") */
+	async getAvatar(inputed_id: number, avatarOptions: IAvatarOptions) : Promise<string> {
+    let user = await this.allUser
+		.createQueryBuilder("user")
+		.select("user.id")
+		.where("user.id = :id", { id: inputed_id })
+		.getOne()
+
+		if (!user)
+			throw new UnprocessableEntityException("Cannot find user corresponding to that id");
+    else
+		  return `${AVATAR_DEST}/${user.id}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
+		}
+
+	/* This function delete the avatars of the user*/
+	deleteAvatar(user: UserEntity) {
+		if (user.profile_picture)
+		{
+			try
+			{
+        /* This function apply a deletion function to every size available on nest server */
+				AVATAR_SIZES.forEach( (size) => {fs.unlinkSync(`${AVATAR_DEST}/${user.id}_${size}.jpg`);})
+        user.profile_picture = null;
+			}
+			catch (err)
+			{
+				throw new UnprocessableEntityException(`Cannot delete old avatar from server.`);
+			}
+		}
+	}
 }

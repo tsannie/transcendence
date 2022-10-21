@@ -1,13 +1,13 @@
-import { Body, Controller, Delete, Get, Header, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Query, Request, Res, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { UserEntity } from '../models/user.entity';
-import { targetDto } from '../dto/target.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { AvatarDto } from '../dto/avatar.dto';
+import { TargetNameDto, TargetIdDto, AvatarDto } from '../dto/target.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateResult } from 'typeorm';
 import { NewUsernameDto } from '../models/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
+import { Express } from 'express'
+import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/filevalidation.validator';
 
 @Controller('user')
 export class UserController {
@@ -30,29 +30,40 @@ export class UserController {
     return await this.userService.cleanAllUser();
   }
 
+  @Post("blockUser")
 	@UseGuards( JwtTwoFactorGuard )
-  @Post("banUser")
-  async banUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
-    return await this.userService.banUser(body.target, req.user);
+  async blockUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
+    return await this.userService.blockUser(body.target, req.user);
   }
 
+  @Post("unBlockUser")
   @UseGuards( JwtTwoFactorGuard )
-  @Post("unBanUser")
-  async unBanUser(@Body() body: targetDto, @Request() req) : Promise<UserEntity> {
-    return await this.userService.unBanUser(body.target, req.user);
+  async unBlockUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
+    return await this.userService.unBlockUser(body.target, req.user);
   }
 
-  @UseGuards( JwtTwoFactorGuard )
   @Post("addAvatar")
-  @UseInterceptors(FileInterceptor('image'))
-  async addAvatar( @UploadedFile() file: any, @Request() req) : Promise<void|UserEntity> {
-    return await this.userService.addAvatar(file, req.user);
+  @UseGuards( JwtTwoFactorGuard )
+  @UseInterceptors( FileInterceptor('avatar') )
+  async addAvatar( @UploadedFile( new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator( { maxSize: 5000000} ),
+      new AvatarFormatValidator( {format: ['jpg', 'jpeg', 'png']} ),
+    ]
+   })) file: Express.Multer.File, @Request() req) : Promise<UserEntity> {
+    return await this.userService.addAvatar(file.buffer, req.user);
   }
 
-  //DELETE OR INTEGRATE IN USER GETTER
+  @Get("avatar")
   @UseGuards( JwtTwoFactorGuard )
-  @Get("getAvatar")
-  async getAvatar (@Request() req) {//: Promise<string> {
-    // return await this.userService.getAvatar(req.user);
+  @UsePipes(new ValidationPipe( { transform: true}))
+  async getAvatar(@Query() data : AvatarDto, @Res() res) : Promise<void> {
+	  res.sendFile(await this.userService.getAvatar(data.id, {size: data.size}));
+}
+
+@Post("deleteAvatar")
+@UseGuards( JwtTwoFactorGuard )
+  deleteAvatar(@Request() req) {
+    return this.userService.deleteAvatar(req.user);
   }
 }

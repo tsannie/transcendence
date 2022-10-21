@@ -5,6 +5,7 @@ export type User = {
   username: string;
   email: string;
   enabled2FA: boolean;
+  profile_picture: string;
 }
 
 export type AuthContextType = {
@@ -28,13 +29,13 @@ export const AuthProvider = ({ children }: IProps) => {
   const [isLogin, setIsLogin] = useState(false);
 
   const login = (user: User) => {
-    setIsLogin(true);
     setUser(user);
+    setIsLogin(true);
   }
 
   const logout = () => {
-    setIsLogin(false);
     setUser(null);
+    setIsLogin(false);
   }
 
   return (
