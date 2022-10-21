@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { api } from "../const/const";
 import { MessagesContext } from "./MessagesContext";
-import { UserContext } from "./UserContext";
 
 export const SocketContext = createContext<Socket>(io());
 

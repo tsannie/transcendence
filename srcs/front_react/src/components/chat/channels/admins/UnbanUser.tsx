@@ -3,7 +3,6 @@ import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
 import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
-import { UserContext } from "../../../../contexts/UserContext";
 import { IChannel, IChannelActions } from "../../types";
 
 interface UnbanUserProps {

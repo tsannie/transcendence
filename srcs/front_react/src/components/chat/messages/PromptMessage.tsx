@@ -2,17 +2,17 @@ import { Grid, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useState } from "react";
 import Paperplane from "../../../assets/paperplane.png";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { SocketContext } from "../../../contexts/SocketContext";
-import { UserContext } from "../../../contexts/UserContext";
 import { IMessage } from "../types";
 
-interface PromptMessageProps {}
+interface PromptMessageProps { }
 
 export default function PromptMessage(props: PromptMessageProps) {
   const { convId } = useContext(MessagesContext);
-  const { userConnected } = useContext(UserContext);
+  const { user } = useContext(AuthContext) as AuthContextType;
   const { isDm } = useContext(MessagesContext);
   const [currentMessage, setCurrentMessage] = useState("");
   const socket = useContext(SocketContext);
@@ -27,7 +27,7 @@ export default function PromptMessage(props: PromptMessageProps) {
     if (currentMessage !== "") {
       const messageData: Partial<IMessage> = {
         id: id,
-        author: userConnected,
+        author: user,
         content: currentMessage,
         isDm: isDm,
       };

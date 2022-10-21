@@ -3,7 +3,6 @@ import { channel } from "diagnostics_channel";
 import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
-import { UserContext } from "../../../../contexts/UserContext";
 import { IChannel } from "../../types";
 import BanUser from "./BanUser";
 import MakeAdmin from "./MakeAdmin";
