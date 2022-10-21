@@ -29,26 +29,6 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
 
   // besoin de user et owner in available channels
 
-  function isInChannel(channelId: number): boolean {
-
-    if (user?.channels) {
-      for (const channel of user?.channels) {
-        if (channel.id === channelId) {
-          return true;
-        }
-      }
-    }
-
-    if (user?.owner_of) {
-      for (const owner of user?.owner_of) {
-        if (owner.id === channelId) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   function joinNewChannelWithoutStatus(channel: IChannel) {
     if (channel.status === "Protected") {
       channel.password = channelPassword;
@@ -89,31 +69,11 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
     setChannelPassword("");
   }
 
-  async function leaveChannel(channel: IChannel) {
-    await api
-      .post("channel/leave", channel)
-      .then((res) => {
-        console.log("channel left with success");
-        console.log(channel);
-        setSeverity("success");
-        setMessage("channel left");
-        setOpenSnackbar(true);
-        getChannelsUserlist();
-        getAvailableChannels();
-        getUser();
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-        console.log(res);
-        setSeverity("error");
-        setMessage(res.response.data.message);
-        setOpenSnackbar(true);
-      });
-  }
-
   useEffect(() => {
     getAvailableChannels();
   }, []);
+
+  console.log("available channels = ", availableChannels);
 
   return (
     <List sx={{ border: "1px solid black" }}>
@@ -124,50 +84,35 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
       {availableChannels.map((channel) => (
         <ListItem key={channel.name}>
           <ListItemText primary={channel.name} />
+          <TextField
+            sx={{
+              minWidth: "15vw",
+              display: channel.status === "Protected" ? "block" : "none",
+              ml: 2,
+            }}
+            placeholder="password"
+            type="password"
+            value={channelPassword}
+            onChange={(event) => {
+              setChannelPassword(event.target.value);
+            }}
+          ></TextField>
+          <ListItemIcon>
+            {channel.status === "Protected" ? (
+              <LockIcon sx={{ ml: 1.5, maxHeight: 18, maxWidth: 18 }} />
+            ) : (
+              <></>
+            )}
+          </ListItemIcon>
+          <ListItemButton
+            onClick={() => {
+              joinChannel(channel);
+            }}
+            sx={{ color: "green" }}
+          >
+            Join
+          </ListItemButton>
 
-          {!isInChannel(channel.id) ? (
-            <TextField
-              sx={{
-                minWidth: "15vw",
-                display: channel.status === "Protected" ? "block" : "none",
-                ml: 2,
-              }}
-              placeholder="password"
-              type="password"
-              value={channelPassword}
-              onChange={(event) => {
-                setChannelPassword(event.target.value);
-              }}
-            ></TextField>
-          ) : (
-            <ListItemIcon>
-              {channel.status === "Protected" ? (
-                <LockIcon sx={{ ml: 1.5, maxHeight: 18, maxWidth: 18 }} />
-              ) : (
-                <></>
-              )}
-            </ListItemIcon>
-          )}
-
-          {!isInChannel(channel.id) ? (
-            <ListItemButton
-              onClick={() => {
-                joinChannel(channel);
-              }}
-              sx={{ color: "green" }}
-            >
-              Join
-            </ListItemButton>
-          ) : (
-            <ListItemButton
-              onClick={() => {
-                leaveChannel(channel);
-              }}
-              sx={{ color: "red" }}
-            >
-              Leave
-            </ListItemButton>
-          )}
         </ListItem>
       ))}
     </List>
