@@ -64,17 +64,13 @@ export const TransitionProvider = ({ children }: IProps) => {
 
     const newLvl = getTransitionStage(location.pathname);
 
-    console.log("newLvl:", newLvl);
-    console.log("actualLvl:", actualLvl);
     if (newLvl !== actualLvl && actualLvl !== TransitionPageLvl.NULL) {
-      console.log("enableTransition///////////////////////////");
         if (actualLvl < newLvl) {
           setTransistionStage("exit-up");
         } else if (actualLvl > newLvl) {
           setTransistionStage("exit-down");
         }
     } else {
-      console.log('hello')
       setDisplayLocation(location);
     }
     setActualLvl(newLvl);
