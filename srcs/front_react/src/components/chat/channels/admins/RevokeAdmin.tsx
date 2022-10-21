@@ -2,6 +2,7 @@ import { Button, List, ListItemButton, Popover } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
 import { IChannel, IChannelActions } from "../../types";
 
 interface RevokeAdminProps {
@@ -12,6 +13,8 @@ interface RevokeAdminProps {
 }
 
 export default function RevokeAdmin(props: RevokeAdminProps) {
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
+
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("makeAdmin", channelData);
     revokeAdmin(props.userTargeted, props.channelData);
@@ -36,13 +39,18 @@ export default function RevokeAdmin(props: RevokeAdminProps) {
       await api
         .post("channel/revokeAdmin", newChannel)
         .then((res) => {
-          console.log("user in not admin anymore");
+          setSeverity("success");
+          setMessage("user is not admin anymore");
+          setOpenSnackbar(true);
           props.channelData.data.admins = res.data.admins;
           props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
           console.log(res);
+          setSeverity("error");
+          setMessage(res.response.data.message);
+          setOpenSnackbar(true);
         });
     }
   }
