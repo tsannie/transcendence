@@ -18,7 +18,7 @@ export enum ChatContent {
   CHANNEL_CONTENT,
 }
 
-interface ChatProps {}
+interface ChatProps { }
 
 export default function Chat(props: ChatProps) {
   const [chatContent, setChatContent] = useState<ChatContent>(
