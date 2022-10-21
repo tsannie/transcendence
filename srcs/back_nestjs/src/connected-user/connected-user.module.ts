@@ -5,12 +5,9 @@ import { ConnectedUserController } from './controller/connected-user.controller'
 import { ConnectedUserService } from './service/connected-user.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ConnectedUserEntity]),
-  ],
-  controllers: [ ConnectedUserController ],
-  providers: [ ConnectedUserService ],
-  exports: [ ConnectedUserService ],
+  imports: [TypeOrmModule.forFeature([ConnectedUserEntity])],
+  controllers: [ConnectedUserController],
+  providers: [ConnectedUserService],
+  exports: [ConnectedUserService],
 })
-export class ConnectedUserModule {
-}
+export class ConnectedUserModule {}

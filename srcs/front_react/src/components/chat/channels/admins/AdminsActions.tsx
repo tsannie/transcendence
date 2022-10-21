@@ -94,6 +94,7 @@ export default function AdminsActions(props: AdminsActionsProps) {
             userTargeted={props.userTargeted}
             getChannelDatas={props.getChannelDatas}
             channelData={props.channelData}
+            setUsersOpen={props.setUsersOpen}
           />
         )}
       </ListItem>
