@@ -21,31 +21,29 @@ export default function App() {
     <div className="bg">
       <Background />
       <div className="app">
-        <SocketProvider>
-          <SnackbarProvider>
-            <Routes>
-              {/* Auth Routes (public) */}
-              <Route path="/auth" element={<LoginPage />} />
-              <Route path="/2fa" element={<TwoFactorPage />} />
+        <SnackbarProvider>
+          <Routes>
+            {/* Auth Routes (public) */}
+            <Route path="/auth" element={<LoginPage />} />
+            <Route path="/2fa" element={<TwoFactorPage />} />
 
-              {/* Main Routes (private) */}
-              <Route path="/" element={<PrivateRoute component={Home} />} />
-              <Route
-                path="/profile"
-                element={<PrivateRoute component={Profile} />}
-              />
-              <Route path="/chat" element={<PrivateRoute component={Chat} />} />
-              <Route
-                path="/game"
-                element={<PrivateRoute component={GamePage} />}
-              />
-              <Route
-                path="/settings"
-                element={<PrivateRoute component={Settings} />}
-              />
-            </Routes>
-          </SnackbarProvider>
-        </SocketProvider>
+            {/* Main Routes (private) */}
+            <Route path="/" element={<PrivateRoute component={Home} />} />
+            <Route
+              path="/profile"
+              element={<PrivateRoute component={Profile} />}
+            />
+            <Route path="/chat" element={<PrivateRoute component={Chat} />} />
+            <Route
+              path="/game"
+              element={<PrivateRoute component={GamePage} />}
+            />
+            <Route
+              path="/settings"
+              element={<PrivateRoute component={Settings} />}
+            />
+          </Routes>
+        </SnackbarProvider>
       </div>
     </div>
   );
