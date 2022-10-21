@@ -59,8 +59,12 @@ export default function ChannelMoreInfos(props: ChannelMoreInfosProps) {
 
   async function deleteChannel(channelName: string) {
 
+    const newChannel = {
+      name: channelName,
+    }
+    console.log("channel name in delete = ", newChannel);
     await api
-      .post("channel/delete", channelName)
+      .post("channel/delete", newChannel)
       .then((res) => {
         console.log("channel deleted with success");
         getChannelsUserlist();
@@ -74,9 +78,10 @@ export default function ChannelMoreInfos(props: ChannelMoreInfosProps) {
 
   async function modifyPassword(channel: any) {
     // name, current password, new password
+    console.log("channel status = ", channel.data.status);
     const newChannel = {
       name: channel.data.name,
-      currentPassword: channel.data.status === "Protected" ? currentPassword : undefined,
+      current_password: channel.data.status === "Protected" ? currentPassword : undefined,
       new_password: newPassword,
     };
     console.log(" new channel = ", newChannel);

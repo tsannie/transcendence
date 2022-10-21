@@ -8,6 +8,7 @@ interface RevokeAdminProps {
   userTargeted: any;
   getChannelDatas: any;
   channelData: any;
+  setUsersOpen: any;
 }
 
 export default function RevokeAdmin(props: RevokeAdminProps) {
@@ -15,6 +16,7 @@ export default function RevokeAdmin(props: RevokeAdminProps) {
     //console.log("makeAdmin", channelData);
     revokeAdmin(props.userTargeted, props.channelData);
     props.getChannelDatas(props.channelData.data.name);
+    props.setUsersOpen(false);
   }
 
   function createChannelActions(channel: any, targetUsername: string) {
