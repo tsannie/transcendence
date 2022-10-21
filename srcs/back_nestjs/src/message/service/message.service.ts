@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { IMessage } from '../models/message.interface';
 import { UserEntity } from 'src/user/models/user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { BanMuteService } from 'src/channel/service/banmute.service';
 
 const LOADED_MESSAGES = 20;
 
@@ -15,8 +16,8 @@ export class MessageService {
   constructor(
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
-
-	private userService: UserService,
+	private readonly banmuteService: BanMuteService,
+	private readonly userService: UserService,
   ) {}
 
 	/* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
@@ -25,16 +26,16 @@ export class MessageService {
 		{
 			let dm = user.dms.find( elem => elem.id === inputed_id);
 			if (!dm)
-				throw new UnprocessableEntityException("User is not part of the dm.");
+			throw new UnprocessableEntityException("User is not part of the dm.");
 			else
-				return dm;
+			return dm;
 		}
 		if (type == "channel")
 		{
-			let owner_of = user.owner_of.find( elem => elem.id === inputed_id);
-			let admin_of = user.admin_of.find( elem => elem.id === inputed_id);
-			let user_of = user.channels.find( elem => elem.id === inputed_id);
-			console.log(owner_of, admin_of, user_of);
+			let owner_of = user.owner_of.find( elem => elem.id == inputed_id);
+			console.log(inputed_id);
+			let admin_of = user.admin_of.find( elem => elem.id == inputed_id);
+			let user_of = user.channels.find( elem => elem.id == inputed_id);
 			if (!owner_of && !admin_of && !user_of)
 				throw new UnprocessableEntityException("User is not part of the channel.");
 			else
@@ -72,6 +73,8 @@ export class MessageService {
 		const user = await this.userService.findByName(data.author, {dms: true, channels: true, admin_of: true, owner_of: true})
 		const channel = this.checkUserValidity("channel", Number(data.id), user) as ChannelEntity;
 
+		if (await this.banmuteService.isMuted(channel, user))
+			throw new UnauthorizedException("You're muted. Shush. Silence. No talking.");
 		const message = new MessageEntity();
 		message.content = data.content;
 		message.author = user;
