@@ -38,33 +38,60 @@
 
 }
 
+.no-animation {
+  animation: none;
+}
+
 .bounce-in-up {
-  animation: 0.5s bounce-in-up forwards;
+  animation: 0.4s bounce-in-up forwards;
 }
 
 @keyframes bounce-in-up {
   0% {
-    opacity: 0;
-    transform: translateY(2000px);
+    transform: translateY(80vh);
   }
-  60% {
-    opacity: 1;
-    transform: translateY(-30px);
+  50% {
+    transform: translateY(-8vh);
   }
-  80% { transform: translateY(10px); }
+  80% { transform: translateY(4vh); }
   100% { transform: translateY(0); }
 }
 
 .bounce-in-down {
-  animation: 0.2s bounce-in-down forwards;
+  animation: 0.4s bounce-in-down forwards;
 }
 
 @keyframes bounce-in-down {
   0% {
-    opacity: 0;
-    transform: translateY(0px);
+    transform: translateY(-80vh);
   }
-  100% { transform: translateY(-2000px); }
+  50% {
+    transform: translateY(8vh);
+  }
+  80% { transform: translateY(-4vh); }
+  100% { transform: translateY(0); }
+}
+
+.exit-up {
+  animation: 0.2s exit-up forwards;
+}
+
+@keyframes exit-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% { transform: translateY(-80vh); }
+}
+
+.exit-down {
+  animation: 0.2s exit-down forwards;
+}
+
+@keyframes exit-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% { transform: translateY(80vh); }
 }
 
 

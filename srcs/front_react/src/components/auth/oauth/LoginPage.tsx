@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { api, COOKIE_NAME } from "../../../const/const";
+import { TransitionContext, TransitionContextType } from "../../../contexts/TransitionContext";
 import ButtonLogin from "./ButtonLogin";
 import './login.style.scss'
 
@@ -18,9 +19,9 @@ export default function LoginPage() {
       api.get('auth/isTwoFactor').then(() => {
         setIs2FA(true);
       });
-
     }
   }, []);
+
 
   if (is2FA === true)
     return <Navigate to="/2fa" />

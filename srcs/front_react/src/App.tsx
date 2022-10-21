@@ -14,14 +14,18 @@ import Background from "./components/background/Background";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 import GamePage from "./components/game/GamePage";
 import Chat from "./components/chat/Chat";
-import { TransitionContext, TransitionContextType } from "./contexts/TransitionContext";
+import {
+  TransitionContext,
+  TransitionContextType,
+} from "./contexts/TransitionContext";
 
 export default function App() {
+  const { displayLocation, location, enableTransition } = useContext(
+    TransitionContext
+  ) as TransitionContextType;
 
-  const {displayLocation} = useContext(TransitionContext) as TransitionContextType;
 
   return (
-
     <div className="bg">
       <Background />
 

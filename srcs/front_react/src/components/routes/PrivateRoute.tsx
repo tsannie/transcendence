@@ -56,8 +56,11 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
           <div
             className={`${transitionStage}`}
             onAnimationEnd={() => {
-              if (transitionStage === "bounce-in-down") {
+              if (transitionStage === "exit-up") {
                 setTransistionStage("bounce-in-up");
+                setDisplayLocation(location);
+              } else if (transitionStage === "exit-down") {
+                setTransistionStage("bounce-in-down");
                 setDisplayLocation(location);
               }
             }}
