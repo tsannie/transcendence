@@ -16,6 +16,7 @@ export function GamePlayer_all(props: any) {
       let data = {
         room: props.room,
         paddle_y : pos_paddle_y,
+        front_canvas_width: props.plowerSize,
       };
       if (props.im_p2 === true) 
         socket.emit("paddleMouvRight", data)
@@ -38,8 +39,8 @@ export function GamePlayer_all(props: any) {
       <canvas
         id="canvas"
         ref={props.canvasRef}
-        height={props.plowerSize / screen_ratio}
         width={props.plowerSize}
+        height={props.plowerSize / screen_ratio}
         onMouseMove={(e) => mouv_paddle(e)}
         style={{ backgroundColor: "black" }}
         ></canvas>

@@ -9,7 +9,7 @@ import {
 import { Server } from 'http';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { canvas_back_height, paddle_height, paddle_margin_position, paddle_width } from './const/const';
+import { canvas_back_height, canvas_back_width, paddle_height, paddle_margin_position, paddle_width } from './const/const';
 import { BallEntity } from './game_entity/ball.entity';
 import { GameEntity } from './game_entity/game.entity';
 import { PaddleEntity } from './game_entity/paddle.entity';
@@ -166,7 +166,7 @@ export class GameGateway implements OnGatewayInit {
     }
     if (!room_game.set.p2_paddle_obj) {
       room_game.set.p2_paddle_obj = new PaddleEntity();
-      room_game.set.p2_paddle_obj.x = canvas_back_height - paddle_margin_position - paddle_width;
+      room_game.set.p2_paddle_obj.x = canvas_back_width - paddle_margin_position - paddle_width;
       room_game.set.p2_paddle_obj.width = paddle_width;
       room_game.set.p2_paddle_obj.height = paddle_height; 
     }
@@ -307,9 +307,17 @@ export class GameGateway implements OnGatewayInit {
     const room_game = await this.all_game.findOneBy({ room_name: data.room });
     if (!room_game)
       return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + data.room + ']');
+    
+    //console.log("\n\npaddleMouvLeft : " + data.paddle_y);
 
-    room_game.set.p1_paddle_obj.y = data.paddle_y;
-  
+
+
+   
+   room_game.set.p1_paddle_obj.y = (data.paddle_y* canvas_back_width) / data.front_canvas_width;
+   room_game.set.p1_paddle_obj.f_y = data.paddle_y; 
+   //console.log("\n\n============== : " + room_game.set.p1_paddle_obj.y)
+    //console.log("paddleMouvLeft : " + data.paddle_y);
+
     await this.all_game.save(room_game);
 
     client.to(data.room).emit('send_the_game', room_game.set);
@@ -324,7 +332,13 @@ export class GameGateway implements OnGatewayInit {
     if (!room_game)
       return console.log(' paddleMouvRight !!!!! NO ROOM !!!! [' + data.room + ']');
 
-    room_game.set.p2_paddle_obj.y = data.paddle_y;
+
+    room_game.set.p2_paddle_obj.y = (data.paddle_y * canvas_back_width) / data.front_canvas_width;
+    room_game.set.p2_paddle_obj.f_y = data.paddle_y; 
+
+    console.log("room_game.set.p2_paddle_obj.y : " + room_game.set.p2_paddle_obj.f_y);
+    //console.log("\n\n============== : " + room_game.set.p2_paddle_obj.y)
+    //console.log("paddleMouvLeft : " + data.paddle_y);
 
     await this.all_game.save(room_game);
 

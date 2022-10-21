@@ -12,8 +12,14 @@ export class PaddleEntity {
   y: number;
 
   @Column({ nullable: true, type: 'float' })
+  f_y: number;
+
+
+  @Column({ nullable: true, type: 'float' })
   width: number;
 
   @Column({ nullable: true, type: 'float' })
   height: number;
+
+
 }
