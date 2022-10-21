@@ -14,11 +14,9 @@ import {
   draw_ball,
 } from "./BallMouv";
 
-import { GamePlayer_p1 } from "./GameP1";
-import { GamePlayer_p2 } from "./GameP2";
 /* import { ballObj, gameSpecs, paddleProps_p1, paddleProps_p2, player_p1, player_p2 } from "../Game"; */
 import { ContactSupport } from "@material-ui/icons";
-import { canvas_back_height, screen_ratio } from "../const/const";
+import { canvas_back_height, canvas_back_width, screen_ratio } from "../const/const";
 import { GamePlayer_all } from "./GamePlayer_all";
 
 interface IBall {
@@ -229,21 +227,28 @@ export function GamePlayer_p1_p2(props: any) {
 
      // console.log ("props.im_p2", props.im_p2);
 
-      IPaddle_p1 = game.p1_paddle_obj;
+     
+     /*       IPaddle_p1.x = game.p1_paddle_obj.x;
+     IPaddle_p1.y = game.p1_paddle_obj.y;
+     
+     
+     IPaddle_p1.width = game.p1_paddle_obj.width;
+     IPaddle_p1.height = game.p1_paddle_obj.height; */
+     
+     //const ratio_width = XlowerSize / canvas_back_height;
+     //const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height / screen_ratio);
 
-/*       IPaddle_p1.x = game.p1_paddle_obj.x;
-      IPaddle_p1.y = game.p1_paddle_obj.y;
-      
-      
-      IPaddle_p1.width = game.p1_paddle_obj.width;
-      IPaddle_p1.height = game.p1_paddle_obj.height; */
-      
-      const ratio_width = XlowerSize / canvas_back_height;
-      const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height / screen_ratio);
 
+     const ratio_width = (lowerSize /canvas_back_width);
+     const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
+     
+     //IPaddle_p1 = game.p1_paddle_obj;
+
+      if (props.im_p2 === false)
+        IPaddle_p1.y = game.p1_paddle_obj.f_y ;
+      else 
+        IPaddle_p1.y = game.p1_paddle_obj.y  //* ratio_height;
       IPaddle_p1.x = game.p1_paddle_obj.x * ratio_width;
-      //IPaddle_p1.y = game.p1_paddle_obj.y //* ratio_height;
-  
       IPaddle_p1.width = game.p1_paddle_obj.width * ratio_width;
       IPaddle_p1.height = game.p1_paddle_obj.height * ratio_height;
 
@@ -253,50 +258,24 @@ export function GamePlayer_p1_p2(props: any) {
         IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height; */
 
 
-      IPaddle_p2 = game.p2_paddle_obj;
+     // IPaddle_p2 = game.p2_paddle_obj;
 
+      if (props.im_p2 === true)
+        IPaddle_p2.y = game.p2_paddle_obj.f_y;
+      else 
+        IPaddle_p2.y = game.p2_paddle_obj.y //* ratio_height;
       IPaddle_p2.x = game.p2_paddle_obj.x * ratio_width;
-      //IPaddle_p2.y = game.p2_paddle_obj.y //* ratio_height;
-    
       IPaddle_p2.width = game.p2_paddle_obj.width * ratio_width;
       IPaddle_p2.height = game.p2_paddle_obj.height * ratio_height;
 
-      //console.log("IPaddle_p1 = ", IPaddle_p1);
+      console.log("IPaddle_p1 = ", game.p2_paddle_obj.f_y);
 
 
-      if (props.im_p2 === true)
-        IPaddle_p1.y = game.p1_paddle_obj.y * ratio_height;
-      else
-        IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height;
-
-      // console.log("P1_LOWER_SIZe", game.p1_lowerSize);
-
-     // console.log("P2_LOWER_SIZe", game.p2_lowerSize);
-
-     // IPaddle_p1.x = game.set.p1_paddle_obj.x * my_ratio;
-
-     // console.log("IPaddle_p2 = ", IPaddle_p2);
-      //console.log("padddle RIGH = ", game.set.p2_paddle_obj);
-      //console.log("padddle left = ", IPaddle_p1);
-
-     // console.log("game.set.p2_paddle_obj = ", game.set.p2_paddle_obj);
-
-      //IPaddle_p2.y = game.set.p2_paddle_obj.y;
-
-      //console.log(" ONNN game.set.padddle_p1 = ", game.set.p1_paddle_obj);
-/* 
+/*
       IBall.x = game.set.ball.x;
       IBall.y = game.set.ball.y;
       IBall.rad = game.set.ball.rad; */
 
-
-      //console.log("IBall = ", game.set.ball);
-
-      //setIPlayer_p1(game.set.set_p1);
-      //setIPlayer_p2(game.set.set_p2);
-
-     // setIPaddle_p1(game.paddle_p1);
-      //setIPaddle_p2(game.paddle_p2);
     });
   }, [socket]);
 
