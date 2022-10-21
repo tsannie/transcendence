@@ -19,15 +19,16 @@ import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { UserContext } from "../../../contexts/UserContext";
+import { SnackbarContext, SnackbarContextType } from "../../../contexts/SnackbarContext";
 
-interface FormChannelProps {}
+interface FormChannelProps { }
 
 export default function FormChannel(props: FormChannelProps) {
   const [nameChannel, setNameChannel] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
-  const [error, setError] = useState("");
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
 
   const { getChannelsUserlist, getAvailableChannels } =
     useContext(ChannelsContext);
@@ -45,7 +46,9 @@ export default function FormChannel(props: FormChannelProps) {
     await api
       .post("channel/create", channelData)
       .then((res) => {
-        console.log("channel created with success");
+        setSeverity("success");
+        setMessage("channel created");
+        setOpenSnackbar(true);
         console.log(channelData);
         getChannelsUserlist();
         getAvailableChannels();
@@ -54,9 +57,15 @@ export default function FormChannel(props: FormChannelProps) {
       .catch((res) => {
         console.log("error");
         console.log(res.response.data.message);
-        setError(res.response.data.message[1]);
+        setSeverity("error");
+        if (typeof (res.response.data.message) !== "string") {
+          setMessage(res.response.data.message[0]);
+        }
+        else {
+          setMessage(res.response.data.message);
+        }
+        setOpenSnackbar(true);
       });
-    setError("");
     setNewPassword("");
     setNameChannel("");
   }
@@ -71,7 +80,6 @@ export default function FormChannel(props: FormChannelProps) {
           setNameChannel(event.target.value);
         }}
       ></TextField>
-      {error !== "" && <Alert severity="error"> {error} </Alert>}
       <FormControl>
         <InputLabel id="channel-status">Status</InputLabel>
         <Select

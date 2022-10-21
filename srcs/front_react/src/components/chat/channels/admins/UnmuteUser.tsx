@@ -2,6 +2,7 @@ import { Button, List, ListItemButton, Popover } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
 import { IChannel, IChannelActions } from "../../types";
 
 interface UnmuteUserProps {
@@ -11,6 +12,9 @@ interface UnmuteUserProps {
 }
 
 export default function UnmuteUser(props: UnmuteUserProps) {
+
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
+
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("ban user", channelData);
     unmuteUser(props.userTargeted, props.channelData);
@@ -34,13 +38,18 @@ export default function UnmuteUser(props: UnmuteUserProps) {
       await api
         .post("channel/unMuteUser", newChannel)
         .then((res) => {
-          console.log("user ban with success");
+          setSeverity("success");
+          setMessage("user unmuted");
+          setOpenSnackbar(true);
           props.channelData.data.muted = res.data.muted;
           props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
           console.log(res);
+          setSeverity("error");
+          setMessage(res.response.data.message);
+          setOpenSnackbar(true);
         });
     }
   }

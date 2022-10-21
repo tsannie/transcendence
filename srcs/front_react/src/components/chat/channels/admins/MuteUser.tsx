@@ -2,6 +2,7 @@ import { Button, List, ListItemButton, Popover } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
 import { IChannel, IChannelActions } from "../../types";
 
 interface MuteUserProps {
@@ -11,6 +12,8 @@ interface MuteUserProps {
 }
 
 export default function MuteUser(props: MuteUserProps) {
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
+
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("ban user", channelData);
     muteUser(props.userTargeted, props.channelData);
@@ -35,12 +38,18 @@ export default function MuteUser(props: MuteUserProps) {
         .post("channel/muteUser", newChannel)
         .then((res) => {
           console.log("user mute with success");
+          setSeverity("success");
+          setMessage("user muted");
+          setOpenSnackbar(true);
           props.channelData.data.muted = res.data.muted;
           props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
           console.log(res);
+          setSeverity("error");
+          setMessage(res.response.data.message);
+          setOpenSnackbar(true);
         });
     }
   }

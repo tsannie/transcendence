@@ -15,8 +15,9 @@ import { IChannel } from "../types";
 import LockIcon from "@mui/icons-material/Lock";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { UserContext } from "../../../contexts/UserContext";
+import { SnackbarContext, SnackbarContextType } from "../../../contexts/SnackbarContext";
 
-interface AvailableChannelsProps {}
+interface AvailableChannelsProps { }
 
 export default function AvailableChannels(props: AvailableChannelsProps) {
   const [channelPassword, setChannelPassword] = useState("");
@@ -24,6 +25,7 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
   const { getChannelsUserlist, getAvailableChannels, availableChannels } =
     useContext(ChannelsContext);
   const { userConnected, getUser } = useContext(UserContext);
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
 
   function isInChannel(channelId: number): boolean {
 
@@ -69,19 +71,21 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
         console.log("channel joined with success");
         console.log(channel);
         //console.log("list channels =", channelsList);
+        setSeverity("success");
+        setMessage("channel joined");
+        setOpenSnackbar(true);
         getChannelsUserlist();
         getAvailableChannels();
         getUser();
       })
       .catch((res) => {
         console.log("invalid channels");
-        // display response error
         console.log(res.response.data.message);
-        //setChannelExistsError(res.response.data.message);
+        setSeverity("error");
+        setMessage(res.response.data.message);
+        setOpenSnackbar(true);
       });
     setChannelPassword("");
-    //setChannelExistsError("");
-    // to do: refresh password after send (look send message)
   }
 
   async function leaveChannel(channel: IChannel) {
@@ -90,6 +94,9 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
       .then((res) => {
         console.log("channel left with success");
         console.log(channel);
+        setSeverity("success");
+        setMessage("channel left");
+        setOpenSnackbar(true);
         getChannelsUserlist();
         getAvailableChannels();
         getUser();
@@ -97,6 +104,9 @@ export default function AvailableChannels(props: AvailableChannelsProps) {
       .catch((res) => {
         console.log("invalid channels");
         console.log(res);
+        setSeverity("error");
+        setMessage(res.response.data.message);
+        setOpenSnackbar(true);
       });
   }
 

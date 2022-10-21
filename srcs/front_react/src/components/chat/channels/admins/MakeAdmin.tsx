@@ -2,6 +2,7 @@ import { Button, List, ListItemButton, Popover } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { api } from "../../../../const/const";
 import { ChannelsContext } from "../../../../contexts/ChannelsContext";
+import { SnackbarContext, SnackbarContextType } from "../../../../contexts/SnackbarContext";
 import { IChannel, IChannelActions } from "../../types";
 
 interface MakeAdminProps {
@@ -11,6 +12,8 @@ interface MakeAdminProps {
 }
 
 export default function MakeAdmin(props: MakeAdminProps) {
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
+
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     //console.log("makeAdmin", channelData);
     makeAdmin(props.userTargeted, props.channelData);
@@ -34,13 +37,18 @@ export default function MakeAdmin(props: MakeAdminProps) {
       await api
         .post("channel/makeAdmin", newChannel)
         .then((res) => {
-          console.log("user ban with success");
+          setSeverity("success");
+          setMessage("user is admin now");
+          setOpenSnackbar(true);
           props.channelData.data.admins = res.data.admins;
           props.getChannelDatas(props.channelData.data.name);
         })
         .catch((res) => {
           console.log("invalid channels");
           console.log(res);
+          setSeverity("error");
+          setMessage(res.response.data.message);
+          setOpenSnackbar(true);
         });
     }
   }
