@@ -86,6 +86,7 @@ export function GamePlayer_p1_p2(props: any) {
       window.removeEventListener('resize', detectSize)
       setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
       //console.log("+++setLowerSize", lowerSize);
+      socket.emit("resize_ingame", props.room);
     }
   }, [HW])
 
@@ -199,7 +200,7 @@ export function GamePlayer_p1_p2(props: any) {
     socket.on("send_the_game", (game: any) => {
       //console.log("GET DATA SEND THE GAME");
       let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
-      console.log("XlowerSize", XlowerSize);
+      //console.log("XlowerSize", XlowerSize);
 
 
 
@@ -226,7 +227,7 @@ export function GamePlayer_p1_p2(props: any) {
 /*       IPlayer_p1 = game.set_p1;
       IPlayer_p2 = game.set_p2; */
 
-
+     // console.log ("props.im_p2", props.im_p2);
 
       IPaddle_p1 = game.p1_paddle_obj;
 
@@ -241,18 +242,21 @@ export function GamePlayer_p1_p2(props: any) {
       const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height / screen_ratio);
 
       IPaddle_p1.x = game.p1_paddle_obj.x * ratio_width;
-      IPaddle_p1.y = game.p1_paddle_obj.y //* ratio_height;
+      //IPaddle_p1.y = game.p1_paddle_obj.y //* ratio_height;
   
       IPaddle_p1.width = game.p1_paddle_obj.width * ratio_width;
       IPaddle_p1.height = game.p1_paddle_obj.height * ratio_height;
 
-  
+/*       if (props.im_p2 === true)
+        IPaddle_p1.y = game.p1_paddle_obj.y * ratio_height;
+      else
+        IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height; */
 
 
       IPaddle_p2 = game.p2_paddle_obj;
 
       IPaddle_p2.x = game.p2_paddle_obj.x * ratio_width;
-      IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height;
+      //IPaddle_p2.y = game.p2_paddle_obj.y //* ratio_height;
     
       IPaddle_p2.width = game.p2_paddle_obj.width * ratio_width;
       IPaddle_p2.height = game.p2_paddle_obj.height * ratio_height;
@@ -260,7 +264,10 @@ export function GamePlayer_p1_p2(props: any) {
       //console.log("IPaddle_p1 = ", IPaddle_p1);
 
 
-
+      if (props.im_p2 === true)
+        IPaddle_p1.y = game.p1_paddle_obj.y * ratio_height;
+      else
+        IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height;
 
       // console.log("P1_LOWER_SIZe", game.p1_lowerSize);
 
