@@ -52,7 +52,7 @@ export class UserEntity {
 
   @ManyToMany( () => UserEntity)
   @JoinTable()
-  banned?: UserEntity[];
+  blocked?: UserEntity[];
 
   @Column( {nullable: true})
   profile_picture?:string;

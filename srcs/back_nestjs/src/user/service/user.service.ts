@@ -9,6 +9,8 @@ import {
 import { UserEntity } from '../models/user.entity';
 import * as sharp from 'sharp';
 import * as fs from 'fs';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map } from 'rxjs';
 
 export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
 
@@ -31,7 +33,7 @@ export class UserService {
   constructor(
 	@InjectRepository(UserEntity)
 	private allUser: Repository<UserEntity>,
-
+  private readonly httpService: HttpService,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -122,7 +124,7 @@ export class UserService {
       relations: {
         owner_of: true,
         channels: true,
-        banned: true,
+        blocked: true,
         admin_of: true,
       },
     });
@@ -151,7 +153,7 @@ export class UserService {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 
-  async banUser(target: string, requester: UserEntity): Promise<UserEntity> {
+  async blockUser(target: string, requester: UserEntity): Promise<UserEntity> {
     if (target === requester.username)
       throw new UnprocessableEntityException(`Cannot ban yourself.`);
     let toBan = await this.findByName(target);
@@ -160,24 +162,24 @@ export class UserService {
         `Cannot find a ${target} in database.`,
       );
     else {
-      if (!requester.banned) requester.banned = [toBan];
+      if (!requester.blocked) requester.blocked = [toBan];
       else {
-        if (requester.banned.find((elem) => elem.username === target))
+        if (requester.blocked.find((elem) => elem.username === target))
           throw new UnprocessableEntityException(
-            `You've already banned ${target}`,
+            `You've already blocked ${target}`,
           );
-        else requester.banned.push(toBan);
+        else requester.blocked.push(toBan);
       }
     }
     return await this.allUser.save(requester);
   }
 
-	async unBanUser(target: string, requester: UserEntity) : Promise<UserEntity> {
+	async unBlockUser(target: string, requester: UserEntity) : Promise<UserEntity> {
 		if (target === requester.username)
 			throw new UnprocessableEntityException(`Cannot unban yourself.`);
-		if (!requester.banned || !requester.banned.find( banned_guys => banned_guys.username === target))
-			throw new UnprocessableEntityException(`${target} is not banned.`);
-		requester.banned = requester.banned.filter( banned_guys => banned_guys.username !== target );
+		if (!requester.blocked || !requester.blocked.find( blocked_guys => blocked_guys.username === target))
+			throw new UnprocessableEntityException(`${target} is not blocked.`);
+		requester.blocked = requester.blocked.filter( blocked_guys => blocked_guys.username !== target );
 		return await this.allUser.save(requester);
 	}
 
@@ -189,10 +191,10 @@ export class UserService {
 
 	/* This function is responsible of resizing images in a square shape according to the inputed format
 	and save it locally in a jpeg format. Eamples : "1_512.jpg" or "12_128.jpg" */
-	async resizeImage(size: number, file: Express.Multer.File, user: UserEntity){
+	async resizeImage(size: number, bufferized_img: Buffer, user: UserEntity){
 		this.createDirectory();
 
-    await sharp(file.buffer)
+    await sharp(bufferized_img)
 		.resize(size, size)
 		.toFile(`${AVATAR_DEST}/${user.id}_${size}.jpg`)
 		.catch( err =>
@@ -202,16 +204,21 @@ export class UserService {
 			);
 	}
 
+  async add42DefaultAvatar(url: string, user: UserEntity) : Promise<void | UserEntity>{    
+    let response = await lastValueFrom(this.httpService.get(url, { responseType: 'arraybuffer'}))
+    return await this.addAvatar(Buffer.from(response.data), user);
+  }
+
 	/* This function add avatar after resizing it two times in the form of static .jpg files and
 	register the keyname to access these files later in db. Size of those pictures can be changed
 	a bit higher in this file (MEDIUM_PIC and SMALL_PIC)*/
-	async addAvatar(file: Express.Multer.File, user: UserEntity) : Promise<UserEntity> {
+	async addAvatar(bufferized_img: Buffer, user: UserEntity) : Promise<UserEntity> {
 		if (user.profile_picture)
 			this.deleteAvatar(user);
 
     /* This apply the resizing function to all type of size available */
-		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, file, user) });
-	
+		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, bufferized_img, user) });
+  
     user.profile_picture = `${process.env.BACK_URL}/user/avatar?id=${user.id}`;
     return await this.allUser.save(user);
 	}
@@ -227,8 +234,8 @@ export class UserService {
 
 		if (!user)
 			throw new UnprocessableEntityException("Cannot find user corresponding to that id");
-
-		return `${AVATAR_DEST}/${user.id}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
+    else
+		  return `${AVATAR_DEST}/${user.id}_${AVATAR_SIZES.get(avatarOptions.size)}.jpg`;
 		}
 
 	/* This function delete the avatars of the user*/
