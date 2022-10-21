@@ -479,7 +479,7 @@ export class GameGateway implements OnGatewayInit {
     //console.log("room_Game.set.p2_paddle_obj.y = " + room_game.set.p2_paddle_obj.y);
 
     //console.log("im right = ", data.im_p2);
-     if (room_game.set) {
+    /*  if (room_game.set) {
       if (room_game.set.ball) {
         room_game.set.ball.x += 2//room_game.set.ball.first_dx;
         room_game.set.ball.y += 2//room_game.set.ball.first_dy;
@@ -489,7 +489,7 @@ export class GameGateway implements OnGatewayInit {
         console.log("no ball")
     } 
     else
-      console.log("NO set");
+      console.log("NO set"); */
     //console.log("xx");
     //BallMouv(ctx, gameSpecs, ballObj, canvas.height, canvas.width, power);
     //BallCol_p1(ctx, gameSpecs, player_p2, ballObj, paddleProps_p1, canvas.height, canvas.width);
@@ -515,7 +515,17 @@ export class GameGateway implements OnGatewayInit {
 
     }//
  */
-    client.to(room).emit('send_the_game', room_game);
-    client.emit('send_the_game', room_game);
+    client.to(room).emit('send_the_game', room_game.set);
+    client.emit('send_the_game', room_game.set);
+  }
+
+  @SubscribeMessage('resize_ingame')
+  async resize_ingame(client: Socket, room: string) {
+    const room_game = await this.all_game.findOneBy({ room_name: room });
+    if (!room_game){
+      console.log("NO ROOM GAME", room)
+      return ;
+    }
+    client.emit('send_the_game', room_game.set);
   }
 }
