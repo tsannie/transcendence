@@ -9,7 +9,7 @@ import { ChatContent } from "../Chat";
 import { api } from "../../../const/const";
 import { DmsContext } from "../../../contexts/DmsContext";
 import DmsList from "./DmsList";
-import { UserContext } from "../../../contexts/UserContext";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 
 interface DmProps {
   setChatContent: (chatContent: ChatContent) => void;
@@ -18,7 +18,7 @@ interface DmProps {
 export default function Dms(props: DmProps) {
   const [newDm, setNewDm] = useState(false);
   const { getDmsList } = useContext(DmsContext);
-  const { getAllUsers } = useContext(UserContext);
+  const { getAllUsers } = useContext(AuthContext) as AuthContextType;
 
   function setDm() {
     //setAnchorEl(event.currentTarget);

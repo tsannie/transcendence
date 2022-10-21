@@ -15,7 +15,6 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
-import { UserContext } from "../../../contexts/UserContext";
 import UnbanUser from "./admins/UnbanUser";
 
 interface InfosChannelsProps {

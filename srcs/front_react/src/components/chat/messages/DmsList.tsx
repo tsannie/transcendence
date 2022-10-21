@@ -19,8 +19,8 @@ import { api } from "../../../const/const";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
-import { UserContext } from "../../../contexts/UserContext";
 import { reverse } from "dns";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 
 // to do: quand tu click sur la conv, ca set props.openConv a true
 // et l'id de la conv peut etre ?
@@ -33,16 +33,16 @@ interface DmsListProps {
 export default function DmsList(props: DmsListProps) {
   const { dmsList, setDmData } = useContext(DmsContext);
   const { loadMessages, setIsDm, setConvId } = useContext(MessagesContext);
-  const { userConnected } = useContext(UserContext);
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   // find target username with conv id and user id
   function findTargetUsername(dmId: number) {
     let targetUsername = "";
     let dm = dmsList.find((dm) => dm.id === dmId);
     if (dm) {
-      dm.users.forEach((user) => {
-        if (user.username !== userConnected.username) {
-          targetUsername = user.username;
+      dm.users.forEach((element) => {
+        if (element.username !== user?.username) {
+          targetUsername = element.username;
         }
       });
     }

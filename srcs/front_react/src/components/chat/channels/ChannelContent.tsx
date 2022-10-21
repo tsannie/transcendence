@@ -9,7 +9,6 @@ import AdminsActions from "./admins/AdminsActions";
 import InfosChannels from "./InfosChannels";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
-import { UserContext } from "../../../contexts/UserContext";
 import ChannelMoreInfos from "./ChannelMoreInfos";
 
 interface ChannelContentProps {
