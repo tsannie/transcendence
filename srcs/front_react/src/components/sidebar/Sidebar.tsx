@@ -32,24 +32,30 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar">
-      <nav className="sidebar__icon">
-        <Link to="/">
-          <HomeIcon className={path === "/" ? "selected" : ""} />
-        </Link>
-        <Link to="/profile">
-          <ProfileIcon className={path === "/profile" ? "selected" : ""} />
-        </Link>
-        <Link to="/chat">
-          <ChatIcon className={path === "/chat" ? "selected" : ""} />
-        </Link>
-        <Link to="/game">
-          <GameIcon className={path === "/game" ? "selected" : ""} />
-        </Link>
-        <Link to="/settings">
-          <SettingsIcon className={path === "/settings" ? "selected" : ""} />
-        </Link>
-        <LogOutIcon onClick={handleLogout} className="" />
-      </nav>
+      <div className="sidebar__content">
+
+        <div className="sidebar__icon">
+          <Link to="/">
+            <HomeIcon className={path === "/" ? "selected" : ""} />
+          </Link>
+          <Link to="/profile">
+            <ProfileIcon className={path === "/profile" ? "selected" : ""} />
+          </Link>
+          <Link to="/chat">
+            <ChatIcon className={path === "/chat" ? "selected" : ""} />
+          </Link>
+          <Link to="/game">
+            <GameIcon className={path === "/game" ? "selected" : ""} />
+          </Link>
+          <Link to="/settings">
+            <SettingsIcon className={path === "/settings" ? "selected" : ""} />
+          </Link>
+          <LogOutIcon onClick={handleLogout} className="" />
+        </div>
+
+        <div className="sidebar__bg"></div>
+
+      </div>
     </div>
   );
 }

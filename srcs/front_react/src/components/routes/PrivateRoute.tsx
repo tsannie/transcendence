@@ -65,6 +65,7 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
               }
             }}
           >
+            <div className="content__bg"></div>
               <RouteComponent />
             </div>
           </div>
