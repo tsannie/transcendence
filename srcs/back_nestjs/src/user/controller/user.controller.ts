@@ -30,16 +30,16 @@ export class UserController {
     return await this.userService.cleanAllUser();
   }
 
-  @Post("banUser")
+  @Post("blockUser")
 	@UseGuards( JwtTwoFactorGuard )
-  async banUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
-    return await this.userService.banUser(body.target, req.user);
+  async blockUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
+    return await this.userService.blockUser(body.target, req.user);
   }
 
-  @Post("unBanUser")
+  @Post("unBlockUser")
   @UseGuards( JwtTwoFactorGuard )
-  async unBanUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
-    return await this.userService.unBanUser(body.target, req.user);
+  async unBlockUser(@Body() body: TargetNameDto, @Request() req) : Promise<UserEntity> {
+    return await this.userService.unBlockUser(body.target, req.user);
   }
 
   @Post("addAvatar")
@@ -51,7 +51,7 @@ export class UserController {
       new AvatarFormatValidator( {format: ['jpg', 'jpeg', 'png']} ),
     ]
    })) file: Express.Multer.File, @Request() req) : Promise<UserEntity> {
-    return await this.userService.addAvatar(file, req.user);
+    return await this.userService.addAvatar(file.buffer, req.user);
   }
 
   @Get("avatar")
