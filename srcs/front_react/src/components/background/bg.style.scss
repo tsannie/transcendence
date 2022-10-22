@@ -1,4 +1,4 @@
-@import '../../const.style.scss';
+@import "../../const.style.scss";
 
 $number_ball: 11;
 
@@ -15,7 +15,8 @@ $number_ball: 11;
   }
   position: absolute;
   bottom: 0;
-};
+  z-index: 2;
+}
 
 .ball {
   position: absolute;
@@ -23,8 +24,6 @@ $number_ball: 11;
   top: -5%;
   width: calc(20 * var(--res));
   height: calc(20 * var(--res));
-  margin: 5px;
-  //background-color: blueviolet;
   animation: 20s linear infinite;
   &::before {
     content: "";
@@ -47,32 +46,20 @@ $number_ball: 11;
     @keyframes ballAnimationLeft#{$i} {
       $random: 1 + random(10) / 10; // TODO delete ?
       0% {
-        transform: translateX(110vw)
-          translateY(random(100) + vh);
+        transform: translateX(110vw) translateY(random(100) + vh);
       }
       100% {
-        transform: translateX(0vw)
-          translateY(random(100) + vh);
+        transform: translateX(0vw) translateY(random(100) + vh);
       }
     }
     @keyframes ballAnimationRight#{$i} {
       $random: 1 + random(10) / 10;
       0% {
-        transform: translateX(0vw)
-          translateY(random(100) + vh);
+        transform: translateX(0vw) translateY(random(100) + vh);
       }
       100% {
-        transform: translateX(110vw)
-          translateY(random(100) + vh);
+        transform: translateX(110vw) translateY(random(100) + vh);
       }
     }
   }
 }
-
-
-  //animation: ballAnimation 15s linear infinite;
-  //animation-duration: calc(15s / random(10));
-
-
-
-

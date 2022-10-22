@@ -1,3 +1,8 @@
-$bg-color: #1D1D1D;
-$white-color: #FFF8DC;
+@font-face {
+  font-family: "Arcade";
+  src: url(./assets/fonts/ARCADECLASSIC.ttf);
+}
+
+$bg-color: #1d1d1d;
+$white-color: #fff8dc;
 $opacity-content-bg: 0.5;
