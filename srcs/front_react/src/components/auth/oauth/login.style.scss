@@ -1,10 +1,5 @@
 @import '../../../const.style.scss';
 
-@font-face {
-  font-family: 'Arcade';
-  src: url(../../../assets/fonts/ARCADECLASSIC.ttf);    // TODO mov to const or app scss ?
-}
-
 .login {
   width: 100%;
   display: flex;
