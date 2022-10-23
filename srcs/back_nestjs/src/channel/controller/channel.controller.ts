@@ -39,8 +39,8 @@ export class ChannelController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('list')
-  async getList(): Promise<ChannelEntity[]> {
-    return await this.channelService.getList();
+  async getList(@Request() req): Promise<ChannelEntity[]> {
+    return await this.channelService.getList(req.user);
   }
 
   //CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)

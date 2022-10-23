@@ -1,5 +1,6 @@
 import {
   Catch,
+  ConsoleLogger,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -88,8 +89,8 @@ export class ChannelService {
   }
 
   /* This getter returns the list of available channels (public and protected) that a user can join */
-  async getList(): Promise<ChannelEntity[]> {
-    return await this.channelRepository.find({
+  async getList(user: UserEntity): Promise<ChannelEntity[]> {
+    let res = await this.channelRepository.find({
       where: [{ status: 'Public' }, { status: 'Protected' }],
       order: {
         createdAt: 'ASC',
@@ -101,6 +102,16 @@ export class ChannelService {
         createdAt: true,
       },
     });
+
+    let newRes = res.filter((channel) => {
+      // return newRes without the channel the user is already in, or as an owner or admin
+      return (
+        !this.isMember(channel.name, user) &&
+        !this.isOwner(channel.name, user) &&
+        !this.isAdmin(channel.name, user)
+      );
+    });
+    return newRes;
   }
 
   /* This getter returns list of channels the user is part of, as an Owner, an admin, or a simple user */
