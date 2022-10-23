@@ -43,7 +43,7 @@ export class AuthService {
     new_user.email = profile.emails[0].value;
     new_user = await this.register(new_user);
 
-    return await this.userService.add42DefaultAvatar(profile._json.image_url, new_user);
+    return await this.userService.add42DefaultAvatar(profile.picture, new_user);
   }
 
   async register(user: UserEntity): Promise<UserEntity> {
