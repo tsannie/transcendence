@@ -8,8 +8,6 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { FC, useContext, useEffect, useState } from "react";
-import { set } from "react-hook-form";
-import { Socket } from "socket.io-client";
 import { api } from "../../const/const";
 import { ChatContent } from "./Chat";
 import { SocketContext } from "./SocketContext";
