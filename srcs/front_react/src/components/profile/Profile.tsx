@@ -12,7 +12,7 @@ function Profile() {
       <div className="profile__header">
         <div className="profile__header__user">
           <div className="profile__header__user__avatar">
-            <img src={user?.profile_picture} alt="avatar" />
+            <img src={user?.profile_picture + '&size=medium'} alt="avatar" />
           </div>
           <div className="profile__header__user__info">
             <h2>{user?.username}</h2>
@@ -33,16 +33,16 @@ function Profile() {
       <div className="profile__stats">
 
         <div className="profile__stats__item">
-          <h3>0</h3>
+          <h3>1254</h3>
           <span>Matches</span>
         </div>
         <div className="profile__stats__item">
-          <h3>0</h3>
+          <h3>64%</h3>
           <span>Win Rate</span>
         </div>
         <div className="profile__stats__item">
           <h3>0</h3>
-          <span>Rank</span>
+          <span>elo</span>
         </div>
         <div className="profile__stats__item">
           <h3>0</h3>
