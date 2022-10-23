@@ -10,8 +10,9 @@ $number_ball: 11;
 }
 
 .bg__hideball {
-  img {
-    width: calc(60 * var(--res));
+  svg {
+    width: calc(50 * var(--res));
+    fill: $white-color;
   }
   position: absolute;
   bottom: 0;

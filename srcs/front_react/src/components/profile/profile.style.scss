@@ -37,7 +37,7 @@
   img {
     border-style: dashed;
     border-radius: 50%;
-    width: calc(200 * var(--res));
+    width: calc(150 * var(--res));
   }
 }
 
@@ -73,8 +73,11 @@
   align-items: center;
   justify-content: center;
   border-style: dashed;
-  width: 100%;
-  margin: calc(10 * var(--res));
-  font-size: calc(30 * var(--res));
+  width: 20%;
+  margin: calc(9 * var(--res));
+  font-size: calc(20 * var(--res));
+  span {
+    font-size: calc(18 * var(--res));
+  }
 }
 
