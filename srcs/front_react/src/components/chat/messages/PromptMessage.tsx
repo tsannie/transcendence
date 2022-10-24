@@ -25,8 +25,8 @@ export default function PromptMessage(props: PromptMessageProps) {
 
     inputMessage.value = "";
     if (currentMessage !== "") {
-      const messageData: Partial<IMessageSent> = {
-        id: id,
+      const messageData: IMessageSent = {
+        convId: id,
         author: user,
         content: currentMessage,
         isDm: isDm,

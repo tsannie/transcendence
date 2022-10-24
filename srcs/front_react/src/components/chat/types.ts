@@ -1,14 +1,16 @@
+import { User } from "../../contexts/AuthContext";
+
 export interface IMessageSent {
-  id: number; // id du dm ou du channel
-  author: any; // IUser en theorie
+  convId: number; // id du dm ou du channel
+  author: User | null; // IUser en theorie
   content: string;
   isDm: boolean;
 }
 
 export interface IMessageReceived {
-  uuid: string;
+  id: string;
   convId: number;
-  author: any; // IUser en theorie
+  author: User | null; // IUser en theorie
   content: string;
   createdAt: Date;
   dm?: any; // IDm en theorie
@@ -27,11 +29,11 @@ export interface IChannel {
   name: string;
   password: string;
   status: string;
-  owner: any;
-  users: any[];
-  admins: any[];
-  muted: any[];
-  banned: any[];
+  owner: User | null;
+  users: User[] | null;
+  admins: User[] | null;
+  muted: User[] | null;
+  banned: User[] | null;
 }
 
 export interface IChannelActions {
@@ -44,12 +46,12 @@ export interface IDm {
   time: Date;
   target: string;
   offset: number;
-  users: any[];
+  users: User[] | null;
   messages: IMessageReceived[];
 }
 
 export interface IConvCreated {
   id: number;
   time: Date;
-  users: any[];
+  users: User[] | null;
 }

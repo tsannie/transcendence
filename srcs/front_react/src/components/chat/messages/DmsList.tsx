@@ -40,7 +40,7 @@ export default function DmsList(props: DmsListProps) {
     let targetUsername = "";
     let dm = dmsList.find((dm) => dm.id === dmId);
     if (dm) {
-      dm.users.forEach((element) => {
+      dm.users?.forEach((element) => {
         if (element.username !== user?.username) {
           targetUsername = element.username;
         }
