@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		owner_of: true,
 		admin_of: true,
 		channels: true,
-		banned: true,
+		blocked: true,
 		dms: true
 	});
   }

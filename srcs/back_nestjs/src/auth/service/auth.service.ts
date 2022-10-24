@@ -18,14 +18,16 @@ export class AuthService {
   ) {}
 
   async validateUser(profile42: any): Promise<any> {
-    console.log(profile42);
     const user = await this.userService.findByMail(profile42.emails[0].value);
     if (user)
       return user;
-    return this.register({
-      username: profile42.username,
-      email: profile42.emails[0].value,
-    });
+
+    let new_user = new UserEntity();
+    new_user.username = profile42.username;
+    new_user.email = profile42.emails[0].value;
+    new_user = await this.register(new_user);
+
+    return await this.userService.add42DefaultAvatar(profile42._json.image_url, new_user);
   }
 
   async register(user: UserEntity): Promise<UserEntity> {
