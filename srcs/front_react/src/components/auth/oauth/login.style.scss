@@ -1,10 +1,5 @@
 @import '../../../const.style.scss';
 
-@font-face {
-  font-family: 'Arcade';
-  src: url(../../../assets/fonts/ARCADECLASSIC.ttf);    // TODO mov to const or app scss ?
-}
-
 .login {
   width: 100%;
   display: flex;
@@ -40,6 +35,7 @@
   overflow: hidden;
   padding: 1%;
   border-style: dashed;
+  width: calc(500 * var(--res));
   //transform: scale(0);
   h2 {
     font-size: calc(40 * var(--res));
@@ -74,20 +70,24 @@
 .login-list__content {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   //background-color: aquamarine;
+  width: 80%;
   button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-bottom: calc(10 * var(--res));
   }
   span {
     margin-left: 1vw;
-    font-size: calc(25 * var(--res));
-    white-space: nowrap;
+    font-size: calc(20 * var(--res));
+  }
+  svg {
+    fill: $white-color;
+    width: calc(70 * var(--res));
   }
 }
 
-.login-list__content__logo {
-  fill: $white-color;
-  width: calc(70 * var(--res));
+.login-list__content__item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

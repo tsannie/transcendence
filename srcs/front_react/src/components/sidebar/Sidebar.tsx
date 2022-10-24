@@ -9,8 +9,11 @@ import { api, COOKIE_NAME } from "../../const/const";
 import "./sidebar.style.scss";
 import { Link } from "react-router-dom";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import { useLocation } from "react-router-dom"
-import { SnackbarContext, SnackbarContextType } from "../../contexts/SnackbarContext";
+import { useLocation } from "react-router-dom";
+import {
+  SnackbarContext,
+  SnackbarContextType,
+} from "../../contexts/SnackbarContext";
 
 export default function Sidebar() {
   const { logout } = useContext(AuthContext) as AuthContextType;
@@ -19,35 +22,40 @@ export default function Sidebar() {
   const path = useLocation().pathname;
 
   const handleLogout = () => {
-    api.get('/auth/logout')
-      .then(res => {
-        setMessage('bye bye');
-        setSeverity('info');
-        setOpenSnackbar(true);
-        logout();
-      });
-  }
+    api.get("/auth/logout").then((res) => {
+      setMessage("bye bye");
+      setSeverity("info");
+      setOpenSnackbar(true);
+      logout();
+    });
+  };
 
   return (
     <div className="sidebar">
-      <nav className="sidebar__icon">
-        <Link to="/">
-          <HomeIcon className={path === '/' ? 'selected' : ''} />
-        </Link>
-        <Link to="/profile">
-          <ProfileIcon className={path === '/profile' ? 'selected' : ''} />
-        </Link>
-        <Link to="/chat">
-          <ChatIcon className={path === '/chat' ? 'selected' : ''} />
-        </Link>
-        <Link to="/game">
-          <GameIcon className={path === '/game' ? 'selected' : ''} />
-        </Link>
-        <Link to="/settings">
-          <SettingsIcon className={path === '/settings' ? 'selected' : ''} />
-        </Link>
-        <LogOutIcon onClick={handleLogout} className='' />
-      </nav>
+      <div className="sidebar__content">
+
+        <div className="sidebar__icon">
+          <Link to="/">
+            <HomeIcon className={path === "/" ? "selected" : ""} />
+          </Link>
+          <Link to="/profile">
+            <ProfileIcon className={path === "/profile" ? "selected" : ""} />
+          </Link>
+          <Link to="/chat">
+            <ChatIcon className={path === "/chat" ? "selected" : ""} />
+          </Link>
+          <Link to="/game">
+            <GameIcon className={path === "/game" ? "selected" : ""} />
+          </Link>
+          <Link to="/settings">
+            <SettingsIcon className={path === "/settings" ? "selected" : ""} />
+          </Link>
+          <LogOutIcon onClick={handleLogout} className="" />
+        </div>
+
+        <div className="sidebar__bg"></div>
+
+      </div>
     </div>
   );
 }
