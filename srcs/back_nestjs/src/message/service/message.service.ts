@@ -2,10 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
-import { uuid } from 'uuidv4';
 import { MessageEntity } from '../models/message.entity';
-import { IMessage } from '../models/message.interface';
-import { v4 as uuidv4 } from 'uuid';
 import { UserEntity } from 'src/user/models/user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
@@ -13,6 +10,7 @@ import { DmService } from 'src/dm/service/dm.service';
 import { Server } from 'socket.io';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
+import { MessageDto } from '../dto/message.dto';
 
 const LOADED_MESSAGES = 20;
 
@@ -62,7 +60,7 @@ export class MessageService {
 
     const messages = await this.allMessages
       .createQueryBuilder('message')
-      .select('message.uuid')
+      .select('message.id')
       .addSelect('message.createdAt')
       .addSelect('message.content')
       .leftJoin('message.author', 'author')
@@ -88,7 +86,7 @@ export class MessageService {
 
     return await this.allMessages
       .createQueryBuilder('message')
-      .select('message.uuid')
+      .select('message.id')
       .addSelect('message.createdAt')
       .addSelect('message.content')
       .leftJoin('message.author', 'author')
@@ -103,7 +101,7 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(data: IMessage): Promise<MessageEntity> {
+  async addMessagetoChannel(data: MessageDto): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findByName(data.author.username, {
       dms: true,
@@ -113,7 +111,7 @@ export class MessageService {
     });
     const channel = this.checkUserValidity(
       'channel',
-      Number(data.id),
+      Number(data.convId),
       user,
     ) as ChannelEntity;
 
@@ -125,7 +123,7 @@ export class MessageService {
   }
 
   /* TODO modify input */
-  async addMessagetoDm(data: IMessage): Promise<MessageEntity> {
+  async addMessagetoDm(data: MessageDto): Promise<MessageEntity> {
     console.log('addMessagetoDm = ', data);
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findByName(data.author.username, {
@@ -134,7 +132,11 @@ export class MessageService {
       admin_of: true,
       owner_of: true,
     });
-    const dm = this.checkUserValidity('dm', Number(data.id), user) as DmEntity;
+    const dm = this.checkUserValidity(
+      'dm',
+      Number(data.convId),
+      user,
+    ) as DmEntity;
 
     const message = new MessageEntity();
     message.content = data.content;
@@ -144,8 +146,8 @@ export class MessageService {
   }
 
   // emit message to all users in dm
-  async emitMessageDm(socket: Server, data: IMessage) {
-    const dm = await this.dmService.getDmById(data.id);
+  async emitMessageDm(socket: Server, data: MessageDto) {
+    const dm = await this.dmService.getDmById(data.convId);
 
     if (dm) {
       for (const dmUser of dm.users) {
@@ -167,8 +169,8 @@ export class MessageService {
   }
 
   // emit message to all users in channel
-  async emitMessageChannel(socket: Server, data: IMessage) {
-    const channel = await this.channelService.getChannelById(data.id);
+  async emitMessageChannel(socket: Server, data: MessageDto) {
+    const channel = await this.channelService.getChannelById(data.convId);
     console.log(channel);
 
     if (channel) {

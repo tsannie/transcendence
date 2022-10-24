@@ -14,7 +14,6 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 //import { socket } from "../Chat";
 import { IChannel, ICreateChannel } from "../types";
-import { v4 as uuidv4 } from "uuid";
 import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
 import { ChannelsContext } from "../../../contexts/ChannelsContext";
