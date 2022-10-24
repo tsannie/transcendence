@@ -43,19 +43,22 @@
 
 .profile__header__search {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  span {
+    margin-bottom: calc(7 * var(--res));
+  }
 }
 
 .profile__header__search__item {
   display: flex;
   border-style: dashed;
-  width: 80%;
+  width: 70%;
 
   svg {
     width: calc(35 * var(--res));
   }
-
   input {
     width: 100%;
     border-style: none;
