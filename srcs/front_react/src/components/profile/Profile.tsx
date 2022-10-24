@@ -5,7 +5,6 @@ import ProfileHeader from "./ProfileHeader";
 import ProfileStatsBar from "./ProfileStatsBar";
 import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
 
-
 function Profile() {
   const { user } = React.useContext(AuthContext) as AuthContextType;
 
@@ -19,20 +18,18 @@ function Profile() {
   return (
     <div className="profile">
       <ProfileHeader user={user} />
-      <hr id="full"/>
+      <hr id="full" />
       <ProfileStatsBar user={user} />
-      <hr id="full"/>
+      <hr id="full" />
       <div className="profile__body">
         <div className="profile__body__history">
           <div className="profile__body__history__title">
             <h3>recent games:</h3>
           </div>
-          <hr />
+          <hr id="full" />
           <div className="profile__body__history__list">
-
             <div className="profile__body__history__item">
-              <div className="trophy-indicator">
-              </div>
+              <div className="trophy-indicator"></div>
               <div className="info">
                 <span>defeat</span>
                 <div className="info__elo">-22PP</div>
@@ -41,7 +38,6 @@ function Profile() {
               <span>6-10</span>
             </div>
             <hr />
-
             <div className="profile__body__history__item">
               <div className="trophy-indicator">
                 <TrophyIcon />
@@ -54,7 +50,36 @@ function Profile() {
               <span>10-7</span>
             </div>
             <hr />
-
+          </div>
+        </div>
+        <div className="profile__body__friends">
+          <div className="profile__body__friends__title">
+            <h3>friends:</h3>
+            <span>651</span>
+          </div>
+          <hr id="full" />
+          <div className="profile__body__friends__list">
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
           </div>
         </div>
       </div>
