@@ -1,12 +1,9 @@
 import { Button, IconButton, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
-import Add from "../../../assets/add.png";
-import { IDm } from "../types";
 import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { ChatContent } from "../Chat";
-import { api } from "../../../const/const";
 import { DmsContext } from "../../../contexts/DmsContext";
 import DmsList from "./DmsList";
 import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
@@ -21,14 +18,13 @@ export default function Dms(props: DmProps) {
   const { getAllUsers } = useContext(AuthContext) as AuthContextType;
 
   function setDm() {
-    //setAnchorEl(event.currentTarget);
     setNewDm(true);
     getAllUsers();
     props.setChatContent(ChatContent.NEW_DM);
   }
 
   return (
-    <Box sx={{ border: "1px solid red", width: "100%" }}>
+    <Box sx={{ border: "1px solid blue" }}>
       <Typography
         sx={{
           fontWeight: "bold",

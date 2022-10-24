@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { createContext } from "react";
-import { IMessage, IMessageReceived } from "../components/chat/types";
+import { IMessageReceived } from "../components/chat/types";
 import { api } from "../const/const";
 import { SocketContext } from "./SocketContext";
 
@@ -97,11 +97,11 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
   }
 
   useEffect(() => {
-    socket.on("message", (data) => {
+    socket.on("message", (data: IMessageReceived) => {
       const newMsg: IMessageReceived = {
+        uuid: data.uuid,
         author: data.author,
         convId: data.dm ? data.dm.id : data.channel.id,
-        uuid: data.uuid,
         content: data.content,
         createdAt: data.createdAt,
       };
