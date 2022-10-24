@@ -6,15 +6,12 @@ export class PaddleEntity {
   id?: number;
 
   @Column({ nullable: true, type: 'float' })
-  x: number;
+  x: number; // TODO CONST !!!!! NO CONST IN ENTITY
 
   @Column({ nullable: true, type: 'float' })
   y: number;
 
-  @Column({ nullable: true, type: 'float' })
-  f_y: number;
-
-
+  // TODO DELL BC CONST
   @Column({ nullable: true, type: 'float' })
   width: number;
 

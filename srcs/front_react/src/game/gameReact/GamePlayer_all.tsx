@@ -10,18 +10,15 @@ export function GamePlayer_all(props: any) {
   // Mouve the paddle with the mouse and send the data to the server to send it to the other player
   function mouv_paddle(e: any) {
     if (props.opready === true) {
-      let pos_paddle_y: number;
-      pos_paddle_y = e.clientY
+      let pos_paddle_y: number = e.clientY
 
       let data = {
         room: props.room,
-        paddle_y : pos_paddle_y,
+        paddle_y: pos_paddle_y,
+        im_p2: props.im_p2,
         front_canvas_height: props.plowerSize / screen_ratio,
       };
-      if (props.im_p2 === true) 
-        socket.emit("paddleMouvRight", data)
-      else
-        socket.emit("paddleMouvLeft", data);
+      socket.emit("paddleMouv", data);
     }
   }
 

@@ -7,8 +7,6 @@ import {
 
 import {
   BallMouv,
-  BallCol_p2,
-  BallCol_p1,
   PaddleMouv_p1,
   PaddleMouv_p2,
   draw_line,

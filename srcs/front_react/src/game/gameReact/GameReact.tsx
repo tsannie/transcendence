@@ -1,9 +1,7 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { socket } from "../Game";
 import {
   BallMouv,
-  BallCol_p2,
-  BallCol_p1,
   PaddleMouv_p1,
   PaddleMouv_p2,
   draw_line,
@@ -195,86 +193,86 @@ export function GamePlayer_p1_p2(props: any) {
  */
 
   useEffect(() => {
-    socket.on("send_the_game", (game: any) => {
+    
+    socket.on("get_the_paddle", (set: any) => {
+      
+      if (!set) {
+        console.log("NO SET front");
+        return;
+      }
+    let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
+      
+     const ratio_width = (XlowerSize /canvas_back_width);
+     const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
+     
+
+      // set paddle 
+      set.p1_paddle_obj.x *= ratio_width;
+      set.p1_paddle_obj.y *= ratio_height;
+      set.p1_paddle_obj.width *= ratio_width;
+      set.p1_paddle_obj.height *= ratio_height;
+
+      set.p2_paddle_obj.x *= ratio_width;
+      set.p2_paddle_obj.y *= ratio_height;
+      set.p2_paddle_obj.width *= ratio_width;
+      set.p2_paddle_obj.height *= ratio_height;
+
+      if (props.im_p2 === true)
+        IPaddle_p2.y = set.p2_paddle_obj.y * ratio_height;
+      else
+        IPaddle_p1.y = set.p1_paddle_obj.y;
+
+      IPaddle_p1 = set.p1_paddle_obj;
+      IPaddle_p2 = set.p2_paddle_obj;
+    });
+
+
+    socket.on("get_the_ball", (set: any) => {
       //console.log("GET DATA SEND THE GAME");
-      let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
+      //let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
       //console.log("XlowerSize", XlowerSize);
 
 
 
-      if (!game) {
+      if (!set) {
         console.log("NO SET front");
         return;
       }
-      //setIBall(game.ball);
-      if (!game.ball)
+      //setIBall(set.ball);
+      if (!set.ball)
         console.log("NO BALL");
 
-      if (!game.p1_paddle_obj)
+      if (!set.p1_paddle_obj)
         console.log("NO PADDLE_p1");
-      if (!game.p2_paddle_obj)
+      if (!set.p2_paddle_obj)
         console.log("NO PADDLE_p2");
 
 
-      if (!game.set_p2)
+      if (!set.set_p2)
         console.log("NO PLAYER_p1");
-      if (!game.set_p1)
+      if (!set.set_p1)
         console.log("NO PLAYER_p2");
 
 
-/*       IPlayer_p1 = game.set_p1;
-      IPlayer_p2 = game.set_p2; */
-
-     // console.log ("props.im_p2", props.im_p2);
-
-     
-     /*       IPaddle_p1.x = game.p1_paddle_obj.x;
-     IPaddle_p1.y = game.p1_paddle_obj.y;
-     
-     
-     IPaddle_p1.width = game.p1_paddle_obj.width;
-     IPaddle_p1.height = game.p1_paddle_obj.height; */
-     
-     //const ratio_width = XlowerSize / canvas_back_height;
-     //const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height / screen_ratio);
 
 
      const ratio_width = (lowerSize /canvas_back_width);
      const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
      
-     //IPaddle_p1 = game.p1_paddle_obj;
+      // set player
+/*       IPlayer_p1 = set.set_p1;
+      IPlayer_p2 = set.set_p2; */
 
-      if (props.im_p2 === false)
-        IPaddle_p1.y = game.p1_paddle_obj.f_y ;
-      else 
-        IPaddle_p1.y = game.p1_paddle_obj.y  * ratio_height;
-      IPaddle_p1.x = game.p1_paddle_obj.x * ratio_width;
-      IPaddle_p1.width = game.p1_paddle_obj.width * ratio_width;
-      IPaddle_p1.height = game.p1_paddle_obj.height * ratio_height;
+      // set ball
+      IBall.x = set.ball.x * ratio_width;
+      IBall.y = set.ball.y * ratio_height;
+      IBall.rad = set.ball.rad * ratio_width;
 
-/*       if (props.im_p2 === true)
-        IPaddle_p1.y = game.p1_paddle_obj.y * ratio_height;
-      else
-        IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height; */
+      console.log(IBall.x, IBall.y, IBall.rad);
 
-
-     // IPaddle_p2 = game.p2_paddle_obj;
-
-      if (props.im_p2 === true)
-        IPaddle_p2.y = game.p2_paddle_obj.f_y;
-      else 
-        IPaddle_p2.y = game.p2_paddle_obj.y * ratio_height;
-      IPaddle_p2.x = game.p2_paddle_obj.x * ratio_width;
-      IPaddle_p2.width = game.p2_paddle_obj.width * ratio_width;
-      IPaddle_p2.height = game.p2_paddle_obj.height * ratio_height;
-
-      console.log("ratio = ", ratio_height);
-
-
-/*
-      IBall.x = game.set.ball.x;
-      IBall.y = game.set.ball.y;
-      IBall.rad = game.set.ball.rad; */
+/*       console.log("\n\n\nIBall.x = ", IBall.x);
+      console.log("IBall.y = ", IBall.y);
+      console.log("IBall.rad = ", IBall.rad); */
 
     });
   }, [socket]);
@@ -286,12 +284,18 @@ export function GamePlayer_p1_p2(props: any) {
 
 
     function get_the_data(room_name: string) {
-      //console.log("getting the data FRONT");
-      socket.emit("send_the_game", room_name);
+      console.log("getting the data FRONT= ", room_name);
+      //socket.emit("get_the_ball", room_name);
     }
 
+
+
+/*     const update = useCallback(() => room_name : any {
+      socket.emit("get_the_ball", room_name);
+    }, []); */
+
   // This useEffect is used to draw the canvas
-  let requestAnimationFrameId: any;
+/*   let requestAnimationFrameId: any;
   useEffect(() => {
     const render = () => {
       requestAnimationFrameId = requestAnimationFrame(render);
@@ -302,23 +306,27 @@ export function GamePlayer_p1_p2(props: any) {
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-        if (x === 2) {
-          //get_the_data(props.room);
+        
+        
+        setInterval(function() { get_the_data(props.room); },10000);
+          
           //console.log("Iplayer_p1 = ", IPlayer_p1);
 
           //console.log("IPaddle_p1 = ", IPaddle_p1);
           //console.log("Iplayer_p2 = ", IPlayer_p2);
-         x = 0;
-      }
-        x++;
+         //x = 0;
 
+         
 
-        draw_line(ctx, canvas.height, canvas.width);
-        draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-        draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-        draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
-        //draw_ball(ctx, IBall, canvas.height, canvas.width);
+         draw_line(ctx, canvas.height, canvas.width);
+         draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+         draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
+         draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+         draw_ball(ctx, IBall, canvas.height, canvas.width);
+         const interval = setInterval(() => {
+           get_the_data(props.room)
+         }, 1000);
+         return () => clearInterval(interval);
 
           //PaddleMouv_p1(IPaddle_p1, canvas.height, canvas.width);
           //PaddleMouv_p2(IPaddle_p2, canvas.height, canvas.width);
@@ -327,6 +335,69 @@ export function GamePlayer_p1_p2(props: any) {
       };
       render();
   }, [props.canvasRef, props.im_p2, props.room, props.setimready, props.setopready, requestAnimationFrameId]);
+ */
+
+  useEffect(() => {
+
+    let requestAnimationFrameId: any;
+      //requestAnimationFrame(render);
+      let canvas: any = props.canvasRef.current;
+      let ctx : any = null;
+      if (canvas)
+      ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+     function draw () { 
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        
+        
+        get_the_data(props.room);
+          
+          //console.log("Iplayer_p1 = ", IPlayer_p1);
+
+          //console.log("IPaddle_p1 = ", IPaddle_p1);
+          //console.log("Iplayer_p2 = ", IPlayer_p2);
+         //x = 0;
+
+         
+
+         draw_line(ctx, canvas.height, canvas.width);
+         draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+         draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
+         draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+         draw_ball(ctx, IBall, canvas.height, canvas.width);
+
+
+          //PaddleMouv_p1(IPaddle_p1, canvas.height, canvas.width);
+          //PaddleMouv_p2(IPaddle_p2, canvas.height, canvas.width);
+          //draw_ball(ctx, ballObj, canvas.height, canvas.width);
+            }
+
+      }
+       setInterval(draw, 1000/30)
+    },[]);
+
+
+/*   var canvas: any = props.canvasRef.current;
+  var ctx: any = null;
+  if (canvas)
+   ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  
+  function draw() {
+     if (ctx) 
+       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+       draw_line(ctx, canvas.height, canvas.width);
+       draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+       draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
+       draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+       draw_ball(ctx, IBall, canvas.height, canvas.width);
+       get_the_data(props.room)
+   }
+   setInterval(draw, 1000)
+ */
+
 
   function deleteGameRoom_ingame() {
     if (IPlayer_p1.won === true || IPlayer_p2.won === true)
