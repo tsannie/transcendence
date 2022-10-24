@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   border-style: dashed;
-  padding: 1%;
-  max-width: 1000px;
+  align-items: center;
+  padding: 2%;
 }
 
 .profile__header {
@@ -65,9 +65,14 @@
   }
 }
 
+#full {
+  width: 100%;
+}
+
 .profile__stats {
   display: flex;
   justify-content: space-between;
+  width: 100%;
 }
 
 .profile__stats__item {
@@ -86,6 +91,7 @@
 
 .profile__body {
   display: flex;
+  width: 100%;
   margin-top: calc(20 * var(--res));
 }
 
@@ -93,7 +99,18 @@
   display: flex;
   flex-direction: column;
   border-style: dashed;
-  width: 50%;
+  width: 60%;
+  h3 {
+    margin-left: calc(30 * var(--res));
+  }
+}
+
+.profile__body__history__title {
+  display: flex;
+  h3 {
+    margin-top: calc(15 * var(--res));
+    margin-bottom: calc(15 * var(--res));
+  }
 }
 
 .profile__body__history__list {
@@ -114,4 +131,23 @@
     width: calc(45 * var(--res));
     cursor: pointer;
   }
+  svg {
+    width: calc(35 * var(--res));
+  }
+}
+
+.info {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info__elo {
+  font-size: calc(15 * var(--res));
+}
+
+.trophy-indicator {
+  display: flex;
+  width: 10%;
 }
