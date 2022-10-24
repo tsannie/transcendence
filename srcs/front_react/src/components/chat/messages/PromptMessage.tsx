@@ -17,8 +17,8 @@ export default function PromptMessage(props: PromptMessageProps) {
   const [currentMessage, setCurrentMessage] = useState("");
   const socket = useContext(SocketContext);
 
-  function sendMessage(id: string) {
-    console.log("send message");
+  function sendMessage() {
+    console.log("send message to " + convId);
     const inputMessage = document.getElementById(
       "input-message"
     ) as HTMLInputElement;
@@ -26,7 +26,7 @@ export default function PromptMessage(props: PromptMessageProps) {
     inputMessage.value = "";
     if (currentMessage !== "") {
       const messageData: IMessageSent = {
-        convId: id,
+        convId: convId,
         author: user,
         content: currentMessage,
         isDm: isDm,
@@ -50,7 +50,7 @@ export default function PromptMessage(props: PromptMessageProps) {
         component="img"
         alt="send message img"
         src={Paperplane}
-        onClick={() => sendMessage(convId)}
+        onClick={sendMessage}
         sx={{
           width: 18,
           height: 18,

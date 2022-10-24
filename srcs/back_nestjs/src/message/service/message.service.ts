@@ -158,6 +158,7 @@ export class MessageService {
         for (const connection of user.connections) {
           const lastMessage = await this.loadLastMessage('dm', dm.id, user);
 
+          console.log('last message = ', lastMessage);
           socket.to(connection.socketId).emit('message', lastMessage);
         }
       }
