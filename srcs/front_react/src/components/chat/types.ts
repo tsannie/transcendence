@@ -41,6 +41,10 @@ export interface IChannelActions {
   target: string;
 }
 
+export interface ICreateDm {
+  target: string;
+}
+
 export interface IDm {
   id: string;
   time: Date;

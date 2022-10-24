@@ -14,7 +14,7 @@ import React, { FC, useContext, useEffect, useState } from "react";
 import { api } from "../../const/const";
 import { ChatContent } from "./Chat";
 import { SocketContext } from "../../contexts/SocketContext";
-import { IChannel, IDm } from "./types";
+import { IChannel, ICreateDm, IDm } from "./types";
 import { MessagesContext } from "../../contexts/MessagesContext";
 import { DmsContext } from "../../contexts/DmsContext";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
@@ -26,13 +26,13 @@ interface ChatUserListProps {
 export default function ChatUserlist(props: ChatUserListProps) {
   const { user, users } = useContext(AuthContext) as AuthContextType;
   const { getDmsList } = useContext(DmsContext);
-  const { loadMessages } = useContext(MessagesContext);
+  const { loadMessages, setConvId } = useContext(MessagesContext);
 
   function handleClick(username: string) {
     createNewConv(username);
   }
 
-  async function createDm(targetUsername: Partial<IDm>) {
+  async function createDm(targetUsername: ICreateDm) {
     console.log("create dm");
     await api
       .post("dm/create", targetUsername)
@@ -40,6 +40,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
         console.log("dm created with success");
         console.log(targetUsername);
         console.log("dm created = ", res.data);
+        setConvId(res.data.id);
         getDmsList();
         loadMessages(res.data.id, true);
       })
@@ -50,7 +51,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
   }
 
   async function createNewConv(targetUsername: string) {
-    let newDm: Partial<IDm> = {
+    let newDm: ICreateDm = {
       target: targetUsername,
     };
 
