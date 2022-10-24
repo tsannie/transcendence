@@ -99,7 +99,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
   useEffect(() => {
     socket.on("message", (data: IMessageReceived) => {
       const newMsg: IMessageReceived = {
-        uuid: data.uuid,
+        id: data.id,
         author: data.author,
         convId: data.dm ? data.dm.id : data.channel.id,
         content: data.content,

@@ -16,7 +16,7 @@ export default function MessagesList(props: MessagesListProps) {
   return (
     <List sx={{ position: "relative" }}>
       {messagesList.map((messageData: IMessageReceived) => {
-        if (user?.username === messageData.author.username) {
+        if (user?.username === messageData.author?.username) {
           return (
             <ListItem
               sx={{
@@ -32,7 +32,7 @@ export default function MessagesList(props: MessagesListProps) {
                 p: 1,
                 right: 0,
               }}
-              key={messageData.uuid}
+              key={messageData.id}
             >
               {messageData.content}
             </ListItem>
@@ -53,7 +53,7 @@ export default function MessagesList(props: MessagesListProps) {
               p: 1,
               left: 0,
             }}
-            key={messageData.uuid}
+            key={messageData.id}
           >
             {messageData.content}
           </ListItem>

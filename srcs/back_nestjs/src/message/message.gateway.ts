@@ -22,12 +22,12 @@ import { Socket, Server, Namespace } from 'socket.io';
 import { MessageService } from './service/message.service';
 import { UserService } from 'src/user/service/user.service';
 import { DmService } from 'src/dm/service/dm.service';
-import { IMessage } from './models/message.interface';
 import { UserEntity } from 'src/user/models/user.entity';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { Repository } from 'typeorm';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { ConnectedUserDto } from 'src/connected-user/dto/connected-user.dto';
+import { MessageDto } from './dto/message.dto';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -87,12 +87,15 @@ export class MessageGateway
 
   private disconnect(client: Socket) {
     this.connectedUserService.deleteBySocketId(client.id);
-    client.emit('Error', new UnauthorizedException());
     client.disconnect();
   }
 
   @SubscribeMessage('message')
-  addMessage(@MessageBody() data: IMessage, @ConnectedSocket() client: Socket) {
+  addMessage(
+    @MessageBody() data: MessageDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log('data = ', data);
     this.logger.log('client id = ', client.id);
 
     if (data.isDm === true) {
