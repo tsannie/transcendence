@@ -6,7 +6,7 @@ export class PlayerEntity {
   id?: number;
 
   @Column({ nullable: true })
-  name: string;
+  name: string; 
 
   @Column({ default: 0 })
   score: number = 0;

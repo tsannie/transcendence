@@ -11,11 +11,18 @@ export class BallEntity {
   @Column({ nullable: true, type: 'float' })
   y: number = 250;
 
+  @Column({ nullable: true, type: 'float' })
+  gravity: number = 6;
+
+  // TODO DELL ALL AFTER
   @Column({ default: false })
   init_ball_pos: boolean = false;
 
   @Column({ default: false })
   first_col: boolean = false;
+
+  @Column({ default: false })
+  col_paddle: boolean = false;
 
   @Column({ default: 'white' })
   color: string = 'white';
@@ -25,15 +32,18 @@ export class BallEntity {
   
   ///////////////////
 
-  @Column({ nullable: true, type: 'float' })
-  way_y: number = 1;
+  @Column({ nullable: true})
+  direction_x: number = 1;
   
-  @Column({ nullable: true, type: 'float' })
-  way_x: number = 1;
+  // up == true / down == false
+  @Column({ nullable: true})
+  direction_y: number = 1;
 
+  @Column({ nullable: true})
+  spawn: boolean = true;
   /// BALL SPEED MOUV
 
-  @Column({ nullable: true, type: 'float' })
+/*   @Column({ nullable: true, type: 'float' })
   first_dx: number = 2;
 
   @Column({ nullable: true, type: 'float' })
@@ -63,7 +73,7 @@ export class BallEntity {
 
   @Column({ nullable: true})
   power_rad : number = 30;
-
+ */
   @Column({ nullable: true})
-  rad : number = 10;
+  rad : number = 40;
 }
