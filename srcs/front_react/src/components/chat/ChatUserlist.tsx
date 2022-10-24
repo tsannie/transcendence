@@ -14,7 +14,7 @@ import React, { FC, useContext, useEffect, useState } from "react";
 import { api } from "../../const/const";
 import { ChatContent } from "./Chat";
 import { SocketContext } from "../../contexts/SocketContext";
-import { IChannel, IDm, IMessage } from "./types";
+import { IChannel, IDm } from "./types";
 import { MessagesContext } from "../../contexts/MessagesContext";
 import { DmsContext } from "../../contexts/DmsContext";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";

@@ -3,7 +3,6 @@ import React, { useContext } from "react";
 import MessagesList from "./MessagesList";
 import PromptMessage from "./PromptMessage";
 import AddIcon from "@mui/icons-material/Add";
-import { IMessage } from "../types";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 
 interface ConvProps { }
