@@ -1,7 +1,7 @@
 import { User } from "../../contexts/AuthContext";
 
 export interface IMessageSent {
-  convId: number; // id du dm ou du channel
+  convId: string; // id du dm ou du channel
   author: User | null; // IUser en theorie
   content: string;
   isDm: boolean;
@@ -9,7 +9,7 @@ export interface IMessageSent {
 
 export interface IMessageReceived {
   id: string;
-  convId: number;
+  convId: string;
   author: User | null; // IUser en theorie
   content: string;
   createdAt: Date;
@@ -25,7 +25,7 @@ export interface ICreateChannel {
 
 // TODO: add id
 export interface IChannel {
-  id: number;
+  id: string;
   name: string;
   password: string;
   status: string;
@@ -42,7 +42,7 @@ export interface IChannelActions {
 }
 
 export interface IDm {
-  id: number;
+  id: string;
   time: Date;
   target: string;
   offset: number;
@@ -51,7 +51,7 @@ export interface IDm {
 }
 
 export interface IConvCreated {
-  id: number;
+  id: string;
   time: Date;
   users: User[] | null;
 }
