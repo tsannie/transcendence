@@ -5,7 +5,7 @@ import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { SocketContext } from "../../../contexts/SocketContext";
-import { IMessage, IMessageReceived } from "../types";
+import { IMessageReceived } from "../types";
 
 interface MessagesListProps { }
 

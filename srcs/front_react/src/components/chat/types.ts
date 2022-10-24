@@ -1,6 +1,5 @@
-export interface IMessage {
+export interface IMessageSent {
   id: number; // id du dm ou du channel
-  uuid: string;
   author: any; // IUser en theorie
   content: string;
   isDm: boolean;
@@ -12,6 +11,8 @@ export interface IMessageReceived {
   author: any; // IUser en theorie
   content: string;
   createdAt: Date;
+  dm?: any; // IDm en theorie
+  channel?: any; // IChannel en theorie
 }
 
 export interface ICreateChannel {
@@ -43,22 +44,12 @@ export interface IDm {
   time: Date;
   target: string;
   offset: number;
-  users : any[];
-  messages: IMessage[];
+  users: any[];
+  messages: IMessageReceived[];
 }
 
 export interface IConvCreated {
   id: number;
   time: Date;
-  //target?: string;
-  users : any[];
-  //messages: IMessage[];
-}
-
-export interface IGetters {
-  getAvailableChannels: any[];
-  getDms: IDm[];
-  getChannelsUsers: any[];
-  getUsers: any[];
-  getAllUsers: any[];
+  users: any[];
 }

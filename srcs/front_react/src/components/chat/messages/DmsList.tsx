@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { MouseEvent, useContext, useEffect, useState } from "react";
-import { IConvCreated, IDm, IMessage } from "../types";
+import { IConvCreated, IDm } from "../types";
 import AddIcon from "@mui/icons-material/Add";
 import ChatUserlist from "../ChatUserlist";
 import { ChatContent } from "../Chat";

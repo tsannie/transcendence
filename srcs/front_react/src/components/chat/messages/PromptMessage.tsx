@@ -6,7 +6,7 @@ import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 import { DmsContext } from "../../../contexts/DmsContext";
 import { MessagesContext } from "../../../contexts/MessagesContext";
 import { SocketContext } from "../../../contexts/SocketContext";
-import { IMessage } from "../types";
+import { IMessageSent } from "../types";
 
 interface PromptMessageProps { }
 
@@ -25,7 +25,7 @@ export default function PromptMessage(props: PromptMessageProps) {
 
     inputMessage.value = "";
     if (currentMessage !== "") {
-      const messageData: Partial<IMessage> = {
+      const messageData: Partial<IMessageSent> = {
         id: id,
         author: user,
         content: currentMessage,
