@@ -1,4 +1,4 @@
-@import './const.style.scss';
+@import "./const.style.scss";
 
 body {
   --res: calc(0.01 * 10vmin);
@@ -9,14 +9,14 @@ body {
 }
 
 .app {
-  display: flex;    // TODO check if postion block is better
+  display: flex; // TODO check if postion block is better
   width: 100%;
   height: 100vh;
   overflow: hidden;
   user-select: none;
 
   * {
-    font-family: 'Arcade' !important;
+    font-family: "Arcade" !important;
     color: $white-color !important;
     -webkit-user-drag: none;
     letter-spacing: 0.1em;
@@ -40,5 +40,18 @@ body {
       filter: invert(70%);
     }
   }
-}
 
+  input {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    &:focus {
+      outline: none !important;
+    }
+    border-style: dashed;
+    border-color: $white-color;
+    background: transparent;
+  }
+}
