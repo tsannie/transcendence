@@ -204,7 +204,7 @@ export class UserService {
 			);
 	}
 
-  async add42DefaultAvatar(url: string, user: UserEntity) : Promise<void | UserEntity>{    
+  async add42DefaultAvatar(url: string, user: UserEntity) : Promise<void | UserEntity>{
     let response = await lastValueFrom(this.httpService.get(url, { responseType: 'arraybuffer'}))
     return await this.addAvatar(Buffer.from(response.data), user);
   }
@@ -218,7 +218,7 @@ export class UserService {
 
     /* This apply the resizing function to all type of size available */
 		AVATAR_SIZES.forEach( async (size) => { await this.resizeImage(size, bufferized_img, user) });
-  
+
     user.profile_picture = `${process.env.BACK_URL}/user/avatar?id=${user.id}`;
     return await this.allUser.save(user);
 	}
