@@ -3,6 +3,8 @@ import "./profile.style.scss";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import ProfileHeader from "./ProfileHeader";
 import ProfileStatsBar from "./ProfileStatsBar";
+import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
+
 
 function Profile() {
   const { user } = React.useContext(AuthContext) as AuthContextType;
@@ -17,28 +19,41 @@ function Profile() {
   return (
     <div className="profile">
       <ProfileHeader user={user} />
-      <hr />
+      <hr id="full"/>
       <ProfileStatsBar user={user} />
-      <hr />
+      <hr id="full"/>
       <div className="profile__body">
         <div className="profile__body__history">
-          <h3>recent games:</h3>
+          <div className="profile__body__history__title">
+            <h3>recent games:</h3>
+          </div>
           <hr />
-
           <div className="profile__body__history__list">
+
             <div className="profile__body__history__item">
-              <span>victory</span>
+              <div className="trophy-indicator">
+              </div>
+              <div className="info">
+                <span>defeat</span>
+                <div className="info__elo">-22PP</div>
+              </div>
               <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-              <span>10-5</span>
+              <span>6-10</span>
             </div>
             <hr />
 
-          <div className="profile__body__history__item">
-            <span>defeat</span>
-            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-            <span>10-5</span>
-          </div>
-          <hr />
+            <div className="profile__body__history__item">
+              <div className="trophy-indicator">
+                <TrophyIcon />
+              </div>
+              <div className="info">
+                <span>victory</span>
+                <div className="info__elo">+22PP</div>
+              </div>
+              <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+              <span>10-7</span>
+            </div>
+            <hr />
 
           </div>
         </div>

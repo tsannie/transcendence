@@ -20,20 +20,16 @@
   h2 {
     font-size: calc(35 * var(--res));
   }
-  p {
+  h3 {
+    font-size: calc(28 * var(--res));
+  }
+  p, button, input, span {
     font-size: calc(22 * var(--res));
   }
-  button, input, span {
-    font-size: calc(22 * var(--res));
-  }
-
-  /*animation: grow 1s ease;
-  @keyframes grow {
-    0% { transform: scale(0); }
-    100% { transform: scale(1); }
-  }*/
 
   hr {
+    margin-top: calc(5 * var(--res));
+    margin-bottom: calc(5 * var(--res));
     width: 97%;
     border-style: none none dashed;
   }
