@@ -26,43 +26,19 @@ function Profile() {
           <hr />
 
           <div className="profile__body__history__list">
-
             <div className="profile__body__history__item">
               <span>victory</span>
               <img src={user?.profile_picture + "&size=small"} alt="avatar" />
               <span>10-5</span>
             </div>
             <hr />
-            <div className="profile__body__history__item">
-              <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-              <span>10-5</span>
-            </div>
-            <hr />
-            <div className="profile__body__history__item">
-              <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-              <span>10-5</span>
-            </div>
-            <hr />
-            <div className="profile__body__history__item">
-              <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-              <span>10-5</span>
-            </div>
-            <hr />
-            <div className="profile__body__history__item">
-              <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-              <span>10-5</span>
-            </div>
-            <hr />
-            <div className="profile__body__history__item">
-              <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-              <span>10-5</span>
-            </div>
-            <hr />
-            <div className="profile__body__history__item">
-              <img src={user?.profile_picture + "&size=small"} alt="avatar" />
-              <span>10-5</span>
-            </div>
-            <hr />
+
+          <div className="profile__body__history__item">
+            <span>defeat</span>
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <span>10-5</span>
+          </div>
+          <hr />
 
           </div>
         </div>
