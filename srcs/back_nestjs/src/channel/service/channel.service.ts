@@ -197,7 +197,7 @@ export class ChannelService {
   }
 
   // get a channel by id (used for message)
-  async getChannelById(inputed_id: number): Promise<ChannelEntity> {
+  async getChannelById(inputed_id: string): Promise<ChannelEntity> {
     let ret = await this.channelRepository
       .createQueryBuilder('channel')
       .where('channel.id = :id', { id: inputed_id })

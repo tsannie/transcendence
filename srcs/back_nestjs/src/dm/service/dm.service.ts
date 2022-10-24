@@ -24,7 +24,9 @@ export class DmService {
       throw new UnprocessableEntityException(`You've blocked ${target}`);
     if (
       user2.blocked &&
-      user2.blocked.find((blocked_guys) => blocked_guys.username === user.username)
+      user2.blocked.find(
+        (blocked_guys) => blocked_guys.username === user.username,
+      )
     )
       throw new UnprocessableEntityException(
         `You've been blocked by ${user2.username}`,
@@ -32,74 +34,67 @@ export class DmService {
     return user2;
   }
 
+  // get a dm by id
+  async getDmById(inputed_id: string): Promise<DmEntity> {
+    let ret = await this.dmRepository
+      .createQueryBuilder('dm')
+      .where('dm.id = :id', { id: inputed_id })
+      .leftJoin('dm.users', 'users')
+      .addSelect('users.id')
+      .addSelect('users.username')
+      .getOne();
 
-	// get a dm by id
-	async getDmById(inputed_id: number): Promise<DmEntity> {
-		let ret = await this.dmRepository
-		.createQueryBuilder("dm")
-		.where("dm.id = :id", {id: inputed_id})
-		.leftJoin("dm.users", "users")
-		.addSelect("users.id")
-		.addSelect("users.username")
-		.getOne();
+    return ret;
+  }
 
-		return ret;
-	}
+  /* This function loads the Dm based on name of target*/
+  async getDmByTarget(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+    if (user.dms) {
+      let convo = user.dms.find(
+        (dm) =>
+          (dm.users[0].username === user.username &&
+            dm.users[1].username === data.target) ||
+          (dm.users[0].username === data.target &&
+            dm.users[1].username === user.username),
+      );
+      if (convo) return await this.getDmById(convo.id);
+    } else
+      throw new UnprocessableEntityException(
+        `No conversation with ${data.target}`,
+      );
+  }
 
-	/* This function loads the Dm based on name of target*/
-	async getDmByTarget(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
-		if (user.dms)
-		{
-			let convo = user.dms.find(
-			(dm) =>
-				(dm.users[0].username === user.username &&
-				dm.users[1].username === data.target) ||
-				(dm.users[0].username === data.target &&
-				dm.users[1].username === user.username),
-			);
-			if (convo)
-				return await this.getDmById(convo.id);
-		}
-		else
-			throw new UnprocessableEntityException(`No conversation with ${data.target}`);
-	}
-
-
-
-	// get all conversations of a user
-	async getDmsList( user: UserEntity ): Promise<DmEntity[]> {
-		if (user.dms.length === 0)
-			return user.dms;
-		else {
-			return await this.dmRepository
-			.createQueryBuilder("dm")
-			.leftJoin("dm.users", "users")
-			.addSelect("users.username")
-			.where("dm.id IN (:...ids)", {ids: user.dms.map( elem => elem.id)})
-			.getMany()
-		}
-	}
+  // get all conversations of a user
+  async getDmsList(user: UserEntity): Promise<DmEntity[]> {
+    if (user.dms.length === 0) return user.dms;
+    else {
+      return await this.dmRepository
+        .createQueryBuilder('dm')
+        .leftJoin('dm.users', 'users')
+        .addSelect('users.username')
+        .where('dm.id IN (:...ids)', { ids: user.dms.map((elem) => elem.id) })
+        .getMany();
+    }
+  }
 
   /*
 	createDM is used to create a new conv between two users, checking if they can, based on their blocked relationship.
 	*/
-	async createDm(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
-		let user2 = await this.checkifBlocked(user, data.target);
-		if (user.dms)
-		{
-			const convo = user.dms.find(
-			(dm) =>
-				(dm.users[0].username === user.username &&
-				dm.users[1].username === data.target) ||
-				(dm.users[0].username === data.target &&
-				dm.users[1].username === user.username),
-			);
-			if (convo)
-				return await this.getDmById(convo.id);
-		}
-		let new_dm = new DmEntity();
+  async createDm(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+    let user2 = await this.checkifBlocked(user, data.target);
+    if (user.dms) {
+      const convo = user.dms.find(
+        (dm) =>
+          (dm.users[0].username === user.username &&
+            dm.users[1].username === data.target) ||
+          (dm.users[0].username === data.target &&
+            dm.users[1].username === user.username),
+      );
+      if (convo) return await this.getDmById(convo.id);
+    }
+    let new_dm = new DmEntity();
 
-		new_dm.users = [user, user2];
-		return await this.dmRepository.save(new_dm);
-	}
+    new_dm.users = [user, user2];
+    return await this.dmRepository.save(new_dm);
+  }
 }

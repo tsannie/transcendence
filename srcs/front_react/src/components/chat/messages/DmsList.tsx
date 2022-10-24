@@ -36,7 +36,7 @@ export default function DmsList(props: DmsListProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
 
   // find target username with conv id and user id
-  function findTargetUsername(dmId: number) {
+  function findTargetUsername(dmId: string) {
     let targetUsername = "";
     let dm = dmsList.find((dm) => dm.id === dmId);
     if (dm) {

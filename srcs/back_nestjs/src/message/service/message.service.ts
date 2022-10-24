@@ -27,18 +27,18 @@ export class MessageService {
   /* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
   checkUserValidity(
     type: string,
-    inputed_id: number,
+    inputed_id: string,
     user: UserEntity,
   ): DmEntity | ChannelEntity {
     if (type === 'dm') {
-      let dm = user.dms.find((elem) => elem.id == inputed_id);
+      let dm = user.dms.find((elem) => elem.id === inputed_id);
       if (!dm)
         throw new UnprocessableEntityException('User is not part of the dm.');
       else return dm;
     } else if (type === 'channel') {
-      let owner_of = user.owner_of.find((elem) => elem.id == inputed_id); // TODO check if == is ok
-      let admin_of = user.admin_of.find((elem) => elem.id == inputed_id);
-      let user_of = user.channels.find((elem) => elem.id == inputed_id);
+      let owner_of = user.owner_of.find((elem) => elem.id === inputed_id); // TODO check if == is ok
+      let admin_of = user.admin_of.find((elem) => elem.id === inputed_id);
+      let user_of = user.channels.find((elem) => elem.id === inputed_id);
       //console.log(owner_of, admin_of, user_of);
       if (!owner_of && !admin_of && !user_of)
         throw new UnprocessableEntityException(
@@ -52,7 +52,7 @@ export class MessageService {
 	It returns n messages, (where n = LOADED_MESSAGES (higher in this page)) */
   async loadMessages(
     type: string,
-    inputed_id: number,
+    inputed_id: string,
     offset: number,
     user: UserEntity,
   ): Promise<MessageEntity[]> {
@@ -79,7 +79,7 @@ export class MessageService {
   /* Load last message from a dm or a channel */
   async loadLastMessage(
     type: string,
-    inputed_id: number,
+    inputed_id: string,
     user: UserEntity,
   ): Promise<MessageEntity> {
     this.checkUserValidity(type, inputed_id, user);
@@ -111,7 +111,7 @@ export class MessageService {
     });
     const channel = this.checkUserValidity(
       'channel',
-      Number(data.convId),
+      data.convId,
       user,
     ) as ChannelEntity;
 
@@ -132,11 +132,7 @@ export class MessageService {
       admin_of: true,
       owner_of: true,
     });
-    const dm = this.checkUserValidity(
-      'dm',
-      Number(data.convId),
-      user,
-    ) as DmEntity;
+    const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
     const message = new MessageEntity();
     message.content = data.content;

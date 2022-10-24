@@ -13,11 +13,11 @@ import { SocketContext } from "./SocketContext";
 export type MessagesContextType = {
   messagesList: IMessageReceived[];
   setMessagesList: (messagesList: any[]) => void;
-  loadMessages: (targetId: number, isDm: boolean) => void;
+  loadMessages: (targetId: string, isDm: boolean) => void;
   isDm: boolean;
   setIsDm: (isDm: boolean) => void;
-  convId: number;
-  setConvId: (convId: number) => void;
+  convId: string;
+  setConvId: (convId: string) => void;
 };
 
 export const MessagesContext = createContext<MessagesContextType>({
@@ -26,7 +26,7 @@ export const MessagesContext = createContext<MessagesContextType>({
   loadMessages: () => { },
   isDm: true,
   setIsDm: () => { },
-  convId: 0,
+  convId: "",
   setConvId: () => { },
 });
 
@@ -37,10 +37,10 @@ interface MessagesContextProps {
 export const MessagesProvider = ({ children }: MessagesContextProps) => {
   const [isDm, setIsDm] = useState(true);
   const [messageState, setMessageState] = useState<{
-    currentConvId: number;
+    currentConvId: string;
     messages: any[];
   }>({
-    currentConvId: 0,
+    currentConvId: "",
     messages: [],
   });
   const socket = useContext(SocketContext);
@@ -63,7 +63,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
     []
   );
 
-  async function loadMessages(id: number, isDm: boolean) {
+  async function loadMessages(id: string, isDm: boolean) {
     if (isDm === true) {
       try {
         const messageList = await api.get("message/dm", {
@@ -98,6 +98,7 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   useEffect(() => {
     socket.on("message", (data: IMessageReceived) => {
+      console.log("message received with data = ", data);
       const newMsg: IMessageReceived = {
         id: data.id,
         author: data.author,
