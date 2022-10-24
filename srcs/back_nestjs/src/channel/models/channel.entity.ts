@@ -13,41 +13,40 @@ import {
 
 @Entity()
 export class ChannelEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-	@CreateDateColumn()
-	createdAt: string;
+  @CreateDateColumn()
+  createdAt: string;
 
-	@Column( {nullable: false, unique: true} )
-	name: string;
+  @Column({ nullable: false, unique: true })
+  name: string;
 
-	@Column({ nullable: false } )
-	status: string;
+  @Column({ nullable: false })
+  status: string;
 
-	@Column( { select: false, nullable: true }) // remettre le select null si solution trouve
-	password: string;
+  @Column({ select: false, nullable: true }) // remettre le select null si solution trouve
+  password: string;
 
-	@ManyToOne( () => UserEntity, (user) => user.owner_of )
-	owner: UserEntity;
+  @ManyToOne(() => UserEntity, (user) => user.owner_of)
+  owner: UserEntity;
 
-	@ManyToMany( () => UserEntity, (user) => user.admin_of )
-	@JoinTable()
-	admins: UserEntity[];
+  @ManyToMany(() => UserEntity, (user) => user.admin_of)
+  @JoinTable()
+  admins: UserEntity[];
 
-	//CHANGE NEXT TWO FIELDS IF CIRCULAR DEPENDENCIES
-	@ManyToMany( () => UserEntity, (user) => user.channels )
-	users: UserEntity[];
+  //CHANGE NEXT TWO FIELDS IF CIRCULAR DEPENDENCIES
+  @ManyToMany(() => UserEntity, (user) => user.channels)
+  users: UserEntity[];
 
-	@OneToMany( () => MessageEntity, (message) => message.channel )
-	messages: MessageEntity[];
+  @OneToMany(() => MessageEntity, (message) => message.channel)
+  messages: MessageEntity[];
 
-	@ManyToMany( () => UserEntity )
-	@JoinTable()
-	muted: UserEntity[];
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  muted: UserEntity[];
 
-	@ManyToMany( () => UserEntity )
-	@JoinTable()
-	banned: UserEntity[];
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  banned: UserEntity[];
 }
-

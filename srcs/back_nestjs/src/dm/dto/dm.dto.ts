@@ -1,5 +1,12 @@
-import { Type } from "class-transformer";
-import { IsDefined, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { Type } from 'class-transformer';
+import {
+  IsDefined,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class DmNameDto {
   @IsDefined()
@@ -11,7 +18,7 @@ export class DmNameDto {
 export class DmIdDto {
   @IsDefined()
   @IsNotEmpty()
-  @Type( () => Number )
-  @IsNumber()
-  id: number;
+  @Type(() => String)
+  @IsString()
+  id: string;
 }

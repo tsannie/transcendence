@@ -17,7 +17,7 @@ export default function PromptMessage(props: PromptMessageProps) {
   const [currentMessage, setCurrentMessage] = useState("");
   const socket = useContext(SocketContext);
 
-  function sendMessage(id: number) {
+  function sendMessage(id: string) {
     console.log("send message");
     const inputMessage = document.getElementById(
       "input-message"
