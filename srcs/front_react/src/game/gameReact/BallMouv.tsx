@@ -171,7 +171,7 @@ export function BallMouv(
     ballObj.ball_way_y *= -1;
 }
 
-export function BallCol_p1(
+/* export function BallCol_p1(
   ctx: any,
   gameSpecs: any,
   player_p2: any,
@@ -242,7 +242,7 @@ export function BallCol_p2(
     ballObj.col_paddle = true;
     ballObj.col_now_paddle = true;
   }
-}
+} */
 
 class Ball {
   x: number;
