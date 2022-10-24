@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import BallIcon from "../../assets/img/icon/ball/ball.png";
-import BallHideIcon from "../../assets/img/icon/ball/ball-hide.png";
+import {ReactComponent as BallIcon} from "../../assets/img/icon/ball/ball.svg";
+import {ReactComponent as BallHideIcon} from "../../assets/img/icon/ball/ball-hide.svg";
 import "./bg.style.scss";
 
 function Background() {
@@ -32,14 +32,14 @@ function Background() {
         <div className="ball"></div>
         <div className="ball"></div>
         <div className="bg__hideball">
-          <img src={BallIcon} onClick={handleBall}></img>
+          <BallIcon onClick={handleBall} />
         </div>
       </Fragment>
     );
   } else {
     return (
         <div className="bg__hideball">
-          <img src={BallHideIcon} onClick={handleBall}></img>
+          <BallHideIcon onClick={handleBall} />
         </div>
     );
   }

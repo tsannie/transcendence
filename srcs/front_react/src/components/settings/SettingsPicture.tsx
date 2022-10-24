@@ -34,9 +34,11 @@ export default function SettingsPicture() {
     }
   }
 
+  console.log(user);
+
   return (
     <div className="settings__picture">
-      <img src={user?.profile_picture} className="settings__picture__profile"></img>
+      <img src={user?.profile_picture + '&size=small'} className="settings__picture__profile"></img>
       <label htmlFor="select-image" >
         <input
           accept="image/jpg image/jpeg image/png"
