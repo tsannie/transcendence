@@ -12,16 +12,21 @@ import * as fs from 'fs';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 
-export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
+const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
 
 /* 1) If you wanna add a size, you put here a name to that size + a value in number type... */
-export const SMALL_PIC_SIZE: number = 128;
-export const MEDIUM_PIC_SIZE: number = 512;
+const SMALL_PIC_SIZE: number = 64;
+const MEDIUM_PIC_SIZE: number = 128;
+const LARGE_PIC_SIZE: number = 256;
+const EXTRA_LARGE_PIC_SIZE: number = 512;
 
 /* 2) ...and then you add it to the map, with a string that will be used through the controller*/
 export const AVATAR_SIZES: Map<string, number> = new Map<string, number>();
 AVATAR_SIZES.set("small", SMALL_PIC_SIZE);
 AVATAR_SIZES.set("medium", MEDIUM_PIC_SIZE);
+AVATAR_SIZES.set("large", LARGE_PIC_SIZE);
+AVATAR_SIZES.set("extra_large", EXTRA_LARGE_PIC_SIZE);
+
 
 export interface IAvatarOptions {
 	  size: string;
