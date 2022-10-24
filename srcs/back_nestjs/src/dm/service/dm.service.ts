@@ -81,6 +81,7 @@ export class DmService {
 	createDM is used to create a new conv between two users, checking if they can, based on their blocked relationship.
 	*/
   async createDm(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+    console.log('create DM');
     let user2 = await this.checkifBlocked(user, data.target);
     if (user.dms) {
       const convo = user.dms.find(
@@ -90,11 +91,13 @@ export class DmService {
           (dm.users[0].username === data.target &&
             dm.users[1].username === user.username),
       );
+      console.log('convo = ', convo);
       if (convo) return await this.getDmById(convo.id);
     }
     let new_dm = new DmEntity();
 
     new_dm.users = [user, user2];
+    console.log('new_dm = ', new_dm);
     return await this.dmRepository.save(new_dm);
   }
 }
