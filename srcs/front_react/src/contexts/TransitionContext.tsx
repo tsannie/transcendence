@@ -28,12 +28,6 @@ enum TransitionPageLvl {
   SETTINGS = 5,
 }
 
-enum Action {
-  NULL = 0,
-  MUTE = 1,
-  BAN = 2,
-}
-
 export const TransitionProvider = ({ children }: IProps) => {
   const location = useLocation();
 
