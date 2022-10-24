@@ -30,13 +30,28 @@ export class AuthService {
     return await this.userService.add42DefaultAvatar(profile42._json.image_url, new_user);
   }
 
+  async validateUserGoogle(profile: any): Promise<any> {
+    const user = await this.userService.findByMail(profile.emails[0].value);
+    if (user)
+      return user;
+    if (profile.email_verified !== true) {
+      throw new UnauthorizedException('Account not verified');
+    }
+
+    let new_user = new UserEntity();
+    new_user.username = profile.displayName;
+    new_user.email = profile.emails[0].value;
+    new_user = await this.register(new_user);
+
+    return await this.userService.add42DefaultAvatar(profile.picture, new_user);
+  }
+
   async register(user: UserEntity): Promise<UserEntity> {
     return await this.userService.add(user);
   }
 
   async getCookie(user: any, isSecondFactor = false): Promise<IToken> { // TODO replace by the entity ??
     const payload: IPayload = {
-      username: user.username,
       sub: user.id, // sub for jwt norm
       isSecondFactor: isSecondFactor,
     };
