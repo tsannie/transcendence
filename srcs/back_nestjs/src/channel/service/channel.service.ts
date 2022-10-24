@@ -104,7 +104,8 @@ export class ChannelService {
     });
 
     const channelsUser = await this.getUserList(user);
-    return res.filter((channel) => !channelsUser.includes(channel));
+    const channelsId = channelsUser.map((channel) => channel.id);
+    return res.filter((channel) => !channelsId.includes(channel.id));
   }
 
   /* This getter returns list of channels the user is part of, as an Owner, an admin, or a simple user */
