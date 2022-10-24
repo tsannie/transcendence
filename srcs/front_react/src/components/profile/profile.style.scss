@@ -84,3 +84,37 @@
   }
 }
 
+.profile__body {
+  display: flex;
+  margin-top: calc(20 * var(--res));
+}
+
+.profile__body__history {
+  display: flex;
+  flex-direction: column;
+  border-style: dashed;
+  width: 50%;
+}
+
+.profile__body__history__list {
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+
+  overflow-x: auto;
+}
+
+.profile__body__history__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+
+
+
+  img {
+    border-radius: 50%;
+    width: calc(45 * var(--res));
+    cursor: pointer;
+  }
+}
