@@ -103,15 +103,8 @@ export class ChannelService {
       },
     });
 
-    let newRes = res.filter((channel) => {
-      // return newRes without the channel the user is already in, or as an owner or admin
-      return (
-        !this.isMember(channel.name, user) &&
-        !this.isOwner(channel.name, user) &&
-        !this.isAdmin(channel.name, user)
-      );
-    });
-    return newRes;
+    let user_list = await this.getUserList(user);
+    return res.filter((channel) => !user_list.includes(channel));
   }
 
   /* This getter returns list of channels the user is part of, as an Owner, an admin, or a simple user */
