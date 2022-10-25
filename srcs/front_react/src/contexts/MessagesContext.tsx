@@ -98,7 +98,6 @@ export const MessagesProvider = ({ children }: MessagesContextProps) => {
 
   useEffect(() => {
     socket.on("message", (data: IMessageReceived) => {
-      console.log("message received with data = ", data);
       const newMsg: IMessageReceived = {
         id: data.id,
         author: data.author,
