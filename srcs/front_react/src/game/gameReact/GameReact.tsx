@@ -16,6 +16,7 @@ import {
 import { ContactSupport } from "@material-ui/icons";
 import { canvas_back_height, canvas_back_width, screen_ratio } from "../const/const";
 import { GamePlayer_all } from "./GamePlayer_all";
+import { Button } from "@mui/material";
 
 interface IBall {
   x: number;
@@ -37,6 +38,9 @@ interface IPlayer {
   score: number;
   won: boolean;
 }
+
+let position_y = 0;
+
 
 export function GamePlayer_p1_p2(props: any) {
   const [power, setpower] = useState(0);
@@ -146,12 +150,6 @@ export function GamePlayer_p1_p2(props: any) {
       player_p2.name = theroom.set.set_p2.name;
     });
 
-    socket.on("player_give_upem", (theroom: any) => {
-      player_p2.won = theroom.set.set_p2.won;
-      player_p1.won = theroom.set.set_p1.won;
-      props.setimready(false);
-      props.setopready(false);
-    });
   }, [socket, props.setimready, props.setopready, power]);
 
   // Sincronize the ball position with the server
@@ -194,6 +192,14 @@ export function GamePlayer_p1_p2(props: any) {
 
   useEffect(() => {
     
+    socket.on("player_give_upem", (set: any) => {
+      IPlayer_p2.won = set.set_p2.won;
+      IPlayer_p1.won = set.set_p1.won;
+
+      //props.setgamestart(false);
+      console.log("xxxplayer_give_upem", IPlayer_p2.won, IPlayer_p1.won);
+    });
+
     socket.on("get_the_paddle", (set: any) => {
       
       if (!set) {
@@ -204,7 +210,9 @@ export function GamePlayer_p1_p2(props: any) {
       
      const ratio_width = (XlowerSize /canvas_back_width);
      const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
-     
+    
+      //console.log("set.p1_paddle_obj.y", set.p1_paddle_obj.y);
+     // console.log("set.p2_paddle_obj.y", set.p2_paddle_obj.y);
 
       // set paddle 
       set.p1_paddle_obj.x *= ratio_width;
@@ -232,110 +240,39 @@ export function GamePlayer_p1_p2(props: any) {
       //let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
       //console.log("XlowerSize", XlowerSize);
 
-
-
       if (!set) {
         console.log("NO SET front");
         return;
       }
-      //setIBall(set.ball);
-      if (!set.ball)
-        console.log("NO BALL");
-
-      if (!set.p1_paddle_obj)
-        console.log("NO PADDLE_p1");
-      if (!set.p2_paddle_obj)
-        console.log("NO PADDLE_p2");
-
-
-      if (!set.set_p2)
-        console.log("NO PLAYER_p1");
-      if (!set.set_p1)
-        console.log("NO PLAYER_p2");
-
-
-
-
      const ratio_width = (lowerSize /canvas_back_width);
      const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
      
-      // set player
-/*       IPlayer_p1 = set.set_p1;
-      IPlayer_p2 = set.set_p2; */
+      IPlayer_p1 = set.set_p1;
+      IPlayer_p2 = set.set_p2;
 
-      // set ball
       IBall.x = set.ball.x * ratio_width;
       IBall.y = set.ball.y * ratio_height;
       IBall.rad = set.ball.rad * ratio_width;
-
-      console.log(IBall.x, IBall.y, IBall.rad);
-
-/*       console.log("\n\n\nIBall.x = ", IBall.x);
-      console.log("IBall.y = ", IBall.y);
-      console.log("IBall.rad = ", IBall.rad); */
-
     });
   }, [socket]);
 
 
     // function that emit every second to the server the game data
-
-
-
-
+    
     function get_the_data(room_name: string) {
-      console.log("getting the data FRONT= ", room_name);
-      //socket.emit("get_the_ball", room_name);
-    }
-
-
-
-/*     const update = useCallback(() => room_name : any {
+      //console.log("getting the data FRONT= ", room_name);
       socket.emit("get_the_ball", room_name);
-    }, []); */
 
-  // This useEffect is used to draw the canvas
-/*   let requestAnimationFrameId: any;
-  useEffect(() => {
-    const render = () => {
-      requestAnimationFrameId = requestAnimationFrame(render);
-      let canvas: any = props.canvasRef.current;
-      let ctx = null;
-      if (canvas)
-      ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        
-        
-        setInterval(function() { get_the_data(props.room); },10000);
-          
-          //console.log("Iplayer_p1 = ", IPlayer_p1);
-
-          //console.log("IPaddle_p1 = ", IPaddle_p1);
-          //console.log("Iplayer_p2 = ", IPlayer_p2);
-         //x = 0;
-
-         
-
-         draw_line(ctx, canvas.height, canvas.width);
-         draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-         draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-         draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
-         draw_ball(ctx, IBall, canvas.height, canvas.width);
-         const interval = setInterval(() => {
-           get_the_data(props.room)
-         }, 1000);
-         return () => clearInterval(interval);
-
-          //PaddleMouv_p1(IPaddle_p1, canvas.height, canvas.width);
-          //PaddleMouv_p2(IPaddle_p2, canvas.height, canvas.width);
-          //draw_ball(ctx, ballObj, canvas.height, canvas.width);
-        }
+      let data = {
+        room: props.room,
+        paddle_y: position_y,
+        im_p2: props.im_p2,
+        front_canvas_height: lowerSize / screen_ratio,
       };
-      render();
-  }, [props.canvasRef, props.im_p2, props.room, props.setimready, props.setopready, requestAnimationFrameId]);
- */
+      socket.emit("paddleMouv_time", data);
+      //console.log("mouv_paddle_time", data.paddle_y)
+      
+    }
 
   useEffect(() => {
 
@@ -349,75 +286,58 @@ export function GamePlayer_p1_p2(props: any) {
      function draw () { 
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        
-        
-        get_the_data(props.room);
+        if (IPlayer_p1.won === false && IPlayer_p2.won === false) {
+          get_the_data(props.room);
           
-          //console.log("Iplayer_p1 = ", IPlayer_p1);
-
-          //console.log("IPaddle_p1 = ", IPaddle_p1);
-          //console.log("Iplayer_p2 = ", IPlayer_p2);
-         //x = 0;
-
-         
-
-         draw_line(ctx, canvas.height, canvas.width);
-         draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-         draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-         draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
-         draw_ball(ctx, IBall, canvas.height, canvas.width);
-
-
-          //PaddleMouv_p1(IPaddle_p1, canvas.height, canvas.width);
-          //PaddleMouv_p2(IPaddle_p2, canvas.height, canvas.width);
-          //draw_ball(ctx, ballObj, canvas.height, canvas.width);
-            }
-
+          draw_line(ctx, canvas.height, canvas.width);
+          draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+          draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
+          draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+          draw_ball(ctx, IBall, canvas.height, canvas.width);
+          }
+        }
       }
-       setInterval(draw, 1000/30)
+       setInterval(draw, 20);
     },[]);
-
-
-/*   var canvas: any = props.canvasRef.current;
-  var ctx: any = null;
-  if (canvas)
-   ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  
-  function draw() {
-     if (ctx) 
-       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-       draw_line(ctx, canvas.height, canvas.width);
-       draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-       draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-       draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
-       draw_ball(ctx, IBall, canvas.height, canvas.width);
-       get_the_data(props.room)
-   }
-   setInterval(draw, 1000)
- */
 
 
   function deleteGameRoom_ingame() {
     if (IPlayer_p1.won === true || IPlayer_p2.won === true)
+    {
+      console.log("end of game");
       socket.emit("end_of_the_game", props.room);
+    }
     else
-      socket.emit("player_give_up", props.room);
+   {
+    console.log("give up")
+    socket.emit("player_give_up", props.room);
+    }
     props.setRoom("");
   }
   ////////////////////////////////////////////////////
 
   return (
-    <GamePlayer_all
-      canvasRef={props.canvasRef}
-      plowerSize={lowerSize}
-      deleteGameRoom_ingame={deleteGameRoom_ingame}
-      opready={props.opready}
-      im_p2={props.im_p2}
-      my_id={props.my_id}
-      op_id={props.op_id}
-      room={props.room}
-    />
+    <div>
+      <canvas
+        id="canvas"
+        ref={props.canvasRef}
+        width={lowerSize}
+        height={lowerSize / screen_ratio}
+        onMouseMove={(e) => position_y = e.clientY}
+        style={{ backgroundColor: "black" }}
+        ></canvas>
+      <br />
+      <br />
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: "black",
+          color: "white",
+        }}
+        onClick={deleteGameRoom_ingame}
+        >
+        Leave The Game
+      </Button>
+    </div>
   );
 }

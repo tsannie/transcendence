@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { GameEntity } from '../game_entity/game.entity';
+import { RoomEntity } from '../game_entity/room.entity';
 import { GameService } from '../game_service/game.service';
 
 @Controller('game')
@@ -7,12 +7,12 @@ export class GameController {
   constructor(private gameService: GameService) {}
 
   @Get()
-  index(): Promise<GameEntity[]> {
+  index(): Promise<RoomEntity[]> {
     return this.gameService.findAll();
   }
 
   @Get('/game_to_spec')
-  spec(): Promise<GameEntity[]> {
+  spec(): Promise<RoomEntity[]> {
     return this.gameService.findAll();
   }
 
