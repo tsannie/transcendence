@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
-import { RoomEntity } from '../game_entity/room.entity';
+import { RoomEntity, RoomStatus } from '../game_entity/room.entity';
 
 @Injectable()
 export class GameService {
@@ -39,7 +39,7 @@ export class GameService {
     if (size != 0) {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
-        if (room_db.fast_play === true && room_db.nbr_co === 1) {
+        if (room_db.fast_play === true && room_db.status === RoomStatus.WAITING) {
           room_game = room_db;
         }
       });

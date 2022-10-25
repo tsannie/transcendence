@@ -73,11 +73,11 @@ export function GameMenuSpectator(props: any) {
           let obj: any = value;
           for (let i = 0; i < listGame.length && donot === false; i++) {
             key2 = listGame[i];
-            if (key === key2 || obj.game_started === false) {
+            if (key === key2 || obj.status !== 2) {
               donot = true;
             }
           }
-          if (donot === false && obj.game_started === true) {
+          if (donot === false && obj.status !== 2) {
             listGame.push(obj.room_name);
           } else {
             donot = false;

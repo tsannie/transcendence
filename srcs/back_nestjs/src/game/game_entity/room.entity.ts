@@ -13,6 +13,7 @@ import {
 import { SetEntity } from './set.entity';
 
 export enum RoomStatus {
+  EMPTY = 0,
   WAITING = 1,
   PLAYING = 2,
   CLOSED = 3,
@@ -20,12 +21,12 @@ export enum RoomStatus {
   
 
 @Entity()
-export class RoomEntity { // TODO rename RoomEntity
+export class RoomEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @Column({ default: RoomStatus.WAITING })
-  status: RoomStatus;
+  @Column({ default: RoomStatus.EMPTY})
+  status: RoomStatus = RoomStatus.EMPTY;
 
   @Column({ nullable: true })
   p1?: string;  // TODO SWITCH IN USER ENTITY 
@@ -59,18 +60,14 @@ export class RoomEntity { // TODO rename RoomEntity
   @Column('boolean', { default: false })
   fast_play: boolean;// TODO DELL
 
-  @Column({ nullable: true })
-  nbr_co: number = 0; // TODO CHANTE TO STATUS -> NBR PLAYERS IN ROOM
-
-
   @Column({ default: 0 })
   spectator: number; // TODO DELL IF CAN EMIT WITOUT SPECTATOR
   //boolean
 
-  @Column('boolean', { default: false })
+/*   @Column('boolean', { default: false })
   game_started?: boolean; // WHI STATUS -> 
 
-
+ */
 /*   @OneToOne( () => StatEntity )
   @JoinColumn()
   stat: StatEntity; */
