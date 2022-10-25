@@ -8,7 +8,7 @@ import GameCreationSettings from "./gameInitialisation/GameCreationSettings";
 import { GameMenuSpectator } from "./gameSpectator/GameMenuSpectator";
 import data from "./gameReact/data";
 
-export let {
+/* export let {
   ballObj,
   gameSpecs,
   player_p1,
@@ -16,6 +16,14 @@ export let {
   paddleProps_p1,
   paddleProps_p2,
 } = data;
+ */
+
+export enum RoomStatus {
+  EMPTY = 0,
+  WAITING = 1,
+  PLAYING = 2,
+  CLOSED = 3,
+}
 
 export const socket = io("http://localhost:4000/game");
 
@@ -36,7 +44,7 @@ socket.on("connect_error", (err) => {
 
 
 export default function Game() {
-  const [nbrconnect, setnbrconnect] = useState(0);
+  const [status, setStatus] = useState(RoomStatus.EMPTY);
   const [room, setRoom] = useState("");
   const [my_id, setmy_id] = useState(socket.id);
   const [op_id, setop_id] = useState("2");
@@ -54,7 +62,8 @@ export default function Game() {
 
   useEffect(() => {
     socket.on("leftRoom", (theroom: any) => {
-      setnbrconnect(theroom.nbr_co);
+      setStatus(theroom.status);
+
       setopready(false);
       setimready(false);
       setgamestart(false);
@@ -62,7 +71,7 @@ export default function Game() {
     });
 
     socket.on("leftRoomEmpty", () => {
-      setnbrconnect(0);
+      setStatus(RoomStatus.EMPTY);   
       setopready(false);
       setimready(false);
       setgamestart(false);
@@ -99,20 +108,20 @@ export default function Game() {
     return (
       <GamePlayer_p1_p2
         setRoom={setRoom}
-        setgamestart={setgamestart}
-        my_id={my_id}
-        op_id={op_id}
+        //setgamestart={setgamestart}
+        //my_id={my_id}
+        //op_id={op_id}
         im_p2={im_p2}
         imready={imready}
         opready={opready}
-        setimready={setimready}
-        setopready={setopready}
+        //setimready={setimready}
+        //setopready={setopready}
         room={room}
         canvasRef={canvasRef}
-        deleteGameRoom={deleteGameRoom}
+        //deleteGameRoom={deleteGameRoom}
       />
     );
-  } else if (nbrconnect === 2 && isinroom) {
+  } else if (status === RoomStatus.PLAYING && isinroom) {
     return (
       <GameWaitPlayerReady
         my_id={my_id}
@@ -159,7 +168,7 @@ export default function Game() {
         setopready={setopready}
         setgamestart={setgamestart}
         setRoom={setRoom}
-        setnbrconnect={setnbrconnect}
+        setStatus={setStatus}
         setisinroom={setisinroom}
         setop_id={setop_id}
         setim_p2={setim_p2}

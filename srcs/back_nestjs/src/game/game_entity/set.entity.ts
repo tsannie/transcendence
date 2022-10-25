@@ -20,17 +20,17 @@ export class SetEntity {
 
   @OneToOne(() => PaddleEntity, { eager: true, cascade: true })
   @JoinColumn()
-  p1_paddle_obj: PaddleEntity;
+  p1_paddle: PaddleEntity;
 
   @OneToOne(() => PaddleEntity, { eager: true, cascade: true })
   @JoinColumn()
-  p2_paddle_obj: PaddleEntity;
+  p2_paddle: PaddleEntity;
 
   @OneToOne(() => PlayerEntity, { eager: true, cascade: true })
   @JoinColumn()
-  set_p1: PlayerEntity;
+  p1: PlayerEntity;
 
   @OneToOne(() => PlayerEntity, { eager: true, cascade: true })
   @JoinColumn()
-  set_p2: PlayerEntity;
+  p2: PlayerEntity;
 }

@@ -2,7 +2,6 @@ import { Box, Button, Grid, radioClasses } from "@mui/material";
 import { useEffect, useState } from "react";
 import { screen_ratio } from "../const/const";
 import { socket } from "../Game";
-import { paddleProps_p1 } from "../Game";
 
 
 export function GamePlayer_all(props: any) {

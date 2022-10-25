@@ -56,24 +56,24 @@ function colision_paddle_player(paddle: PaddleEntity, ball: BallEntity) {
 
 export function BallCol_p1(set: SetEntity) {
 
-  if ( set.ball.x - rad <= set.p1_paddle_obj.x + paddle_width &&
-  set.ball.x + (rad / 3) >= set.p1_paddle_obj.x &&
-  set.ball.y + rad >= set.p1_paddle_obj.y &&
-  set.ball.y - rad <= set.p1_paddle_obj.y + paddle_height) {
-    colision_paddle_player(set.p1_paddle_obj, set.ball);
+  if ( set.ball.x - rad <= set.p1_paddle.x + paddle_width &&
+  set.ball.x + (rad / 3) >= set.p1_paddle.x &&
+  set.ball.y + rad >= set.p1_paddle.y &&
+  set.ball.y - rad <= set.p1_paddle.y + paddle_height) {
+    colision_paddle_player(set.p1_paddle, set.ball);
   }
   else if (set.ball.x - rad <= - (rad * 3))
-    increment_score_player(set.set_p2, set.ball);
+    increment_score_player(set.p2, set.ball);
 }
  
 export function BallCol_p2(set: SetEntity) {
 
-  if (set.ball.x + rad >= set.p2_paddle_obj.x &&
-  set.ball.x - (rad / 3) <= set.p2_paddle_obj.x + paddle_width &&
-  set.ball.y + rad >= set.p2_paddle_obj.y &&
-  set.ball.y - rad <= set.p2_paddle_obj.y + paddle_height) {
-    colision_paddle_player(set.p2_paddle_obj, set.ball);
+  if (set.ball.x + rad >= set.p2_paddle.x &&
+  set.ball.x - (rad / 3) <= set.p2_paddle.x + paddle_width &&
+  set.ball.y + rad >= set.p2_paddle.y &&
+  set.ball.y - rad <= set.p2_paddle.y + paddle_height) {
+    colision_paddle_player(set.p2_paddle, set.ball);
   }
   else if (set.ball.x + rad >= canvas_back_width + (rad * 3))
-    increment_score_player(set.set_p1, set.ball);
+    increment_score_player(set.p1, set.ball);
 }
