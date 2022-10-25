@@ -9,9 +9,11 @@ interface ConvProps { }
 
 export default function Conv(props: ConvProps) {
   return (
-    <Box sx={{ border: "1px solid green" }}>
+    <Box sx={{ border: "1px solid green", height: "500px", width: "300px", position: "relative" }}>
       <MessagesList />
-      <PromptMessage />
+      <Box sx={{ border: "1px solid blue", position: "absolute", bottom: 0 }}>
+        <PromptMessage />
+      </Box>
     </Box>
   );
 }

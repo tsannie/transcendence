@@ -41,7 +41,6 @@ export default function ChatUserlist(props: ChatUserListProps) {
         console.log(targetUsername);
         console.log("dm created = ", res.data);
         setConvId(res.data.id);
-        getDmDatas(res.data);
         getDmsList();
         loadMessages(res.data.id, true);
       })
