@@ -94,13 +94,17 @@
   justify-content: space-around;
   width: 100%;
   margin-top: calc(20 * var(--res));
+  width: calc(650 * var(--res));
+  height: calc(350 * var(--res));
+
 }
 
 .profile__body__history {
   display: flex;
   flex-direction: column;
   border-style: dashed;
-  width: calc(450 * var(--res));
+  width: 80%;
+  margin: calc(9 * var(--res));
   h3 {
     margin-left: calc(30 * var(--res));
   }
@@ -108,16 +112,11 @@
 
 .profile__body__history__title {
   display: flex;
-  h3 {
-    margin-top: calc(15 * var(--res));
-    margin-bottom: calc(15 * var(--res));
-  }
 }
 
 .profile__body__history__list {
   display: flex;
   flex-direction: column;
-  height: calc(250 * var(--res));
 
   overflow-x: auto;
 }
@@ -137,18 +136,26 @@
   }
 }
 
-.profile__body__friends{
+.profile__body__friends {
   display: flex;
   flex-direction: column;
   border-style: dashed;
-  width: 25%;
-  h3 {
-    margin-left: calc(30 * var(--res));
-  }
+  flex-basis: 45%;
+
+  margin: calc(9 * var(--res));
+
+}
+
+.profile__body__friends__title {
+  display: flex;
 }
 
 .profile__body__friends__list {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-x: auto;
   img {
+    margin: calc(2 * var(--res));
     border-radius: 50%;
     width: calc(45 * var(--res));
     cursor: pointer;
