@@ -73,40 +73,40 @@ export function GameSpectator(props: any) {
       ballObj.first_col = theroom.set.ball.first_col;
       gameSpecs.power = theroom.power;
 
-      player_p1.score = theroom.set.set_p1.score;
-      player_p2.score = theroom.set.set_p2.score;
+      player_p1.score = theroom.set.p1.score;
+      player_p2.score = theroom.set.p2.score;
 
       first_sinc = true;
       setpower(theroom.power);
     });
     socket.on("mouvPaddleLeft_spec", (theroom: any) => {
-      paddleProps_p1.x = theroom.set.p1_paddle_obj.x;
-      paddleProps_p1.y = theroom.set.p1_paddle_obj.y;
+      paddleProps_p1.x = theroom.set.p1_paddle.x;
+      paddleProps_p1.y = theroom.set.p1_paddle.y;
     });
     socket.on("mouvPaddleRight_spec", (theroom: any) => {
-      paddleProps_p2.x = theroom.set.p2_paddle_obj.x;
-      paddleProps_p2.y = theroom.set.p2_paddle_obj.y;
+      paddleProps_p2.x = theroom.set.p2_paddle.x;
+      paddleProps_p2.y = theroom.set.p2_paddle.y;
     });
     socket.on("setDataP1_spec", (theroom: any) => {
-      player_p1.score = theroom.set.set_p1.score;
-      player_p1.won = theroom.set.set_p1.won;
-      player_p1.name = theroom.set.set_p1.name;
-      setp1id(theroom.set.set_p1.name);
+      player_p1.score = theroom.set.p1.score;
+      player_p1.won = theroom.set.p1.won;
+      player_p1.name = theroom.set.p1.name;
+      setp1id(theroom.set.p1.name);
     });
     socket.on("setDataP2_spec", (theroom: any) => {
-      player_p2.score = theroom.set.set_p2.score;
-      player_p2.won = theroom.set.set_p2.won;
-      player_p2.name = theroom.set.set_p2.name;
-      setp2id(theroom.set.set_p2.name);
+      player_p2.score = theroom.set.p2.score;
+      player_p2.won = theroom.set.p2.won;
+      player_p2.name = theroom.set.p2.name;
+      setp2id(theroom.set.p2.name);
     });
     socket.on("startGame_spec", (theroom: any) => {
-      setp1id(theroom.set.set_p1.name);
-      setp2id(theroom.set.set_p2.name);
+      setp1id(theroom.set.p1.name);
+      setp2id(theroom.set.p2.name);
       setThisRoom(theroom.room_name);
     });
     socket.on("player_give_upem_spec", (theroom: any) => {
-      player_p2.won = theroom.set.set_p2.won;
-      player_p1.won = theroom.set.set_p1.won;
+      player_p2.won = theroom.set.p2.won;
+      player_p1.won = theroom.set.p1.won;
     });
     if (props.Specthegame === true && emit_to_get_room === true) {
       socket.emit("Specthegame", props.Room_name_spec);

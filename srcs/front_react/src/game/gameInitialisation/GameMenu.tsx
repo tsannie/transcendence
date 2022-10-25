@@ -32,7 +32,7 @@ export default function GameMenu(props: any) {
     });
 
     socket.on("joinedRoom", (theroom: any) => {
-      props.setnbrconnect(theroom.nbr_co);
+      props.setStatus(theroom.status);
       props.setisinroom(true);
       props.setRoom(theroom.room_name);
       if (theroom.p2 === socket.id) {

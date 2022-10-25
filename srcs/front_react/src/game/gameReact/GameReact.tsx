@@ -90,114 +90,15 @@ export function GamePlayer_p1_p2(props: any) {
     }
   }, [HW])
 
-  let x = 0;
-  let u = 0;
-/*   useEffect(() => {
-
-    // This useEffect is used to get the room data from the server to set the ball position and the players position
-
-    socket.on("sincTheBall", (theroom: any) => {
-      if (theroom.power === powerEnum.speed || theroom.power === powerEnum.speed_bigball
-        || theroom.power === powerEnum.speed_bigball_smach || theroom.power === powerEnum.speed_bigball_smach) {
-        ballObj.ingame_dx = theroom.set.ball.power_ingame_dx;
-        ballObj.ingame_dy = theroom.set.ball.power_ingame_dy;
-  
-        ballObj.first_dx = theroom.set.ball.power_first_dx;
-        ballObj.first_dy = theroom.set.ball.power_first_dy;
-      }
-      else {
-        ballObj.ingame_dx = theroom.set.ball.ingame_dx;
-        ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-        
-        ballObj.first_dx = theroom.set.ball.first_dx;
-        ballObj.first_dy = theroom.set.ball.first_dy;
-      }
-      if (theroom.power === 2 || theroom.power === 3
-      || theroom.power === 6 || theroom.power === 7) {
-        ballObj.rad = theroom.set.ball.power_rad;
-      }
-      else {
-        ballObj.rad = theroom.set.ball.rad;
-      }
-      ballObj.x = theroom.set.ball.x;
-      ballObj.y = theroom.set.ball.y;
-
-      ballObj.ball_way_x = theroom.set.ball.way_x;
-      ballObj.ball_way_y = theroom.set.ball.way_y;
-      
-      ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
-      ballObj.first_col = theroom.set.ball.first_col;
-      gameSpecs.power = theroom.power;
-      setpower(theroom.power);
-      //console.log("INGAME_power = ", theroom.power);
-    });
-    socket.on("mouvPaddleLeft", (theroom: any) => {
-      paddleProps_p1.x = theroom.set.p1_paddle_obj.x;
-      paddleProps_p1.y = theroom.set.p1_paddle_obj.y;
-    });
-    socket.on("mouvPaddleRight", (theroom: any) => {
-      paddleProps_p2.x = theroom.set.p2_paddle_obj.x;
-      paddleProps_p2.y = theroom.set.p2_paddle_obj.y;
-    });
-    socket.on("setDataP1", (theroom: any) => {
-      player_p1.score = theroom.set.set_p1.score;
-      player_p1.won = theroom.set.set_p1.won;
-      player_p1.name = theroom.set.set_p1.name;
-    });
-    socket.on("setDataP2", (theroom: any) => {
-      player_p2.score = theroom.set.set_p2.score;
-      player_p2.won = theroom.set.set_p2.won;
-      player_p2.name = theroom.set.set_p2.name;
-    });
-
-  }, [socket, props.setimready, props.setopready, power]);
-
-  // Sincronize the ball position with the server
-
-  function sinc_ball(room_name: string, ballObj: any, first: boolean) {
-    console.log("!!! SINC BALL !!!!")
-    if (player_p1.won === false && player_p2.won === false) {
-      let data = {
-        room: room_name,
-        ball: ballObj,
-        first: first,
-        power: gameSpecs.power,
-      };
-      socket.emit("sincBall", data);
-    }
-  }
-  
-  // Sinchronize the paddle position with the server
-  
-  function sinc_player_p1(room_name: string, player_p1: any) {
-    let data = {
-      room: room_name,
-      name: player_p1.name,
-      score: player_p1.score,
-      won: player_p1.won,
-    };
-    socket.emit("playerActyLeft", data);
-  }
-  
-  function sinc_player_p2(room_name: string, player_p2: any) {
-    let data = {
-      room: room_name,
-      name: player_p2.name,
-      score: player_p2.score,
-      won: player_p2.won,
-    };
-    socket.emit("playerActyRight", data);
-  }
- */
 
   useEffect(() => {
     
     socket.on("player_give_upem", (set: any) => {
-      IPlayer_p2.won = set.set_p2.won;
-      IPlayer_p1.won = set.set_p1.won;
+      IPlayer_p2.won = set.p2.won;
+      IPlayer_p1.won = set.p1.won;
 
       //props.setgamestart(false);
-      console.log("xxxplayer_give_upem", IPlayer_p2.won, IPlayer_p1.won);
+      //console.log("xxxplayer_give_upem", IPlayer_p2.won, IPlayer_p1.won);
     });
 
     socket.on("get_the_paddle", (set: any) => {
@@ -211,27 +112,27 @@ export function GamePlayer_p1_p2(props: any) {
      const ratio_width = (XlowerSize /canvas_back_width);
      const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
     
-      //console.log("set.p1_paddle_obj.y", set.p1_paddle_obj.y);
-     // console.log("set.p2_paddle_obj.y", set.p2_paddle_obj.y);
+      //console.log("set.p1_paddle.y", set.p1_paddle.y);
+     // console.log("set.p2_paddle.y", set.p2_paddle.y);
 
       // set paddle 
-      set.p1_paddle_obj.x *= ratio_width;
-      set.p1_paddle_obj.y *= ratio_height;
-      set.p1_paddle_obj.width *= ratio_width;
-      set.p1_paddle_obj.height *= ratio_height;
+      set.p1_paddle.x *= ratio_width;
+      set.p1_paddle.y *= ratio_height;
+      set.p1_paddle.width *= ratio_width;
+      set.p1_paddle.height *= ratio_height;
 
-      set.p2_paddle_obj.x *= ratio_width;
-      set.p2_paddle_obj.y *= ratio_height;
-      set.p2_paddle_obj.width *= ratio_width;
-      set.p2_paddle_obj.height *= ratio_height;
+      set.p2_paddle.x *= ratio_width;
+      set.p2_paddle.y *= ratio_height;
+      set.p2_paddle.width *= ratio_width;
+      set.p2_paddle.height *= ratio_height;
 
       if (props.im_p2 === true)
-        IPaddle_p2.y = set.p2_paddle_obj.y * ratio_height;
+        IPaddle_p2.y = set.p2_paddle.y * ratio_height;
       else
-        IPaddle_p1.y = set.p1_paddle_obj.y;
+        IPaddle_p1.y = set.p1_paddle.y;
 
-      IPaddle_p1 = set.p1_paddle_obj;
-      IPaddle_p2 = set.p2_paddle_obj;
+      IPaddle_p1 = set.p1_paddle;
+      IPaddle_p2 = set.p2_paddle;
     });
 
 
@@ -247,8 +148,8 @@ export function GamePlayer_p1_p2(props: any) {
      const ratio_width = (lowerSize /canvas_back_width);
      const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
      
-      IPlayer_p1 = set.set_p1;
-      IPlayer_p2 = set.set_p2;
+      IPlayer_p1 = set.p1;
+      IPlayer_p2 = set.p2;
 
       IBall.x = set.ball.x * ratio_width;
       IBall.y = set.ball.y * ratio_height;
