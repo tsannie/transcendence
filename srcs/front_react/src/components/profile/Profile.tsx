@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./profile.style.scss";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import ProfileHeader from "./ProfileHeader";
@@ -6,7 +6,7 @@ import ProfileStatsBar from "./ProfileStatsBar";
 import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
 
 function Profile() {
-  const { user } = React.useContext(AuthContext) as AuthContextType;
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   /*let items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"];
   let itemList:any = [];
@@ -54,11 +54,15 @@ function Profile() {
         </div>
         <div className="profile__body__friends">
           <div className="profile__body__friends__title">
-            <h3>friends:</h3>
-            <span>651</span>
+            <h3>friends :</h3>
           </div>
           <hr id="full" />
           <div className="profile__body__friends__list">
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
+            <img src={user?.profile_picture + "&size=small"} alt="avatar" />
             <img src={user?.profile_picture + "&size=small"} alt="avatar" />
             <img src={user?.profile_picture + "&size=small"} alt="avatar" />
             <img src={user?.profile_picture + "&size=small"} alt="avatar" />
