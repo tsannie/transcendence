@@ -46,17 +46,19 @@ export default function PromptMessage(props: PromptMessageProps) {
           setCurrentMessage(event.target.value);
         }}
       />
-      <Box
-        component="img"
-        alt="send message img"
-        src={Paperplane}
-        onClick={sendMessage}
-        sx={{
-          width: 18,
-          height: 18,
-          position: "absolute",
-        }}
-      ></Box>
+      {currentMessage !== "" && (
+        <Box
+          component="img"
+          alt="send message img"
+          src={Paperplane}
+          onClick={sendMessage}
+          sx={{
+            width: 18,
+            height: 18,
+            position: "absolute",
+          }}
+        ></Box>
+      )}
     </Box>
   );
 }
