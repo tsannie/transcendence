@@ -30,7 +30,7 @@ export default function MessagesList(props: MessagesListProps) {
                 mr: 0.5,
                 mb: 1,
                 p: 1,
-                right: 0,
+                ml: "auto",
               }}
               key={messageData.id}
             >
