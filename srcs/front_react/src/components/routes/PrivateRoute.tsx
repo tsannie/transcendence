@@ -18,7 +18,7 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
 }) => {
   const [isLoad, setIsLoad] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
-  const { isLogin, login } = useContext(AuthContext) as AuthContextType;
+  const { isLogin, login, logout } = useContext(AuthContext) as AuthContextType;
   const { transitionStage, setTransistionStage, setDisplayLocation, location } =
     useContext(TransitionContext) as TransitionContextType;
 
