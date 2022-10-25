@@ -25,7 +25,7 @@ interface ChatUserListProps {
 
 export default function ChatUserlist(props: ChatUserListProps) {
   const { user, users } = useContext(AuthContext) as AuthContextType;
-  const { getDmsList } = useContext(DmsContext);
+  const { getDmsList, getDmDatas } = useContext(DmsContext);
   const { loadMessages, setConvId } = useContext(MessagesContext);
 
   function handleClick(username: string) {
@@ -41,6 +41,7 @@ export default function ChatUserlist(props: ChatUserListProps) {
         console.log(targetUsername);
         console.log("dm created = ", res.data);
         setConvId(res.data.id);
+        getDmDatas(res.data);
         getDmsList();
         loadMessages(res.data.id, true);
       })

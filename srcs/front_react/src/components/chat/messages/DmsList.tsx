@@ -31,7 +31,7 @@ interface DmsListProps {
 }
 
 export default function DmsList(props: DmsListProps) {
-  const { dmsList, setDmData } = useContext(DmsContext);
+  const { dmsList, getDmDatas } = useContext(DmsContext);
   const { loadMessages, setIsDm, setConvId } = useContext(MessagesContext);
   const { user } = useContext(AuthContext) as AuthContextType;
 
@@ -47,23 +47,6 @@ export default function DmsList(props: DmsListProps) {
       });
     }
     return targetUsername;
-  }
-
-  async function getDmDatas(dm: any) {
-    await api
-      .get("dm/getByTarget", {
-        params: {
-          target: findTargetUsername(dm.id),
-        },
-      })
-      .then((res) => {
-        console.log("get infos of channel clicked by user");
-        setDmData(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid dm data");
-        console.log(res.response.data.message);
-      });
   }
 
   async function handleClick(dm: any) {
