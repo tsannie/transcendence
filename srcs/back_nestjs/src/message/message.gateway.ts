@@ -91,7 +91,7 @@ export class MessageGateway
   }
 
   @SubscribeMessage('message')
-  addMessage(
+  async addMessage(
     @MessageBody() data: MessageDto,
     @ConnectedSocket() client: Socket,
   ) {
@@ -99,11 +99,13 @@ export class MessageGateway
     this.logger.log('client id = ', client.id);
 
     if (data.isDm === true) {
-      this.messageService.addMessagetoDm(data);
-      this.messageService.emitMessageDm(this.server, data);
+      const lastMsg = await this.messageService.addMessagetoDm(data);
+
+      await this.messageService.emitMessageDm(this.server, lastMsg);
     } else {
-      this.messageService.addMessagetoChannel(data);
-      this.messageService.emitMessageChannel(this.server, data);
+      const lastMsg = await this.messageService.addMessagetoChannel(data);
+
+      await this.messageService.emitMessageChannel(this.server, lastMsg);
     }
   }
 }
