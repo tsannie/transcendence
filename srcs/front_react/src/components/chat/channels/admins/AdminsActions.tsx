@@ -49,23 +49,21 @@ export default function AdminsActions(props: AdminsActionsProps) {
 
   return (
     <List>
-      <ListItem>
-        {!isBan(props.channelData) ? (
-          <BanUser
-            userTargeted={props.userTargeted}
-            getChannelDatas={props.getChannelDatas}
-            channelData={props.channelData}
-            setUsersOpen={props.setUsersOpen}
-          />
-        ) : (
-          <UnbanUser
-            userTargeted={props.userTargeted}
-            getChannelDatas={props.getChannelDatas}
-            channelData={props.channelData}
-            setBannedOpen={props.setBannedOpen}
-          />
-        )}
-      </ListItem>
+      {!isBan(props.channelData) ? (
+        <BanUser
+          userTargeted={props.userTargeted}
+          getChannelDatas={props.getChannelDatas}
+          channelData={props.channelData}
+          setUsersOpen={props.setUsersOpen}
+        />
+      ) : (
+        <UnbanUser
+          userTargeted={props.userTargeted}
+          getChannelDatas={props.getChannelDatas}
+          channelData={props.channelData}
+          setBannedOpen={props.setBannedOpen}
+        />
+      )}
       <ListItem>
         {!isMute(props.channelData) ? (
           <MuteUser
