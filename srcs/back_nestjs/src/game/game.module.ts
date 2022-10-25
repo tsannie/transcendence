@@ -4,7 +4,7 @@ import { GameController } from './game_controller/game.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GameGateway } from './game.gateway';
 import { SetEntity } from './game_entity/set.entity';
-import { GameEntity } from './game_entity/game.entity';
+import { RoomEntity } from './game_entity/room.entity';
 import { BallEntity } from './game_entity/ball.entity';
 import { PaddleEntity } from './game_entity/paddle.entity';
 import { PlayerEntity } from './game_entity/players.entity';
@@ -12,7 +12,7 @@ import { PlayerEntity } from './game_entity/players.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      GameEntity,
+      RoomEntity,
       SetEntity,
       PlayerEntity,
       PaddleEntity,
