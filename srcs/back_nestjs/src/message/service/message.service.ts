@@ -95,7 +95,6 @@ export class MessageService {
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
       .orderBy('message.createdAt', 'DESC')
-      .take(1)
       .getOne();
   }
 
@@ -142,34 +141,28 @@ export class MessageService {
   }
 
   // emit message to all users in dm
-  async emitMessageDm(socket: Server, data: MessageDto) {
-    const dm = await this.dmService.getDmById(data.convId);
-
-    if (dm) {
-      for (const dmUser of dm.users) {
-        const user = await this.userService.findByName(dmUser.username, {
-          connections: true,
-          dms: true,
-          channels: true,
-          admin_of: true,
-          owner_of: true,
-        });
-
-        for (const connection of user.connections) {
-          const lastMessage = await this.loadLastMessage('dm', dm.id, user);
-
-          if (lastMessage) {
-            socket.to(connection.socketId).emit('message', lastMessage);
-          }
+  async emitMessageDm(socket: Server, lastMessage: MessageEntity) {
+    for (const dmUser of lastMessage.dm.users) {
+      const user = await this.userService.findByName(dmUser.username, {
+        connections: true,
+        dms: true,
+        channels: true,
+        admin_of: true,
+        owner_of: true,
+      });
+      for (const connection of user.connections) {
+        if (lastMessage) {
+          socket.to(connection.socketId).emit('message', lastMessage);
         }
       }
     }
   }
 
   // emit message to all users in channel
-  async emitMessageChannel(socket: Server, data: MessageDto) {
-    const channel = await this.channelService.getChannelById(data.convId);
-    console.log(channel);
+  async emitMessageChannel(socket: Server, lastMessage: MessageEntity) {
+    const channel = await this.channelService.getChannelById(
+      lastMessage.channel.id,
+    );
 
     if (channel) {
       this.emitMessageToAllUsersInChannel(channel, socket);
