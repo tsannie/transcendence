@@ -52,19 +52,6 @@ export default function Game() {
   
   // useEffect reinint the game when the player leave the room or the game is over or the player give up
 
-  function reinit_game(){
-    player_p1.name = "null";
-    player_p1.score = 0;
-    player_p1.won = false;
-
-    player_p2.name = "null";
-    player_p2.score = 0;
-    player_p2.won = false;
-
-    ballObj.init_ball_pos = false;
-    ballObj.first_col = false;
-  }
-
   useEffect(() => {
     socket.on("leftRoom", (theroom: any) => {
       setnbrconnect(theroom.nbr_co);
@@ -72,7 +59,6 @@ export default function Game() {
       setimready(false);
       setgamestart(false);
       setop_id("");
-      reinit_game();
     });
 
     socket.on("leftRoomEmpty", () => {
@@ -82,7 +68,6 @@ export default function Game() {
       setgamestart(false);
       setisinroom(false);
       setop_id("");
-      reinit_game();
     });
     setisFull("");
     socket.on("roomFull", (theroom: any) => {
@@ -97,7 +82,6 @@ export default function Game() {
       setimready(false);
       setopready(false);
       setim_p2(false);
-      reinit_game();
       socket.emit("leaveGameRoom", room);
       setRoom("");
     }
@@ -115,6 +99,7 @@ export default function Game() {
     return (
       <GamePlayer_p1_p2
         setRoom={setRoom}
+        setgamestart={setgamestart}
         my_id={my_id}
         op_id={op_id}
         im_p2={im_p2}

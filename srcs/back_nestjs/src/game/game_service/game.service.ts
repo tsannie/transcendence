@@ -2,21 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
-import { GameEntity } from '../game_entity/game.entity';
+import { RoomEntity } from '../game_entity/room.entity';
 
 @Injectable()
 export class GameService {
   constructor(
-    @InjectRepository(GameEntity)
-    private all_game: Repository<GameEntity>,
+    @InjectRepository(RoomEntity)
+    private all_game: Repository<RoomEntity>,
   )
   {}
 
-  findAll(): Promise<GameEntity[]> {
+  findAll(): Promise<RoomEntity[]> {
     return this.all_game.find();
   }
 
-  findByName(room_name: string): Promise<GameEntity> {
+  findByName(room_name: string): Promise<RoomEntity> {
     return this.all_game.findOne({
       where: {
         room_name: room_name,
@@ -24,7 +24,7 @@ export class GameService {
     });
   }
 
-  async gameStarted(room_name: string): Promise<GameEntity> {
+  async gameStarted(room_name: string): Promise<RoomEntity> {
     const game = await this.findByName(room_name);
 
     
@@ -32,7 +32,7 @@ export class GameService {
     return this.all_game.save(game);
   }
 
-  async joinFastRoom(room: string): Promise<GameEntity> {
+  async joinFastRoom(room: string): Promise<RoomEntity> {
 
     let room_game;
     const size = await this.all_game.count();
@@ -47,7 +47,7 @@ export class GameService {
 
     } 
     if (!room_game) {
-      room_game = new GameEntity();
+      room_game = new RoomEntity();
       room_game.fast_play = true;
       room_game.room_name = randomUUID();
 
@@ -58,18 +58,18 @@ export class GameService {
     return room_game;
   }
 
-  async joinInvitation(room: string): Promise<GameEntity> {
+  async joinInvitation(room: string): Promise<RoomEntity> {
 
     let room_game = await this.all_game.findOneBy({ room_name: room });
     if (!room_game) {
-      room_game = new GameEntity();
+      room_game = new RoomEntity();
       room_game.fast_play = true;
       room_game.room_name = room;
     }
     return room_game;
   }
 
-  async get_room(room_name: string): Promise<GameEntity> {
+  async get_room(room_name: string): Promise<RoomEntity> {
     return await this.findByName(room_name);
   }
 

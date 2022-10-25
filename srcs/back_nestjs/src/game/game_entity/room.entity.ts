@@ -20,7 +20,7 @@ export enum RoomStatus {
   
 
 @Entity()
-export class GameEntity { // TODO rename RoomEntity
+export class RoomEntity { // TODO rename RoomEntity
   @PrimaryGeneratedColumn()
   id?: number;
 
