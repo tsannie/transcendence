@@ -96,7 +96,6 @@
   margin-top: calc(20 * var(--res));
   width: calc(650 * var(--res));
   height: calc(350 * var(--res));
-
 }
 
 .profile__body__history {
@@ -143,7 +142,6 @@
   flex-basis: 45%;
 
   margin: calc(9 * var(--res));
-
 }
 
 .profile__body__friends__title {
@@ -153,6 +151,7 @@
 .profile__body__friends__list {
   display: flex;
   flex-wrap: wrap;
+
   overflow-x: auto;
   img {
     margin: calc(2 * var(--res));
