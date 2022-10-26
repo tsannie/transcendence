@@ -33,7 +33,6 @@ export default function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar__content">
-
         <div className="sidebar__icon">
           <Link to="/">
             <HomeIcon className={path === "/" ? "selected" : ""} />
@@ -54,7 +53,6 @@ export default function Sidebar() {
         </div>
 
         <div className="sidebar__bg"></div>
-
       </div>
     </div>
   );
