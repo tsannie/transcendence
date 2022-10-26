@@ -25,9 +25,11 @@ function ProfileHeader(props: IProps) {
           </div>
         </div>
       </div>
-      <div className="profile__header__search">
-        <span>search player:</span>
-        <SearchBar />
+      <div className="profile__header__right">
+        <div className="profile__header__search">
+          <span>search player:</span>
+          <SearchBar />
+        </div>
       </div>
     </div>
   );
