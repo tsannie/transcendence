@@ -249,7 +249,7 @@ export class GameGateway implements OnGatewayInit {
     const room_game = await this.all_game.findOneBy({ room_name: room });
 
 
-    if (room_game) {
+/*     if (room_game) {
       room = room_game.room_name;
       if ((room_game.p1 === client.id || room_game.p2 === client.id) && room_game.status === RoomStatus.PLAYING)
         this.LeaveRoom(client, room);
@@ -259,7 +259,7 @@ export class GameGateway implements OnGatewayInit {
         this.PlayerGiveUp(client, room); 
       else if (room_game.p1 === client.id || room_game.p2 === client.id)
         this.EndOfTheGame(client, room);
-    }
+    } */
   }
 
   @SubscribeMessage('player_give_up')
@@ -273,7 +273,7 @@ export class GameGateway implements OnGatewayInit {
       room_game.status = RoomStatus.WAITING;
     else if (room_game.status === RoomStatus.WAITING)
       room_game.status = RoomStatus.EMPTY;
-
+////
     if (room_game.set.p1.name === client.id)
       room_game.set.p2.won = true;
     else if (room_game.set.p2.name === client.id)
