@@ -66,4 +66,10 @@ export class UserController {
   deleteAvatar(@Request() req) {
     return this.userService.deleteAvatar(req.user);
   }
+
+  @Get("conversations")
+  @UseGuards( JwtTwoFactorGuard )
+  async getConvos(@Request() req) {
+    return this.userService.getConversations(req.user);
+  }
 }
