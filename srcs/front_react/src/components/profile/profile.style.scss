@@ -199,6 +199,15 @@ $search_bar_size: calc(250 * var(--res));
 
   li {
     padding: calc(10 * var(--res));
+    img {
+      border-radius: 50%;
+      width: calc(20 * var(--res));
+      cursor: pointer;
+    }
+    span {
+      margin-left: calc(10 * var(--res));
+      font-size: calc(22 * var(--res));
+    }
   }
 
   li:not(:last-of-type) {
