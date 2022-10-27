@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -17,7 +18,10 @@ export class ChannelEntity {
   id: string;
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column({ nullable: false, unique: true })
   name: string;
