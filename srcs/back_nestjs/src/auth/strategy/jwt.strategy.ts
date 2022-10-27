@@ -22,7 +22,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IPayload) {
-    return await this.userService.findById(payload.sub);
+  async validate(payload: any) {  // TODO all check for validate jeton
+    //console.log(payload)
+    //console.log( await this.userService.findByName(payload.username));
+    return await this.userService.findByName(payload.username, {  // TODO add check for user
+		owner_of: true,
+		admin_of: true,
+		channels: true,
+		blocked: true,
+		dms: true
+	});
   }
 }

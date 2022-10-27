@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import FortyTwoGuard from '../guard/fortyTwo.guard';
+import GoogleGuard from '../guard/google.guard';
 import JwtGuard from '../guard/jwt.guard';
 import JwtTwoFactorGuard from '../guard/jwtTwoFactor.guard';
 import { AuthService } from '../service/auth.service';
@@ -37,9 +38,9 @@ export class AuthController {
   }
 
   @UseGuards(FortyTwoGuard)
-  @Get('')
+  @Get('oauth42')
   @Redirect(process.env.FRONT_URL, 301)
-  async oauthFortyTwo(@Req() req) {
+  async oauthFortyTwo(@Req() req) { // TODO Interface
     const user = req.user;
     if (!user)
       throw new UnauthorizedException('User not found');
@@ -50,5 +51,28 @@ export class AuthController {
       path: '/',
     });
     return user;
+  }
+
+  @UseGuards(GoogleGuard)
+  @Get('oauthGoogle')
+  @Redirect(process.env.FRONT_URL, 301)
+  async oauthGoogle(@Req() req) {
+    const user = req.user;
+    if (!user)
+      throw new UnauthorizedException('User not found');
+    const accessToken = await this.authService.getCookie(user);
+
+    req.res.cookie(process.env.COOKIE_NAME, accessToken, {
+      httpOnly: false,
+      path: '/',
+    });
+    return user;
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('logout')
+  async logout(@Request() req) {
+    req.res.clearCookie(process.env.COOKIE_NAME);
+    return {message: 'Logout'};
   }
 }

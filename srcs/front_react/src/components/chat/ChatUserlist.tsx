@@ -1,45 +1,68 @@
-import { Button, Grid, Menu, MenuItem, Typography } from "@mui/material";
+import {
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  Menu,
+  MenuItem,
+  Popover,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { api } from "../../const/const";
+import { ChatContent } from "./Chat";
+import { SocketContext } from "../../contexts/SocketContext";
+import { IChannel, ICreateDm, IDm } from "./types";
+import { MessagesContext } from "../../contexts/MessagesContext";
+import { DmsContext } from "../../contexts/DmsContext";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
-export default function ChatUserlist(props: any) {
+interface ChatUserListProps {
+  setChatContent: (chatContent: ChatContent) => void;
+}
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+export default function ChatUserlist(props: ChatUserListProps) {
+  const { user, users } = useContext(AuthContext) as AuthContextType;
+  const { getDmsList, getDmDatas } = useContext(DmsContext);
+  const { loadMessages, setConvId } = useContext(MessagesContext);
 
-  function handleClick(event: React.MouseEvent<HTMLElement>) {
-    event.preventDefault();
-    setAnchorEl(event.currentTarget);
-  };
-
-  function handleClose() {
-    setAnchorEl(null);
+  function handleClick(username: string) {
+    createNewConv(username);
   }
 
-  function handleProfile() {
-    console.log('handle profile');
-    setAnchorEl(null);
+  async function createDm(targetUsername: ICreateDm) {
+    console.log("create dm");
+    await api
+      .post("dm/create", targetUsername)
+      .then((res) => {
+        console.log("dm created with success");
+        console.log(targetUsername);
+        console.log("dm created = ", res.data);
+        setConvId(res.data.id);
+        getDmsList();
+        loadMessages(res.data.id, true);
+      })
+      .catch((res) => {
+        console.log("invalid create dm");
+        console.log(res.response.data.message);
+      });
   }
 
-  function handleInvite() {
-    console.log('handle invite');
-    setAnchorEl(null);
-  }
+  async function createNewConv(targetUsername: string) {
+    let newDm: ICreateDm = {
+      target: targetUsername,
+    };
 
-  function handleNewMessage() {
-    console.log('handle new message');
-    setAnchorEl(null);
-    props.setIsNewMessage(true);
+    console.log(newDm);
+    console.log("handle new message");
+    createDm(newDm);
+    props.setChatContent(ChatContent.MESSAGES);
   }
 
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-      }}
-    >
+    <>
       <Typography
         sx={{
           fontWeight: "bold",
@@ -49,20 +72,22 @@ export default function ChatUserlist(props: any) {
       >
         Users
       </Typography>
-      <Box>
-        <Box onContextMenu={handleClick}>
-          {/* I have delete UserList sign tsannie */}
-        </Box>
-        <Menu
-          open={open}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-        >
-          <MenuItem onClick={handleProfile}>Profile</MenuItem>
-          <MenuItem onClick={handleNewMessage}>New Message</MenuItem>
-          <MenuItem onClick={handleInvite}>Invite to play</MenuItem>
-        </Menu>
-      </Box>
-    </Box>
+      <List>
+        {users.map(
+          (element) =>
+            element.id !== user?.id && (
+              <ListItemButton
+                key={element.id}
+                onClick={() => handleClick(element.username)}
+                sx={{
+                  width: "fit-content",
+                }}
+              >
+                {element.username}
+              </ListItemButton>
+            )
+        )}
+      </List>
+    </>
   );
 }

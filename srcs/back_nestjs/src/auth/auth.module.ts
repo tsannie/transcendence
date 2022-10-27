@@ -10,9 +10,12 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { FortyTwoStrategy } from './strategy/fortyTwo.strategy';
 import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
+import { HttpModule } from '@nestjs/axios';
+import { GoogleStrategy } from './strategy/google.strategy';
 
 @Module({
   imports: [
+    HttpModule,
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     PassportModule,
@@ -24,6 +27,7 @@ import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
     UserService,
     JwtStrategy,
     FortyTwoStrategy,
+    GoogleStrategy,
     JwtTwoFactorStrategy
   ],
   exports: [AuthService],
