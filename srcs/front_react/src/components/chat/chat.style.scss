@@ -1,0 +1,18 @@
+$height_chat: calc(800 * var(--res));
+$width_chat: calc(450 * var(--res));
+
+.chat {
+    display: flex;
+    flex-direction: row;
+    border-style: dashed;
+    width: $height_chat;
+    height: $width_chat;
+    padding: 1%;
+}
+
+.chat__list {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 25%;
+    border-right-style: dashed;
+}
