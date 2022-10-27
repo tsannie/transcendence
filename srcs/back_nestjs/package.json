@@ -32,6 +32,7 @@
     "@nestjs/platform-socket.io": "^9.0.3",
     "@nestjs/typeorm": "^9.0.1",
     "@nestjs/websockets": "^9.0.3",
+    "@types/multer": "^1.4.7",
     "@types/socket.io": "^3.0.2",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",

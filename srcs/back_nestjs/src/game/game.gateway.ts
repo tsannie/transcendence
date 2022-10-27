@@ -312,14 +312,14 @@ export class GameGateway implements OnGatewayInit {
       return console.log(' paddleMouv !!!!! NO ROOM !!!! [' + data.room + ']');
 
       console.log("data.paddle_pos : " + data.paddle_y);
-      if (data.im_p2 === true)
+/*       if (data.im_p2 === true)
         room_game.set.p2_paddle.y = (data.paddle_y * canvas_back_height) / data.front_canvas_height;
       else
         room_game.set.p1_paddle.y = (data.paddle_y * canvas_back_height) / data.front_canvas_height;
       
         await this.all_game.save(room_game);
       client.emit('get_the_paddle', room_game.set);
-      client.to(data.room).emit('get_the_paddle', room_game.set);
+      client.to(data.room).emit('get_the_paddle', room_game.set); */
       
      //if (room_game.set.ball.x + (rad) >= room_game.set.p2_paddle.x ||
     //room_game.set.ball.x - (rad) <= room_game.set.p1_paddle.x + paddle_width) {
@@ -334,6 +334,9 @@ export class GameGateway implements OnGatewayInit {
     const room_game = await this.all_game.findOneBy({ room_name: data.room });
     if (!room_game)
       return console.log(' paddleMouv !!!!! NO ROOM !!!! [' + data.room + ']');
+
+      console.log("data.paddle_pos : " + data.paddle_y);
+      console.log("data.im_p2 : " + data.im_p2);
 
       if (data.im_p2 === true)
         room_game.set.p2_paddle.y = (data.paddle_y * canvas_back_height) / data.front_canvas_height;
