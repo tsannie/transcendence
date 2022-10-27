@@ -30,7 +30,7 @@ import {
 } from '../pipes/filevalidation.validator';
 import { UserSearchDto } from '../dto/usersearch.dto';
 import { IUserSearch } from '../models/iusersearch.interface';
-import { NewUsernameDto } from '../models/newusername.dto';
+import { NewUsernameDto } from '../dto/newusername.dto';
 
 @Controller('user')
 export class UserController {
@@ -55,6 +55,7 @@ export class UserController {
   }
 
   @Get('search')
+  @UseGuards(JwtTwoFactorGuard)
   async searchUser(@Query() body: UserSearchDto): Promise<IUserSearch[]> {
     return await this.userService.searchUser(body.search);
   }
@@ -64,7 +65,7 @@ export class UserController {
     return await this.userService.cleanAllUser();
   }
 
-  @Post('blockUser')
+  @Post('blockUser') // TODO to lower cases everywhere
   @UseGuards(JwtTwoFactorGuard)
   async blockUser(
     @Body() body: TargetNameDto,
@@ -109,9 +110,15 @@ export class UserController {
     );
   }
 
-  @Post('deleteAvatar')
+  @Post('deleteAvatar') // TODO useless ?
   @UseGuards(JwtTwoFactorGuard)
   deleteAvatar(@Request() req) {
     return this.userService.deleteAvatar(req.user);
+  }
+
+  @Get('get-friendlist')
+  @UseGuards(JwtTwoFactorGuard)
+  async getFriendList(@Request() req): Promise<UserEntity[]> {
+    return await this.userService.getFriendList(req.user);
   }
 }
