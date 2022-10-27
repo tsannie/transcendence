@@ -17,6 +17,14 @@ export default function GameMenu(props: any) {
     game.setRoom("");
     if ( game.status === RoomStatus.EMPTY)
       socket.emit("createGameRoom",  game.room);
+
+
+
+/*     if (game.status === RoomStatus.PLAYING)
+    {
+      console.log("game.status === RoomStatus.PLAYING");
+      socket.emit("startGameRoom",  game.room);
+    } */
   }
 
   console.log("game.status",  game.status);

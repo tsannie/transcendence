@@ -113,48 +113,57 @@ export function GamePlayer_p1_p2() {
 
       IPaddle_p1 = set.p1_paddle;
       IPaddle_p2 = set.p2_paddle;
+
+      //console.log("IPaddle_p1", IPaddle_p1);
     });
 
 
-    socket.on("get_the_ball", (set: any) => {
+    socket.on("get_the_ball", (ball: any) => {
       //console.log("GET DATA SEND THE GAME");
       //let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
       //console.log("XlowerSize", XlowerSize);
 
-      if (!set) {
+      if (!ball) {
         console.log("NO SET front");
         return;
       }
      const ratio_width = (lowerSize /canvas_back_width);
      const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
      
-      IPlayer_p1 = set.p1;
-      IPlayer_p2 = set.p2;
+/*       IPlayer_p1 = set.p1;
+      IPlayer_p2 = set.p2; */
 
-      IBall.x = set.ball.x * ratio_width;
-      IBall.y = set.ball.y * ratio_height;
-      IBall.rad = set.ball.rad * ratio_width;
+      IBall.x = ball.x * ratio_width;
+      IBall.y = ball.y * ratio_height;
+      IBall.rad = ball.rad * ratio_width;
     });
   }, [socket]);
 
 
     // function that emit every second to the server the game data
     
+    interface paddle_y {
+      room: string;
+      paddle_y: number;
+      im_p2: boolean;
+      front_canvas_height: number;
+    }
+
     function get_the_data(room_name: string) {
       //console.log("getting the data FRONT= ", room_name);
-      //socket.emit("get_the_ball", room_name);
+      socket.emit("get_the_ball", room_name);
       
-      let data = {
+      let data : paddle_y = {
         room: game.room,
         paddle_y: position_y,
         im_p2: game.im_p2,
         front_canvas_height: lowerSize / screen_ratio,
       };
       
-      console.log("data", data);
+     // console.log("data", data);
       
     
-      socket.emit("paddleMouv_time", data);
+      //socket.emit("paddleMouv_time", data);
       //console.log("mouv_paddle_time", data.paddle_y)
       
     }
@@ -180,8 +189,9 @@ export function GamePlayer_p1_p2() {
           }
         }
       }
-       setInterval(draw, 1000);
-    },[]);
+      // setInterval(draw, 1000 / 60); 60fps
+      setInterval(draw, 1000 / 30);
+    }, []);
 
 
   function leaveGame() {
