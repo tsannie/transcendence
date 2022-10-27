@@ -218,7 +218,9 @@ $search_bar_size: calc(250 * var(--res));
   .suggestions li:hover {
     cursor: pointer;
     &:after {
-      content: " <";
+      font-size: calc(18 * var(--res));
+      content: " ◄";
+      margin: 0;
     }
   }
 }

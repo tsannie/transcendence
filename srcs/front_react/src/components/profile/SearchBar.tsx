@@ -69,6 +69,7 @@ function SearchBar() {
     if (!showSuggestion) return;
     // Up key
     if (e.key === "ArrowUp") {
+      e.preventDefault();
       if (activeSuggestion === 0) {
         return;
       }
@@ -76,6 +77,7 @@ function SearchBar() {
     }
     // Down key
     else if (e.key === "ArrowDown") {
+      e.preventDefault();
       if (activeSuggestion + 1 === lengthDictionary) {
         return;
       }
