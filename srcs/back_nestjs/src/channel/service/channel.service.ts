@@ -2,6 +2,8 @@ import {
   Catch,
   ConsoleLogger,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -25,6 +27,7 @@ export class ChannelService {
   constructor(
     @InjectRepository(ChannelEntity)
     private channelRepository: Repository<ChannelEntity>,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
   ) {}
 
