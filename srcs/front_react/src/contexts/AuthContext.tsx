@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react";
+import { api } from "../const/const";
 
 export type User = {
   id: number;
@@ -6,6 +7,8 @@ export type User = {
   email: string;
   enabled2FA: boolean;
   profile_picture: string;
+  channels: any[]; // changer en IUser[] plus tard ou a retirer
+  owner_of: any; // changer en IUser plus tard ou a retirer
 }
 
 export type AuthContextType = {
@@ -14,6 +17,9 @@ export type AuthContextType = {
   setUser: (user: User) => void;
   login: (user: User) => void;
   logout: () => void;
+  users: any[];
+  getAllUsers: () => void;
+  getUser: () => void;
   //monitoringSocket: WebSocket | null;
 }
 
@@ -27,6 +33,7 @@ export const AuthProvider = ({ children }: IProps) => {
 
   const [user, setUser] = useState<User | null>(null);
   const [isLogin, setIsLogin] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
 
   const login = (user: User) => {
     setUser(user);
@@ -38,9 +45,33 @@ export const AuthProvider = ({ children }: IProps) => {
     setIsLogin(false);
   }
 
+  async function getAllUsers() {
+    await api
+      .get("user")
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+        console.log(res);
+      });
+  }
+
+  async function getUser() {
+    console.log("get user");
+    await api
+      .get("auth/profile")
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((res) => {
+        console.log("invalid jwt");
+      });
+  }
+
   return (
 
-    <AuthContext.Provider value={{ isLogin, user, login, logout }}>
+    <AuthContext.Provider value={{ isLogin, user, login, logout, users, getAllUsers, getUser }}>
       {children}
     </AuthContext.Provider>
   );

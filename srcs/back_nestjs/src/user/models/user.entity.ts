@@ -1,4 +1,5 @@
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import {
   Column,
@@ -16,7 +17,7 @@ import {
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id?: number;  // TODO remove ? ith new object
+  id?: number; // TODO remove ? ith new object
 
   @Column({ unique: true })
   username: string;
@@ -31,29 +32,38 @@ export class UserEntity {
   updatedAt?: Date;
 
   @Column({ default: false })
-  enabled2FA?: boolean
+  enabled2FA?: boolean;
 
   @Column({ nullable: true })
-  secret2FA?: string
+  secret2FA?: string;
 
-  @OneToMany( () => ChannelEntity, (channels) => channels.owner, {nullable: true} )
+  @OneToMany(() => ChannelEntity, (channels) => channels.owner, {
+    nullable: true,
+  })
   owner_of?: ChannelEntity[];
 
-  @ManyToMany( () => ChannelEntity, (channels) => channels.admins, {nullable: true} )
+  @ManyToMany(() => ChannelEntity, (channels) => channels.admins, {
+    nullable: true,
+  })
   admin_of?: ChannelEntity[];
 
-  @ManyToMany( () => ChannelEntity, (channels) => channels.users, {nullable: true} )
+  @ManyToMany(() => ChannelEntity, (channels) => channels.users, {
+    nullable: true,
+  })
   @JoinTable()
   channels?: ChannelEntity[];
 
-  @ManyToMany( () => DmEntity, (dms) => dms.users, {nullable: true} )
+  @ManyToMany(() => DmEntity, (dms) => dms.users, { nullable: true })
   @JoinTable()
   dms?: DmEntity[];
 
-  @ManyToMany( () => UserEntity)
+  @ManyToMany(() => UserEntity)
   @JoinTable()
   blocked?: UserEntity[];
 
-  @Column( {nullable: true})
-  profile_picture?:string;
+  @OneToMany(() => ConnectedUserEntity, (connection) => connection.user)
+  connections?: ConnectedUserEntity[];
+
+  @Column({ nullable: true })
+  profile_picture?: string;
 }
