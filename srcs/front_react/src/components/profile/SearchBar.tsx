@@ -8,10 +8,10 @@ interface IUserSearch {
 }
 
 function SearchBar() {
-  const [dictionary, setDictionary] = useState<string[]>([]);
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
+  const [lengthDictionary, setLengthDictionary] = useState<number>(0);
   const [activeSuggestion, setActiveSuggestion] = useState<number>(0);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<IUserSearch[]>([]);
   const [userInput, setUserInput] = useState<string>("");
 
   let suggestionsListComponent = [];
@@ -19,7 +19,7 @@ function SearchBar() {
   if (showSuggestion && userInput) {
     if (suggestions.length) {
       suggestionsListComponent.push(
-        <ul className="suggestions">
+        <ul className="suggestions" key="on">
           {suggestions.map((suggestion, index) => {
             let className;
 
@@ -27,8 +27,9 @@ function SearchBar() {
               className = "suggestion-active";
             }
             return (
-              <li className={className} key={index}>
-                {suggestion}
+              <li key={index} className={className}>
+                <img src={suggestion.picture + "&size=small"}></img>
+                <span>{suggestion.username}</span>
               </li>
             );
           })}
@@ -36,33 +37,30 @@ function SearchBar() {
       );
     } else {
       suggestionsListComponent.push(
-        <div className="no-suggestions">
+        <div className="no-suggestions" key="off">
           <em>unknown username !</em>
         </div>
       );
     }
   }
 
-  async function updateDictionary(search: string) {
-    await api.get("/user/search/" + search).then((res) => {
-      console.log(res.data);
-      setDictionary(res.data);
-    });
+  async function getDictionary(search: string): Promise<IUserSearch[]> {
+    return await api
+      .get("/user/search", { params: { search: search } })
+      .then((res) => {
+        return res.data;
+      });
   }
 
   const handleOnChange = async (e: FormEvent<HTMLInputElement>) => {
-    //console.log("handleOnChange", e.currentTarget.value);
     const userInput: string = e.currentTarget.value;
-    await updateDictionary(userInput);
+    const dictionary = await getDictionary(userInput);
 
-    // filter our suggestions
-    const filteredSuggestions = dictionary.filter((suggestion) => {
-      return suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1;
-    });
+    setLengthDictionary(dictionary.length);
 
     // update the user input
     setUserInput(userInput);
-    setSuggestions(filteredSuggestions);
+    setSuggestions(dictionary);
     setShowSuggestion(userInput.length > 0 ? true : false);
     setActiveSuggestion(0);
   };
@@ -78,7 +76,7 @@ function SearchBar() {
     }
     // Down key
     else if (e.key === "ArrowDown") {
-      if (activeSuggestion - 1 === dictionary.length) {
+      if (activeSuggestion + 1 === lengthDictionary) {
         return;
       }
       setActiveSuggestion(activeSuggestion + 1);
@@ -87,7 +85,7 @@ function SearchBar() {
     else if (e.key === "Enter") {
       setActiveSuggestion(0);
       setShowSuggestion(false);
-      setUserInput(suggestions[activeSuggestion]);
+      setUserInput(suggestions[activeSuggestion].username);
     }
   };
 

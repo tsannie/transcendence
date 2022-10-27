@@ -92,19 +92,38 @@ export default function InfosChannels(props: InfosChannelsProps) {
               <ListItemText primary="Name" secondary={infosChannel.name} />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Owner" secondary={infosChannel.owner.username} />
+              <ListItemText
+                primary="Owner"
+                secondary={infosChannel.owner.username}
+              />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Users" secondary={infosChannel.users.map((user: any) => user.username)} />
+              <ListItemText
+                primary="Users"
+                secondary={infosChannel.users.map((user: any) => user.username)}
+              />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Admins" secondary={infosChannel.admins.map((user: any) => user.username)} />
+              <ListItemText
+                primary="Admins"
+                secondary={infosChannel.admins.map(
+                  (user: any) => user.username
+                )}
+              />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Banned" secondary={infosChannel.banned.map((user: any) => user.username)} />
+              <ListItemText
+                primary="Banned"
+                secondary={infosChannel.banned.map(
+                  (user: any) => user.username
+                )}
+              />
             </ListItem>
             <ListItem>
-              <ListItemText primary="Muted" secondary={infosChannel.muted.map((user: any) => user.username)} />
+              <ListItemText
+                primary="Muted"
+                secondary={infosChannel.muted.map((user: any) => user.username)}
+              />
             </ListItem>
           </List>
         )}
