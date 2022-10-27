@@ -38,40 +38,19 @@ interface IPlayer {
 let position_y = 0;
 
 export function GamePlayer_p1_p2() {
-  const [power, setpower] = useState(0);
-  const [date, setdate] = useState(new Date());
 
   const game = useContext(GameContext);
 
   const canvasRef: any = createRef();
 
-
-  /* 
-  const [IPaddle_p1, setIPaddle_p1] = useState<IPaddle>({ x: 0, y: 0 });
-  const [IPaddle_p2, setIPaddle_p2] = useState<IPaddle>({ x: 0, y: 0 });
-
-  const [IBall, setIBall] = useState<IBall>({ x: 0, y: 0 });
-
-  const [IPlayer_p1, setIPlayer_p1] = useState<IPlayer>({ name: "", score: 0, won: false });
-  const [IPlayer_p2, setIPlayer_p2] = useState<IPlayer>({ name: "", score: 0, won: false }); */
-
   let IPlayer_p1 : IPlayer = { name: "", score: 0, won: false };
   let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false };
+
   let IPaddle_p1 : IPaddle = { x: 0, y: 0, height: 0, width: 0 };
   let IPaddle_p2 : IPaddle = { x: 0, y: 0, height: 0, width: 0 };
-  
+
   let IBall : IBall = { x: 0, y: 0, rad: 0};
 
-   enum powerEnum {
-    normal = 0,
-    speed = 1,
-    bigball = 2,
-    smach = 4,
-    speed_bigball = 3,
-    speed_smach = 5,
-    bigball_smach = 6,
-    speed_bigball_smach = 7,
-  }
   
   const [lowerSize, setLowerSize] = useState((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth));
   const [HW, setdetectHW] = useState({winWidth: window.innerWidth, winHeight: window.innerHeight,})
@@ -163,7 +142,7 @@ export function GamePlayer_p1_p2() {
     
     function get_the_data(room_name: string) {
       //console.log("getting the data FRONT= ", room_name);
-      socket.emit("get_the_ball", room_name);
+      //socket.emit("get_the_ball", room_name);
 
       let data = {
         room: game.room,
@@ -171,15 +150,14 @@ export function GamePlayer_p1_p2() {
         im_p2: game.im_p2,
         front_canvas_height: lowerSize / screen_ratio,
       };
-      socket.emit("paddleMouv_time", data);
+      console.log("data", data);
+      //socket.emit("paddleMouv_time", data);
       //console.log("mouv_paddle_time", data.paddle_y)
       
     }
 
   useEffect(() => {
 
-    let requestAnimationFrameId: any;
-      //requestAnimationFrame(render);
       let canvas: any = canvasRef.current;
       let ctx : any = null;
       if (canvas)
@@ -199,11 +177,11 @@ export function GamePlayer_p1_p2() {
           }
         }
       }
-       setInterval(draw, 20);
+       setInterval(draw, 1000);
     },[]);
 
 
-  function deleteGameRoom_ingame() {
+  function leaveGame() {
     if (IPlayer_p1.won === true || IPlayer_p2.won === true)
     {
       console.log("end of game");
@@ -217,7 +195,9 @@ export function GamePlayer_p1_p2() {
     game.setRoom("");
   }
   ////////////////////////////////////////////////////
-  console.log("position_y", position_y);
+
+    console.log("position_y", position_y);
+
   return (
     <div>
       <canvas
@@ -236,7 +216,7 @@ export function GamePlayer_p1_p2() {
           backgroundColor: "black",
           color: "white",
         }}
-        onClick={deleteGameRoom_ingame}
+        onClick={leaveGame}
         >
         Leave The Game
       </Button>
