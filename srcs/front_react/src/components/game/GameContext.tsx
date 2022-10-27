@@ -92,6 +92,12 @@ export const GameProvider = ({ children }: GameContextProps) => {
         setop_id(theroom.p2);
          setim_p2(false);
       }
+
+/*       if (theroom.status === RoomStatus.PLAYING && im_p2 === false)
+      {
+        console.log("CONTEXT: PLAYING");
+        //socket.emit("startGameRoom",  theroom.room_name);
+      } */
     });
      //setisFull("");
      setmy_id(socket.id);
