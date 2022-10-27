@@ -1,4 +1,4 @@
-@import '../../const.style.scss';
+@import "../../const.style.scss";
 
 .menu {
   display: flex;
@@ -23,8 +23,19 @@
   h3 {
     font-size: calc(28 * var(--res));
   }
-  p, button, input, span {
+  p,
+  button,
+  input,
+  span {
+    font-size: calc(23 * var(--res));
+  }
+
+  li {
     font-size: calc(22 * var(--res));
+  }
+
+  em {
+    font-size: calc(17 * var(--res));
   }
 
   hr {
@@ -33,7 +44,6 @@
     width: 95%;
     border-style: none none dashed;
   }
-
 }
 
 .content__bg {
@@ -62,8 +72,12 @@
   50% {
     transform: translateY(-8vh);
   }
-  80% { transform: translateY(4vh); }
-  100% { transform: translateY(0); }
+  80% {
+    transform: translateY(4vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .bounce-in-down {
@@ -77,8 +91,12 @@
   50% {
     transform: translateY(8vh);
   }
-  80% { transform: translateY(-4vh); }
-  100% { transform: translateY(0); }
+  80% {
+    transform: translateY(-4vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .exit-up {
@@ -89,7 +107,9 @@
   0% {
     transform: translateY(0);
   }
-  100% { transform: translateY(-80vh); }
+  100% {
+    transform: translateY(-80vh);
+  }
 }
 
 .exit-down {
@@ -100,7 +120,7 @@
   0% {
     transform: translateY(0);
   }
-  100% { transform: translateY(80vh); }
+  100% {
+    transform: translateY(80vh);
+  }
 }
-
-
