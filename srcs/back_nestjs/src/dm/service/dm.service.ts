@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
@@ -11,6 +11,7 @@ export class DmService {
   constructor(
     @InjectRepository(DmEntity)
     private dmRepository: Repository<DmEntity>,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
   ) {}
 
@@ -77,6 +78,10 @@ export class DmService {
     }
   }
 
+  async saveDm(dm: DmEntity) {
+    return await this.dmRepository.save(dm);
+  }
+
   /*
 	createDM is used to create a new conv between two users, checking if they can, based on their blocked relationship.
 	*/
@@ -91,13 +96,11 @@ export class DmService {
           (dm.users[0].username === data.target &&
             dm.users[1].username === user.username),
       );
-      console.log('convo = ', convo);
       if (convo) return await this.getDmById(convo.id);
     }
     let new_dm = new DmEntity();
 
     new_dm.users = [user, user2];
-    console.log('new_dm = ', new_dm);
-    return await this.dmRepository.save(new_dm);
+    return await this.saveDm(new_dm);
   }
 }

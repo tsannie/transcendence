@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindOneOptions,
@@ -11,6 +11,10 @@ import * as sharp from 'sharp';
 import * as fs from 'fs';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { DmService } from 'src/dm/service/dm.service';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
 
 export const AVATAR_DEST: string = "/nestjs/datas/users/avatars";
 
@@ -34,6 +38,10 @@ export class UserService {
 	@InjectRepository(UserEntity)
 	private allUser: Repository<UserEntity>,
   private readonly httpService: HttpService,
+  @Inject(forwardRef(() => ChannelService))
+  private readonly channelService: ChannelService,
+  @Inject(forwardRef(() => DmService))
+  private readonly dmService: DmService,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {

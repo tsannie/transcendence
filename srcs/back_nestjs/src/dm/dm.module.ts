@@ -11,7 +11,7 @@ import { DmService } from './service/dm.service';
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef( () => UserModule),
     TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity]),
   ],
   controllers: [DmController],
