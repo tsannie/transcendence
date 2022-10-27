@@ -58,20 +58,11 @@ export const GameProvider = ({ children }: GameContextProps) => {
   useEffect(() => {
     socket.on("leftRoom", (theroom: any) => {
       setStatus(theroom.status);
-
-/*       setopready(false);
-      setimready(false);
-      setgamestart(false); */
-
       setop_id("");
     });
 
     socket.on("leftRoomEmpty", () => {
       setStatus(RoomStatus.EMPTY);   
-/*       setopready(false);
-      setimready(false);
-      setgamestart(false);
-      setisinroom(false); */
       setop_id("");
     });
    // setisFull("");
@@ -92,7 +83,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
       console.log("theroom.status", theroom.status);
       
       setStatus(theroom.status);
-       //setisinroom(true);
       
        setRoom(theroom.room_name);
       if (theroom.p2 === socket.id) {
