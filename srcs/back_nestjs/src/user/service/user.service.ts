@@ -282,7 +282,7 @@ export class UserService {
   }
 
   async searchUser(search: string): Promise<IUserSearch[]> {
-    const allUser = await this.getAllUser();
+    const allUser = await this.allUser.find();
 
     const filteredSuggestions = allUser.filter((suggestion) => {
       return (
