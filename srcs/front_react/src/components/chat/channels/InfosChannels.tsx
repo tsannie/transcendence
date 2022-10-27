@@ -1,114 +1,143 @@
-import { Button, List, ListItem, ListItemText, Popover } from "@mui/material";
-import React, { useState } from "react";
+import {
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Popover,
+} from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { IChannel } from "../types";
+import AdminsActions from "./admins/AdminsActions";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import Collapse from "@mui/material/Collapse";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
+import UnbanUser from "./admins/UnbanUser";
 
 interface InfosChannelsProps {
-  channelData: IChannel;
-  userId: number;
+  getChannelDatas: any;
+  channelData: any;
 }
 
 export default function InfosChannels(props: InfosChannelsProps) {
-  const [infosChannel, setInfosChannel] = useState<IChannel>(props.channelData);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-  const [channelId, setChannelId] = useState(0);
+  const [adminsOpen, setAdminsOpen] = useState(false);
+  const [usersOpen, setUsersOpen] = useState(false);
+  const [bannedOpen, setBannedOpen] = useState(false);
 
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
-
-  // check if user is admin of the channel in infosChannel
-  function isAdmin(channel: IChannel, id: number) {
-    if (infosChannel === undefined) getInfosChannel(channel);
-    if (channel !== undefined) {
-      for (let i = 0; i < channel.admins.length; i++) {
-        if (channel.admins[i].id === id) {
-          return true;
-        }
-      }
-    }
-    return false;
+  function handleClickAdmins() {
+    setAdminsOpen(!adminsOpen);
   }
-
-  function handleClick(
-    channel: IChannel,
-    event: React.MouseEvent<HTMLButtonElement>
-  ) {
-    setAnchorEl(event.currentTarget);
-    getInfosChannel(channel);
+  function handleClickUsers() {
+    console.log("click on user who i wnat to ban, mute etc");
+    console.log("channel", props.channelData);
+    setUsersOpen(!usersOpen);
   }
-
-  function handleClose() {
-    setAnchorEl(null);
-  }
-
-  async function getInfosChannel(channel: IChannel) {
-    console.log("333");
-
-    await api
-      .get("channel/privateData", {
-        params: {
-          name: channel.name,
-        },
-      })
-      .then((res) => {
-        console.log("get infos channels");
-        setInfosChannel(res.data);
-        setChannelId(res.data.id);
-      })
-      .catch((res) => {
-        console.log("invalid channels private data");
-      });
-    console.log("bbbbb");
+  function handleClickBanned() {
+    setBannedOpen(!bannedOpen);
   }
 
   return (
-    <>
-      <Button
-        sx={{
-          color: "black",
-          ml: "1vh",
-        }}
-        onClick={(event) => {
-          handleClick(props.channelData, event);
-        }}
-      >
-        Infos
-      </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-      >
-        {open === true && (
-          <List key={channelId}>
-            <ListItem>
-              <ListItemText primary="Name" secondary={infosChannel.name} />
+    <Grid container>
+      <Grid item>
+        <List>
+          Owner
+          <ListItem key={props.channelData.data.name}>
+            <ListItemText>
+              {props.channelData.data.owner.username}
+            </ListItemText>
+          </ListItem>
+        </List>
+      </Grid>
+
+      <Grid item>
+        <List>
+          Admins
+          {props.channelData.data.admins.map((user: any) => (
+            <ListItem key={user.username}>
+              <ListItemButton
+                onClick={handleClickAdmins}
+                disabled={props.channelData.status !== "owner"}
+              >
+                <ListItemText primary={user.username}></ListItemText>
+                {adminsOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={adminsOpen} timeout="auto" unmountOnExit>
+                <AdminsActions
+                  userTargeted={user}
+                  getChannelDatas={props.getChannelDatas}
+                  channelData={props.channelData}
+                  setBannedOpen={setBannedOpen}
+                  setUsersOpen={setUsersOpen}
+                />
+              </Collapse>
             </ListItem>
-            <ListItem>
-              <ListItemText primary="Owner" secondary={infosChannel.owner.username} />
+          ))}
+        </List>
+      </Grid>
+
+      <Grid item>
+        <List>
+          Users
+          {props.channelData.data.users.map((user: any) => (
+            <ListItem key={user.username}>
+              <ListItemButton
+                onClick={handleClickUsers}
+                disabled={
+                  props.channelData.status !== "owner" &&
+                  props.channelData.status !== "admin"
+                }
+              >
+                <ListItemText primary={user.username}></ListItemText>
+                {usersOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={usersOpen} timeout="auto" unmountOnExit>
+                <AdminsActions
+                  userTargeted={user}
+                  getChannelDatas={props.getChannelDatas}
+                  channelData={props.channelData}
+                  setBannedOpen={setBannedOpen}
+                  setUsersOpen={setUsersOpen}
+                />
+              </Collapse>
             </ListItem>
-            <ListItem>
-              <ListItemText primary="Users" secondary={infosChannel.users.map((user: any) => user.username)} />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Admins" secondary={infosChannel.admins.map((user: any) => user.username)} />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Banned" secondary={infosChannel.banned.map((user: any) => user.username)} />
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Muted" secondary={infosChannel.muted.map((user: any) => user.username)} />
-            </ListItem>
+          ))}
+        </List>
+      </Grid>
+      {props.channelData.data.banned &&
+        props.channelData.data.banned.length > 0 ? (
+        <Grid item>
+          <List>
+            Banned
+            {props.channelData.data.banned.map((user: any) => (
+              <ListItem key={user.username}>
+                <ListItemButton
+                  onClick={handleClickBanned}
+                  disabled={
+                    props.channelData.status !== "owner" &&
+                    props.channelData.status !== "admin"
+                  }
+                >
+                  <ListItemText primary={user.username}></ListItemText>
+                  {bannedOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={bannedOpen} timeout="auto" unmountOnExit>
+                  <ListItem>
+                    <UnbanUser
+                      userTargeted={user}
+                      getChannelDatas={props.getChannelDatas}
+                      channelData={props.channelData}
+                      setBannedOpen={setBannedOpen}
+                    />
+                  </ListItem>
+                </Collapse>
+              </ListItem>
+            ))}
           </List>
-        )}
-      </Popover>
-    </>
+        </Grid>
+      ) : null}
+    </Grid>
   );
 }

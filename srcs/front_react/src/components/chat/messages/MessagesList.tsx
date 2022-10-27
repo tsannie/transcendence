@@ -1,80 +1,64 @@
+import { List, ListItem } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
-import { SocketContext } from "../SocketContext";
-import { IMessage } from "../types";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
+import { DmsContext } from "../../../contexts/DmsContext";
+import { MessagesContext } from "../../../contexts/MessagesContext";
+import { SocketContext } from "../../../contexts/SocketContext";
+import { IMessageReceived } from "../types";
 
-interface MessagesListProps {
-  //setMessagesList: (messagesList: IMessage[]) => void;
-  messagesList: IMessage[];
-  username: string;
-}
+interface MessagesListProps { }
 
 export default function MessagesList(props: MessagesListProps) {
-
-  const socket = useContext(SocketContext);
-
-  console.log("messagesList");
-
-  useEffect(() => {
-    console.log("listen message");
-    socket.on("message", (data) => {
-      console.log(data);
-    });
-  }, [socket]);
+  const { messagesList } = useContext(MessagesContext);
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   return (
-    <Box
-      sx={{
-        border: "1px solid black",
-        x: 20,
-      }}
-    >
-      <>
-        {props.messagesList.map((messageData: IMessage) => {
-          //console.log("uuid du msg", messageData.uuid);
-          //if (props.username === messageData.author)
-            return (
-              <Box
-                sx={{
-                  width: "fit-content",
-                  height: "fit-content",
-                  backgroundColor: "#064fbd",
-                  color: "white",
-                  fontFamily: "sans-serif",
-                  fontSize: 16,
-                  borderRadius: 12,
-                  ml: "auto",
-                  mr: 0.5,
-                  mb: 1,
-                  p: 1,
-                }}
-                key={messageData.uuid}
-              >
-                {messageData.content}
-              </Box>
-            );
+    <List sx={{ position: "relative" }}>
+      {messagesList.map((messageData: IMessageReceived) => {
+        if (user?.username === messageData.author?.username) {
           return (
-            <Box
+            <ListItem
               sx={{
                 width: "fit-content",
                 height: "fit-content",
-                backgroundColor: "#f1f1f1",
-                color: "black",
+                backgroundColor: "#064fbd", // author
+                color: "white",
                 fontFamily: "sans-serif",
                 fontSize: 16,
                 borderRadius: 12,
-                ml: 0.5,
-                mr: "auto",
+                mr: 0.5,
                 mb: 1,
                 p: 1,
+                ml: "auto",
               }}
-              key={messageData.uuid}
+              key={messageData.id}
             >
               {messageData.content}
-            </Box>
+            </ListItem>
           );
-        })}
-      </>
-    </Box>
+        }
+        return (
+          <ListItem
+            sx={{
+              width: "fit-content",
+              height: "fit-content",
+              backgroundColor: "#3a3b3c",
+              color: "black",
+              fontFamily: "sans-serif",
+              fontSize: 16,
+              borderRadius: 12,
+              ml: 0.5,
+              mb: 1,
+              p: 1,
+              left: 0,
+            }}
+            key={messageData.id}
+          >
+            {messageData.content}
+          </ListItem>
+        );
+      })}
+    </List>
   );
 }
