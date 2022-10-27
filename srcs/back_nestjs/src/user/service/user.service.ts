@@ -281,6 +281,7 @@ export class UserService {
     }
   }
 
+  /* search user with filter for search bar */
   async searchUser(search: string): Promise<IUserSearch[]> {
     const allUser = await this.allUser.find();
 
@@ -296,5 +297,10 @@ export class UserService {
         picture: suggestion.profile_picture,
       };
     });
+  }
+
+  async getFriendList(user: UserEntity): Promise<UserEntity[]> {
+    if (!user.friends) return [];
+    return user.friends;
   }
 }
