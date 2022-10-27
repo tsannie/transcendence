@@ -1,5 +1,5 @@
 
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { socket } from "./Game";
 
 export enum RoomStatus {
@@ -39,6 +39,7 @@ export const GameContext = createContext<GameContextType>({
 
   im_p2: false,
   setim_p2: () => {},
+  
 
 });
 
@@ -53,6 +54,59 @@ export const GameProvider = ({ children }: GameContextProps) => {
   const [my_id, setmy_id] = useState("");
   const [op_id, setop_id] = useState("");
   const [im_p2, setim_p2] = useState(false);
+
+  useEffect(() => {
+    socket.on("leftRoom", (theroom: any) => {
+      setStatus(theroom.status);
+
+/*       setopready(false);
+      setimready(false);
+      setgamestart(false); */
+
+      setop_id("");
+    });
+
+    socket.on("leftRoomEmpty", () => {
+      setStatus(RoomStatus.EMPTY);   
+/*       setopready(false);
+      setimready(false);
+      setgamestart(false);
+      setisinroom(false); */
+      setop_id("");
+    });
+   // setisFull("");
+    socket.on("roomFull", (theroom: any) => {
+     // setisFull("This ROOM IS FULL MATE");
+    });
+  }, [socket]);
+
+
+
+  // If the players are ready, start the game
+
+  useEffect(() => {
+
+
+    socket.on("joinedRoom", (theroom: any) => {
+
+      console.log("theroom.status", theroom.status);
+      
+      setStatus(theroom.status);
+       //setisinroom(true);
+      
+       setRoom(theroom.room_name);
+      if (theroom.p2 === socket.id) {
+        setop_id(theroom.p1);
+         setim_p2(true);
+      } else if (theroom.p1 === socket.id) {
+        setop_id(theroom.p2);
+         setim_p2(false);
+      }
+    });
+     //setisFull("");
+     setmy_id(socket.id);
+  }, [socket]);
+
 
   return (
     <GameContext.Provider
@@ -69,6 +123,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
 
         im_p2,
         setim_p2,
+
       }}
     >
       {children}
