@@ -4,10 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MessageModule } from './message/message.module';
-import { MessageController } from './message/controller/message.controller';
 import { MessageService } from './message/service/message.service';
 import { UserModule } from './user/user.module';
-//import { AuthResolver } from './auth/auth.resolver';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/service/auth.service';
 import { UserService } from './user/service/user.service';
@@ -21,6 +19,12 @@ import { ChannelModule } from './channel/channel.module';
 import { GameModule } from './game/game.module';
 import { TwoFactorService } from './two-factor/service/two-factor.service';
 import { TwoFactorController } from './two-factor/controller/two-factor.controller';
+import { DmController } from './dm/controller/dm.controller';
+import { DmService } from './dm/service/dm.service';
+import { DmModule } from './dm/dm.module';
+import { DmEntity } from './dm/models/dm.entity';
+import { ConnectedUserModule } from './connected-user/connected-user.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -33,21 +37,26 @@ import { TwoFactorController } from './two-factor/controller/two-factor.controll
       autoLoadEntities: true,
       synchronize: true, //TODO deploiement false
     }),
-    MessageModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity]),
+    HttpModule,
     UserModule,
     AuthModule,
     PassportModule,
-    //ChannelModule,
-    GameModule
+    GameModule,
+    ChannelModule,
+    MessageModule,
+    DmModule,
+    ConnectedUserModule,
   ],
-  controllers: [AppController, TwoFactorController],
+  controllers: [AppController, TwoFactorController, DmController],
   providers: [
     AppService,
     JwtService,
     AuthService,
     UserService,
     TwoFactorService,
+    DmService,
+    MessageService,
   ], // AuthResolver
 })
 export class AppModule {}

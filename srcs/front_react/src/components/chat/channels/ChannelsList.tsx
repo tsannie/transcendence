@@ -1,57 +1,70 @@
-import { Box, Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Popover,
+  SvgIcon,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
-import { socket } from "../Chat";
 import { IChannel } from "../types";
+import { display } from "@mui/system";
+import InfosChannels from "./InfosChannels";
+import AdminsActions from "./admins/AdminsActions";
+import { ChatContent } from "../Chat";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
+import { MessagesContext } from "../../../contexts/MessagesContext";
 
 // to do: channel list
 // faire un call api to channel/all pour afficher les channels
 
-export default function ChannelsList() {
+interface ChannelsListProps {
+  setChatContent: (chatContent: ChatContent) => void;
+  getChannelDatas: (channelName: string) => void;
+}
 
-  const [channelsList, setChannelsList] = useState<Array<IChannel>>([]);
+export default function ChannelsList(props: ChannelsListProps) {
+  const [channelPassword, setChannelPassword] = useState("");
+  const [channelExistsError, setChannelExistsError] = useState("");
+  const { channelsList } = useContext(ChannelsContext);
+  const { loadMessages, isDm, setIsDm, convId, setConvId } =
+    useContext(MessagesContext);
 
-  function getChannels() {
-    api
-      .get("channel/all")
-      .then((res) => {
-        setChannelsList(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid channels");
-        console.log(res);
-      });
+  function handleClick(channel: IChannel) {
+    props.setChatContent(ChatContent.CHANNEL_CONTENT);
+    props.getChannelDatas(channel.name);
+    setIsDm(false);
+    setConvId(channel.id);
+    loadMessages(channel.id, false);
+    //console.log("channel clicked", channel);
   }
 
-  useEffect(() => {
-    const strChannelsList = JSON.parse(window.localStorage.getItem("channelsList") || "null");
-    setChannelsList(strChannelsList);
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem("channelsList", JSON.stringify(channelsList));
-  }, [channelsList]);
-
-  // a changer (rq api en boucle)
-
-  useEffect(() => {
-    getChannels();
-  }, [channelsList]);
-
   return (
-    <Box>
+    <List>
       {channelsList.map((channelData: IChannel) => {
         return (
-          <Box
+          <ListItemButton
             sx={{
-              color: "red",
+              color: "black",
+              textAlign: "center",
+              borderRadius: "3px",
+              mb: "1vh",
+              border: "1px solid black",
             }}
             key={channelData.name}
+            onClick={() => handleClick(channelData)}
           >
-            {channelData.name}
-          </Box>
+            <ListItemText sx={{ ml: "1vw" }}>{channelData.name}</ListItemText>
+          </ListItemButton>
         );
       })}
-    </Box>
+    </List>
   );
 }
