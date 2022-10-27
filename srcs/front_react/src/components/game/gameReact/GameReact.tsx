@@ -143,15 +143,18 @@ export function GamePlayer_p1_p2() {
     function get_the_data(room_name: string) {
       //console.log("getting the data FRONT= ", room_name);
       //socket.emit("get_the_ball", room_name);
-
+      
       let data = {
         room: game.room,
         paddle_y: position_y,
         im_p2: game.im_p2,
         front_canvas_height: lowerSize / screen_ratio,
       };
+      
       console.log("data", data);
-      //socket.emit("paddleMouv_time", data);
+      
+    
+      socket.emit("paddleMouv_time", data);
       //console.log("mouv_paddle_time", data.paddle_y)
       
     }
