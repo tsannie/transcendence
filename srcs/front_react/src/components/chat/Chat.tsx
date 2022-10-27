@@ -1,138 +1,81 @@
-import { Box, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
-import { v4 as uuidv4 } from "uuid";
-import { IMessage } from "./types";
-import ChatJoin from "./ChatJoin";
-import MessagesList from "./messages/MessagesList";
-import PromptMessage from "./messages/PromptMessage";
+import { Box, Grid, Popover, Typography } from "@mui/material";
+import { useState } from "react";
+import { IChannel, IMessageReceived } from "./types";
 import Channels from "./channels/Channels";
 import ChatUserlist from "./ChatUserlist";
-import { ContactSupportOutlined } from "@material-ui/icons";
-import HistoryMessages from "./messages/HistoryMessages";
 import { api, COOKIE_NAME } from "../../const/const";
+import Conv from "./messages/Conv";
+import FormChannel from "./channels/FormChannel";
+import AvailableChannels from "./channels/AvailableChannels";
+import ChannelContent from "./channels/ChannelContent";
+import { ChatProvider } from "../../contexts/ChatContext";
+import Dms from "./messages/Dms";
 
-export const socket = io("http://localhost:4000");
+export enum ChatContent {
+  NEW_CHANNELS,
+  NEW_DM,
+  MESSAGES,
+  CHANNEL_CONTENT,
+}
 
-export default function Chat() {
-  const [room, setRoom] = useState("");
-  const [currentMessage, setCurrentMessage] = useState("");
-  const [windowChat, setWindowChat] = useState(false);
-  const [messagesList, setMessagesList] = useState<Array<IMessage>>([]);
-  const [author, setAuthor] = useState("");
-  const [username, setUsername] = useState("");
-  const [isNewMessage, setIsNewMessage] = useState(false);
-  const [id, setId] = useState(0);
+interface ChatProps { }
 
-  function createRoom() {
-    console.log(room);
-    if (room !== "") {
-      socket.emit("createRoom", room);
-      console.log(`User join room ${room}`);
-      setWindowChat(true);
-      console.log(windowChat);
+export default function Chat(props: ChatProps) {
+  const [chatContent, setChatContent] = useState<ChatContent>(
+    ChatContent.NEW_CHANNELS
+  );
+  const [channelData, setChannelData] = useState<IChannel>();
+
+  async function getChannelDatas(channelName: string) {
+    try {
+      const res = await api.get("channel/datas", {
+        params: {
+          name: channelName,
+        },
+      });
+      setChannelData(res.data);
+    } catch {
+      console.log("invalid get channels datas");
     }
   }
 
-  async function getUser() {          // TODO explain to dov
-    if (document.cookie.includes(COOKIE_NAME)) {
-      await api
-        .get("auth/profile")
-        .then((res) => {
-          setId(res.data.id);
-          setUsername(res.data.username);
-        })
-        .catch((res) => {
-          console.log("invalid jwt");
-          document.cookie = COOKIE_NAME + "=; Max-Age=-1;;";
-        });
-    }
-  }
-
-  function sendMessage() {
-    const inputMessage = document.getElementById(
-      "input-message"
-    ) as HTMLInputElement;
-
-    inputMessage.value = "";
-    if (currentMessage !== "") {
-      const messageData: IMessage = {
-        id: uuidv4(),
-        room: room,
-        author: username,
-        content: currentMessage,
-        time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          String(new Date(Date.now()).getMinutes()).padStart(2, "0"),
-      };
-      socket.emit("message", messageData);
-      setMessagesList((list) => [...list, messageData]);
-      setCurrentMessage("");
-      setAuthor(messageData.author);
-    }
-  }
-
-  useEffect(() => {
-    getUser();
-  });
-
-  // listen message from backend
-  useEffect(() => {
-    socket.on("message", (data) => {
-      console.log(data);
-      setMessagesList((list) => [...list, data]);
-    });
-  }, [socket]);
-
-  if (!windowChat) {
-    return (
-      <div>
-        <ChatJoin setRoom={setRoom} createRoom={createRoom} />
-      </div>
-    );
-  }
   return (
-    <Box sx={{}}>
-      <Box
-        sx={{
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          sx={{
-            fontWeight: "bold",
-          }}
-          variant="h4"
-        >
-          Live chat
-        </Typography>
-      </Box>
-      <Box>
-        <HistoryMessages isNewMessage={isNewMessage} />
-      </Box>
-      <Box>
-        <MessagesList messagesList={messagesList} author={author} />
-      </Box>
-      <Box>
-        <PromptMessage
-          setCurrentMessage={setCurrentMessage}
-          currentMessage={currentMessage}
-          sendMessage={sendMessage}
-        />
-      </Box>
-      <Box>
-        <ChatUserlist setIsNewMessage={setIsNewMessage} />
-      </Box>
-      <Box
-        sx={{
-          position: "relative",
-          display: "flex",
-          float: "right",
-        }}
-      >
-        <Channels />
-      </Box>
-    </Box>
+    <ChatProvider>
+      <Grid container>
+        <Grid item xs={4}>
+          <Grid item>
+            <Dms setChatContent={setChatContent} />
+          </Grid>
+          <Grid item>
+            <Channels
+              setChatContent={setChatContent}
+              getChannelDatas={getChannelDatas}
+            />
+          </Grid>
+        </Grid>
+        <Grid item xs={8}>
+          {chatContent === ChatContent.MESSAGES && <Conv />}
+          {chatContent === ChatContent.NEW_CHANNELS && (
+            <Grid item xs={8}>
+              <Grid item xs={4}>
+                <FormChannel />
+              </Grid>
+              <Grid item xs={4}>
+                <AvailableChannels />
+              </Grid>
+            </Grid>
+          )}
+          {chatContent === ChatContent.NEW_DM && (
+            <ChatUserlist setChatContent={setChatContent} />
+          )}
+          {chatContent === ChatContent.CHANNEL_CONTENT && (
+            <ChannelContent
+              getChannelDatas={getChannelDatas}
+              channelData={channelData}
+            />
+          )}
+        </Grid>
+      </Grid>
+    </ChatProvider>
   );
 }

@@ -1,108 +1,87 @@
 import {
+  Alert,
   Box,
   Button,
   FormControl,
   Grid,
   InputLabel,
+  List,
+  ListItem,
   MenuItem,
   Select,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { socket } from "../Chat";
-import { IChannel } from "../types";
-import { v4 as uuidv4 } from "uuid";
+import React, { useContext, useEffect, useState } from "react";
+//import { socket } from "../Chat";
+import { IChannel, ICreateChannel } from "../types";
 import ChannelsList from "./ChannelsList";
 import { api, COOKIE_NAME } from "../../../const/const";
+import { ChannelsContext } from "../../../contexts/ChannelsContext";
+import { SnackbarContext, SnackbarContextType } from "../../../contexts/SnackbarContext";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 
-export default function FormChannel(props: any) {
-  const [username, setUsername] = useState("");
+interface FormChannelProps { }
+
+export default function FormChannel(props: FormChannelProps) {
+  const [nameChannel, setNameChannel] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [status, setStatus] = useState("Public");
   const [enablePassword, setEnablePassword] = useState(false);
-  const [ownerid, setOwnerid] = useState("");
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(SnackbarContext) as SnackbarContextType;
 
-  async function getUser() {
-    if (document.cookie.includes(COOKIE_NAME))
-    {
-      await api.get('auth/profile').then(res => {
-        console.log(res.data.username)
-        setOwnerid(res.data.username);
-      }).catch(res => {
-        console.log('invalid jwt');
-        console.log(res);
-        document.cookie = COOKIE_NAME + '=; Max-Age=-1;;';
-      });
-    }
-  }
+  const { getChannelsUserlist, getAvailableChannels } =
+    useContext(ChannelsContext);
+  const { getUser } = useContext(AuthContext) as AuthContextType;
 
-  function checkifchannelexist(): boolean {
-    api
-      .get("channel/all")
-      .then((res) => {
-        const ChannelById = res.data.filter((channel: IChannel) => {
-          return channel.name === username;
-        });
-        if (ChannelById.length !== 0 && username !== "") {
-          alert("id deja pris");
-          return (true);
-        }
-      })
-      .catch((res) => {
-        console.log("error");
-        console.log(res);
-      });
-      return (false);
-  }
-
+  // create channel in db
   async function createChannels() {
-    if (checkifchannelexist() === true)
-      return ;
-    console.log(ownerid);
-    if (username !== "") {
-      const channelData: IChannel = {
-        name: username,
-        status: status,
-        /* time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          String(new Date(Date.now()).getMinutes()).padStart(2, "0"), */
-        ownerid: ownerid,
-      };
-      await api
-      .post("channel/createChannel", channelData)
+    const channelData: Partial<ICreateChannel> = {
+      name: nameChannel,
+      status: status,
+    };
+    if (status === "Protected") {
+      channelData.password = newPassword;
+    }
+    await api
+      .post("channel/create", channelData)
       .then((res) => {
-        console.log("channel created with success");
+        setSeverity("success");
+        setMessage("channel created");
+        setOpenSnackbar(true);
         console.log(channelData);
+        getChannelsUserlist();
+        getAvailableChannels();
+        getUser();
       })
       .catch((res) => {
         console.log("error");
-        console.log(res);
+        console.log(res.response.data.message);
+        setSeverity("error");
+        if (typeof (res.response.data.message) !== "string") {
+          setMessage(res.response.data.message[0]);
+        }
+        else {
+          setMessage(res.response.data.message);
+        }
+        setOpenSnackbar(true);
       });
-      props.setChannelCreated(true);
-      props.setNewChannel(false);
-    }
+    setNewPassword("");
+    setNameChannel("");
   }
-
-  useEffect(() => {
-    getUser();
-  }, []);
 
   return (
-    <Box sx={{}}>
+    <>
       <TextField
-        sx={{}}
         variant="outlined"
         placeholder="name"
+        value={nameChannel}
         onChange={(event) => {
-          setUsername(event.target.value);
+          setNameChannel(event.target.value);
         }}
-      />
+      ></TextField>
       <FormControl>
         <InputLabel id="channel-status">Status</InputLabel>
         <Select
-          sx={{
-            width: "fit-content",
-          }}
           labelId="channel-status"
           id="channel-status-select"
           value={status}
@@ -121,12 +100,22 @@ export default function FormChannel(props: any) {
           <MenuItem value={"Protected"}>Protected</MenuItem>
         </Select>
       </FormControl>
-      {enablePassword === true && (
-        <TextField variant="outlined" placeholder="password" />
+      {enablePassword && (
+        <TextField
+          variant="outlined"
+          placeholder="password"
+          type="password"
+          // reset input password when msg is sent
+          value={newPassword}
+          onChange={(event) => {
+            setNewPassword(event.target.value);
+          }}
+        />
       )}
-      <Button sx={{}} variant="contained" onClick={createChannels}>
+
+      <Button variant="contained" onClick={createChannels}>
         Create channel
       </Button>
-    </Box>
+    </>
   );
 }

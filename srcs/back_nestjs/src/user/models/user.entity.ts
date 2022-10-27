@@ -1,15 +1,23 @@
+import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-//import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id?: number; // TODO remove ? ith new object
 
   @Column({ unique: true })
   username: string;
@@ -17,20 +25,45 @@ export class UserEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
   @CreateDateColumn()
   createdAt?: Date;
 
-  @Column()
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt?: Date;
 
   @Column({ default: false })
-  enabled2FA?: boolean
+  enabled2FA?: boolean;
 
   @Column({ nullable: true })
-  secret2FA?: string
+  secret2FA?: string;
 
-  //@OnetoMany(() => RoomEntity, room => room.users)
-  //room: RoomEntity
+  @OneToMany(() => ChannelEntity, (channels) => channels.owner, {
+    nullable: true,
+  })
+  owner_of?: ChannelEntity[];
+
+  @ManyToMany(() => ChannelEntity, (channels) => channels.admins, {
+    nullable: true,
+  })
+  admin_of?: ChannelEntity[];
+
+  @ManyToMany(() => ChannelEntity, (channels) => channels.users, {
+    nullable: true,
+  })
+  @JoinTable()
+  channels?: ChannelEntity[];
+
+  @ManyToMany(() => DmEntity, (dms) => dms.users, { nullable: true })
+  @JoinTable()
+  dms?: DmEntity[];
+
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  blocked?: UserEntity[];
+
+  @OneToMany(() => ConnectedUserEntity, (connection) => connection.user)
+  connections?: ConnectedUserEntity[];
+
+  @Column({ nullable: true })
+  profile_picture?: string;
 }

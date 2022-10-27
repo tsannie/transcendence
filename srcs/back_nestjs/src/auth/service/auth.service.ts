@@ -18,13 +18,32 @@ export class AuthService {
   ) {}
 
   async validateUser(profile42: any): Promise<any> {
-    const user = await this.userService.findByName(profile42.username);
+    const user = await this.userService.findByMail(profile42.emails[0].value);
     if (user)
       return user;
-    return this.register({
-      username: profile42.username,
-      email: profile42.emails[0].value,
-    });
+
+    let new_user = new UserEntity();
+    new_user.username = profile42.username;
+    new_user.email = profile42.emails[0].value;
+    new_user = await this.register(new_user);
+
+    return await this.userService.add42DefaultAvatar(profile42._json.image_url, new_user);
+  }
+
+  async validateUserGoogle(profile: any): Promise<any> {
+    const user = await this.userService.findByMail(profile.emails[0].value);
+    if (user)
+      return user;
+    if (profile.email_verified !== true) {
+      throw new UnauthorizedException('Account not verified');
+    }
+
+    let new_user = new UserEntity();
+    new_user.username = profile.displayName;
+    new_user.email = profile.emails[0].value;
+    new_user = await this.register(new_user);
+
+    return await this.userService.add42DefaultAvatar(profile.picture, new_user);
   }
 
   async register(user: UserEntity): Promise<UserEntity> {
@@ -33,7 +52,6 @@ export class AuthService {
 
   async getCookie(user: any, isSecondFactor = false): Promise<IToken> { // TODO replace by the entity ??
     const payload: IPayload = {
-      username: user.username,
       sub: user.id, // sub for jwt norm
       isSecondFactor: isSecondFactor,
     };
