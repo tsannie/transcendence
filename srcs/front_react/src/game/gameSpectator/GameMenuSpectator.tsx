@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../const/const";
 import { socket } from "../Game";
+import { GameSpectator } from "./GameSpectator";
 let game_ended = false;
 
 export function GameMenuSpectator(props: any) {
@@ -8,6 +9,9 @@ export function GameMenuSpectator(props: any) {
   const [listGamenotz, setlistGamenotz] = useState(false);
   const [game_empty, setgame_empty] = useState(true);
   const [game_already_ended, setgame_already_ended] = useState("");
+
+  const [Specthegame, setSpecthegame] = useState(false);
+  const [Room_name_spec, setRoom_name_spec] = useState("");
 
   useEffect(() => {
     socket.on("GameSpecEmpty", () => {
@@ -109,7 +113,18 @@ export function GameMenuSpectator(props: any) {
     refresh_games_spec_solo();
     setgame_empty(false);
   }
-  if (listGamenotz === true) {
+
+  if (Specthegame === true)
+  return (
+    <GameSpectator
+      setSpecthegame={setSpecthegame}
+      setisLookingRoom={props.setisLookingRoom}
+      Specthegame={Specthegame}
+      Room_name_spec={Room_name_spec}
+      canvasRef={props.canvasRef}
+    />
+  )
+  else if (listGamenotz === true) {
     return (
       <div className="look">
         <h4> watch a game : </h4>

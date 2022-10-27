@@ -1,22 +1,18 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import React, { createRef, useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { socket } from "../Game";
 import {
-  BallMouv,
-  PaddleMouv_p1,
-  PaddleMouv_p2,
   draw_line,
   draw_score,
-  draw_game_ended,
-  draw_smasher,
   draw_paddle,
   draw_ball,
 } from "./BallMouv";
 
-/* import { ballObj, gameSpecs, paddleProps_p1, paddleProps_p2, player_p1, player_p2 } from "../Game"; */
+
 import { ContactSupport } from "@material-ui/icons";
 import { canvas_back_height, canvas_back_width, screen_ratio } from "../const/const";
 import { GamePlayer_all } from "./GamePlayer_all";
 import { Button } from "@mui/material";
+import { GameContext } from "../GameContext";
 
 interface IBall {
   x: number;
@@ -41,10 +37,15 @@ interface IPlayer {
 
 let position_y = 0;
 
-
-export function GamePlayer_p1_p2(props: any) {
+export function GamePlayer_p1_p2() {
   const [power, setpower] = useState(0);
   const [date, setdate] = useState(new Date());
+
+  const game = useContext(GameContext);
+
+  const canvasRef: any = createRef();
+
+
   /* 
   const [IPaddle_p1, setIPaddle_p1] = useState<IPaddle>({ x: 0, y: 0 });
   const [IPaddle_p2, setIPaddle_p2] = useState<IPaddle>({ x: 0, y: 0 });
@@ -86,7 +87,7 @@ export function GamePlayer_p1_p2(props: any) {
       window.removeEventListener('resize', detectSize)
       setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
       //console.log("+++setLowerSize", lowerSize);
-      socket.emit("resize_ingame", props.room);
+      socket.emit("resize_ingame", game.room);
     }
   }, [HW])
 
@@ -126,7 +127,7 @@ export function GamePlayer_p1_p2(props: any) {
       set.p2_paddle.width *= ratio_width;
       set.p2_paddle.height *= ratio_height;
 
-      if (props.im_p2 === true)
+      if (game.im_p2 === true)
         IPaddle_p2.y = set.p2_paddle.y * ratio_height;
       else
         IPaddle_p1.y = set.p1_paddle.y;
@@ -165,9 +166,9 @@ export function GamePlayer_p1_p2(props: any) {
       socket.emit("get_the_ball", room_name);
 
       let data = {
-        room: props.room,
+        room: game.room,
         paddle_y: position_y,
-        im_p2: props.im_p2,
+        im_p2: game.im_p2,
         front_canvas_height: lowerSize / screen_ratio,
       };
       socket.emit("paddleMouv_time", data);
@@ -179,7 +180,7 @@ export function GamePlayer_p1_p2(props: any) {
 
     let requestAnimationFrameId: any;
       //requestAnimationFrame(render);
-      let canvas: any = props.canvasRef.current;
+      let canvas: any = canvasRef.current;
       let ctx : any = null;
       if (canvas)
       ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -188,7 +189,7 @@ export function GamePlayer_p1_p2(props: any) {
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (IPlayer_p1.won === false && IPlayer_p2.won === false) {
-          get_the_data(props.room);
+          get_the_data(game.room);
           
           draw_line(ctx, canvas.height, canvas.width);
           draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
@@ -206,22 +207,22 @@ export function GamePlayer_p1_p2(props: any) {
     if (IPlayer_p1.won === true || IPlayer_p2.won === true)
     {
       console.log("end of game");
-      socket.emit("end_of_the_game", props.room);
+      socket.emit("end_of_the_game", game.room);
     }
     else
    {
     console.log("give up")
-    socket.emit("player_give_up", props.room);
+    socket.emit("player_give_up", game.room);
     }
-    props.setRoom("");
+    game.setRoom("");
   }
   ////////////////////////////////////////////////////
-
+  console.log("position_y", position_y);
   return (
     <div>
       <canvas
         id="canvas"
-        ref={props.canvasRef}
+        ref={canvasRef}
         width={lowerSize}
         height={lowerSize / screen_ratio}
         onMouseMove={(e) => position_y = e.clientY}

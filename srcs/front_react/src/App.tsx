@@ -12,6 +12,7 @@ import Game from "./game/Game";
 import Settings from "./components/settings/Settings";
 import TwoFactorCode from "./Auth/TwoFactorCode";
 import { api, COOKIE_NAME } from "./const/const";
+import { GameProvider } from "./game/GameContext";
 
 export default function App() {
   const [inputChat, setInputChat] = useState(false);
@@ -86,6 +87,7 @@ export default function App() {
         {inputChat && <Chat />}
         {inputSettings && <Settings />}
         {inputGame && <Game />}
+
       </Box>
     );
   }
