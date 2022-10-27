@@ -262,4 +262,20 @@ export class UserService {
 			}
 		}
 	}
+
+  /* This returns a mix of DM and Channels of users, ordered by DESC Date. */
+  async getConversations(user: UserEntity) : Promise<Array<ChannelEntity | DmEntity>>{
+    let convos: Array<ChannelEntity | DmEntity>;
+    
+
+    convos = await this.channelService.getUserList(user);
+    convos = convos.concat(await this.dmService.getDmsList(user));
+    convos.sort( (a,b) => {
+      if (a.updatedAt < b.updatedAt)
+        return 1;
+      else
+        return -1;
+    })
+    return convos;
+  }
 }
