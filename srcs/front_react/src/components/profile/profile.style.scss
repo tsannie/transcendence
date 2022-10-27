@@ -1,3 +1,11 @@
+@import "../../const.style.scss";
+
+$search_bar_size: calc(250 * var(--res));
+
+#full {
+  width: 100%;
+}
+
 .profile {
   display: flex;
   flex-direction: column;
@@ -37,7 +45,7 @@
   img {
     border-style: dashed;
     border-radius: 50%;
-    width: calc(150 * var(--res));
+    width: calc(140 * var(--res));
   }
 }
 
@@ -55,6 +63,7 @@
 .profile__header__search__item {
   display: flex;
   border-style: dashed;
+  width: $search_bar_size;
 
   svg {
     width: calc(35 * var(--res));
@@ -63,10 +72,6 @@
     width: 100%;
     border-style: none;
   }
-}
-
-#full {
-  width: 100%;
 }
 
 .profile__stats {
@@ -104,13 +109,13 @@
   border-style: dashed;
   width: 80%;
   margin: calc(9 * var(--res));
-  h3 {
-    margin-left: calc(30 * var(--res));
-  }
 }
 
 .profile__body__history__title {
   display: flex;
+  h3 {
+    margin-left: calc(20 * var(--res));
+  }
 }
 
 .profile__body__history__list {
@@ -146,6 +151,10 @@
 
 .profile__body__friends__title {
   display: flex;
+
+  h3 {
+    margin-left: calc(20 * var(--res));
+  }
 }
 
 .profile__body__friends__list {
@@ -178,7 +187,34 @@
 }
 
 .suggestions {
+  width: $search_bar_size;
+  overflow-y: auto;
+  max-height: calc(200 * var(--res));
+  background-color: $bg-color;
   position: absolute;
-  border: 1px solid #999;
+  border-style: dashed;
+  margin-top: 0;
+  padding-left: 0;
+  list-style: none;
+
+  li {
+    padding: calc(10 * var(--res));
+  }
+
+  li:not(:last-of-type) {
+    border-bottom: dashed;
+  }
+
+  .suggestion-active,
+  .suggestions li:hover {
+    cursor: pointer;
+    &:after {
+      content: " <";
+    }
+  }
+}
+
+.no-suggestions {
+  position: absolute;
   margin-top: 0;
 }
