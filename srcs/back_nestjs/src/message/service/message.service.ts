@@ -20,7 +20,6 @@ export class MessageService {
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
     private userService: UserService,
-    private dmService: DmService,
     private channelService: ChannelService,
   ) {}
 
@@ -118,6 +117,7 @@ export class MessageService {
     message.content = data.content;
     message.author = user;
     message.channel = channel;
+    channel.updatedAt = new Date();
     return await this.allMessages.save(message);
   }
 
@@ -137,6 +137,7 @@ export class MessageService {
     message.content = data.content;
     message.author = user;
     message.dm = dm;
+    dm.updatedAt = new Date();
     return await this.allMessages.save(message);
   }
 
