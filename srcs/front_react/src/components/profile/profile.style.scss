@@ -193,16 +193,17 @@ $search_bar_size: calc(250 * var(--res));
   background-color: $bg-color;
   position: absolute;
   border-style: dashed;
+  border-top: 0;
   margin-top: 0;
   padding-left: 0;
   list-style: none;
+  cursor: pointer;
 
   li {
     padding: calc(10 * var(--res));
     img {
       border-radius: 50%;
       width: calc(20 * var(--res));
-      cursor: pointer;
     }
     span {
       margin-left: calc(10 * var(--res));

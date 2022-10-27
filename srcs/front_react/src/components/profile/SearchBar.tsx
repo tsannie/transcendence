@@ -16,6 +16,12 @@ function SearchBar() {
 
   let suggestionsListComponent = [];
 
+  const handleClick = (e: any) => {
+    setActiveSuggestion(0);
+    setShowSuggestion(false);
+    setUserInput(e.currentTarget.innerText);
+  };
+
   if (showSuggestion && userInput) {
     if (suggestions.length) {
       suggestionsListComponent.push(
@@ -27,7 +33,7 @@ function SearchBar() {
               className = "suggestion-active";
             }
             return (
-              <li key={index} className={className}>
+              <li key={index} className={className} onClick={handleClick}>
                 <img src={suggestion.picture + "&size=small"}></img>
                 <span>{suggestion.username}</span>
               </li>
