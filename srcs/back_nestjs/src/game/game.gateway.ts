@@ -424,11 +424,10 @@ export class GameGateway implements OnGatewayInit {
     {console.log("NO ROOM GAME |", room, "|")
     return ;
   }
-
+  let x = 0;
       if (room_game.set) {
       if (room_game.set.ball) {
 
-        while (1) {
 
           mouv_ball(room_game.set);
 
@@ -446,8 +445,8 @@ export class GameGateway implements OnGatewayInit {
 
            // console.log("!!!!!! SAVED BALL");
             //await this.all_game.save(room_game);
-          //}
-          }
+            //}
+
         }
         else
         console.log("no ball")
@@ -457,7 +456,36 @@ export class GameGateway implements OnGatewayInit {
 
   }
 
+  @SubscribeMessage('get_ball')
+  async getball(client: Socket, data: any) {
+      const room_game = await this.all_game.findOneBy({ room_name: data.room });
+      const set = room_game.set;
 
+        let y = (data.ball_y * canvas_back_height) / data.front_canvas_height;
+        let x = (data.ball_x * canvas_back_width) / data.front_canvas_width;
+
+        if (room_game.set)
+        {
+          room_game.set.ball.y = y
+          room_game.set.ball.x = x
+
+
+        client.emit('get_ball', room_game.set.ball);
+        client.to(data.room).emit('get_ball', room_game.set.ball);
+
+
+        // if ball touch paddle
+       // if (set.ball.x - (rad * 2) === set.p1_paddle.x + paddle_width) {
+
+           // console.log("!!!!!ball touch paddle p1");
+          //  await this.all_game.save(room_game)
+         // }
+
+//      //console.log("TIME paddleMouv saveds");
+       //await this.all_game.save(room_game);
+      }
+    return;
+  }
 
   @SubscribeMessage('resize_ingame')
   async resize_ingame(client: Socket, room: string) {
