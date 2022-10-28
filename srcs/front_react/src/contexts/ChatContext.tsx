@@ -5,22 +5,11 @@ import { ChannelsProvider } from "./ChannelsContext";
 import { DmsProvider } from "./DmsContext";
 import { MessagesProvider } from "./MessagesContext";
 
-export type ChatContextType = {};
-
-export const ChatContext = createContext<ChatContextType>({});
+export const ChatList = createContext<Partial<IChannel[]>>([]);
 
 interface ChatContextProps {
   children: JSX.Element | JSX.Element[];
 }
 
-export const ChatProvider = ({ children }: ChatContextProps) => {
-  return (
-    <ChatContext.Provider value={children}>
-      <ChannelsProvider>
-        <DmsProvider>
-          <MessagesProvider>{children}</MessagesProvider>
-        </DmsProvider>
-      </ChannelsProvider>
-    </ChatContext.Provider>
-  );
-};
+export function ChatListProvider({ children }: ChatContextProps) {
+}
