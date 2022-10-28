@@ -1,9 +1,8 @@
 import { useContext, useEffect } from "react";
 import { socket } from "../Game";
 import { GameContext, RoomStatus } from "../GameContext";
-import { GameWaitPlayerReady } from "./GameWaitPlayer";
 
-export default function GameCreationSettings(props: any) {
+export default function WaitingRoom(props: any) {
 
   const game = useContext(GameContext);
 
@@ -19,7 +18,7 @@ export default function GameCreationSettings(props: any) {
     }
   }
 
-  console.log("game.status in GameCreationSettings: ", game.status);
+  console.log("game.status in WaitingRoom: ", game.status);
   return (
     <div className="queues">
       <h2> you are : {game.my_id} </h2>

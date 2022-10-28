@@ -7,7 +7,6 @@ import img_power1 from "../../assets/game_assets/power1.png";
 import img_power2 from "../../assets/game_assets/power2.png";
 import img_power3 from "../../assets/game_assets/power3.png";
 import "./init.css"
-import { GamePlayer_p1_p2 } from "../gameReact/GameReact";
 import { GameContext } from "../GameContext";
 export function GameWaitPlayerReady(props: any) {
   const [color_ready, setColor_ready] = useState("");
@@ -204,11 +203,7 @@ export function GameWaitPlayerReady(props: any) {
     }
   }
 
-  if (props.gamestart === true) {
-  return (<GamePlayer_p1_p2
-    />);
-  }
-  else if (game.im_p2 === false) {
+  if (game.im_p2 === false) {
   return (
     <div className="readytoplay">
       <h2> you are : {props.my_id} </h2>

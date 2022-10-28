@@ -1,9 +1,8 @@
 import { createRef, useContext, useEffect, useState } from "react";
 import { socket } from "../Game";
 import { GameContext, RoomStatus } from "../GameContext";
-import { GamePlayer_p1_p2 } from "../gameReact/GameReact";
-import { GameMenuSpectator } from "../gameSpectator/GameMenuSpectator";
-import GameCreationSettings from "./GameCreationSettings";
+import { GamePlayer_p1_p2 } from "../render/Render";
+import WaitingRoom from "./WaitingRoom";
 import { GameWaitPlayerReady } from "./GameWaitPlayer";
 
 export default function GameMenu(props: any) {
@@ -38,7 +37,7 @@ export default function GameMenu(props: any) {
       </div>
     }
 
-    {game.status === RoomStatus.WAITING && <GameCreationSettings />}
+    {game.status === RoomStatus.WAITING && <WaitingRoom />}
     {game.status === RoomStatus.PLAYING && <GamePlayer_p1_p2 />}
     </div>
   );

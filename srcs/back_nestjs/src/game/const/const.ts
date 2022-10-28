@@ -11,7 +11,7 @@ export const paddle_height: number = 800;
 // BALL DATA CONST
 
 export const spawn_speed: number = 5;
-export const spawn_gravity: number = 3;
+export const spawn_gravity: number = 10;
 
 export const speed: number = 8;
 
