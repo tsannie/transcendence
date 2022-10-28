@@ -1,4 +1,11 @@
-import { Get, Injectable, Logger, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Get,
+  Injectable,
+  Logger,
+  Request,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConnectedSocket,
@@ -15,15 +22,19 @@ import { Socket, Server, Namespace } from 'socket.io';
 import { MessageService } from './service/message.service';
 import { UserService } from 'src/user/service/user.service';
 import { DmService } from 'src/dm/service/dm.service';
-import { IMessage } from './models/message.interface';
 import { UserEntity } from 'src/user/models/user.entity';
-
+import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
+import { Repository } from 'typeorm';
+import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
+import { ConnectedUserDto } from 'src/connected-user/dto/connected-user.dto';
+import { MessageDto } from './dto/message.dto';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
   cors: {
     origin: 'http://localhost:3000',
   },
+  namespace: 'chat',
 })
 export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -31,9 +42,8 @@ export class MessageGateway
   constructor(
     private messageService: MessageService,
     private userService: UserService,
+    private connectedUserService: ConnectedUserService,
   ) {}
-
-  connectedClients: Map<string, UserEntity> = new Map();
 
   private readonly logger: Logger = new Logger('messageGateway');
 
@@ -50,85 +60,52 @@ export class MessageGateway
     try {
       let userId = client.handshake.query.userId;
       let user: UserEntity;
-      console.log("userId = ", userId);
+      console.log('userId = ', userId);
       if (typeof userId === 'string') {
         user = await this.userService.findById(parseInt(userId));
       }
       if (!user) {
         return this.disconnect(client);
+      } else {
+        let connectedUser = new ConnectedUserDto();
+
+        connectedUser.socketId = client.id;
+        connectedUser.user = user;
+        this.connectedUserService.create(connectedUser);
       }
-      else {
-        this.connectedClients.set(client.id, user);
-        //console.log("map clients = ", this.connectedClients);
-      }
-    }
-    catch {
+    } catch {
       return this.disconnect(client);
     }
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
 
-    // remove client from the map
-    this.connectedClients.delete(client.id);
-    console.log("map clients = ", this.connectedClients);
+    this.connectedUserService.deleteBySocketId(client.id);
     client.disconnect();
   }
 
   private disconnect(client: Socket) {
-    client.emit('Error', new UnauthorizedException());
+    this.connectedUserService.deleteBySocketId(client.id);
     client.disconnect();
   }
 
   @SubscribeMessage('message')
-  addMessage(@MessageBody() data: IMessage, @ConnectedSocket() client: Socket) {
-    //): Observable<IMessage> {
-    this.logger.log(client.id);
-    console.log(data);
+  async addMessage(
+    @MessageBody() data: MessageDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log('data = ', data);
+    this.logger.log('client id = ', client.id);
 
-    if (data.target !== undefined) {
-      this.messageService.addMessagetoDm(data);
+    if (data.isDm === true) {
+      const lastMsg = await this.messageService.addMessagetoDm(data);
+
+      await this.messageService.emitMessageDm(this.server, lastMsg);
     } else {
-      this.messageService.addMessagetoChannel(data);
+      const lastMsg = await this.messageService.addMessagetoChannel(data);
+
+      await this.messageService.emitMessageChannel(this.server, lastMsg);
     }
-
-    // emit to all clients
-    //this.server.emit('message', data);
-
-    // parcourir tous mes clients connectés et envoyer le message uniquement a l'id du target
-    this.connectedClients.forEach((value, key) => {
-      console.log("key = ", key);
-      console.log("value = ", value);
-      console.log("data.target = ", data.target);
-      if (value.username === data.target) {
-        this.server.to(key).emit('message', data);
-      }
-    });
-    //this.server.to(client.id).emit('message', data);
   }
-
-  // emit all dms of a user
-  /* @SubscribeMessage('getDmList')
-  getDmList(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
-
-    console.log("data = ", data);
-
-    let allDms = this.dmService.getAllDms(this.connectedClients.get(client.id));
-    this.logger.log(`client ${client.id} get all dm ${allDms} `);
-    console.log("allDms = ", allDms);
-    this.server.emit('getDmList', allDms);
-  }
-
-  @SubscribeMessage('getConv')
-  getConv(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
-
-    console.log("data = ", data);
-
-    // get id of the dm in data
-
-    // return all messages of a dm with his id
-    //let allMessages = this.dmService.getDmById();
-    this.server.emit('getConv', data);
-  } */
 }
