@@ -7,9 +7,9 @@ import {
   draw_ball,
 } from "./Draw";
 
-import { canvas_back_height, canvas_back_width, screen_ratio, spawn_gravity, spawn_speed, speed } from "../const/const";
+import { canvas_back_height, canvas_back_width, screen_ratio} from "../const/const";
 import { Button } from "@mui/material";
-import { GameContext } from "../GameContext";
+import { GameContext, RoomStatus } from "../GameContext";
 
 interface IBall {
   x: number;
@@ -149,12 +149,12 @@ export function GamePlayer_p1_p2() {
       IBall.rad = ball.rad * ratio_width;
 
 
-      IBall.first_col = ball.first_col;
+/*       IBall.first_col = ball.first_col;
 
       IBall.direction_x = ball.direction_x;
       IBall.direction_y = ball.direction_y;
 
-      IBall.gravity = ball.gravity;
+      IBall.gravity = ball.gravity; */
     
       // colision to wall up and down
     
@@ -184,6 +184,8 @@ export function GamePlayer_p1_p2() {
       socket.on("get_ball", (ball: any) => {
         const ratio_width = (lowerSize /canvas_back_width);
         const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
+
+        //console.log("ball", ball.x, ball.y);
 
             IBall.x = ball.x * ratio_width;
             IBall.y = ball.y * ratio_height;
@@ -243,7 +245,7 @@ export function GamePlayer_p1_p2() {
     }
 
 
-    function mouv_ball()
+/*     function mouv_ball()
     {
       console.log("IBall.first_col", IBall.first_col);
       IBall.x += spawn_speed * IBall.direction_x
@@ -260,10 +262,7 @@ export function GamePlayer_p1_p2() {
         IBall.direction_y *= -1;
       else if (IBall.y - IBall.rad <= 0) 
         IBall.direction_y *= -1;
-
-
-
-    }
+    } */
 
     function get_ball(){
       let data = {
@@ -273,6 +272,7 @@ export function GamePlayer_p1_p2() {
         front_canvas_height: lowerSize / screen_ratio,
         front_canvas_width: lowerSize,
       };
+    
       socket.emit("get_ball", data);
     }
 
@@ -294,13 +294,13 @@ export function GamePlayer_p1_p2() {
             }
             else 
             {
-              socket.emit("get_the_ball", game.room);
               if (game.im_p2 === true)
                 get_paddle_p1()
               else
                 get_paddle_p2()
               get_ball();
             }
+            //console.log("IBall.first_col", IBall.x, IBall.y);
             //draw_line(ctx, canvas.height, canvas.width);
             //draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
             draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
@@ -325,6 +325,7 @@ export function GamePlayer_p1_p2() {
     console.log("give up")
     socket.emit("player_give_up", game.room);
     }
+    game.setStatus(RoomStatus.CLOSED);
     game.setRoom("");
   }
   ////////////////////////////////////////////////////

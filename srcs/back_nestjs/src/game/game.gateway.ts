@@ -424,29 +424,11 @@ export class GameGateway implements OnGatewayInit {
     {console.log("NO ROOM GAME |", room, "|")
     return ;
   }
-  let x = 0;
       if (room_game.set) {
       if (room_game.set.ball) {
 
-
-          mouv_ball(room_game.set);
-
-          BallCol_p1(room_game.set);
-
-          BallCol_p2(room_game.set);
-
-          //client.emit('get_the_score', room_game);
-
           client.emit('get_the_ball', room_game.set.ball);
-          client.to(room).emit('get_the_ball', room_game.set.ball);
-
-          // if (room_game.set.ball.x - (rad * 2) === room_game.set.p1_paddle.x + paddle_width || 
-          //    room_game.set.ball.x + (rad * 2) === room_game.set.p2_paddle.x) {
-
-           // console.log("!!!!!! SAVED BALL");
-            //await this.all_game.save(room_game);
-            //}
-
+            await this.all_game.save(room_game);
         }
         else
         console.log("no ball")
@@ -459,7 +441,6 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('get_ball')
   async getball(client: Socket, data: any) {
       const room_game = await this.all_game.findOneBy({ room_name: data.room });
-      const set = room_game.set;
 
         let y = (data.ball_y * canvas_back_height) / data.front_canvas_height;
         let x = (data.ball_x * canvas_back_width) / data.front_canvas_width;
@@ -469,9 +450,29 @@ export class GameGateway implements OnGatewayInit {
           room_game.set.ball.y = y
           room_game.set.ball.x = x
 
+        //console.log('get_ball', data.ball_y, data.ball_x);
 
+        
+          mouv_ball(room_game.set);
+
+          if (room_game.set.ball.y + rad >= canvas_back_height)
+          {
+            console.log("ball touch bot SAVED");
+            await this.all_game.save(room_game);
+          }
+          else if (room_game.set.ball.y - rad <= 0)
+          {
+            console.log("ball touch top SAVED");
+            await this.all_game.save(room_game);
+          }
+
+          if (room_game.set.ball.x - (rad * 2) === room_game.set.p1_paddle.x + paddle_width)
+            BallCol_p1(room_game.set);
+          if (room_game.set.ball.x + (rad * 2) === room_game.set.p2_paddle.x)
+            BallCol_p2(room_game.set);
+          
         client.emit('get_ball', room_game.set.ball);
-        client.to(data.room).emit('get_ball', room_game.set.ball);
+        //client.to(data.room).emit('get_ball', room_game.set.ball);
 
 
         // if ball touch paddle
@@ -482,7 +483,6 @@ export class GameGateway implements OnGatewayInit {
          // }
 
 //      //console.log("TIME paddleMouv saveds");
-       //await this.all_game.save(room_game);
       }
     return;
   }
