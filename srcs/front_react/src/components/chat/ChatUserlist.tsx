@@ -1,6 +1,9 @@
 import {
   Button,
   Grid,
+  List,
+  ListItem,
+  ListItemButton,
   Menu,
   MenuItem,
   Popover,
@@ -10,53 +13,52 @@ import { Box } from "@mui/system";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { api } from "../../const/const";
 import { ChatContent } from "./Chat";
-import { SocketContext } from "./SocketContext";
-import { IChannel, IDm, IMessage } from "./types";
+import { SocketContext } from "../../contexts/SocketContext";
+import { IChannel, ICreateDm, IDm } from "./types";
+import { MessagesContext } from "../../contexts/MessagesContext";
+import { DmsContext } from "../../contexts/DmsContext";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
 interface ChatUserListProps {
-  setMessagesList: (messagesList: IMessage[]) => void;
-  setTargetUsername: (targetUsername: string) => void;
-  setEnumState: (enumState: ChatContent) => void;
-  users: any[];
-  getAllUsers: () => Promise<void>;
+  setChatContent: (chatContent: ChatContent) => void;
 }
 
 export default function ChatUserlist(props: ChatUserListProps) {
+  const { user, users } = useContext(AuthContext) as AuthContextType;
+  const { getDmsList, getDmDatas } = useContext(DmsContext);
+  const { loadMessages, setConvId } = useContext(MessagesContext);
 
-  const socket = useContext(SocketContext);
-
-  function handleClick(event: React.MouseEvent<HTMLElement>) {
-    event.preventDefault();
-    createNewConv(event.currentTarget.innerHTML);
+  function handleClick(username: string) {
+    createNewConv(username);
   }
 
-  async function createDm(targetUsername: IDm) {
+  async function createDm(targetUsername: ICreateDm) {
     console.log("create dm");
     await api
-      .post("dm/createDm", targetUsername)
+      .post("dm/create", targetUsername)
       .then((res) => {
         console.log("dm created with success");
         console.log(targetUsername);
-        console.log(res.data.messages);
-        //socket.emit("getConv", res.data);
-        props.setMessagesList(res.data.messages);
+        console.log("dm created = ", res.data);
+        setConvId(res.data.id);
+        getDmsList();
+        loadMessages(res.data.id, true);
       })
       .catch((res) => {
         console.log("invalid create dm");
-        console.log(res);
+        console.log(res.response.data.message);
       });
   }
 
   async function createNewConv(targetUsername: string) {
-    let newDm: IDm = {
+    let newDm: ICreateDm = {
       target: targetUsername,
     };
 
     console.log(newDm);
     console.log("handle new message");
     createDm(newDm);
-    props.setEnumState(ChatContent.MESSAGES);
-    props.setTargetUsername(targetUsername);
+    props.setChatContent(ChatContent.MESSAGES);
   }
 
   return (
@@ -70,11 +72,22 @@ export default function ChatUserlist(props: ChatUserListProps) {
       >
         Users
       </Typography>
-      {/* <UserList
-        handleClick={handleClick}
-        users={props.users}
-        getAllUsers={props.getAllUsers}
-      /> */}
+      <List>
+        {users.map(
+          (element) =>
+            element.id !== user?.id && (
+              <ListItemButton
+                key={element.id}
+                onClick={() => handleClick(element.username)}
+                sx={{
+                  width: "fit-content",
+                }}
+              >
+                {element.username}
+              </ListItemButton>
+            )
+        )}
+      </List>
     </>
   );
 }
