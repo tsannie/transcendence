@@ -11,21 +11,23 @@ import {
 
 @Entity()
 export class MessageEntity {
-	@PrimaryGeneratedColumn("uuid")
-	uuid: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-	@CreateDateColumn()
-	createdAt?: Date;
+  @CreateDateColumn()
+  createdAt?: Date;
 
-	@Column()
-	content: string;
+  @Column()
+  content: string;
 
-	@ManyToOne( () => UserEntity )
-	author: UserEntity;
+  @ManyToOne(() => UserEntity)
+  author: UserEntity;
 
-	@ManyToOne( () => DmEntity, (dm) => dm.messages, {onDelete: 'CASCADE'} )
-	dm?: DmEntity;
+  @ManyToOne(() => DmEntity, (dm) => dm.messages, { onDelete: 'CASCADE' })
+  dm?: DmEntity;
 
-	@ManyToOne( () => ChannelEntity, (channel) => channel.messages, {onDelete: 'CASCADE'} )
-	channel?: ChannelEntity;
+  @ManyToOne(() => ChannelEntity, (channel) => channel.messages, {
+    onDelete: 'CASCADE',
+  })
+  channel?: ChannelEntity;
 }

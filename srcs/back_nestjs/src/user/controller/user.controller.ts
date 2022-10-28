@@ -22,6 +22,7 @@ import { UserEntity } from '../models/user.entity';
 import { TargetNameDto, TargetIdDto, AvatarDto } from '../dto/target.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateResult } from 'typeorm';
+import { NewUsernameDto } from '../dto/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express } from 'express';
 import {
@@ -30,7 +31,6 @@ import {
 } from '../pipes/filevalidation.validator';
 import { UserSearchDto } from '../dto/usersearch.dto';
 import { IUserSearch } from '../models/iusersearch.interface';
-import { NewUsernameDto } from '../dto/newusername.dto';
 
 @Controller('user')
 export class UserController {
