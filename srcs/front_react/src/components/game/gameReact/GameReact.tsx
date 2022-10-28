@@ -51,7 +51,7 @@ export function GamePlayer_p1_p2() {
 
   let IBall : IBall = { x: 0, y: 0, rad: 0};
 
-  
+
   const [lowerSize, setLowerSize] = useState((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth));
   const [HW, setdetectHW] = useState({winWidth: window.innerWidth, winHeight: window.innerHeight,})
   const detectSize = () => {
@@ -72,7 +72,7 @@ export function GamePlayer_p1_p2() {
 
 
   useEffect(() => {
-    
+
     socket.on("player_give_upem", (set: any) => {
       IPlayer_p2.won = set.p2.won;
       IPlayer_p1.won = set.p1.won;
@@ -82,20 +82,20 @@ export function GamePlayer_p1_p2() {
     });
 
     socket.on("get_the_paddle", (set: any) => {
-      
+
       if (!set) {
         console.log("NO SET front");
         return;
       }
     let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
-      
+
      const ratio_width = (XlowerSize /canvas_back_width);
      const ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
-    
+
       //console.log("set.p1_paddle.y", set.p1_paddle.y);
      // console.log("set.p2_paddle.y", set.p2_paddle.y);
 
-      // set paddle 
+      // set paddle
       set.p1_paddle.x *= ratio_width;
       set.p1_paddle.y *= ratio_height;
       set.p1_paddle.width *= ratio_width;
@@ -129,7 +129,7 @@ export function GamePlayer_p1_p2() {
       }
      const ratio_width = (lowerSize /canvas_back_width);
      const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
-     
+
 /*       IPlayer_p1 = set.p1;
       IPlayer_p2 = set.p2; */
 
@@ -141,7 +141,7 @@ export function GamePlayer_p1_p2() {
 
 
     // function that emit every second to the server the game data
-    
+
     interface paddle_y {
       room: string;
       paddle_y: number;
@@ -152,20 +152,20 @@ export function GamePlayer_p1_p2() {
     function get_the_data(room_name: string) {
       //console.log("getting the data FRONT= ", room_name);
       socket.emit("get_the_ball", room_name);
-      
+
       let data : paddle_y = {
         room: game.room,
         paddle_y: position_y,
         im_p2: game.im_p2,
         front_canvas_height: lowerSize / screen_ratio,
       };
-      
+
      // console.log("data", data);
-      
-    
-      //socket.emit("paddleMouv_time", data);
+
+
+      socket.emit("paddleMouv_time", data);
       //console.log("mouv_paddle_time", data.paddle_y)
-      
+
     }
 
   useEffect(() => {
@@ -175,22 +175,22 @@ export function GamePlayer_p1_p2() {
       if (canvas)
       ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-     function draw () { 
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (IPlayer_p1.won === false && IPlayer_p2.won === false) {
-          get_the_data(game.room);
-          
-          draw_line(ctx, canvas.height, canvas.width);
-          draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-          draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-          draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
-          draw_ball(ctx, IBall, canvas.height, canvas.width);
+     function draw() {
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          if (IPlayer_p1.won === false && IPlayer_p2.won === false) {
+            get_the_data(game.room);
+
+            draw_line(ctx, canvas.height, canvas.width);
+            draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+            draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
+            draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+            draw_ball(ctx, IBall, canvas.height, canvas.width);
+            }
           }
-        }
+        window.requestAnimationFrame(draw); // call draw every 1 / 60 sec
       }
-      // setInterval(draw, 1000 / 60); 60fps
-      setInterval(draw, 1000 / 30);
+      window.requestAnimationFrame(draw); // 1ere image
     }, []);
 
 
@@ -209,7 +209,9 @@ export function GamePlayer_p1_p2() {
   }
   ////////////////////////////////////////////////////
 
-    console.log("position_y", position_y);
+    //console.log("position_y", position_y);
+    //console.log("height paddle p1", IPaddle_p1);
+    //console.log("height paddle p2", IPaddle_p2);
 
   return (
     <div>
@@ -218,16 +220,15 @@ export function GamePlayer_p1_p2() {
         ref={canvasRef}
         width={lowerSize}
         height={lowerSize / screen_ratio}
-        onMouseMove={(e) => position_y = e.clientY}
+        onMouseMove={(e) => position_y = e.clientY - 1.5 * IPaddle_p1.height}
         style={{ backgroundColor: "black" }}
         ></canvas>
-      <br />
-      <br />
       <Button
         variant="contained"
         sx={{
           backgroundColor: "black",
           color: "white",
+          mt: "2vh",
         }}
         onClick={leaveGame}
         >

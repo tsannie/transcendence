@@ -6,9 +6,6 @@ import {
 } from "../Game";
 
 import {
-  BallMouv,
-  PaddleMouv_p1,
-  PaddleMouv_p2,
   draw_line,
   draw_score,
   draw_loading,
@@ -45,14 +42,14 @@ export function GameSpectator(props: any) {
         || theroom.power === 5 || theroom.power === 7) {
         ballObj.ingame_dx = theroom.set.ball.power_ingame_dx;
         ballObj.ingame_dy = theroom.set.ball.power_ingame_dy;
-  
+
         ballObj.first_dx = theroom.set.ball.power_first_dx;
         ballObj.first_dy = theroom.set.ball.power_first_dy;
       }
       else {
         ballObj.ingame_dx = theroom.set.ball.ingame_dx;
         ballObj.ingame_dy = theroom.set.ball.ingame_dy;
-        
+
         ballObj.first_dx = theroom.set.ball.first_dx;
         ballObj.first_dy = theroom.set.ball.first_dy;
       }
@@ -68,7 +65,7 @@ export function GameSpectator(props: any) {
 
       ballObj.ball_way_x = theroom.set.ball.way_x;
       ballObj.ball_way_y = theroom.set.ball.way_y;
-      
+
       ballObj.init_ball_pos = theroom.set.ball.init_ball_pos;
       ballObj.first_col = theroom.set.ball.first_col;
       gameSpecs.power = theroom.power;
