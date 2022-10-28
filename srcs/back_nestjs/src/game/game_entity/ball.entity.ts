@@ -6,13 +6,13 @@ export class BallEntity {
   id?: number;
 
   @Column({ nullable: true, type: 'float' })
-  x: number = 500;
+  x: number;
 
   @Column({ nullable: true, type: 'float' })
-  y: number = 250;
+  y: number;
 
   @Column({ nullable: true, type: 'float' })
-  gravity: number = 6;
+  gravity: number;
 
   // TODO DELL ALL AFTER
   @Column({ default: false })

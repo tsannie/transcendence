@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../../const/const";
+/* import { api } from "../../../const/const";
 import { socket } from "../Game";
 import { GameSpectator } from "./GameSpectator";
 let game_ended = false;
@@ -160,4 +160,4 @@ export function GameMenuSpectator(props: any) {
       </div>
     );
   }
-}
+} */

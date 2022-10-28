@@ -1,9 +1,7 @@
 import React, { createRef, useContext, useEffect, useState } from "react";
 import io from "socket.io-client";
-import { GamePlayer_p1_p2 } from "./gameReact/GameReact";
-import GameMenu from "./gameInitialisation/GameMenu";
+import GameMenu from "./menu/GameMenu";
 import { GameContext, GameProvider, RoomStatus } from "./GameContext";
-import GameCreationSettings from "./gameInitialisation/GameCreationSettings";
 
 export const socket = io("http://localhost:4000/game");
 
