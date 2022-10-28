@@ -1,7 +1,7 @@
-import { Button, Grid } from "@mui/material";
+ import { Button, Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
-import {
+/*import {
   socket,
 } from "../Game";
 
@@ -10,7 +10,7 @@ import {
   draw_score,
   draw_loading,
   draw_smasher,
-} from "../gameReact/BallMouv";
+} from "../gameReact/DrawGame";
 
 import data from "../gameReact/data";
 export let {
@@ -119,7 +119,7 @@ export function GameSpectator(props: any) {
       if (canvas)
         ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       if (ctx) {
-        /* ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (player_p1.won === false && player_p2.won === false) {
           draw_line(ctx, ballObj, canvas.height, canvas.width);
           draw_score(ctx, player_p1, player_p2, canvas.height, canvas.width);
@@ -138,7 +138,7 @@ export function GameSpectator(props: any) {
         } else {
           draw_score(ctx, player_p1, player_p2, canvas.height, canvas.width);
           cancelAnimationFrame(requestAnimationFrameId);
-        } */
+        }
       }
     };
     render();
@@ -203,4 +203,4 @@ export function GameSpectator(props: any) {
       </Button>
     </Grid>
   );
-}
+} */

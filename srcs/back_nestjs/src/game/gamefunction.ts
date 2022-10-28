@@ -27,7 +27,6 @@ export function mouv_ball(set: SetEntity) {
     set.ball.direction_y *= -1;
   else if (set.ball.y - rad <= 0) 
     set.ball.direction_y *= -1;
-     
 }
 
 function increment_score_player(player: PlayerEntity, ball: BallEntity) {
@@ -51,7 +50,7 @@ function colision_paddle_player(paddle: PaddleEntity, ball: BallEntity) {
       ball.first_col = true;
        //set.ball.col_paddle = true;
        // set.ball.col_now_paddle = true;
-       console.log('col paddle');
+       //console.log('col paddle');
 }
 
 export function BallCol_p1(set: SetEntity) {
