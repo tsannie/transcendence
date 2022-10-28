@@ -180,6 +180,15 @@ export function GamePlayer_p1_p2() {
         //console.log("y", y);
       });
 
+
+      socket.on("get_ball", (ball: any) => {
+        const ratio_width = (lowerSize /canvas_back_width);
+        const ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
+
+            IBall.x = ball.x * ratio_width;
+            IBall.y = ball.y * ratio_height;
+        });
+
   }, [socket]);
 
 
@@ -256,6 +265,17 @@ export function GamePlayer_p1_p2() {
 
     }
 
+    function get_ball(){
+      let data = {
+        room: game.room,
+        ball_y: IBall.y,
+        ball_x: IBall.x,
+        front_canvas_height: lowerSize / screen_ratio,
+        front_canvas_width: lowerSize,
+      };
+      socket.emit("get_ball", data);
+    }
+
 
   useEffect(() => {
 
@@ -279,7 +299,7 @@ export function GamePlayer_p1_p2() {
                 get_paddle_p1()
               else
                 get_paddle_p2()
-              //get_ball();
+              get_ball();
             }
             //draw_line(ctx, canvas.height, canvas.width);
             //draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
