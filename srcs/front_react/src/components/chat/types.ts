@@ -1,27 +1,39 @@
-export interface IMessage {
-  uuid?: string;
-  //room: string;
-  author: string;
+import { User } from "../../contexts/AuthContext";
+
+export interface IMessageSent {
+  convId: string; // id du dm ou du channel
+  author: User | null; // IUser en theorie
   content: string;
-  target: string;
+  isDm: boolean;
+}
+
+export interface IMessageReceived {
+  id: string;
+  convId: string;
+  author: User | null; // IUser en theorie
+  content: string;
+  createdAt: Date;
+  dm?: any; // IDm en theorie
+  channel?: any; // IChannel en theorie
 }
 
 export interface ICreateChannel {
   name: string;
-  password?: string;
+  password: string;
   status: string;
 }
 
 // TODO: add id
 export interface IChannel {
+  id: string;
   name: string;
-  password?: string;
+  password: string;
   status: string;
-  owner: any;
-  users: any[];
-  admins: any[];
-  muted: any[];
-  banned: any[];
+  owner: User | null;
+  users: User[] | null;
+  admins: User[] | null;
+  muted: User[] | null;
+  banned: User[] | null;
 }
 
 export interface IChannelActions {
@@ -29,18 +41,21 @@ export interface IChannelActions {
   target: string;
 }
 
+export interface ICreateDm {
+  target: string;
+}
+
 export interface IDm {
-  id?: number;
-  time?: Date;
-  target?: string;
-  users? : any[];
-  messages?: IMessage[];
+  id: string;
+  time: Date;
+  target: string;
+  offset: number;
+  users: User[] | null;
+  messages: IMessageReceived[];
 }
 
 export interface IConvCreated {
-  id: number;
+  id: string;
   time: Date;
-  //target?: string;
-  users : any[];
-  //messages: IMessage[];
+  users: User[] | null;
 }
