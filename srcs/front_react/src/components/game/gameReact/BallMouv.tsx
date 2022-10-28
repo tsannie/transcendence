@@ -123,55 +123,8 @@ export function draw_smasher(
 //// BALL FUNCTIONS
 ////////////////////////
 
-export function BallMouv(
-  ctx: any,
-  gameSpecs: any,
-  ballObj: any,
-  canvas_height: number,
-  canvas_width: number,
-  power: number,
-) {
-  let data = new Ball(ballObj.x, ballObj.y, ballObj.rad);
 
-  
-  ctx.fillStyle = "white";
-  data.draw(ctx);
-
-  if (gameSpecs.first_set === true) {
-      console.log("REALY REALY FIRST SET");
-      ballObj.ball_way_x = 1;
-      ballObj.ball_way_y = 1;
-      gameSpecs.smash = 1;
-      gameSpecs.first_set = false;
-  }
-  if (ballObj.init_ball_pos === false) {
-    ballObj.x = canvas_width / 2;
-    ballObj.y = canvas_height / 2;
-    gameSpecs.smash = 1;
-    ballObj.ball_way_y = 1;
-    ballObj.ingame_dy = 6;
-    ballObj.col_paddle = false;
-    ballObj.init_ball_pos = true;
-  }
-
-  if(ballObj.x > (canvas_width / 2) - 40 && ballObj.x < (canvas_width / 2) + 40)
-    ballObj.col_paddle = false;
-
-  if (ballObj.first_col === false) {
-    ballObj.x += ballObj.first_dx * ballObj.ball_way_x;
-    ballObj.y += ballObj.first_dy * ballObj.ball_way_y;
-  } else {
-    ballObj.x += ballObj.ingame_dx * gameSpecs.smash * ballObj.ball_way_x;
-    ballObj.y += ballObj.ingame_dy * ballObj.ball_way_y;
-  }
-
-  if (ballObj.y + ballObj.rad > canvas_height)
-    ballObj.ball_way_y *= -1;
-  else if (ballObj.y - ballObj.rad < 0) 
-    ballObj.ball_way_y *= -1;
-}
-
-/* export function BallCol_p1(
+export function BallCol_p1(
   ctx: any,
   gameSpecs: any,
   player_p2: any,
@@ -196,7 +149,7 @@ export function BallMouv(
   ) {
     let res = paddleProps.y + paddleProps.height - ballObj.y;
     ballObj.ingame_dy = -(res / 10 - paddleProps.height / 20);
-    
+
     gameSpecs.smash = 1;
     ballObj.ball_way_y = 1;
     ballObj.ball_way_x *= -1;
@@ -242,102 +195,11 @@ export function BallCol_p2(
     ballObj.col_paddle = true;
     ballObj.col_now_paddle = true;
   }
-} */
-
-class Ball {
-  x: number;
-  y: number;
-  rad: number;
-
-  constructor(x: number, y: number, rad: number) {
-    this.x = x;
-    this.y = y;
-    this.rad = rad;
-  }
-  draw(ctx: any) {
-    ctx.beginPath();
-    ctx.fillStryle = "blue";
-    ctx.arc(this.x, this.y, this.rad, 0, 2 * Math.PI);
-    ctx.strokeStyle = "black";
-    ctx.strokeWidth = 10;
-    ctx.fill();
-    ctx.stroke();
-  }
 }
 
 ////////////////////////
 //// PADDLE FUNCTIONS
 ////////////////////////
-
-export function PaddleMouv_p1(ctx: any, canvas: any, paddleProps: any) {
-  class Paddle {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    colors: string[];
-
-    constructor(y: number) {
-      this.x = paddleProps.x;
-      this.y = y;
-      this.height = paddleProps.height;
-      this.width = paddleProps.width;
-      this.colors = ["white", "blue"];
-    }
-    move() {
-      ctx.beginPath();
-      ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.fillStyle = paddleProps.color;
-      ctx.lineWidth = 1;
-      ctx.shadowBlur = 0;
-      ctx.shadowColor = "blue";
-      ctx.strokeRect(this.x, this.y, this.width, this.height);
-      ctx.fill();
-    }
-  }
-
-  const paddle = new Paddle(paddleProps.y);
-  paddle.move();
-  if (paddleProps.y <= 0)
-    paddleProps = 0;
-  else if (paddleProps.y + paddleProps.height >= canvas.height)
-    paddleProps.y = canvas.height - paddleProps.height;
-}
-
-export function PaddleMouv_p2(ctx: any, canvas: any, paddleProps: any) {
-  class Paddle {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    colors: string[];
-
-    constructor(y: number) {
-      this.x = paddleProps.x;
-      this.y = y;
-      this.height = paddleProps.height;
-      this.width = paddleProps.width;
-      this.colors = ["white", "blue"];
-    }
-    move() {
-      ctx.beginPath();
-      ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.fillStyle = paddleProps.color;
-      ctx.lineWidth = 1;
-      ctx.shadowBlur = 0;
-      ctx.shadowColor = "blue";
-      ctx.strokeRect(this.x, this.y, this.width, this.height);
-      ctx.fill();
-    }
-  }
-
-  const paddle = new Paddle(paddleProps.y);
-  paddle.move();
-  if (paddleProps.y <= 0) paddleProps = 0;
-  else if (paddleProps.y + paddleProps.height >= canvas.height)
-    paddleProps.y = canvas.height - paddleProps.height;
-}
-
 
 export function draw_paddle(ctx: any , IPaddle : any, height : any, width : any){
 
@@ -355,8 +217,11 @@ export function draw_paddle(ctx: any , IPaddle : any, height : any, width : any)
 
 export function draw_ball(ctx: any , IBall : any, height : any, width : any){
 
-  let data = new Ball(IBall.x, IBall.y, IBall.rad);
-
+  ctx.beginPath();
   ctx.fillStyle = "white";
-  data.draw(ctx);
+  ctx.arc(IBall.x, IBall.y, IBall.rad, 0, 2 * Math.PI);
+  ctx.strokeStyle = "black";
+  ctx.strokeWidth = 10;
+  ctx.fill();
+  ctx.stroke();
 }
