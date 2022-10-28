@@ -1,4 +1,5 @@
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import {
   Column,
@@ -36,7 +37,6 @@ export class UserEntity {
   @Column({ nullable: true })
   secret2FA: string;
 
-  // list friends
   @OneToMany(() => UserEntity, (user) => user.id)
   friends: UserEntity[];
 
@@ -63,6 +63,9 @@ export class UserEntity {
   @ManyToMany(() => UserEntity)
   @JoinTable()
   blocked: UserEntity[];
+
+  @OneToMany(() => ConnectedUserEntity, (connection) => connection.user)
+  connections: ConnectedUserEntity[];
 
   @Column({ nullable: true })
   profile_picture: string;
