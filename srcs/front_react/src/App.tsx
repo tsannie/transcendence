@@ -23,7 +23,6 @@ export default function App() {
     TransitionContext
   ) as TransitionContextType;
 
-
   return (
     <div className="bg">
       <Background />

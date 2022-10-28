@@ -14,47 +14,38 @@ import {
 
 @Entity()
 export class ChannelEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-	@CreateDateColumn()
-	createdAt: string;
-	
-	@Column( {nullable: false, unique: true} )
-	name: string;
-	
-	@Column({ nullable: false } )
-	status: string;
+  @CreateDateColumn()
+  createdAt: string;
 
-	@Column( { select: null, nullable: true })
-	password: string;
-	
-	@ManyToOne( () => UserEntity, (user) => user.owner_of )
-	owner: UserEntity;
-	
-	@ManyToMany( () => UserEntity, (user) => user.admin_of )
-	@JoinTable()
-	admins: UserEntity[];
-	
-	//CHANGE NEXT TWO FIELDS IF CIRCULAR DEPENDENCIES
-	@ManyToMany( () => UserEntity, (user) => user.channels )
-	users: UserEntity[];
+  @Column({ nullable: false, unique: true })
+  name: string;
 
-	@OneToMany( () => MessageEntity, (message) => message.channel )
-	messages: MessageEntity[];
+  @Column({ nullable: false })
+  status: string;
 
-	// @ManyToMany( () => UserEntity )
-	// @JoinTable()
-	// muted: UserEntity[];
+  @Column({ select: false, nullable: true }) // remettre le select null si solution trouve
+  password: string;
 
-	// @ManyToMany( () => UserEntity )
-	// @JoinTable()
-	// banned: UserEntity[];
+  @ManyToOne(() => UserEntity, (user) => user.owner_of)
+  owner: UserEntity;
 
-	@OneToMany( () => MuteEntity, (mute) => mute.channel )
-	muted: MuteEntity[];
+  @ManyToMany(() => UserEntity, (user) => user.admin_of)
+  @JoinTable()
+  admins: UserEntity[];
 
-	@OneToMany( () => BanEntity, (ban) => ban.channel )
-	banned: BanEntity[];
+  //CHANGE NEXT TWO FIELDS IF CIRCULAR DEPENDENCIES
+  @ManyToMany(() => UserEntity, (user) => user.channels)
+  users: UserEntity[];
+
+  @OneToMany(() => MessageEntity, (message) => message.channel)
+  messages: MessageEntity[];
+
+  @OneToMany( () => MuteEntity, (mute) => mute.channel )
+  muted: MuteEntity[];
+
+  @OneToMany( () => BanEntity, (ban) => ban.channel )
+  banned: BanEntity[];
 }
-
