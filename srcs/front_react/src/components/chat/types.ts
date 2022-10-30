@@ -27,6 +27,7 @@ export interface ICreateChannel {
 export interface IChannel {
   id: string;
   name: string;
+  updatedAt: Date;
   password: string;
   status: string;
   owner: User | null;
