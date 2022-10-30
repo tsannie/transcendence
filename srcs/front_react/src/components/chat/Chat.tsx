@@ -1,11 +1,10 @@
 import { Box, Grid, Popover, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IChannel, IMessageReceived } from "./types";
 import { api, COOKIE_NAME } from "../../const/const";
 import { ChatList, ChatListProvider } from "../../contexts/ChatContext";
 import "./chat.style.scss"
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-
 
 function MessageList() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -30,7 +29,7 @@ function MessageList() {
 
     useEffect( () => {
       loadList();
-    }, [])
+      }, []);
 
   return (<ul className="chat__list__body">{MessageListItems}</ul>)
 }
