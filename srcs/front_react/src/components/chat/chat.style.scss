@@ -1,3 +1,5 @@
+@import "../../const.style.scss";
+
 $height_chat: calc(800 * var(--res));
 $width_chat: calc(450 * var(--res));
 
@@ -31,10 +33,27 @@ $width_chat: calc(450 * var(--res));
 .chat__list__body{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 1%;
+    padding: 3%;
     margin-top: 3%;
     margin-bottom: 3%;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar{
+        width: calc(14 * var(--res));
+        border-style: dashed;
+    }
+
+    &::-webkit-scrollbar-thumb{
+        background-color: $white-color;
+    }
+
+    &::-webkit-scrollbar-button:single-button {
+        background-color: $white-color;
+        display: block;
+        border-style: solid;
+        height: 4%;
+        width: 4%;
+    }
 }
 
 .chat__list__items {
@@ -43,10 +62,12 @@ $width_chat: calc(450 * var(--res));
     flex-direction: column;
     border-style: dashed;
     align-items: center;
-    margin: 2%;
-}
-
-//TODO ANIMATION TO TURN WHITE
-.chat__list__items:hover{
-    background-color: #ffffff;
+    margin: 2.4%;
+    transition: 300ms;
+    will-change: auto;
+    
+    &:hover {
+        transform: scale(1.10);
+        -webkit-transform: scale(1.10);
+    }
 }
