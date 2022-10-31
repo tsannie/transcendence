@@ -150,15 +150,5 @@ export class UserController {
   ): Promise<UserEntity[]> {
     const userTarget = await this.userService.findById(target.id);
     return await this.userService.addFriend(req.user, userTarget);
-  }
-
-  @Delete('removeFriend')
-  @UseGuards(JwtTwoFactorGuard)
-  async deleteFriend(
-    @Request() req,
-    @Body() target: TargetIdDto,
-  ): Promise<UserEntity[]> {
-    const userTarget = await this.userService.findById(target.id);
-    return await this.userService.removeFriend(req.user, userTarget);
   }*/
 }
