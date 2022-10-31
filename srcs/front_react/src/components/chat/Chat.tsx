@@ -1,13 +1,19 @@
-import { Box, Grid, Popover, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
-import { IChannel, IMessageReceived } from "./types";
-import { api, COOKIE_NAME } from "../../const/const";
-import { ChatList, ChatListProvider } from "../../contexts/ChatContext";
+import { IChannel } from "./types";
+import { api } from "../../const/const";
 import "./chat.style.scss"
-import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
+import { AuthContext, AuthContextType, AuthProvider, User } from "../../contexts/AuthContext";
+import { io } from "socket.io-client";
+import { SocketContext, SocketProvider } from "../../contexts/SocketContext";
+
+interface IProps {
+  user: User | null;
+}
 
 function MessageList() {
   const { user } = useContext(AuthContext) as AuthContextType;
+  const message = useContext(SocketContext);
+
   const [chatList, setChatList] = useState<IChannel[]>([]);
 
   const loadList = async () => {
@@ -27,9 +33,12 @@ function MessageList() {
           return (<li className="chat__list__items" key={conv.id}>{conv.users[0].username !== user?.username ? conv.users[0].username : conv.users[1].username}</li>)
     });
 
+    //EQUIVALENT TO COMPONENTDIDMOUNT
     useEffect( () => {
+      console.log("USER = ", user);
+      console.log("message = ", message);
       loadList();
-      }, []);
+    }, []);
 
   return (<ul className="chat__list__body">{MessageListItems}</ul>)
 }
@@ -39,7 +48,9 @@ function Chat() {
       <div className="chat">
         <div className="chat__list">
           <div className="chat__list__header">Channels</div>
-          <MessageList />
+            <SocketProvider>
+              <MessageList />
+            </SocketProvider>
         </div>
       </div>
   );
