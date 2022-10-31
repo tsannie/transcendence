@@ -54,16 +54,14 @@ export const TransitionProvider = ({ children }: IProps) => {
   }
 
   useEffect(() => {
-    console.log("location changed:", location);
-
     const newLvl = getTransitionStage(location.pathname);
 
     if (newLvl !== actualLvl && actualLvl !== TransitionPageLvl.NULL) {
-        if (actualLvl < newLvl) {
-          setTransistionStage("exit-up");
-        } else if (actualLvl > newLvl) {
-          setTransistionStage("exit-down");
-        }
+      if (actualLvl < newLvl) {
+        setTransistionStage("exit-up");
+      } else if (actualLvl > newLvl) {
+        setTransistionStage("exit-down");
+      }
     } else {
       setDisplayLocation(location);
     }

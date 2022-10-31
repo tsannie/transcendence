@@ -30,6 +30,7 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
           setIs2FA(res.data.isTwoFactor);
         })
         .catch((res) => {
+          logout();
           setIsLoad(true);
         });
 
@@ -43,9 +44,10 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
           setIsLoad(true);
         });
     } else {
+      logout();
       setIsLoad(true);
     }
-  }, []);
+  }, [location]);
 
   if (isLoad === true) {
     if (isLogin) {
@@ -53,19 +55,19 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
         <div className="menu">
           <Sidebar />
           <div className="content">
-          <div
-            className={`${transitionStage}`}
-            onAnimationEnd={() => {
-              if (transitionStage === "exit-up") {
-                setTransistionStage("bounce-in-up");
-                setDisplayLocation(location);
-              } else if (transitionStage === "exit-down") {
-                setTransistionStage("bounce-in-down");
-                setDisplayLocation(location);
-              }
-            }}
-          >
-            <div className="content__bg"></div>
+            <div
+              className={`${transitionStage}`}
+              onAnimationEnd={() => {
+                if (transitionStage === "exit-up") {
+                  setTransistionStage("bounce-in-up");
+                  setDisplayLocation(location);
+                } else if (transitionStage === "exit-down") {
+                  setTransistionStage("bounce-in-down");
+                  setDisplayLocation(location);
+                }
+              }}
+            >
+              <div className="content__bg"></div>
               <RouteComponent />
             </div>
           </div>
