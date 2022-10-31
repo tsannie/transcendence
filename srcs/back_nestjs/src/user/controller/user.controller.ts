@@ -116,9 +116,16 @@ export class UserController {
     return this.userService.deleteAvatar(req.user);
   }
 
-  @Get('get-friendlist')
+  @Get('friendlist')
   @UseGuards(JwtTwoFactorGuard)
-  async getFriendList(@Request() req): Promise<UserEntity[]> {
+  async friendList(@Request() req): Promise<UserEntity[]> {
     return await this.userService.getFriendList(req.user);
+  }
+
+  @Post('addfriend')
+  @UseGuards(JwtTwoFactorGuard)
+  async addFriend(@Request() req, @Body() target: TargetIdDto) {
+    const userTarget = await this.userService.findById(target.id);
+    return await this.userService.addFriend(req.user, userTarget);
   }
 }
