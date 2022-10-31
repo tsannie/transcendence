@@ -21,12 +21,11 @@ $width_chat: calc(450 * var(--res));
 }
 
 .chat__list__header {
-    font-size: calc(22 * var(--res));
-    border-bottom-style: dashed;
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
+    font-size: calc(22 * var(--res));
+    border-bottom-style: dashed;
     padding: 1% 1% 3% 1%;
 }
 
@@ -46,28 +45,28 @@ $width_chat: calc(450 * var(--res));
     &::-webkit-scrollbar-thumb{
         background-color: $white-color;
     }
-
-    &::-webkit-scrollbar-button:single-button {
-        background-color: $white-color;
-        display: block;
-        border-style: solid;
-        height: 4%;
-        width: 4%;
-    }
 }
 
 .chat__list__items {
     font-size: calc(20 * var(--res));
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
     border-style: dashed;
+    justify-content: center;
     align-items: center;
     margin: 2.4%;
-    transition: 300ms;
-    will-change: auto;
+    transition: 70ms;
     
     &:hover {
         transform: scale(1.10);
         -webkit-transform: scale(1.10);
     }
+}
+
+.notif {
+    gap: 20%;
+    border-radius: 100%;
+    height: 0.4em;
+    width: 0.4em;
+    background-color: $white-color;
 }

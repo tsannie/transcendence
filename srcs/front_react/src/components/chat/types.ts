@@ -13,8 +13,8 @@ export interface IMessageReceived {
   author: User | null; // IUser en theorie
   content: string;
   createdAt: Date;
-  dm?: any; // IDm en theorie
-  channel?: any; // IChannel en theorie
+  dm: any; // IDm en theorie
+  channel: any; // IChannel en theorie
 }
 
 export interface ICreateChannel {
@@ -35,6 +35,7 @@ export interface IChannel {
   admins: User[] | null;
   muted: User[] | null;
   banned: User[] | null;
+  notif: boolean;
 }
 
 export interface IChannelActions {
