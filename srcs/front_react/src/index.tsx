@@ -12,11 +12,9 @@ const root = createRoot(document.getElementById("root")!);
 root.render(
   <BrowserRouter>
     <AuthProvider>
-      <SocketProvider>
-        <TransitionProvider>
-          <App />
-        </TransitionProvider>
-      </SocketProvider>
+      <TransitionProvider>
+        <App />
+      </TransitionProvider>
     </AuthProvider>
   </BrowserRouter>
 );

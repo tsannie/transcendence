@@ -1,41 +1,40 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
-import { api } from "../const/const";
-import { MessagesContext } from "./MessagesContext";
+import { io } from "socket.io-client";
+import { AuthContext, AuthContextType } from "./AuthContext";
 
-export const SocketContext = createContext<Socket>(io());
+export const SocketContext = createContext(null);
 
 interface SocketProviderProps {
   children: JSX.Element | JSX.Element[];
 }
 
 export const SocketProvider = ({ children }: SocketProviderProps) => {
-  const [userid, setUserid] = useState(0);
+  const { user } = useContext(AuthContext) as AuthContextType;
+  const [ message, setMessage ] = useState(null);
+
   const socket = io("http://localhost:4000/chat", {
     query: {
-      userId: userid,
+      userId: user?.id,
     },
   });
 
-  async function getUser() {
-    console.log("get user");
-    await api
-      .get("auth/profile")
-      .then((res) => {
-        setUserid(res.data.id);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-      });
-  }
-
   useEffect(() => {
-    getUser();
-    console.log("socket provider");
-    socket.on("connect", () => console.log("connected to socket"));
-  }, [socket]);
+    if (socket)
+    {
+      socket.on("connect", () => console.log("connected to socket"));
+      socket.on("message", (data) => {
+          console.log("DATA IN PROVIDER = ", data);
+          setMessage(data);
+    })
+    };
+
+    return ( () => {
+      socket.off("connect");
+      socket.off("message");
+    })
+  }, []);
 
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={message}>{children}</SocketContext.Provider>
   );
 };
