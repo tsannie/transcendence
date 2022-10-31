@@ -35,6 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       blocked: true,
       dms: true,
       friends: true,
+      friend_requests: true,
     });
   }
 }

@@ -122,10 +122,43 @@ export class UserController {
     return await this.userService.getFriendList(req.user);
   }
 
-  @Post('addfriend')
+  @Post('accept-friend-request')
   @UseGuards(JwtTwoFactorGuard)
-  async addFriend(@Request() req, @Body() target: TargetIdDto) {
+  async acceptFriendRequest(@Request() req, @Body() target: TargetIdDto) {
+    const userTarget = await this.userService.findById(target.id);
+    return await this.userService.acceptFriendRequest(req.user, userTarget);
+  }
+
+  @Post('create-friend-request')
+  @UseGuards(JwtTwoFactorGuard)
+  async createFriendRequest(@Request() req, @Body() target: TargetIdDto) {
+    const userTarget = await this.userService.findById(target.id);
+    return await this.userService.createFriendRequest(req.user, userTarget);
+  }
+
+  @Get('friend-request')
+  @UseGuards(JwtTwoFactorGuard)
+  async getFriendRequest(@Request() req): Promise<UserEntity[]> {
+    return await this.userService.getFriendRequest(req.user);
+  }
+
+  /*@Post('addfriend')
+  @UseGuards(JwtTwoFactorGuard)
+  async addFriend(
+    @Request() req,
+    @Body() target: TargetIdDto,
+  ): Promise<UserEntity[]> {
     const userTarget = await this.userService.findById(target.id);
     return await this.userService.addFriend(req.user, userTarget);
   }
+
+  @Delete('removeFriend')
+  @UseGuards(JwtTwoFactorGuard)
+  async deleteFriend(
+    @Request() req,
+    @Body() target: TargetIdDto,
+  ): Promise<UserEntity[]> {
+    const userTarget = await this.userService.findById(target.id);
+    return await this.userService.removeFriend(req.user, userTarget);
+  }*/
 }

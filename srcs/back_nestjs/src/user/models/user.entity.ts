@@ -41,6 +41,10 @@ export class UserEntity {
   @JoinTable()
   friends: UserEntity[];
 
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  friend_requests: UserEntity[];
+
   @OneToMany(() => ChannelEntity, (channels) => channels.owner, {
     nullable: true,
   })
