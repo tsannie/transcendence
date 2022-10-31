@@ -37,7 +37,8 @@ export class UserEntity {
   @Column({ nullable: true })
   secret2FA: string;
 
-  @OneToMany(() => UserEntity, (user) => user.id)
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
   friends: UserEntity[];
 
   @OneToMany(() => ChannelEntity, (channels) => channels.owner, {

@@ -50,7 +50,7 @@ export class UserService {
     return await this.allUser.findOne(findOptions);
   }
 
-  // find user by name
+  // TODO delete and replace by id
   async findByName(
     username: string,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
@@ -106,20 +106,18 @@ export class UserService {
     input_id: number,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
   ): Promise<UserEntity> {
-    if (!relations_ToLoad) {
-      return await this.allUser.findOne({
-        where: {
-          id: input_id,
-        },
-      });
-    } else {
-      return await this.allUser.findOne({
-        where: {
-          id: input_id,
-        },
-        relations: relations_ToLoad,
-      });
-    }
+    const user = await this.allUser.findOne({
+      where: {
+        id: input_id,
+      },
+      relations: relations_ToLoad,
+    });
+
+    if (!user)
+      throw new UnprocessableEntityException(
+        `User ${input_id} is not registered in database.`,
+      );
+    return user;
   }
 
   // TODO DELETE
@@ -306,5 +304,16 @@ export class UserService {
   async getFriendList(user: UserEntity): Promise<UserEntity[]> {
     if (!user.friends) return [];
     return user.friends;
+  }
+
+  async addFriend(user: UserEntity, friend: UserEntity): Promise<UserEntity> {
+    if (user.friends) {
+      if (user.friends.find((elem) => elem.username === friend.username))
+        throw new UnprocessableEntityException(
+          `You've already added ${friend.username} as friend.`,
+        );
+      else user.friends.push(friend);
+    } else user.friends = [friend];
+    return await this.allUser.save(user);
   }
 }
