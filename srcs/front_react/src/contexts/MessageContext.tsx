@@ -3,13 +3,13 @@ import { io } from "socket.io-client";
 import { IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
 
-export const SocketContext = createContext<IMessageReceived | null>(null);
+export const MessageContext = createContext<IMessageReceived | null>(null);
 
-interface SocketProviderProps {
+interface MessageProviderProps {
   children: JSX.Element | JSX.Element[];
 }
 
-export const SocketProvider = ({ children }: SocketProviderProps) => {
+export const MessageProvider = ({ children }: MessageProviderProps) => {
   const { user } = useContext(AuthContext) as AuthContextType;
   const [ message, setMessage ] = useState(null);
 
@@ -37,6 +37,6 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={message}>{children}</SocketContext.Provider>
+    <MessageContext.Provider value={message}>{children}</MessageContext.Provider>
   );
 };
