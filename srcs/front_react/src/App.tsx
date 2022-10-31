@@ -12,7 +12,6 @@ import Profile from "./components/profile/Profile";
 import Background from "./components/background/Background";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 import GamePage from "./components/game/GamePage";
-import Chat from "./components/chat/Chat";
 import {
   TransitionContext,
   TransitionContextType,
@@ -40,7 +39,7 @@ export default function App() {
               path="/profile"
               element={<PrivateRoute component={Profile} />}
             />
-            <Route path="/chat" element={<PrivateRoute component={Chat} />} />
+            <Route path="/chat" element={<PrivateRoute component={Home} />} />
             <Route
               path="/game"
               element={<PrivateRoute component={GamePage} />}
