@@ -1,19 +1,20 @@
-import { Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { Request } from "express";
-import { ExtractJwt, Strategy } from "passport-jwt";
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Request } from 'express';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/user/service/user.service';
-import { IPayload } from "../models/payload.interface";
+import { IPayload } from '../models/payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([ //TODO add baerer ?
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        //TODO add baerer ?
         (request: Request) => {
-          console.log('hello')
+          console.log('hello');
           const cookie = request?.cookies['AuthToken'];
-          console.log('cookie', cookie)
+          console.log('cookie', cookie);
           return cookie ? cookie.access_token : null;
         },
       ]),
@@ -22,15 +23,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {  // TODO all check for validate jeton
+  async validate(payload: any) {
+    // TODO all check for validate jeton
     //console.log(payload)
     //console.log( await this.userService.findByName(payload.username));
-    return await this.userService.findByName(payload.username, {  // TODO add check for user
-		owner_of: true,
-		admin_of: true,
-		channels: true,
-		blocked: true,
-		dms: true
-	});
+    return await this.userService.findByName(payload.username, {
+      // TODO add check for user
+      owner_of: true,
+      admin_of: true,
+      channels: true,
+      blocked: true,
+      dms: true,
+      friends: true,
+    });
   }
 }
