@@ -4,21 +4,40 @@ import { MessageProvider } from "../../contexts/MessageContext";
 import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
 import { useContext } from "react";
 
+function Channel(props: any) {
+  return (
+      <div>
+        <h3>ChannelId : {props.id}</h3>
+      </div>
+      );
+}
+
+function Dm(props: any) {
+  return (
+    <div>
+        <div className="conversation__target" />
+        <div className="conversation__content"></ div>
+      </div>
+      );
+}
+
 function Conversation() {
   const { currentConvId, isChannel } = useContext(ChatStateContext);
 
-  return (<div>
-      <h3>Hello World : {currentConvId} IsChannel ? {isChannel ? "True": "false"}</h3>
-    </ div>)
+  if (isChannel)
+    return <Channel id={currentConvId}/>  
+  else
+    return <Dm id={currentConvId}/>
 }
 
 function ChatBody() {
   const {display} = useContext(ChatStateContext);
-  if (display === ChatType.CONV)
-    return <Conversation />
-  else if (display === ChatType.FORM)
+
+  // if (display === ChatType.CONV)
+    return (<div className="conversation"><Conversation /></div>)
+  // else if (display === ChatType.FORM)
     return (<div></div>)
-  else
+  // else
     return (<div></div>)
 }
 
