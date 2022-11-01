@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import { MessageEntity } from '../models/message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { BanMuteService } from 'src/channel/service/banmute.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { Server } from 'socket.io';
 import { ChannelService } from 'src/channel/service/channel.service';
