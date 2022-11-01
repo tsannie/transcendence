@@ -4,7 +4,7 @@ import { UserEntity } from '../models/user.entity';
 import { TargetNameDto, TargetIdDto, AvatarDto } from '../dto/target.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateResult } from 'typeorm';
-import { NewUsernameDto } from '../models/newusername.dto';
+import { NewUsernameDto } from '../dto/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express } from 'express'
 import { AvatarFormatValidator, AvatarFormatValidatorOptions } from '../pipes/filevalidation.validator';
