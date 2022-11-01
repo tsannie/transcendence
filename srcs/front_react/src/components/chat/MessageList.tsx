@@ -10,7 +10,7 @@ import  {ReactComponent as GroupChatIcon} from "../../assets/img/icon/groupchat.
 function MessageList() {
     const { user } = useContext(AuthContext) as AuthContextType;
     const message = useContext(MessageContext);
-    const { display, changeDisplay, currentConvId, changeCurrentConv } = useContext(ChatStateContext);
+    const { changeDisplay, changeCurrentConv, changeIsChannel } = useContext(ChatStateContext);
 
     const [chatList, setChatList] = useState<IChannel[]>([]);
   
@@ -44,11 +44,23 @@ function MessageList() {
       setChatList(newList);
     }
 
-    //TODO SEARCH ITEM BY ID AND EDIT the NOTIF field if it exists
-    const clickItem = (data: string) => {
-      console.log(data)
+    const disableNotif = (conv: IChannel) => {
+      let newList = [...chatList];
+      let editable_room = newList.find( (elem) => elem.id === conv.id);
+      if (editable_room)
+        editable_room.notif = false;
+      setChatList(newList);
+    }
+
+    const clickItem = (conv: IChannel) => {
       changeDisplay(ChatType.CONV);
-      changeCurrentConv(data);
+      changeCurrentConv(conv.id);
+      if (conv.name)
+        changeIsChannel(true);
+      else
+        changeIsChannel(false);
+      if (conv.notif)
+        disableNotif(conv);
     }
   
     const MessageListItems = chatList.map( (conv: any) => {
@@ -61,10 +73,9 @@ function MessageList() {
         {
           user2 = conv.users[0].username !== user?.username ? conv.users[0] : conv.users[1];
           title = user2?.username;
-          console.log(user2?.profile_picture + "&size=small")
         }
         return (
-            <li className="chat__list__items" key={conv.id} onClick={ () => clickItem(conv.id)}>
+            <li className="chat__list__items" key={conv.id} onClick={ () => clickItem(conv)}>
               {user2 ? <img src={user2.profile_picture + "&size=small"} className="avatar"></img> : <GroupChatIcon className="avatar" />}
               {title}
               {conv.notif ? <div className="notif" /> : null}
