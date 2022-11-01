@@ -5,7 +5,7 @@ import "./chat.style.scss"
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
-
+import  {ReactComponent as GroupChatIcon} from "../../assets/img/icon/groupchat.svg";
   
 function MessageList() {
     const { user } = useContext(AuthContext) as AuthContextType;
@@ -52,18 +52,24 @@ function MessageList() {
     }
   
     const MessageListItems = chatList.map( (conv: any) => {
-      /* Imbricated ternary operators. First one is to distinguate DM from Channel, and second one is to get the name of other user, than us */
-        const conv_title = conv.name ? conv.name : (conv.users[0].username !== user?.username ? conv.users[0].username : conv.users[1].username);
-        
-        if (conv.notif)
-            return (
-            <li className="chat__list__items" key={conv.id}>
-              <div className="notif" />
-                {conv_title}
+        let title : string | undefined;
+        let user2: User | null = null;
+
+        if (conv.name)
+          title = conv.name;
+        else
+        {
+          user2 = conv.users[0].username !== user?.username ? conv.users[0] : conv.users[1];
+          title = user2?.username;
+          console.log(user2?.profile_picture + "&size=small")
+        }
+        return (
+            <li className="chat__list__items" key={conv.id} onClick={ () => clickItem(conv.id)}>
+              {user2 ? <img src={user2.profile_picture + "&size=small"} className="avatar"></img> : <GroupChatIcon className="avatar" />}
+              {title}
+              {conv.notif ? <div className="notif" /> : null}
             </li>
             )
-        else
-          return <li className="chat__list__items" key={conv.id} onClick={ () => clickItem(conv.id)}>{conv_title}</li>
       });
   
       //EQUIVALENT TO COMPONENTDIDMOUNT

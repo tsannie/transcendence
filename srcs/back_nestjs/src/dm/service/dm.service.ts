@@ -43,6 +43,7 @@ export class DmService {
       .leftJoin('dm.users', 'users')
       .addSelect('users.id')
       .addSelect('users.username')
+      .addSelect('users.profile_picture')
       .getOne();
 
     return ret;
@@ -73,6 +74,7 @@ export class DmService {
         .createQueryBuilder('dm')
         .leftJoin('dm.users', 'users')
         .addSelect('users.username')
+        .addSelect('users.profile_picture')
         .where('dm.id IN (:...ids)', { ids: user.dms.map((elem) => elem.id) })
         .getMany();
     }
