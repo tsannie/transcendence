@@ -12,6 +12,8 @@ export interface ChatContextInterface {
     changeDisplay: (newDisplay: ChatType) => void;
     currentConvId: string;
     changeCurrentConv: (newConv: string) => void;
+    isChannel: boolean;
+    changeIsChannel: (newIsChannel: boolean) => void;
 }
 
 
@@ -24,6 +26,7 @@ interface ChatStateProviderProps {
 export const ChatStateProvider = ({ children }: ChatStateProviderProps) => {
     const [ display, setDisplay ] = useState<ChatType>(ChatType.EMPTY);
     const [ currentConvId, setCurrentConv ] = useState<string>("");
+    const [ isChannel, setIsChannel ] = useState<boolean>(false);
 
     const changeDisplay = (newDisplay: ChatType) => {
       setDisplay(newDisplay);
@@ -32,8 +35,12 @@ export const ChatStateProvider = ({ children }: ChatStateProviderProps) => {
     const changeCurrentConv = (newConv: string) => {
         setCurrentConv(newConv);
     }
+
+    const changeIsChannel = (newIsChannel: boolean) => {
+      setIsChannel(newIsChannel);
+    }
   
     return (
-      <ChatStateContext.Provider value={{display, changeDisplay, currentConvId, changeCurrentConv}}>{children}</ChatStateContext.Provider>
+      <ChatStateContext.Provider value={{display, changeDisplay, currentConvId, changeCurrentConv, isChannel, changeIsChannel}}>{children}</ChatStateContext.Provider>
     )
 } 
