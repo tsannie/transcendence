@@ -4,13 +4,22 @@ import { MessageProvider } from "../../contexts/MessageContext";
 import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
 import { useContext } from "react";
 
+function Conversation() {
+  const { currentConvId, isChannel } = useContext(ChatStateContext);
+
+  return (<div>
+      <h3>Hello World : {currentConvId} IsChannel ? {isChannel ? "True": "false"}</h3>
+    </ div>)
+}
+
 function ChatBody() {
-  const {display, currentConvId} = useContext(ChatStateContext);
+  const {display} = useContext(ChatStateContext);
   if (display === ChatType.CONV)
-    return (<div>
-        <h3>{currentConvId}</h3></div>)
+    return <Conversation />
+  else if (display === ChatType.FORM)
+    return (<div></div>)
   else
-      return (<div></div>)
+    return (<div></div>)
 }
 
 function Chat() {
@@ -20,8 +29,10 @@ function Chat() {
         <ChatStateProvider>
           {/* This loads the left part of the chat page with the list of convs */}
           <MessageList />
+
           {/* This loads the right part of the chat */}
           <ChatBody />
+
         </ChatStateProvider>
         </MessageProvider>
       </div>
