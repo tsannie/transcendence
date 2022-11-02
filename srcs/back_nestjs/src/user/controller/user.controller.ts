@@ -132,7 +132,10 @@ export class UserController {
   @Post('create-friend-request')
   @UseGuards(JwtTwoFactorGuard)
   async createFriendRequest(@Request() req, @Body() target: TargetIdDto) {
-    const userTarget = await this.userService.findById(target.id);
+    const userTarget = await this.userService.findById(target.id, {
+      friend_requests: true,
+    });
+    console.log(userTarget);
     return await this.userService.createFriendRequest(req.user, userTarget);
   }
 

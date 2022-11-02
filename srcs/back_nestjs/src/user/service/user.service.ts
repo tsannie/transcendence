@@ -136,10 +136,6 @@ export class UserService {
     return await this.allUser.clear();
   }
 
-  async editUser() {
-    await this.allUser.update(1, { username: 'newuser' });
-  }
-
   // turn enabled2FA to true for user
   async enable2FA(userId: number) {
     // TODO update user ?
@@ -314,6 +310,7 @@ export class UserService {
         `You are already friends with ${target.username}`,
       );
 
+    console.log('==HELLO==');
     const allRequestsUser = user.friend_requests;
     let allRequestsTarget = target.friend_requests;
 
@@ -331,9 +328,13 @@ export class UserService {
       throw new UnprocessableEntityException(
         `You already received a friend request from ${target.username}`,
       );
+    console.log('==HELLO2==');
 
     if (!allRequestsTarget) allRequestsTarget = [user];
     else target.friend_requests.push(user);
+    console.log('==HELLO3==');
+    console.log(target);
+
     return await this.allUser.update(target.id, {
       friend_requests: allRequestsTarget,
     });
