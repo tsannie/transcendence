@@ -7,8 +7,8 @@ export type User = {
   email: string;
   enabled2FA: boolean;
   profile_picture: string;
-  channels: any[]; // changer en IUser[] plus tard ou a retirer
-  owner_of: any; // changer en IUser plus tard ou a retirer
+  friends: User[];
+  friends_requests: User[];
 };
 
 export type AuthContextType = {
