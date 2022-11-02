@@ -65,6 +65,7 @@ export class MessageService {
       .addSelect('message.content')
       .leftJoin('message.author', 'author')
       .addSelect('author.username')
+      .addSelect('author.id')
       .leftJoin(`message.${type}`, `${type}`)
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
@@ -100,9 +101,9 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(data: MessageDto): Promise<MessageEntity> {
+  async addMessagetoChannel(data: MessageDto, userId: string): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
-    const user = await this.userService.findByName(data.author.username, {
+    const user = await this.userService.findById(userId, {
       dms: true,
       channels: true,
       admin_of: true,
@@ -123,15 +124,17 @@ export class MessageService {
   }
 
   /* TODO modify input */
-  async addMessagetoDm(data: MessageDto): Promise<MessageEntity> {
+  async addMessagetoDm(data: MessageDto, userId: string): Promise<MessageEntity> {
     console.log('addMessagetoDm = ', data);
     //TODO change input type(DTO over interface) and load less from user
-    const user = await this.userService.findByName(data.author.username, {
+    const user = await this.userService.findById(userId, {
       dms: true,
       channels: true,
       admin_of: true,
       owner_of: true,
     });
+    if (!user)
+      throw new UnprocessableEntityException('User does not exist in database.');
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
     const message = new MessageEntity();
@@ -145,7 +148,7 @@ export class MessageService {
   // emit message to all users in dm
   async emitMessageDm(socket: Server, lastMessage: MessageEntity) {
     for (const dmUser of lastMessage.dm.users) {
-      const user = await this.userService.findByName(dmUser.username, {
+      const user = await this.userService.findById(dmUser.id, {
         connections: true,
         dms: true,
         channels: true,
@@ -176,7 +179,7 @@ export class MessageService {
 
     if (users) {
       for (const channelUser of users) {
-        const user = await this.userService.findByName(channelUser.username, {
+        const user = await this.userService.findById(channelUser.id, {
           connections: true,
           dms: true,
           channels: true,

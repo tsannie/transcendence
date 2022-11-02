@@ -62,7 +62,7 @@ export class MessageGateway
       let user: UserEntity;
       console.log('userId = ', userId);
       if (typeof userId === 'string') {
-        user = await this.userService.findById(parseInt(userId));
+        user = await this.userService.findById(userId);
       }
       if (!user) {
         return this.disconnect(client);
@@ -71,7 +71,7 @@ export class MessageGateway
 
         connectedUser.socketId = client.id;
         connectedUser.user = user;
-        this.connectedUserService.create(connectedUser);
+        await this.connectedUserService.create(connectedUser);
       }
     } catch {
       return this.disconnect(client);
@@ -95,15 +95,15 @@ export class MessageGateway
     @MessageBody() data: MessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('data = ', data);
-    this.logger.log('client id = ', client.id);
-
+    const userId = client.handshake.query.userId;
+    console.log("client = ", client);
     if (data.isDm === true) {
-      const lastMsg = await this.messageService.addMessagetoDm(data);
+      console.log(userId.toString());
+      const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
 
       await this.messageService.emitMessageDm(this.server, lastMsg);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(data);
+      const lastMsg = await this.messageService.addMessagetoChannel(data, userId.toString());
 
       await this.messageService.emitMessageChannel(this.server, lastMsg);
     }

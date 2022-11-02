@@ -112,7 +112,7 @@ export class UserService {
 
   // find user by id
   async findById(
-    input_id: number,
+    input_id: string,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
   ): Promise<UserEntity> {
     if (!relations_ToLoad) {
@@ -162,7 +162,7 @@ export class UserService {
     return await this.allUser.update(userId, { enabled2FA: false });
   }
 
-  async setSecret2FA(userId: number, secret: string) {
+  async setSecret2FA(userId: string, secret: string) {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 
