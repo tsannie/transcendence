@@ -18,10 +18,14 @@ function ProfileHeader(props: IProps) {
           />
         </div>
         <div className="profile__header__user__info">
-          <h2>{props.user?.username}</h2>
-          <div className="profile__header__user__info__elo">
-            <MedalIcon />
-            <span>789 PP</span>
+          <div className="name">
+            <h2>{props.user?.username}</h2>
+          </div>
+          <div className="elo">
+            <div className="elo__item">
+              <MedalIcon />
+              <span>789 PP</span>
+            </div>
           </div>
         </div>
       </div>
