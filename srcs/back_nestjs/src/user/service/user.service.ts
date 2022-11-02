@@ -55,33 +55,18 @@ export class UserService {
     username: string,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
   ): Promise<UserEntity> {
-    if (!relations_ToLoad) {
-      return await this.allUser.findOne({
-        where: {
-          username: username,
-        },
-      });
-    } else {
-      return await this.allUser.findOne({
-        where: {
-          username: username,
-        },
-        relations: relations_ToLoad,
-      });
-    }
-  }
+    const user = await this.allUser.findOne({
+      where: {
+        username: username,
+      },
+      relations: relations_ToLoad,
+    });
 
-  //same as findbyName but throw error if not found
-  async findUser(
-    username: string,
-    relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
-  ): Promise<UserEntity> {
-    let user = await this.findByName(username, relations_ToLoad);
     if (!user)
       throw new UnprocessableEntityException(
-        `User ${user} is not registered in database.`,
+        `User ${username} is not registered in database.`,
       );
-    else return user;
+    return user;
   }
 
   // find user by mail
@@ -98,7 +83,13 @@ export class UserService {
     userId: number,
     newUsername: string,
   ): Promise<UpdateResult> {
-    return await this.allUser.update(userId, { username: newUsername });
+    try {
+      return await this.allUser.update(userId, {
+        username: newUsername.toLowerCase().replace(/ /g, ''),
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(`Username already taken.`);
+    }
   }
 
   // find user by id

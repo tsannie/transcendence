@@ -1,4 +1,5 @@
 import React, { FormEvent, Fragment, KeyboardEvent, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
 import { api } from "../../const/const";
 
@@ -10,7 +11,7 @@ interface IUserSearch {
 function SearchBar() {
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
   const [lengthDictionary, setLengthDictionary] = useState<number>(0);
-  const [activeSuggestion, setActiveSuggestion] = useState<number>(0);
+  const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
   const [suggestions, setSuggestions] = useState<IUserSearch[]>([]);
   const [userInput, setUserInput] = useState<string>("");
 
@@ -68,13 +69,13 @@ function SearchBar() {
     setUserInput(userInput);
     setSuggestions(dictionary);
     setShowSuggestion(userInput.length > 0 ? true : false);
-    setActiveSuggestion(0);
+    setActiveSuggestion(userInput.length > 0 ? 0 : -1);
   };
 
   const handleOnKeyDown = (e: KeyboardEvent) => {
-    if (!showSuggestion) return;
     // Up key
     if (e.key === "ArrowUp") {
+      if (!showSuggestion) return;
       e.preventDefault();
       if (activeSuggestion === 0) {
         return;
@@ -83,6 +84,7 @@ function SearchBar() {
     }
     // Down key
     else if (e.key === "ArrowDown") {
+      if (!showSuggestion) return;
       e.preventDefault();
       if (activeSuggestion + 1 === lengthDictionary) {
         return;
@@ -91,9 +93,14 @@ function SearchBar() {
     }
     // Enter key
     else if (e.key === "Enter") {
-      setActiveSuggestion(0);
-      setShowSuggestion(false);
-      setUserInput(suggestions[activeSuggestion].username);
+      e.preventDefault();
+      if (!showSuggestion && userInput) {
+        window.location.href = "/profile/" + userInput;
+      } else if (activeSuggestion !== -1) {
+        setActiveSuggestion(0);
+        setShowSuggestion(false);
+        setUserInput(suggestions[activeSuggestion].username);
+      }
     }
   };
 
