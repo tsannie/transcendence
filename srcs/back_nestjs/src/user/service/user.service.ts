@@ -128,6 +128,8 @@ export class UserService {
         channels: true,
         blocked: true,
         admin_of: true,
+        friend_requests: true,
+        friends: true,
       },
     });
   }
@@ -305,40 +307,35 @@ export class UserService {
   }
 
   async createFriendRequest(user: UserEntity, target: UserEntity) {
+    if (user.id === target.id)
+      throw new UnprocessableEntityException(`You cannot add yourself.`);
     if (user.friends && user.friends.find((elem) => elem.id === target.id))
       throw new UnprocessableEntityException(
         `You are already friends with ${target.username}`,
       );
 
-    console.log('==HELLO==');
-    const allRequestsUser = user.friend_requests;
-    let allRequestsTarget = target.friend_requests;
-
     if (
-      allRequestsTarget &&
-      allRequestsTarget.find((elem) => elem.id === user.id)
+      target.friend_requests &&
+      target.friend_requests.find((elem) => elem.id === user.id)
     )
       throw new UnprocessableEntityException(
         `You already sent a friend request to ${target.username}`,
       );
     else if (
-      allRequestsUser &&
-      allRequestsUser.find((elem) => elem.id === target.id)
+      target.friend_requests &&
+      target.friend_requests.find((elem) => elem.id === target.id)
     )
       throw new UnprocessableEntityException(
         `You already received a friend request from ${target.username}`,
       );
-    console.log('==HELLO2==');
 
-    if (!allRequestsTarget) allRequestsTarget = [user];
+    if (!target.friend_requests) target.friend_requests = [user];
     else target.friend_requests.push(user);
-    console.log('==HELLO3==');
-    console.log(target);
 
-    return await this.allUser.update(target.id, {
-      friend_requests: allRequestsTarget,
-    });
-    //return await this.allUser.save(target);
+    /* return await this.allUser.update(target.id, {    // method to update is ok but not working bc typeorm bug
+      friend_requests: target.friend_requests,
+    }); */
+    await this.allUser.save(target);
   }
 
   async getFriendRequest(user: UserEntity): Promise<UserEntity[]> {
@@ -351,34 +348,57 @@ export class UserService {
         `You are already friends with ${target.username}`,
       );
 
-    const allRequestsUser = user.friend_requests;
-    const allRequestsTarget = target.friend_requests;
-
     if (
-      !allRequestsTarget ||
-      !allRequestsTarget.find((elem) => elem.id === user.id)
-    )
-      throw new UnprocessableEntityException(
-        `You don't have any friend request from ${target.username}`,
-      );
-    else if (
-      !allRequestsUser ||
-      !allRequestsUser.find((elem) => elem.id === target.id)
+      !user.friend_requests ||
+      !user.friend_requests.find((elem) => elem.id === target.id)
     )
       throw new UnprocessableEntityException(
         `You don't have any friend request to ${target.username}`,
       );
 
-    user.friends.push(target);
-    target.friends.push(user);
+    if (!user.friends) user.friends = [target];
+    else user.friends.push(target);
+    if (!target.friends) target.friends = [user];
+    else target.friends.push(user);
+
     user.friend_requests = user.friend_requests.filter(
       (elem) => elem.id !== target.id,
     );
-    target.friend_requests = target.friend_requests.filter(
-      (elem) => elem.id !== user.id,
+
+    await this.allUser.save(user);
+    await this.allUser.save(target);
+  }
+
+  async removeFriend(
+    user: UserEntity,
+    target: UserEntity,
+  ): Promise<UserEntity[]> {
+    if (!user.friends || !user.friends.find((elem) => elem.id === target.id))
+      throw new UnprocessableEntityException(
+        `You are not friends with ${target.username}`,
+      );
+
+    user.friends = user.friends.filter((elem) => elem.id !== target.id);
+    target.friends = target.friends.filter((elem) => elem.id !== user.id);
+
+    await this.allUser.save(target);
+    await this.allUser.save(user);
+    return user.friends;
+  }
+
+  async refuseFriendRequest(user: UserEntity, target: UserEntity) {
+    if (
+      !user.friend_requests ||
+      !user.friend_requests.find((elem) => elem.id === target.id)
+    )
+      throw new UnprocessableEntityException(
+        `You don't have any friend request to ${target.username}`,
+      );
+
+    user.friend_requests = user.friend_requests.filter(
+      (elem) => elem.id !== target.id,
     );
 
     await this.allUser.save(user);
-    return await this.allUser.save(target);
   }
 }

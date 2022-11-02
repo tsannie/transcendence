@@ -22,12 +22,17 @@ export default function Sidebar() {
   const path = useLocation().pathname;
 
   const handleLogout = () => {
-    api.get("/auth/logout").then((res) => {
-      setMessage("bye bye");
-      setSeverity("info");
-      setOpenSnackbar(true);
-      logout();
-    });
+    api
+      .get("/auth/logout")
+      .then((res) => {
+        setMessage("bye bye");
+        setSeverity("info");
+        setOpenSnackbar(true);
+        logout();
+      })
+      .catch((err) => {
+        logout();
+      });
   };
 
   return (
