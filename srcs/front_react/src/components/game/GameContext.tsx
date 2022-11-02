@@ -80,7 +80,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
 
     socket.on("joinedRoom", (theroom: any) => {
 
-      console.log("theroom.status", theroom.status);
+      //console.log("theroom.status", theroom.status);
       
       setStatus(theroom.status);
       

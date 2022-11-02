@@ -23,6 +23,16 @@ export function mouv_ball(set: SetEntity) {
 
   // colision to wall up and down
 
+/*   if (set.ball.x - rad <= 0)
+  {
+    console.log('col wall');
+  set.ball.direction_x *= -1;
+  }
+  if (set.ball.x + rad >= canvas_back_width)
+  {
+    console.log("change direction x");
+    set.ball.direction_x *= -1;
+  } */
   if (set.ball.y + rad >= canvas_back_height)
     set.ball.direction_y *= -1;
   else if (set.ball.y - rad <= 0) 

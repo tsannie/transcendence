@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RoomEntity } from '../game_entity/room.entity';
 import { GameService } from '../game_service/game.service';
 
@@ -14,6 +14,12 @@ export class GameController {
   @Get('/game_to_spec')
   spec(): Promise<RoomEntity[]> {
     return this.gameService.findAll();
+  }
+
+  @Get('/ball')
+  ball(@Query() room_name: any) {
+    console.log("qweqwe", room_name);
+    return this.gameService.get_ball(room_name.room);
   }
 
   @Get('/del')

@@ -6,7 +6,7 @@ export function draw_line(
   ctx.beginPath();
 
   for (let x = 10; x < canvas_height - 10; x += 40)
-    ctx.rect(canvas_width / 2, x, 6, 30);
+    ctx.rect((canvas_width / 2) - 3, x, 6, 30);
   ctx.fillStyle = "white";
   ctx.lineWidth = 1;
   ctx.shadowBlur = 0;
@@ -130,11 +130,9 @@ export function draw_smasher(
 
 export function draw_paddle(ctx: any , IPaddle : any, height : any, width : any){
 
-  //console.log (IPaddle);
-
   ctx.beginPath();
   ctx.rect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
-  ctx.fillStyle = "yellow";
+  ctx.fillStyle = "white";
   ctx.lineWidth = 1;
   ctx.shadowBlur = 0;
   ctx.shadowColor = "blue";
