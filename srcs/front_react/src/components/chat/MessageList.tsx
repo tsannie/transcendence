@@ -85,7 +85,9 @@ function MessageList() {
   
       //EQUIVALENT TO COMPONENTDIDMOUNT
       useEffect( () => {
-        loadList();
+        const async_fct = async () => await loadList(); 
+        
+        async_fct();
       }, []);
   
       useEffect( () => {
