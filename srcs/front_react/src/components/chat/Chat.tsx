@@ -24,13 +24,21 @@ function Dm(props: any) {
 
   const { newMessage, changeNewMessage } = useContext(MessageContext);
 
+  const loadDm = async () => {
+    await api
+      .get("/dm/getById", {params: {id: props.id}})
+      .then((res) => {
+        setDm(res.data);
+      })
+      .catch( () => console.log("Axios Error"));
+  }
+
   const loadMessage = async () => {
     await api
       .get("/message/dm", {params: {id: props.id, offset: offset}})
       .then((res) => {
-        console.log(res.data);
         setMessages(res.data);
-        setOffset(offset + 1);
+        setOffset(0);
       })
       .catch( () => console.log("Axios Error"));
   }
@@ -45,12 +53,21 @@ function Dm(props: any) {
     });
 
   useEffect( () => {
-    loadMessage();
-  }, []);
+    console.log("newProps.id", props.id);
+    const async_func = async () => {
+      await loadDm();
+      await loadMessage();
+    };
+    
+    async_func();
+  }, [props.id]);
 
   useEffect ( () => {
-    addMessage(newMessage);
-    changeNewMessage(null);
+    if (newMessage && newMessage?.dm.id == dm.id)
+    {  
+      addMessage(newMessage);
+      // changeNewMessage(null);
+    }
   }, [newMessage]);
 
   return (
