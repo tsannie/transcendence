@@ -7,6 +7,7 @@ $search_bar_size: calc(250 * var(--res));
 }
 
 .profile {
+  width: calc(750 * var(--res));
   display: flex;
   flex-direction: column;
   border-style: dashed;
@@ -15,30 +16,49 @@ $search_bar_size: calc(250 * var(--res));
 }
 
 .profile__header {
+  width: 100%;
+  white-space: normal;
   display: flex;
   justify-content: space-between;
 }
 
 .profile__header__user {
   display: flex;
+  flex: 0 0 60%;
 }
 
 .profile__header__user__info {
   display: flex;
   flex-direction: column;
+  word-break: break-all;
 
-  margin-left: calc(30 * var(--res));
-}
-
-.profile__header__user__info__elo {
-  display: flex;
-  align-items: center;
+  h2 {
+    margin: 0;
+  }
   svg {
     width: calc(35 * var(--res));
   }
   span {
     margin-left: calc(10 * var(--res));
   }
+
+  .name {
+    display: flex;
+    align-items: center;
+    flex: 0 0 50%;
+  }
+
+  .elo {
+    display: flex;
+    flex: 0 0 50%;
+    align-items: flex-start;
+    .elo__item {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  margin-left: calc(30 * var(--res));
 }
 
 .profile__header__user__avatar {
@@ -51,7 +71,8 @@ $search_bar_size: calc(250 * var(--res));
 
 .profile__header__right {
   display: flex;
-  margin: calc(30 * var(--res));
+  margin-top: calc(30 * var(--res));
+  margin-left: calc(30 * var(--res));
 }
 
 .profile__header__search {
@@ -99,7 +120,6 @@ $search_bar_size: calc(250 * var(--res));
   justify-content: space-around;
   width: 100%;
   margin-top: calc(20 * var(--res));
-  width: calc(650 * var(--res));
   height: calc(350 * var(--res));
 }
 
