@@ -12,9 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromExtractors([
         //TODO add baerer ?
         (request: Request) => {
-          console.log('hello');
           const cookie = request?.cookies['AuthToken'];
-          console.log('cookie', cookie);
           return cookie ? cookie.access_token : null;
         },
       ]),
