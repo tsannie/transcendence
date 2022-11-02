@@ -36,7 +36,10 @@ function SearchBar() {
             return (
               <li key={index} className={className} onClick={handleClick}>
                 <img src={suggestion.picture + "&size=small"}></img>
-                <span>{suggestion.username}</span>
+                <span>
+                  {suggestion.username.substring(0, 10)}
+                  {suggestion.username.length > 10 ? "..." : ""}
+                </span>
               </li>
             );
           })}

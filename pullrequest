@@ -10,6 +10,7 @@ chat dov (front)
 
 [fix]
 delog on one page (front)
+alignement for all BIIIG pseudo (front)
 pseudo on register or on change is now full in lower case (back)
 
 [warn]
