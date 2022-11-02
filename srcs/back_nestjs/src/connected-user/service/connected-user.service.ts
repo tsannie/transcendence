@@ -12,8 +12,11 @@ export class ConnectedUserService {
     private readonly connectedUserRepository: Repository<ConnectedUserEntity>,
   ) {}
 
-  async create(connectedUser: ConnectedUserDto): Promise<ConnectedUserDto> {
-    return this.connectedUserRepository.save(connectedUser);
+  async create(connectedUser: ConnectedUserDto): Promise<ConnectedUserEntity> {
+    let newConnectedUser = new ConnectedUserEntity();
+    newConnectedUser.socketId = connectedUser.socketId;
+    newConnectedUser.user = connectedUser.user;
+    return await this.connectedUserRepository.save(connectedUser);
   }
 
   async deleteBySocketId(socketId: string) {
