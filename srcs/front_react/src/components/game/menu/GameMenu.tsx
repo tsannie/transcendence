@@ -26,7 +26,6 @@ export default function GameMenu(props: any) {
     } */
   }
 
-  console.log("game.status",  game.status);
   return (
     <div className="Game">
       {game.status === RoomStatus.EMPTY &&
