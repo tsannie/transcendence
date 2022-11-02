@@ -88,6 +88,22 @@ $width_chat: calc(450 * var(--res));
     padding: 1%;
 }
 
+.conversation__content__messages{
+    display: flex;
+    font-size: calc(14 * var(--res));
+    &.self{
+        justify-content: right;
+        border-style: dashed;
+        background-color: red;
+    }
+
+    &.other{
+        justify-content: left;
+        border-style: dotted;
+        background-color: rgb(98, 0, 255);
+    }
+}
+
 .conversation__options {
     display: flex;
     flex-direction: column;

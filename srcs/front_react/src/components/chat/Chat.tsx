@@ -5,6 +5,7 @@ import { ChatContextInterface, ChatStateContext, ChatStateProvider, ChatType } f
 import { Fragment, useContext, useEffect, useState } from "react";
 import { IDm, IMessageReceived } from "./types";
 import { api } from "../../const/const";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
 function Channel(props: any) {
   return (
@@ -21,6 +22,7 @@ function Dm(props: any) {
   const [dm, setDm] = useState<IDm>({} as IDm);
   const [offset, setOffset] = useState<number>(0);
   const [messages, setMessages] = useState<IMessageReceived[]>([]);
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   const { newMessage, changeNewMessage } = useContext(MessageContext);
 
@@ -37,6 +39,7 @@ function Dm(props: any) {
     await api
       .get("/message/dm", {params: {id: props.id, offset: offset}})
       .then((res) => {
+        console.log(res.data);
         setMessages(res.data);
         setOffset(0);
       })
@@ -48,12 +51,23 @@ function Dm(props: any) {
       setMessages([...messages, newMessage]);
   }
 
-  const displayMessages = messages.map( (message) => {
-      return <li key={message.id}>{message.content}</ li>
+  const displayMessages = messages.map( (message) => { 
+      let class_type : string;
+
+      if (message.author?.id === user?.id)
+      {
+        console.log("MOI");
+        class_type = "conversation__content__messages self";
+      }
+      else
+      {
+        console.log("AUTRE");
+        class_type = "conversation__content__messages other";
+      }
+      return <li className={class_type} key={message.id}>{message.content}</ li>
     });
 
   useEffect( () => {
-    console.log("newProps.id", props.id);
     const async_func = async () => {
       await loadDm();
       await loadMessage();
@@ -66,15 +80,13 @@ function Dm(props: any) {
     if (newMessage && newMessage?.dm.id == dm.id)
     {  
       addMessage(newMessage);
-      // changeNewMessage(null);
+      // changeNewMessage(null); TODO VIRER CA
     }
   }, [newMessage]);
 
   return (
       <Fragment>
-        <div className="conversation__content">
-          <ul>{displayMessages}</ul>
-        </div>
+          <ul className="conversation__content">{displayMessages}</ul>
           <div className="conversation__options">
             <div className="conversation__options__title" />
           </div>
