@@ -17,8 +17,9 @@ import {
 
 export default function Sidebar() {
   const { logout } = useContext(AuthContext) as AuthContextType;
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(
+    SnackbarContext
+  ) as SnackbarContextType;
   const path = useLocation().pathname;
 
   const handleLogout = () => {
@@ -43,7 +44,9 @@ export default function Sidebar() {
             <HomeIcon className={path === "/" ? "selected" : ""} />
           </Link>
           <Link to="/profile">
-            <ProfileIcon className={path === "/profile" ? "selected" : ""} />
+            <ProfileIcon
+              className={path.slice(0, 8) === "/profile" ? "selected" : ""}
+            />
           </Link>
           <Link to="/chat">
             <ChatIcon className={path === "/chat" ? "selected" : ""} />

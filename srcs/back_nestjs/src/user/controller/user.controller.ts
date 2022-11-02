@@ -49,6 +49,16 @@ export class UserController {
     );
   }
 
+  @Get('username')
+  async getUserByUsername(@Query() body: TargetNameDto): Promise<UserEntity> {
+    return await this.userService.findByName(body.username, { friends: true });
+  }
+
+  @Get('id')
+  async getUserById(@Query() body: TargetIdDto): Promise<UserEntity> {
+    return await this.userService.findById(body.id, { friends: true });
+  }
+
   @Get()
   async getAllUser(): Promise<UserEntity[]> {
     return await this.userService.getAllUser();
@@ -71,7 +81,7 @@ export class UserController {
     @Body() body: TargetNameDto,
     @Request() req,
   ): Promise<UserEntity> {
-    return await this.userService.blockUser(body.target, req.user);
+    return await this.userService.blockUser(body.username, req.user);
   }
 
   @Post('unBlockUser')
@@ -80,7 +90,7 @@ export class UserController {
     @Body() body: TargetNameDto,
     @Request() req,
   ): Promise<UserEntity> {
-    return await this.userService.unBlockUser(body.target, req.user);
+    return await this.userService.unBlockUser(body.username, req.user);
   }
 
   @Post('addAvatar')

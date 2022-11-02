@@ -1,15 +1,18 @@
 [+]
+search bar for user (front)
+route for search /profile/{username} (front)
 recent game and friend on profile (front)
 friends and friends request (back)
 
+
 [-]
-chat dov
+chat dov (front)
 
 [fix]
-delog on one page
+delog on one page (front)
+pseudo on register or on change is now full in lower case (back)
 
 [warn]
 active prettier on auto save
 
-[say to giz]
-change save with update for not resave all entity
+

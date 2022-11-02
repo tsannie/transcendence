@@ -37,16 +37,16 @@ export const TransitionProvider = ({ children }: IProps) => {
   const [actualLvl, setActualLvl] = useState(TransitionPageLvl.NULL);
 
   function getTransitionStage(path: string) {
-    switch (path) {
-      case "/":
+    switch (path.split("/")[1]) {
+      case "":
         return TransitionPageLvl.HOME;
-      case "/profile":
+      case "profile":
         return TransitionPageLvl.PROFILE;
-      case "/chat":
+      case "chat":
         return TransitionPageLvl.CHAT;
-      case "/game":
+      case "game":
         return TransitionPageLvl.GAME;
-      case "/settings":
+      case "settings":
         return TransitionPageLvl.SETTINGS;
       default:
         return TransitionPageLvl.NULL;

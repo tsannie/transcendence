@@ -7,10 +7,14 @@ interface IProps {
 
 function ProfileFriends(props: IProps) {
   let allFriends = props.user?.friends.map((friend, index) => {
-    return <img src={friend.profile_picture + "&size=small"} alt="avatar" />;
+    return (
+      <img
+        key={index}
+        src={friend.profile_picture + "&size=small"}
+        alt="avatar"
+      />
+    );
   });
-
-  console.log(allFriends);
 
   return (
     <div className="profile__body__friends">
