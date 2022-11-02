@@ -51,7 +51,7 @@ export class RoomEntity {
 /*   @Column({ nullable: true , default: -1})
   power: number; // TODO INSET 
  */
-
+//
 
 
   @Column({ nullable: true })

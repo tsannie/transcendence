@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
+import { BallEntity } from '../game_entity/ball.entity';
 import { RoomEntity, RoomStatus } from '../game_entity/room.entity';
 
 @Injectable()
@@ -73,6 +74,12 @@ export class GameService {
     return await this.findByName(room_name);
   }
 
+  async get_ball(room_name: string): Promise<BallEntity> {
+    console.log("ROOM NAME = ", room_name);
+    const room = await this.findByName(room_name);
+    return room.set.ball;
+  }
+//
   async deleteUser(id: number): Promise<void> {
     await this.all_game.delete(id);
   }

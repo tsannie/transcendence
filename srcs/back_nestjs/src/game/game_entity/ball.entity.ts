@@ -33,11 +33,11 @@ export class BallEntity {
   ///////////////////
 
   @Column({ nullable: true})
-  direction_x: number = 1;
+  direction_x: number;
   
   // up == true / down == false
   @Column({ nullable: true})
-  direction_y: number = 1;
+  direction_y: number;
 
   @Column({ nullable: true})
   rad : number = 40;
