@@ -125,8 +125,20 @@ export class UserController {
   @Post('accept-friend-request')
   @UseGuards(JwtTwoFactorGuard)
   async acceptFriendRequest(@Request() req, @Body() target: TargetIdDto) {
-    const userTarget = await this.userService.findById(target.id);
-    return await this.userService.acceptFriendRequest(req.user, userTarget);
+    const userTarget = await this.userService.findById(target.id, {
+      friend_requests: true,
+      friends: true,
+    });
+    await this.userService.acceptFriendRequest(req.user, userTarget);
+  }
+
+  @Post('refuse-friend-request')
+  @UseGuards(JwtTwoFactorGuard)
+  async refuseFriendRequest(@Request() req, @Body() target: TargetIdDto) {
+    const userTarget = await this.userService.findById(target.id, {
+      friend_requests: true,
+    });
+    await this.userService.refuseFriendRequest(req.user, userTarget);
   }
 
   @Post('create-friend-request')
@@ -135,8 +147,7 @@ export class UserController {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
     });
-    console.log(userTarget);
-    return await this.userService.createFriendRequest(req.user, userTarget);
+    await this.userService.createFriendRequest(req.user, userTarget);
   }
 
   @Get('friend-request')
@@ -145,13 +156,15 @@ export class UserController {
     return await this.userService.getFriendRequest(req.user);
   }
 
-  /*@Post('addfriend')
+  @Delete('friend')
   @UseGuards(JwtTwoFactorGuard)
-  async addFriend(
+  async removeFriend(
     @Request() req,
     @Body() target: TargetIdDto,
   ): Promise<UserEntity[]> {
-    const userTarget = await this.userService.findById(target.id);
-    return await this.userService.addFriend(req.user, userTarget);
-  }*/
+    const userTarget = await this.userService.findById(target.id, {
+      friends: true,
+    });
+    return await this.userService.removeFriend(req.user, userTarget);
+  }
 }
