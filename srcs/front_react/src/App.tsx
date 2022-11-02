@@ -8,7 +8,6 @@ import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
 import Settings from "./components/settings/Settings";
 import Home from "./components/home/Home";
-import Profile from "./components/profile/Profile";
 import Background from "./components/background/Background";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 import GamePage from "./components/game/GamePage";
@@ -16,6 +15,8 @@ import {
   TransitionContext,
   TransitionContextType,
 } from "./contexts/TransitionContext";
+import ProfilePlayer from "./components/profile/ProfilePlayer";
+import ProfileUser from "./components/profile/ProfileUser";
 
 export default function App() {
   const { displayLocation, location, enableTransition } = useContext(
@@ -32,12 +33,15 @@ export default function App() {
             {/* Auth Routes (public) */}
             <Route path="/auth" element={<LoginPage />} />
             <Route path="/2fa" element={<TwoFactorPage />} />
-
             {/* Main Routes (private) */}
             <Route path="/" element={<PrivateRoute component={Home} />} />
             <Route
               path="/profile"
-              element={<PrivateRoute component={Profile} />}
+              element={<PrivateRoute component={ProfileUser} />}
+            />
+            <Route
+              path="/profile/:id"
+              element={<PrivateRoute component={ProfilePlayer} />}
             />
             <Route path="/chat" element={<PrivateRoute component={Home} />} />
             <Route

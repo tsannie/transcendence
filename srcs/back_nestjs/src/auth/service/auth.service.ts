@@ -19,27 +19,28 @@ export class AuthService {
 
   async validateUser(profile42: any): Promise<any> {
     const user = await this.userService.findByMail(profile42.emails[0].value);
-    if (user)
-      return user;
+    if (user) return user;
 
     let new_user = new UserEntity();
-    new_user.username = profile42.username;
+    new_user.username = profile42.username.toLowerCase().replace(/ /g, '');
     new_user.email = profile42.emails[0].value;
     new_user = await this.register(new_user);
 
-    return await this.userService.add42DefaultAvatar(profile42._json.image_url, new_user);
+    return await this.userService.add42DefaultAvatar(
+      profile42._json.image_url,
+      new_user,
+    );
   }
 
   async validateUserGoogle(profile: any): Promise<any> {
     const user = await this.userService.findByMail(profile.emails[0].value);
-    if (user)
-      return user;
+    if (user) return user;
     if (profile.email_verified !== true) {
       throw new UnauthorizedException('Account not verified');
     }
 
     let new_user = new UserEntity();
-    new_user.username = profile.displayName;
+    new_user.username = profile.displayName.toLowerCase().replace(/ /g, '');
     new_user.email = profile.emails[0].value;
     new_user = await this.register(new_user);
 
@@ -50,16 +51,19 @@ export class AuthService {
     return await this.userService.add(user);
   }
 
-  async getCookie(user: any, isSecondFactor = false): Promise<IToken> { // TODO replace by the entity ??
+  async getCookie(user: any, isSecondFactor = false): Promise<IToken> {
+    // TODO replace by the entity ??
     const payload: IPayload = {
       sub: user.id, // sub for jwt norm
       isSecondFactor: isSecondFactor,
     };
     //console.log('payload', payload)
-    const token: IToken = { access_token: await this.jwtTokenService.sign(payload, { // generate our jwt
+    const token: IToken = {
+      access_token: await this.jwtTokenService.sign(payload, {
+        // generate our jwt
         secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME
-      })
+        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME,
+      }),
     };
     return token;
   }

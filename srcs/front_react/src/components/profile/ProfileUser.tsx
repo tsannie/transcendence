@@ -5,16 +5,10 @@ import ProfileHeader from "./ProfileHeader";
 import ProfileStatsBar from "./ProfileStatsBar";
 import ProfileFriends from "./ProfileFriends";
 import ProfileHistory from "./ProfileHistory";
+import { useParams } from "react-router-dom";
 
-function Profile() {
+function ProfileUser() {
   const { user } = useContext(AuthContext) as AuthContextType;
-
-  /*let items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"];
-  let itemList:any = [];
-
-  items.forEach((item,index)=>{
-    itemList.push( <li key={index}>{item}</li>)
-  })*/
 
   return (
     <div className="profile">
@@ -30,4 +24,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default ProfileUser;
