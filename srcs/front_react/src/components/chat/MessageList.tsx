@@ -9,7 +9,7 @@ import  {ReactComponent as GroupChatIcon} from "../../assets/img/icon/groupchat.
   
 function MessageList() {
     const { user } = useContext(AuthContext) as AuthContextType;
-    const message = useContext(MessageContext);
+    const { newMessage } = useContext(MessageContext);
     const { changeDisplay, changeCurrentConv, changeIsChannel } = useContext(ChatStateContext);
 
     const [chatList, setChatList] = useState<IChannel[]>([]);
@@ -28,12 +28,12 @@ function MessageList() {
   
     const updateList = () => {
       let newList = [...chatList];
-      let conv_id = message?.channel ? message?.channel.id : message?.dm.id;
+      let conv_id = newMessage?.channel ? newMessage?.channel.id : newMessage?.dm.id;
       let editable_room = newList.find( (elem) => elem.id === conv_id);
-      if (editable_room && message)
+      if (editable_room && newMessage)
       {
         editable_room.notif = true;
-        editable_room.updatedAt = message.createdAt;
+        editable_room.updatedAt = newMessage.createdAt;
       }
       newList.sort( (a,b) => {
         if (a.updatedAt < b.updatedAt)
@@ -90,7 +90,7 @@ function MessageList() {
   
       useEffect( () => {
         updateList();
-      }, [message])
+      }, [newMessage])
   
     return (
     <div className="chat__list">

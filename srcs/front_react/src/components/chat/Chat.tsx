@@ -1,44 +1,85 @@
 import MessageList from "./MessageList"
 import "./chat.style.scss"
-import { MessageProvider } from "../../contexts/MessageContext";
-import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
-import { useContext } from "react";
+import { MessageContext, MessageProvider } from "../../contexts/MessageContext";
+import { ChatContextInterface, ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
+import { Fragment, useContext, useEffect, useState } from "react";
+import { IDm, IMessageReceived } from "./types";
+import { api } from "../../const/const";
 
 function Channel(props: any) {
   return (
-      <div>
-        <h3>ChannelId : {props.id}</h3>
-      </div>
+      <Fragment>
+        <div className="conversation__content" />
+          <div className="conversation__options">
+            <div className="conversation__options__title" />
+          </div>
+      </Fragment>
       );
 }
 
 function Dm(props: any) {
+  const [dm, setDm] = useState<IDm>({} as IDm);
+  const [offset, setOffset] = useState<number>(0);
+  const [messages, setMessages] = useState<IMessageReceived[]>([]);
+
+  const { newMessage, changeNewMessage } = useContext(MessageContext);
+
+  const loadMessage = async () => {
+    await api
+      .get("/message/dm", {params: {id: props.id, offset: offset}})
+      .then((res) => {
+        console.log(res.data);
+        setMessages(res.data);
+        setOffset(offset + 1);
+      })
+      .catch( () => console.log("Axios Error"));
+  }
+
+  const addMessage = (newMessage: IMessageReceived | null) => {
+    if (newMessage)
+      setMessages([...messages, newMessage]);
+  }
+
+  const displayMessages = messages.map( (message) => {
+      return <li key={message.id}>{message.content}</ li>
+    });
+
+  useEffect( () => {
+    loadMessage();
+  }, []);
+
+  useEffect ( () => {
+    addMessage(newMessage);
+    changeNewMessage(null);
+  }, [newMessage]);
+
   return (
-    <div>
-        <div className="conversation__target" />
-        <div className="conversation__content"></ div>
-      </div>
+      <Fragment>
+        <div className="conversation__content">
+          <ul>{displayMessages}</ul>
+        </div>
+          <div className="conversation__options">
+            <div className="conversation__options__title" />
+          </div>
+      </Fragment>
       );
 }
 
 function Conversation() {
   const { currentConvId, isChannel } = useContext(ChatStateContext);
 
-  if (isChannel)
-    return <Channel id={currentConvId}/>  
-  else
-    return <Dm id={currentConvId}/>
+  return <div className="conversation">
+    { isChannel ? <Channel id={currentConvId} /> : <Dm id={currentConvId} /> }
+    </ div>;
 }
 
 function ChatBody() {
   const {display} = useContext(ChatStateContext);
 
-  // if (display === ChatType.CONV)
-    return (<div className="conversation"><Conversation /></div>)
-  // else if (display === ChatType.FORM)
-    return (<div></div>)
-  // else
-    return (<div></div>)
+  if (display === ChatType.CONV)
+    return <Conversation />;
+  else
+    return <div></div>;
 }
 
 function Chat() {

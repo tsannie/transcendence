@@ -10,9 +10,9 @@ export interface IMessageSent {
 export interface IMessageReceived {
   id: string;
   convId: string;
-  author: User | null; // IUser en theorie
-  content: string;
   createdAt: Date;
+  content: string;
+  author: User | null; // IUser en theorie
   dm: any; // IDm en theorie
   channel: any; // IChannel en theorie
 }
@@ -49,11 +49,9 @@ export interface ICreateDm {
 
 export interface IDm {
   id: string;
-  time: Date;
-  target: string;
-  offset: number;
+  createdAt: Date;
+  updatedAt: string;
   users: User[] | null;
-  messages: IMessageReceived[];
 }
 
 export interface IConvCreated {
