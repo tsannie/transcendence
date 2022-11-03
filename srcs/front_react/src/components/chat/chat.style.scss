@@ -84,6 +84,7 @@ $width_chat: calc(450 * var(--res));
 .conversation__elems{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .conversation__messages__list {
@@ -101,12 +102,12 @@ $width_chat: calc(450 * var(--res));
 form {
     display: flex;
     justify-content: center;
-    align-items: flex-end;
-    flex: 0 0 9%;
+    align-items: center;
+    flex: 0 0 13%;
 }
 
 .input__form {
-    padding-left: 1%;
+    padding-left: 2%;
     border-style: dashed;
     border-width: calc(4 * var(--res)) !important;
     border-radius: calc(15 * var(--res)) !important;
@@ -131,9 +132,11 @@ form {
     border-width: calc(2 * var(--res)) !important;
     font-size: calc(14 * var(--res));
     border-radius: calc(15 * var(--res));
-    padding: 0 1.5% 0 1.5%;
+    padding: 0.25% 1.5% 0.25% 1.5%;
     margin: 1%;
     max-width: 70%;
+    word-break: normal;
+    overflow-wrap: anywhere;
 }
 
 .conversation__options {
