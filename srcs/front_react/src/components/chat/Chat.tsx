@@ -55,16 +55,12 @@ function Dm(props: any) {
       let class_type : string;
 
       if (message.author?.id === user?.id)
-      {
-        console.log("MOI");
         class_type = "conversation__content__messages self";
-      }
       else
-      {
-        console.log("AUTRE");
         class_type = "conversation__content__messages other";
-      }
-      return <li className={class_type} key={message.id}>{message.content}</ li>
+      return <li className={class_type} key={message.id}>
+                {message.content}
+              </ li>
     });
 
   useEffect( () => {

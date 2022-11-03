@@ -76,7 +76,7 @@ function MessageList() {
         }
         return (
             <li className="chat__list__items" key={conv.id} onClick={ () => clickItem(conv)}>
-              {user2 ? <img src={user2.profile_picture + "&size=small"} className="avatar"></img> : <GroupChatIcon className="avatar" />}
+              {user2 ? <img src={user2.profile_picture + "&size=small"} className="avatar"/> : <GroupChatIcon className="avatar" />}
               {title}
               {conv.notif ? <div className="notif" /> : null}
             </li>
