@@ -49,7 +49,7 @@ function ProfilePlayer() {
         <hr id="full" />
         <div className="profile__body">
           <ProfileHistory user={player} />
-          <ProfileFriends user={player} />
+          <ProfileFriends user={player} isPerso={isPerso} />
         </div>
       </div>
     );
