@@ -24,6 +24,18 @@ export class AuthService {
     let new_user = new UserEntity();
     new_user.username = profile42.username.toLowerCase().replace(/ /g, '');
     new_user.email = profile42.emails[0].value;
+
+    /* check if the user is already in the database with the same username
+    and if so, add a number to the end of the username */
+    while (42) {
+      try {
+        await this.userService.findByName(new_user.username);
+        new_user.username += Math.floor(Math.random() * 10);
+      } catch (e) {
+        break;
+      }
+    }
+
     new_user = await this.register(new_user);
 
     return await this.userService.add42DefaultAvatar(

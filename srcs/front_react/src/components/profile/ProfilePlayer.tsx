@@ -7,34 +7,49 @@ import ProfileFriends from "./ProfileFriends";
 import ProfileHistory from "./ProfileHistory";
 import { api } from "../../const/const";
 import { useParams } from "react-router-dom";
+import PageNotFound from "../menu/PageNotFound";
 
 function ProfilePlayer() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isload, setIsLoad] = useState<boolean>(false);
   const params = useParams().id;
+  const { user } = useContext(AuthContext) as AuthContextType;
+
+  const [player, setPlayer] = useState<User | null>(null);
+  const [isload, setIsLoad] = useState<boolean>(false);
+  const [isPerso, setIsPerso] = useState<boolean>(params ? false : true);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
-    api
-      .get("/user/username", { params: { username: params } })
-      .then((res) => {
-        setUser(res.data as User);
-        setIsLoad(true);
-      })
-      .catch((err) => {
-        console.log("error");
-      });
+    if (isPerso) {
+      setPlayer(user);
+      setIsLoad(true);
+    } else {
+      api
+        .get("/user/username", { params: { username: params } })
+        .then((res) => {
+          setPlayer(res.data as User);
+          setIsLoad(true);
+        })
+        .catch((err) => {
+          console.log("error");
+          setNotFound(true);
+        });
+    }
   }, []);
+
+  if (notFound) {
+    return <PageNotFound redirection="/profile" objectNotFound="player" />;
+  }
 
   if (isload) {
     return (
       <div className="profile">
-        <ProfileHeader user={user} />
+        <ProfileHeader user={player} />
         <hr id="full" />
-        <ProfileStatsBar user={user} />
+        <ProfileStatsBar user={player} />
         <hr id="full" />
         <div className="profile__body">
-          <ProfileHistory user={user} />
-          <ProfileFriends user={user} />
+          <ProfileHistory user={player} />
+          <ProfileFriends user={player} />
         </div>
       </div>
     );
