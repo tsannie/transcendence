@@ -16,7 +16,7 @@ import {
   TransitionContextType,
 } from "./contexts/TransitionContext";
 import ProfilePlayer from "./components/profile/ProfilePlayer";
-import ProfileUser from "./components/profile/ProfileUser";
+import PageNotFound from "./components/menu/PageNotFound";
 
 export default function App() {
   const { displayLocation, location, enableTransition } = useContext(
@@ -30,6 +30,11 @@ export default function App() {
       <div className="app">
         <SnackbarProvider>
           <Routes location={displayLocation}>
+            {/* 404 Page (public) */}
+            <Route
+              path="*"
+              element={<PageNotFound redirection="/" objectNotFound="page" />}
+            />
             {/* Auth Routes (public) */}
             <Route path="/auth" element={<LoginPage />} />
             <Route path="/2fa" element={<TwoFactorPage />} />
@@ -37,7 +42,7 @@ export default function App() {
             <Route path="/" element={<PrivateRoute component={Home} />} />
             <Route
               path="/profile"
-              element={<PrivateRoute component={ProfileUser} />}
+              element={<PrivateRoute component={ProfilePlayer} />}
             />
             <Route
               path="/profile/:id"

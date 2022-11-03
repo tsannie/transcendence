@@ -1,5 +1,6 @@
 [+]
 search bar for user (front)
+404 page not found (front)
 route for search /profile/{username} (front)
 recent game and friend on profile (front)
 friends and friends request (back)
@@ -12,8 +13,7 @@ chat dov (front)
 delog on one page (front)
 alignement for all BIIIG pseudo (front)
 pseudo on register or on change is now full in lower case (back)
+pseudo already exist for a new player. Now tsannie will become tsannie{0-9} if tsannie already exist (back)
 
 [warn]
 active prettier on auto save
-
-
