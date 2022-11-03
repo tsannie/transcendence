@@ -89,12 +89,27 @@ $width_chat: calc(450 * var(--res));
 .conversation__messages__list {
     display: flex;
     flex-direction: column;
-    flex: 0 0 70%;
+    flex: 0 0 85%;
     padding: 1%;
     overflow-y: auto;
     margin-top: 1%;
     margin-left: 1%;
     margin-right: 1%;
+    margin-bottom: 0%;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex: 0 0 9%;
+}
+
+.input__form {
+    padding-left: 1%;
+    border-style: dashed;
+    border-width: calc(4 * var(--res)) !important;
+    border-radius: calc(15 * var(--res)) !important;
 }
 
 .conversation__messages__items {
@@ -136,5 +151,7 @@ $width_chat: calc(450 * var(--res));
     flex: 0 0 25%;
     border-bottom-style: dashed;
 }
+
+
 
 
