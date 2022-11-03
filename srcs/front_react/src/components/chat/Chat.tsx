@@ -6,6 +6,7 @@ import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { IDm, IMessageReceived } from "./types";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
+import  {ReactComponent as SendIcon} from "../../assets/img/icon/send.svg";
 
 function Channel(props: any) {
   return (
@@ -100,13 +101,22 @@ function Dm(props: any) {
           <ul className="conversation__messages__list">{displayMessages}
             <div ref={messagesEndRef}/>
           </ul>
-          <form><input className="input__form" type="text" placeholder="add message..."/></ form>
+          <MessageForm />
         </div>
           <div className="conversation__options">
             <div className="conversation__options__title" />
           </div>
       </ Fragment>
       );
+}
+
+function MessageForm() {
+  return (
+    <form>
+        <input className="input__form" type="text" placeholder="add message..."/>
+          <SendIcon className="send__button" onClick={() => console.log("cc")}/>
+    </ form>
+  )
 }
 
 function Conversation() {
