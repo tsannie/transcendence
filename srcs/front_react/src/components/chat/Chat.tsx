@@ -52,14 +52,15 @@ function Dm(props: any) {
   }
 
   const displayMessages = messages.map( (message) => { 
-      let class_type : string;
+      let items_class : string;
 
       if (message.author?.id === user?.id)
-        class_type = "conversation__content__messages self";
+        items_class = "conversation__messages__items self";
       else
-        class_type = "conversation__content__messages other";
-      return <li className={class_type} key={message.id}>
-                {message.content}
+        items_class = "conversation__messages__items other";
+      return <li className={items_class} key={message.id}>
+                <img src={message.author?.profile_picture + "&size=small"} className="avatar" />
+                <div className="conversation__messages__text">{message.content}</div>
               </ li>
     });
 
@@ -82,11 +83,14 @@ function Dm(props: any) {
 
   return (
       <Fragment>
-          <ul className="conversation__content">{displayMessages}</ul>
+        <div className="conversation__elems">
+          <ul className="conversation__messages__list">{displayMessages}</ul>
+          <form><input type="text" placeholder="Add Message..."/></ form>
+        </div>
           <div className="conversation__options">
             <div className="conversation__options__title" />
           </div>
-      </Fragment>
+      </ Fragment>
       );
 }
 
