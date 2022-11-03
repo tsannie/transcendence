@@ -34,9 +34,14 @@ export function mouv_ball(set: SetEntity) {
     set.ball.direction_x *= -1;
   } */
   if (set.ball.y + rad >= canvas_back_height)
+  {
     set.ball.direction_y *= -1;
-  else if (set.ball.y - rad <= 0) 
+    //console.log("touch wall down");
+  }
+  else if (set.ball.y - rad <= 0) {
     set.ball.direction_y *= -1;
+    //console.log("touch wall up");
+  }
 }
 
 function increment_score_player(player: PlayerEntity, ball: BallEntity) {
@@ -46,7 +51,7 @@ function increment_score_player(player: PlayerEntity, ball: BallEntity) {
   ball.direction_y = 1;
   ball.first_col = false;
   
-  player.score += 1;
+  //player.score += 1;
   console.log('+= 1 p2');
 }
 
@@ -76,6 +81,11 @@ export function BallCol_p1(set: SetEntity) {
 }
  
 export function BallCol_p2(set: SetEntity) {
+
+  //console.log("set.p2_paddle.x", set.p2_paddle.x);
+  //console.log("set.p2_paddle.y", set.p2_paddle.y);
+  //console.log("set.ball.x", set.ball.x);
+  //console.log("set.ball.y", set.ball.y);
 
   if (set.ball.x + rad >= set.p2_paddle.x &&
   set.ball.x - (rad / 3) <= set.p2_paddle.x + paddle_width &&
