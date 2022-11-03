@@ -161,18 +161,18 @@ export function GamePlayer_p1_p2() {
     });
 
 
-      socket.on("get_ball", (ball: any) => {
+      socket.on("get_ball", (x: any, y: any) => {
 
         //console.log("ball", ball.x, ball.y);
-        console.log("get_ball on front");
+        //console.log("get_ball on front");
 
-            IBall.x = ball.x * ratio_width;
-            IBall.y = ball.y * ratio_height;
-            IBall.rad = ball.rad * ratio_width;
+            IBall.x = x * ratio_width;
+            IBall.y = y * ratio_height;
+/*             IBall.rad = ball.rad * ratio_width;
             IBall.first_col = ball.first_col;
             IBall.direction_x = ball.direction_x;
             IBall.direction_y = ball.direction_y;
-            IBall.gravity = ball.gravity;
+            IBall.gravity = ball.gravity; */
 
         });
 
@@ -256,21 +256,21 @@ export function GamePlayer_p1_p2() {
 
     }
 
-useEffect(() => {
+/* useEffect(() => {
  
       let canvas: any = canvasRef.current;
       let ctx : any = null;
       if (canvas)
       ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-     function draw() {
         if (ctx) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           if (IPlayer_p1.won === false && IPlayer_p2.won === false && game.room !== "") {
             
-            //if (x === 1)  {
-              //  x = 0;
-              //}
+            if (x === 1)  {
+                x = 0;
+                get_ball();
+              }
               if (game.im_p2 === false) {
                 get_paddle_p2()
               }
@@ -279,8 +279,7 @@ useEffect(() => {
               
               //get_ball();
               
-              get_ball();
-              mouv_ball();
+              //mouv_ball();
               
             draw_line(ctx, canvas.height, canvas.width);
             draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
@@ -289,9 +288,49 @@ useEffect(() => {
             draw_ball(ctx, IBall, canvas.height, canvas.width);
             }
           }
-      }
-      setInterval(draw, 100);
-    }, []);
+        }, []);
+ */
+
+
+let requestAnimationFrameId: any;
+  useEffect(() => {
+    let canvas: any = canvasRef.current;
+
+      const render = () => {
+        requestAnimationFrameId = requestAnimationFrame(render);
+        let ctx : any = null;
+        ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  
+          if (ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (IPlayer_p1.won === false && IPlayer_p2.won === false && game.room !== "") {
+              if (x >= 200) {
+                if (x === 200 && game.im_p2 === false)  {
+                  get_ball();
+                }
+
+                if (game.im_p2 === false)
+                  get_paddle_p2()
+                else
+                  get_paddle_p1()
+              }
+              x++;
+              //console.log("x", x);
+              //get_ball();
+              //mouv_ball();
+                
+              draw_line(ctx, canvas.height, canvas.width);
+              draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+              draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
+              draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+              draw_ball(ctx, IBall, canvas.height, canvas.width);
+              }
+            }
+      };
+      render();
+  }, []);
+
+
 
 
   function leaveGame() {
