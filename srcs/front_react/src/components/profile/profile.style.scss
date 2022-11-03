@@ -127,7 +127,7 @@ $search_bar_size: calc(250 * var(--res));
   display: flex;
   flex-direction: column;
   border-style: dashed;
-  width: 80%;
+  flex: 0 0 58%;
   margin: calc(9 * var(--res));
 }
 
@@ -146,7 +146,7 @@ $search_bar_size: calc(250 * var(--res));
   display: flex;
   flex-direction: column;
 
-  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .profile__body__history__item {
@@ -168,7 +168,7 @@ $search_bar_size: calc(250 * var(--res));
   display: flex;
   flex-direction: column;
   border-style: dashed;
-  flex-basis: 45%;
+  flex: 0 0 35%;
 
   margin: calc(9 * var(--res));
 }
@@ -188,12 +188,46 @@ $search_bar_size: calc(250 * var(--res));
   display: flex;
   flex-wrap: wrap;
 
-  overflow-x: auto;
+  overflow-y: auto;
   img {
     margin: calc(2 * var(--res));
     border-radius: 50%;
     width: calc(45 * var(--res));
     cursor: pointer;
+  }
+}
+
+.profile__body__friend__request {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  width: 100%;
+  height: 100%;
+}
+
+.friend__request__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  img {
+    border-radius: 50%;
+    width: calc(45 * var(--res));
+    cursor: pointer;
+  }
+  svg {
+    width: calc(35 * var(--res));
+  }
+
+  .info__request {
+    display: flex;
+    flex: 0 0 60%;
+    flex-direction: column;
+    align-items: center;
+    word-break: break-all;
+    span {
+      font-size: calc(15 * var(--res));
+    }
   }
 }
 
