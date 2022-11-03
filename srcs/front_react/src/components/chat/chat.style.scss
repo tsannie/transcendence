@@ -86,21 +86,34 @@ $width_chat: calc(450 * var(--res));
     flex-direction: column;
     flex: 0 0 70%;
     padding: 1%;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar{
+        width: calc(14 * var(--res));
+        border-style: dashed;
+    }
+
+    &::-webkit-scrollbar-thumb{
+        background-color: $white-color;
+    }
 }
 
 .conversation__content__messages{
     display: flex;
+    border-style: dashed;
     font-size: calc(14 * var(--res));
+    border-radius: 20px;
+    padding: 0 1.5% 0 1.5%;
+    margin: 1%;
+
     &.self{
         justify-content: right;
-        border-style: dashed;
-        background-color: red;
+        align-self: flex-end;
     }
 
     &.other{
         justify-content: left;
-        border-style: dotted;
-        background-color: rgb(98, 0, 255);
+        align-self: flex-start;
     }
 }
 
