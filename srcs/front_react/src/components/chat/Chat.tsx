@@ -2,7 +2,7 @@ import MessageList from "./MessageList"
 import "./chat.style.scss"
 import { MessageContext, MessageProvider } from "../../contexts/MessageContext";
 import { ChatContextInterface, ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { IDm, IMessageReceived } from "./types";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
@@ -23,8 +23,14 @@ function Dm(props: any) {
   const [offset, setOffset] = useState<number>(0);
   const [messages, setMessages] = useState<IMessageReceived[]>([]);
   const { user } = useContext(AuthContext) as AuthContextType;
+  const messagesEndRef = useRef(null);
 
-  const { newMessage, changeNewMessage } = useContext(MessageContext);
+  const { newMessage } = useContext(MessageContext);
+
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
   const loadDm = async () => {
     await api
@@ -71,20 +77,19 @@ function Dm(props: any) {
     };
     
     async_func();
+    scrollToBottom();
   }, [props.id]);
 
   useEffect ( () => {
     if (newMessage && newMessage?.dm.id == dm.id)
-    {  
       addMessage(newMessage);
-      // changeNewMessage(null); TODO VIRER CA
-    }
   }, [newMessage]);
 
   return (
       <Fragment>
         <div className="conversation__elems">
           <ul className="conversation__messages__list">{displayMessages}</ul>
+          <div ref={messagesEndRef} />
           <form><input type="text" placeholder="Add Message..."/></ form>
         </div>
           <div className="conversation__options">
