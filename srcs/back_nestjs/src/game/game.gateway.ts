@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   OnGatewayInit,
@@ -18,6 +18,12 @@ import { PlayerEntity } from './game_entity/players.entity';
 import { SetEntity } from './game_entity/set.entity';
 import { GameService } from './game_service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
+import { clearInterval } from 'timers';
+
+interface double_pos {
+  y1: number;
+  y2: number;
+}
 
 @WebSocketGateway({
   namespace: '/game',
@@ -50,6 +56,10 @@ export class GameGateway implements OnGatewayInit {
   afterInit(server: any) {
     this.logger.log('Initialized');
   }
+
+
+  paddle_pos = new Map<string, double_pos>();
+
 
   //////////////////////////////////////////////
   ////////////// SPECTATOR ROOM
@@ -183,7 +193,7 @@ export class GameGateway implements OnGatewayInit {
       room_game.set.p1_paddle.x = paddle_margin;
       room_game.set.p1_paddle.width = paddle_width;
       room_game.set.p1_paddle.height = paddle_height;
-    }
+    }//
     if (!room_game.set.p2_paddle) {
       room_game.set.p2_paddle = new PaddleEntity();
       room_game.set.p2_paddle.x = canvas_back_width - paddle_margin - paddle_width;
@@ -224,7 +234,7 @@ export class GameGateway implements OnGatewayInit {
     room_game.p2_ready = false;
     room_game.p1_ready = false;
 /*     room_game.date = null;
- */
+ *///
     if (room_game.set) {
       if (room_game.set.p1) {
         room_game.set.p1.score = 0;
@@ -331,7 +341,9 @@ export class GameGateway implements OnGatewayInit {
   ///////////////////////////////////////////////
   //////////////// PADDLE DATA
   ///////////////////////////////////////////////
-
+/* 
+  public  y1 = 0;
+  public  y2 = 0;
 
   @SubscribeMessage('paddleMouv_time')
   async paddleMouv_time(client: Socket, data: PaddleDto) {
@@ -360,67 +372,27 @@ export class GameGateway implements OnGatewayInit {
       await this.all_game.save(room_game);
     return;
   }
-
+ */
   @SubscribeMessage('pad_p1')
   async pad(client: Socket, data: PaddleDto) {
-    const room_game = await this.all_game.findOneBy({ room_name: data.room });
-    
-      const paddle = room_game.set.p1_paddle;
 
-        let y = (data.paddle_y * canvas_back_height) / data.front_canvas_height;
+    client.to(data.room).emit('pad_p1', (data.paddle_y * canvas_back_height) / data.front_canvas_height)
+    if (!this.paddle_pos[data.room])
+      this.paddle_pos[data.room] = { y1: 0, y2: 0 };
+    this.paddle_pos[data.room] = {y1: (data.paddle_y * canvas_back_height) / data.front_canvas_height, y2: this.paddle_pos[data.room].y2};
 
-        if (room_game.set)
-        {
-          paddle.y = y
-
-
-       // client.emit('pad_p1', y);
-        client.to(data.room).emit('pad_p1', y);
-
-
-        // if ball touch paddle
-        //if (set.ball.x - (rad * 2) === set.p1_paddle.x + paddle_width) {
-
-        //    console.log("!!!!!ball touch paddle p1");
-          //  await this.all_game.save(room_game)
-        //  }
-
-//      //console.log("TIME paddleMouv saveds");
-       await this.all_paddle.save(paddle);
-      }
-    return;
   }
 
   @SubscribeMessage('pad_p2')
   async padright(client: Socket, data: PaddleDto) {
-      const room_game = await this.all_game.findOneBy({ room_name: data.room });
-
-      const paddle = room_game.set.p2_paddle;
-
-
-      let y = (data.paddle_y * canvas_back_height) / data.front_canvas_height;
-      if (room_game.set)
-      {
-      const set = room_game.set;
-      paddle.y = y
-
-        //client.emit('pad_p2', y);
-        client.to(data.room).emit('pad_p2', y);
-
-        //if (set.ball.x + (rad * 2) === set.p2_paddle.x) {
-        //    console.log("!!!!!!ball touch paddle p2");
-            //await this.all_game.save(room_game)
-
-       // }
-//
-      //console.log("TIME paddleMouv saveds");
-    await this.all_paddle.save(paddle);
-      }
-    return;
+    client.to(data.room).emit('pad_p2',(data.paddle_y * canvas_back_height) / data.front_canvas_height);
+    if (!this.paddle_pos[data.room])
+      this.paddle_pos[data.room] = { y1: 0, y2: 0 };
+    this.paddle_pos[data.room] = {y1: this.paddle_pos[data.room].y1, y2: (data.paddle_y * canvas_back_height) / data.front_canvas_height};
   }
 
   ///////////////////////////////////////////////
-  //////////////// Player DATA
+  //////////////// Player DATA 
   ///////////////////////////////////////////////
 
   ///////////////////////////////////////////////
@@ -455,123 +427,47 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('get_ball')
    async getball(client: Socket, data: any) {
-      const room_game = await this.all_game.findOneBy({ room_name: data.room });
-      if (!room_game)
-        return console.log(' getball !!!!! NO ROOM !!!! [' + data.room + ']');
+    const room_game = await this.all_game.findOneBy({ room_name: data.room });
 
-        const ball = room_game.set.ball;
-        if (room_game.set)
-        {
+     if (!room_game)
+     return console.log(' getball !!!!! NO ROOM !!!! [' + data.room + ']');
+     
+     const ball = room_game.set.ball;
+     if (room_game.set)
+     {
+       
+       setInterval(() => {
+         
+        if (this.paddle_pos[data.room]) {
+         room_game.set.p1_paddle.y = this.paddle_pos[data.room].y1;
+         room_game.set.p2_paddle.y = this.paddle_pos[data.room].y2;
+        }
+         mouv_ball(room_game.set);
+         if (ball.x + rad >= canvas_back_width + (rad * 3))
+         {
+           room_game.set.p1.score += 1;
+           this.all_game.save(room_game);
+           client.emit('get_players', room_game.set.p1, room_game.set.p2);
+           client.to(data.room).emit('get_players', room_game.set.p1, room_game.set.p2);
+         }
+ 
+         if (ball.x - rad <= - (rad * 3))
+         {
+           room_game.set.p2.score += 1;
+           this.all_game.save(room_game);
+           client.emit('get_players', room_game.set.p1, room_game.set.p2);
+           client.to(data.room).emit('get_players', room_game.set.p1, room_game.set.p2);
+         }
+         
+         BallCol_p1(room_game.set);
+         BallCol_p2(room_game.set);
 
-        //  setInterval(() => {
-              
-          //console.log("\ny",ball.y)
-          ball.y = (data.ball_y * canvas_back_height) / data.front_canvas_height;
-          ball.x = (data.ball_x * canvas_back_width) / data.front_canvas_width;
-          //console.log("y",ball.y)
-        //console.log('get_ball', data.ball_y, data.ball_x);
-      
-        
-        if (ball.first_col === false) {
-          ball.x += spawn_speed * ball.direction_x
-          ball.y += spawn_gravity * ball.direction_y
-        } else {
-          ball.x += speed * ball.direction_x;
-          ball.y += ball.gravity * ball.direction_y
-        }//
-      
-        if (ball.y + rad >= canvas_back_height)
-        {
-          console.log("ball touch bottom");
-          ball.direction_y = -1;
+          client.emit('get_ball', ball.x, ball.y);
+          client.to(data.room).emit('get_ball', ball.x, ball.y);
+
           this.all_ball.save(ball);
-          client.to(data.room).emit('get_ball', ball);
-          
-        }
-        else if (ball.y - rad <= 0) 
-        {
-          console.log("ball touch top");
-          ball.direction_y = 1; 
-          this.all_ball.save(ball);
-          client.to(data.room).emit('get_ball', ball);
-        }
-        else if ( ball.x - rad <= room_game.set.p1_paddle.x + paddle_width &&
-          ball.x + (rad / 3) >= room_game.set.p1_paddle.x &&
-          ball.y + rad >= room_game.set.p1_paddle.y &&
-          ball.y - rad <= room_game.set.p1_paddle.y + paddle_height) {
-
-
-            let res = room_game.set.p1_paddle.y + paddle_height - ball.y;
-            ball.gravity = -(res / 10 - paddle_height / 20);
-            
-              // gameSpecs.smash = 1;
-               //set.ball.direction_y = true;
-            ball.direction_x *= -1; 
-            ball.first_col = true;
-            client.to(data.room).emit('get_ball', ball);
-
-            this.all_ball.save(ball);
-
-        }
-        else if (ball.x - rad <= - (rad * 3))
-        {
-          ball.x = canvas_back_width / 2;
-          ball.y = canvas_back_height / 2;
-            
-          ball.direction_y = 1;
-          ball.first_col = false;
-
-          client.to(data.room).emit('get_ball', ball);
-          this.all_ball.save(ball);
-
-          //
-/*           room_game.set.p2.score += 1;
-          console.log('+= 1 p2');
-       this.all_ball.save(ball);
-//
-
-          client.emit('get_players', room_game.set.p1, room_game.set.p2);
-          client.to(data.room).emit('get_players', room_game.set.p1, room_game.set.p2); */
-        }
-        else if (ball.x + rad >= room_game.set.p2_paddle.x &&
-          ball.x - (rad / 3) <= room_game.set.p2_paddle.x + paddle_width &&
-          ball.y + rad >= room_game.set.p2_paddle.y &&
-          ball.y - rad <= room_game.set.p2_paddle.y + paddle_height) {
-
-
-            let res = room_game.set.p2_paddle.y + paddle_height - ball.y;
-            ball.gravity = -(res / 10 - paddle_height / 20);
-            
-              // gameSpecs.smash = 1;
-               //set.ball.direction_y = true;
-               ball.direction_x *= -1; 
-               ball.first_col = true;
-               client.to(data.room).emit('get_ball', ball);
-               this.all_ball.save(ball);
-              }
-        else if (ball.x + rad >= canvas_back_width + (rad * 3))
-        {
-          ball.x = canvas_back_width / 2;
-          ball.y = canvas_back_height / 2;
-            
-          ball.direction_y = 1;
-          ball.first_col = false;
-              
-/*           room_game.set.p1.score += 1;
-          console.log('+= 1 p2');
-          
-          //this.all_game.save(room_game);
-          client.emit('get_players', room_game.set.p1, room_game.set.p2);
-          client.to(data.room).emit('get_players', room_game.set.p1, room_game.set.p2); */
-        }
-        //
-//
-      //client.emit('get_ball', ball);
-      //this.all_ball.save(ball);
-      //client.to(data.room).emit('get_ball', ball);
-//}, 30);
-////
-//
+        }, 25);
+    //
       }
     return;
   }
