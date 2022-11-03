@@ -10,7 +10,7 @@ function ProfileHistory(props: IProps) {
   return (
     <div className="profile__body__history">
       <div className="profile__body__history__title">
-        <h3>recent games:</h3>
+        <h3>recent games</h3>
       </div>
       <hr id="full" />
       <div className="profile__body__history__list">
