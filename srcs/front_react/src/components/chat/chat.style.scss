@@ -4,11 +4,12 @@ $height_chat: calc(800 * var(--res));
 $width_chat: calc(450 * var(--res));
 
 ::-webkit-scrollbar{
-    width: calc(14 * var(--res));
-    border-style: dashed;
+    width: calc(5 * var(--res));
+    // border-style: dashed;
 }
 
 ::-webkit-scrollbar-thumb{
+    border-radius: calc(5 * var(--res));
     background-color: $white-color;
 }
 
@@ -52,6 +53,7 @@ $width_chat: calc(450 * var(--res));
     border-style: dashed;
     justify-content: space-around;
     align-items: center;
+    padding: 1% 0% 1% 0%;
     margin: 2.4%;
     transition: 70ms;
     
@@ -72,8 +74,6 @@ $width_chat: calc(450 * var(--res));
     border-radius: 100%;
     height: 1em;
     width: 1em;
-    padding-top: 2%;
-    padding-bottom: 2%;
 }
 
 .conversation {
@@ -81,7 +81,12 @@ $width_chat: calc(450 * var(--res));
     width: 100%;
 }
 
-.conversation__content {
+.conversation__elems{
+    display: flex;
+    flex-direction: column;
+}
+
+.conversation__messages__list {
     display: flex;
     flex-direction: column;
     flex: 0 0 70%;
@@ -92,9 +97,20 @@ $width_chat: calc(450 * var(--res));
     margin-right: 1%;
 }
 
+.conversation__messages__items {
+    display: flex;
+    align-items: center;
 
+    &.self{
+        flex-direction: row-reverse;
+    }
+    
+    &.other{
+        flex-direction: row;
+    }
+}
 
-.conversation__content__messages{
+.conversation__messages__text{
     display: flex;
     border-style: dashed;
     border-width: calc(2 * var(--res)) !important;
@@ -102,17 +118,7 @@ $width_chat: calc(450 * var(--res));
     border-radius: calc(15 * var(--res));
     padding: 0 1.5% 0 1.5%;
     margin: 1%;
-    max-width: 90%;
-
-    &.self{
-        justify-content: right;
-        align-self: flex-end;
-    }
-
-    &.other{
-        justify-content: left;
-        align-self: flex-start;
-    }
+    max-width: 70%;
 }
 
 .conversation__options {
