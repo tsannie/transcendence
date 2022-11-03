@@ -23,14 +23,20 @@ function Dm(props: any) {
   const [offset, setOffset] = useState<number>(0);
   const [messages, setMessages] = useState<IMessageReceived[]>([]);
   const { user } = useContext(AuthContext) as AuthContextType;
-  const messagesEndRef = useRef(null);
 
   const { newMessage } = useContext(MessageContext);
 
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  
+  const scrollToBottom = (smooth: boolean = false) => {
+      setTimeout(() => {
+        if (!smooth)
+          messagesEndRef.current?.scrollIntoView(false);
+        else
+          messagesEndRef.current?.scrollIntoView({behavior: "smooth"})
+      }
+        , 200);
+    }
 
   const loadDm = async () => {
     await api
@@ -82,15 +88,19 @@ function Dm(props: any) {
 
   useEffect ( () => {
     if (newMessage && newMessage?.dm.id == dm.id)
+    { 
       addMessage(newMessage);
+      scrollToBottom(true);
+    }
   }, [newMessage]);
 
   return (
       <Fragment>
         <div className="conversation__elems">
-          <ul className="conversation__messages__list">{displayMessages}</ul>
-          <div ref={messagesEndRef} />
-          <form><input type="text" placeholder="Add Message..."/></ form>
+          <ul className="conversation__messages__list">{displayMessages}
+            <div ref={messagesEndRef}/>
+          </ul>
+          <form><input className="input__form" type="text" placeholder="add message..."/></ form>
         </div>
           <div className="conversation__options">
             <div className="conversation__options__title" />
