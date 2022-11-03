@@ -3,6 +3,7 @@ import React, { Fragment } from "react";
 import { User } from "../../contexts/AuthContext";
 import { ReactComponent as AddIcon } from "../../assets/img/icon/circle_check.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/img/icon/circle_remove.svg";
+import { Link } from "react-router-dom";
 
 interface IProps {
   user: User | null;
@@ -27,7 +28,12 @@ function ProfileFriends(props: IProps) {
         <Fragment key={index}>
           <div className="friend__request__item">
             <div className="info__request">
-              <img src={request.profile_picture + "&size=small"} alt="avatar" />
+              <Link to={"/profile/" + request.username}>
+                <img
+                  src={request.profile_picture + "&size=small"}
+                  alt="avatar"
+                />
+              </Link>
               <span>
                 {request.username.substring(0, 10)}
                 {request.username.length > 10 ? "..." : ""}
