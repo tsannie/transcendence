@@ -133,8 +133,12 @@ $search_bar_size: calc(250 * var(--res));
 
 .profile__body__history__title {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(70 * var(--res));
   h3 {
-    margin-left: calc(20 * var(--res));
+    margin: 0;
   }
 }
 
@@ -171,9 +175,12 @@ $search_bar_size: calc(250 * var(--res));
 
 .profile__body__friends__title {
   display: flex;
-
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: calc(70 * var(--res));
   h3 {
-    margin-left: calc(20 * var(--res));
+    margin: 0;
   }
 }
 

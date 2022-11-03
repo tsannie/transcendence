@@ -8,7 +8,7 @@ export type User = {
   enabled2FA: boolean;
   profile_picture: string;
   friends: User[];
-  friends_requests: User[];
+  friend_requests: User[];
 };
 
 export type AuthContextType = {
