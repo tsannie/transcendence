@@ -113,8 +113,7 @@ form {
 .input__form {
     padding-left: 2%;
     border-style: dashed;
-    border-width: calc(4 * var(--res)) !important;
-    border-radius: calc(15 * var(--res)) !important;
+    border-radius: calc(15 * var(--res));
 }
 
 svg {
@@ -122,8 +121,9 @@ svg {
 }
 
 .send__button{
-    width: 2em;
-    height: 2em;
+    padding-left: 1%;
+    width:  calc(30 * var(--res));
+    height: calc(30 * var(--res));
 }
 
 .conversation__messages__items {
