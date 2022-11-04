@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
 
 export const MessageContext = createContext<MessageContextInterface>({} as MessageContextInterface);
 
 export interface MessageContextInterface {
+  socket: Socket | null;
   newMessage: IMessageReceived | null;
   changeNewMessage: (newMessage: IMessageReceived | null) => void;
 } 
@@ -22,7 +23,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
     setNewMessage(newMessage);
   }
 
-  const socket = io("http://localhost:4000/chat", {
+  const socket : Socket = io("http://localhost:4000/chat", {
     query: {
       userId: user?.id,
     },
@@ -46,6 +47,6 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   }, []);
 
   return (
-    <MessageContext.Provider value={{newMessage, changeNewMessage}}>{children}</MessageContext.Provider>
+    <MessageContext.Provider value={{socket, newMessage, changeNewMessage}}>{children}</MessageContext.Provider>
   );
 };
