@@ -6,7 +6,7 @@ export class ChannelDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  uuid: string;
+  id: string;
 
   @IsOptional()
   @IsNotEmpty()

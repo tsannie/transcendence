@@ -8,19 +8,6 @@ export class MessageController {
   constructor(private messageService: MessageService,
     ) {}
 
-
-	// //TODO DELETE THIS ROUTE LATER, USED FOR DEBUGGING
-	// @Post("addToChannel")
-	// async addMessageChannel(@Body() data) {
-	// 	return await this.messageService.addMessagetoChannel(data);
-	// }
-
-	// //TODO DELETE THIS ROUTE LATER, USED FOR DEBUGGING
-	// @Post("addToDm")
-	// async addDm(@Body() data) {
-	// 	return await this.messageService.addMessagetoDm(data);
-	// }
-
 	@UseGuards( JwtTwoFactorGuard )
 	@Get("dm")
 	async loadDmMessages(@Query() data: LoadMessagesDto, @Request() req) {
