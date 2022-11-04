@@ -9,7 +9,7 @@ import  {ReactComponent as SendIcon} from "../../assets/img/icon/send.svg";
 
 
 function MessageForm(props: any) {
-  const conv = props.conv;
+  const convId = props.convId;
   const isChannel = props.isChannel;
 
   const { socket } = useContext(MessageContext);
@@ -24,7 +24,7 @@ function MessageForm(props: any) {
     if (input === "")
       return ;
     const data : IMessageSent = {
-        convId: conv.id,
+        convId: convId,
         content: input,
         isDm: !isChannel,
     }
@@ -64,7 +64,6 @@ function Channel() {
     const { newMessage } = useContext(MessageContext);
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
     
-    const [channel, setChannel] = useState<IDm | IChannel>({} as IDm | IChannel);
     const [offset, setOffset] = useState<number>(0);
     const [messages, setMessages] = useState<IMessageReceived[]>([]);
 
@@ -79,22 +78,6 @@ function Channel() {
         , 200);
     }
 
-  const loadChannel = async () => {
-    let route : string;
-
-    if (isChannel)
-        route = "/channel/datas";
-    else
-        route = "/dm/getById";
-
-    await api
-      .get(route, {params: {id: currentConvId}})
-      .then((res) => {
-        setChannel(res.data);
-      })
-      .catch( () => console.log("Axios Error"));
-  }
-
   const loadMessage = async () => {
     let route : string;
 
@@ -106,7 +89,14 @@ function Channel() {
     await api
       .get(route, {params: {id: currentConvId, offset: offset}})
       .then((res) => {
-        setMessages(res.data);
+        const unorderedMessages : IMessageReceived[] = res.data;
+        setMessages(unorderedMessages.sort( (a, b) => {
+          if (a.createdAt < b.createdAt)
+            return -1;
+          else
+            return 1;
+        }
+        ));
         setOffset(0);
       })
       .catch( () => console.log("Axios Error"));
@@ -120,7 +110,6 @@ function Channel() {
 
   useEffect( () => {
     const async_func = async () => {
-      await loadChannel();
       await loadMessage();
     };
     
@@ -129,7 +118,7 @@ function Channel() {
   }, [currentConvId]);
 
   useEffect ( () => {
-    if (newMessage && newMessage?.dm.id == channel.id)
+    if (newMessage && (newMessage?.dm?.id == currentConvId || newMessage?.channel?.id == currentConvId))
     { 
       addMessage(newMessage);
       scrollToBottom(true);
@@ -145,7 +134,7 @@ function Channel() {
             <MessageList messages={messages} user={user}/>
             <div ref={messagesEndRef}/>
           </ul>
-          <MessageForm conv={channel} isChannel={isChannel} />
+          <MessageForm convId={currentConvId} isChannel={isChannel} />
         </div>
       </ Fragment>
       );
