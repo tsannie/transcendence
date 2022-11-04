@@ -206,7 +206,6 @@ $height__title: calc(60 * var(--res));
   display: flex;
   flex-direction: column;
   overflow: auto;
-
   width: 100%;
 }
 
@@ -221,6 +220,7 @@ $height__title: calc(60 * var(--res));
   }
   svg {
     width: calc(35 * var(--res));
+    cursor: pointer;
   }
 
   .info__request {
@@ -259,18 +259,23 @@ $height__title: calc(60 * var(--res));
   position: absolute;
   border-style: dashed;
   border-top: 0;
-  margin-top: 0;
-  padding-left: 0;
+  margin: 0;
+  padding: 0;
   list-style: none;
   cursor: pointer;
 
   li {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
     padding: calc(10 * var(--res));
     img {
       border-radius: 50%;
       width: calc(20 * var(--res));
     }
     span {
+      margin: 0;
       margin-left: calc(10 * var(--res));
       font-size: calc(22 * var(--res));
     }
@@ -286,7 +291,6 @@ $height__title: calc(60 * var(--res));
     &:after {
       font-size: calc(18 * var(--res));
       content: " ◄";
-      margin: 0;
     }
   }
 }
