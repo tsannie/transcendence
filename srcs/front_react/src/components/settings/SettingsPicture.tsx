@@ -12,9 +12,14 @@ import {
 import "./settings.style.scss";
 
 export default function SettingsPicture() {
-  const { user } = useContext(AuthContext) as AuthContextType;
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
+  const { user, setReloadUser } = useContext(AuthContext) as AuthContextType;
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(
+    SnackbarContext
+  ) as SnackbarContextType;
+  const [profilePicture, setProfilePicture] = useState<string | undefined>(
+    user?.profile_picture
+  );
+  const [reloadPicture, setReloadPicture] = useState<boolean>(false);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -25,14 +30,14 @@ export default function SettingsPicture() {
       };
       api
         .post("/user/addAvatar", { avatar: e.target.files[0] }, config)
-        .then((res) => {
+        .then(() => {
           setSeverity("success");
           setMessage("Avatar updated");
-          setAfterReload(true);
-          window.location.reload();
+          setOpenSnackbar(true);
+          setProfilePicture(undefined);
+          setReloadPicture(true);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           setSeverity("error");
           setMessage("Error while uploading avatar");
           setOpenSnackbar(true);
@@ -40,10 +45,17 @@ export default function SettingsPicture() {
     }
   };
 
+  useEffect(() => {
+    if (reloadPicture && user) {
+      setProfilePicture(user?.profile_picture);
+      setReloadPicture(false);
+    }
+  }, [reloadPicture]);
+
   return (
     <div className="settings__picture">
       <img
-        src={user?.profile_picture + "&size=small"}
+        src={profilePicture + "&size=medium"}
         className="settings__picture__profile"
       ></img>
       <label htmlFor="select-image">
