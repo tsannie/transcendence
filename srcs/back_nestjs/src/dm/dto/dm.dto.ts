@@ -18,7 +18,6 @@ export class DmNameDto {
 export class DmIdDto {
   @IsDefined()
   @IsNotEmpty()
-  @Type(() => String)
   @IsString()
   id: string;
 }

@@ -70,7 +70,7 @@ export class MessageService {
       .leftJoin(`message.${type}`, `${type}`)
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
-      .orderBy('message.createdAt', 'ASC')
+      .orderBy('message.createdAt', 'DESC')
       .skip(offset * LOADED_MESSAGES)
       .take(LOADED_MESSAGES)
       .getMany();
@@ -92,7 +92,9 @@ export class MessageService {
       .addSelect('message.createdAt')
       .addSelect('message.content')
       .leftJoin('message.author', 'author')
+      .addSelect('author.id')
       .addSelect('author.username')
+      .addSelect('author.profile_picture')
       .leftJoin(`message.${type}`, `${type}`)
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
