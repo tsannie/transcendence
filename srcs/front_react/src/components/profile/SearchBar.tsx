@@ -1,5 +1,5 @@
 import React, { FormEvent, Fragment, KeyboardEvent, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
 import { api } from "../../const/const";
 
@@ -14,6 +14,7 @@ function SearchBar() {
   const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
   const [suggestions, setSuggestions] = useState<IUserSearch[]>([]);
   const [userInput, setUserInput] = useState<string>("");
+  const nav = useNavigate();
 
   let suggestionsListComponent = [];
 
@@ -98,7 +99,10 @@ function SearchBar() {
     else if (e.key === "Enter") {
       e.preventDefault();
       if (!showSuggestion && userInput) {
-        window.location.href = "/profile/" + userInput;
+        nav("/profile/" + userInput);
+        // Reset props
+        setActiveSuggestion(-1);
+        setUserInput("");
       } else if (activeSuggestion !== -1) {
         setActiveSuggestion(0);
         setShowSuggestion(false);

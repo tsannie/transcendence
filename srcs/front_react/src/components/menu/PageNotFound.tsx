@@ -1,24 +1,22 @@
 import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   SnackbarContext,
   SnackbarContextType,
 } from "../../contexts/SnackbarContext";
 
-interface Iprops {
-  redirection: string;
-  objectNotFound: string;
-}
-
-function PageNotFound(props: Iprops) {
-  const { setSeverity, setMessage, setAfterReload } = useContext(
+function PageNotFound() {
+  const { setSeverity, setMessage, setOpenSnackbar } = useContext(
     SnackbarContext
   ) as SnackbarContextType;
 
+  const nav = useNavigate();
+
   useEffect(() => {
     setSeverity("warning");
-    setMessage(props.objectNotFound + " not found ");
-    setAfterReload(true);
-    window.location.href = props.redirection;
+    setMessage("page not found ");
+    setOpenSnackbar(true);
+    nav("/");
   }, []);
   return <>redirection</>;
 }
