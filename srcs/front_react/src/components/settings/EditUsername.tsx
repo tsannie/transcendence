@@ -1,7 +1,13 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, {
+  FormEvent,
+  Fragment,
+  KeyboardEvent,
+  useContext,
+  useState,
+} from "react";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import {ReactComponent as EditIcon} from "../../assets/img/icon/edit.svg";
-import {ReactComponent as VerifIcon} from "../../assets/img/icon/circle_check.svg";
+import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
+import { ReactComponent as VerifIcon } from "../../assets/img/icon/circle_check.svg";
 import { api } from "../../const/const";
 import {
   SnackbarContext,
@@ -9,11 +15,14 @@ import {
 } from "../../contexts/SnackbarContext";
 
 function EditUsername() {
-  const { user } = React.useContext(AuthContext) as AuthContextType;
+  const { user, setReloadUser } = React.useContext(
+    AuthContext
+  ) as AuthContextType;
   const [editUsername, setEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
+  const { setMessage, setOpenSnackbar, setSeverity } = useContext(
+    SnackbarContext
+  ) as SnackbarContextType;
 
   const handleUsername = () => {
     setEditUsername(!editUsername);
@@ -25,14 +34,17 @@ function EditUsername() {
     setNewUsername(e.target.value.slice(0, size_max));
   };
 
-  const handleVerifyUsername = () => {
+  const handleVerifyUsername = (e: KeyboardEvent) => {
+    if (e.key !== "Enter") return;
+
     api
       .post("user/edit-username", { username: newUsername })
       .then(({ data }) => {
         setSeverity("success");
         setMessage("username updated");
-        setAfterReload(true);
-        window.location.reload();
+        setOpenSnackbar(true);
+        setReloadUser(true);
+        setEditUsername(false);
       })
       .catch((error) => {
         setSeverity("error");
@@ -52,8 +64,9 @@ function EditUsername() {
             type="text"
             value={newUsername}
             onChange={handleUsernameChange}
+            onKeyDown={handleVerifyUsername}
           ></input>
-          <VerifIcon onClick={handleVerifyUsername}/>
+          <VerifIcon onClick={handleVerifyUsername} />
         </Fragment>
       )}
       {editUsername === false && (
