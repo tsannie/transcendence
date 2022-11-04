@@ -12,10 +12,7 @@ function ProfileHeader(props: IProps) {
     <div className="profile__header">
       <div className="profile__header__user">
         <div className="profile__header__user__avatar">
-          <img
-            src={props.user?.profile_picture + "&size=medium"}
-            alt="avatar"
-          />
+          <img src={props.user?.profile_picture + "&size=large"} alt="avatar" />
         </div>
         <div className="profile__header__user__info">
           <div className="name">
