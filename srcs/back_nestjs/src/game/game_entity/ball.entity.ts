@@ -31,6 +31,8 @@ export class BallEntity {
   right: boolean = true;
   
   ///////////////////
+  @Column({ default: false })
+  can_touch_paddle: boolean = true;
 
   @Column({ nullable: true})
   direction_x: number;

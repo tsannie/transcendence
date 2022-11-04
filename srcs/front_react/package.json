@@ -21,6 +21,7 @@
     "axios": "^0.27.2",
     "buffer": "^6.0.3",
     "has-cors": "^1.1.0",
+    "p5": "^1.5.0",
     "react": "^18.0.0",
     "react-canvas-draw": "^1.2.1",
     "react-dom": "^18.0.0",
