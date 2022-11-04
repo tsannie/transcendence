@@ -26,6 +26,7 @@ $number_ball: 11;
   width: calc(20 * var(--res));
   height: calc(20 * var(--res));
   animation: 20s linear infinite;
+  z-index: -2;
   &::before {
     content: "";
     display: block;

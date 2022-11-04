@@ -55,20 +55,22 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
         <div className="menu">
           <Sidebar />
           <div className="content">
-            <div
-              className={`${transitionStage}`}
-              onAnimationEnd={() => {
-                if (transitionStage === "exit-up") {
-                  setTransistionStage("bounce-in-up");
-                  setDisplayLocation(location);
-                } else if (transitionStage === "exit-down") {
-                  setTransistionStage("bounce-in-down");
-                  setDisplayLocation(location);
-                }
-              }}
-            >
-              <div className="content__bg"></div>
-              <RouteComponent />
+            <div className="content__rel">
+              <div className="content__bg" />
+              <div
+                className={`${transitionStage}`}
+                onAnimationEnd={() => {
+                  if (transitionStage === "exit-up") {
+                    setTransistionStage("bounce-in-up");
+                    setDisplayLocation(location);
+                  } else if (transitionStage === "exit-down") {
+                    setTransistionStage("bounce-in-down");
+                    setDisplayLocation(location);
+                  }
+                }}
+              >
+                <RouteComponent />
+              </div>
             </div>
           </div>
         </div>

@@ -7,12 +7,15 @@ $search_bar_size: calc(250 * var(--res));
 }
 
 .profile {
-  width: calc(750 * var(--res));
   display: flex;
   flex-direction: column;
   border-style: dashed;
   align-items: center;
   padding: 2%;
+}
+
+.profile__size {
+  width: calc(750 * var(--res));
 }
 
 .profile__header {
