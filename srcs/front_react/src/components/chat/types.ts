@@ -2,7 +2,6 @@ import { User } from "../../contexts/AuthContext";
 
 export interface IMessageSent {
   convId: string; // id du dm ou du channel
-  author: User | null; // IUser en theorie
   content: string;
   isDm: boolean;
 }
