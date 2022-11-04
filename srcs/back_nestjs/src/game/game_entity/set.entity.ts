@@ -33,4 +33,6 @@ export class SetEntity {
   @OneToOne(() => PlayerEntity, { eager: true, cascade: true })
   @JoinColumn()
   p2: PlayerEntity;
+
+
 }

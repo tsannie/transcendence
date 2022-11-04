@@ -13,6 +13,16 @@ import { SetEntity } from "./game_entity/set.entity";
 
 export function mouv_ball(set: SetEntity) {
 
+  // if ball center of canvas
+  if (set.ball.x > (canvas_back_width/2) - 10 && set.ball.x < (canvas_back_width/2) + 10
+  && set.ball.can_touch_paddle == false)
+  {
+    console.log("ball center of canvas");
+    set.ball.can_touch_paddle = true;
+  }
+
+
+
   if (set.ball.first_col === false) {
     set.ball.x += spawn_speed * set.ball.direction_x
     set.ball.y += spawn_gravity * set.ball.direction_y
@@ -34,14 +44,9 @@ export function mouv_ball(set: SetEntity) {
     set.ball.direction_x *= -1;
   } */
   if (set.ball.y + rad >= canvas_back_height)
-  {
     set.ball.direction_y *= -1;
-    //console.log("touch wall down");
-  }
-  else if (set.ball.y - rad <= 0) {
+  else if (set.ball.y - rad <= 0)
     set.ball.direction_y *= -1;
-    //console.log("touch wall up");
-  }
 }
 
 function increment_score_player(player: PlayerEntity, ball: BallEntity) {
@@ -51,27 +56,43 @@ function increment_score_player(player: PlayerEntity, ball: BallEntity) {
   ball.direction_y = 1;
   ball.first_col = false;
   
-  //player.score += 1;
+  // player.score += 1;
   console.log('+= 1 p2');
 }
 
 function colision_paddle_player(paddle: PaddleEntity, ball: BallEntity) {
+  
+  // 
+
+  
   let res = paddle.y + paddle_height - ball.y;
-     ball.gravity = -(res / 10 - paddle_height / 20);
-     
+
+  ball.gravity = -(res / 10 - paddle_height / 20);
+
+  Math.abs(ball.gravity);
+
        // gameSpecs.smash = 1;
         //set.ball.direction_y = true;
-      ball.direction_x *= -1; 
+      ball.direction_x *= -1;
+
+      if (ball.y < paddle.y - (paddle_height / 2))
+        ball.direction_y = -1;
+      else
+        ball.direction_y = 1;
+
       ball.first_col = true;
-       //set.ball.col_paddle = true;
+
+      ball.can_touch_paddle = false;
+      console.log("touch paddle");
+         //set.ball.col_paddle = true;
        // set.ball.col_now_paddle = true;
        //console.log('col paddle');
 }
-
+//
 export function BallCol_p1(set: SetEntity) {
 
-  if ( set.ball.x - rad <= set.p1_paddle.x + paddle_width &&
-  set.ball.x + (rad / 3) >= set.p1_paddle.x &&
+  if (set.ball.can_touch_paddle === true &&
+  set.ball.x - rad <= set.p1_paddle.x + paddle_width &&
   set.ball.y + rad >= set.p1_paddle.y &&
   set.ball.y - rad <= set.p1_paddle.y + paddle_height) {
     colision_paddle_player(set.p1_paddle, set.ball);
@@ -87,8 +108,8 @@ export function BallCol_p2(set: SetEntity) {
   //console.log("set.ball.x", set.ball.x);
   //console.log("set.ball.y", set.ball.y);
 
-  if (set.ball.x + rad >= set.p2_paddle.x &&
-  set.ball.x - (rad / 3) <= set.p2_paddle.x + paddle_width &&
+  if (set.ball.can_touch_paddle === true &&
+  set.ball.x + rad >= set.p2_paddle.x &&
   set.ball.y + rad >= set.p2_paddle.y &&
   set.ball.y - rad <= set.p2_paddle.y + paddle_height) {
     colision_paddle_player(set.p2_paddle, set.ball);
