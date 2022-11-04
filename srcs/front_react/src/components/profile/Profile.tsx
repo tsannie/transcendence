@@ -6,17 +6,24 @@ import ProfileStatsBar from "./ProfileStatsBar";
 import ProfileFriends from "./ProfileFriends";
 import ProfileHistory from "./ProfileHistory";
 import { api } from "../../const/const";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PageNotFound from "../menu/PageNotFound";
+import {
+  SnackbarContext,
+  SnackbarContextType,
+} from "../../contexts/SnackbarContext";
 
-function ProfilePlayer() {
+function Profile() {
   const params = useParams().id;
   const { user } = useContext(AuthContext) as AuthContextType;
+  const { setSeverity, setMessage, setOpenSnackbar } = useContext(
+    SnackbarContext
+  ) as SnackbarContextType;
+  const nav = useNavigate();
 
   const [player, setPlayer] = useState<User | null>(null);
   const [isload, setIsLoad] = useState<boolean>(false);
   const [isPerso, setIsPerso] = useState<boolean>(false);
-  const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
     const perso = params === user?.username ? true : false;
@@ -32,16 +39,14 @@ function ProfilePlayer() {
           setPlayer(res.data as User);
           setIsLoad(true);
         })
-        .catch((err) => {
-          console.log("error");
-          setNotFound(true);
+        .catch(() => {
+          nav("/profile/" + user?.username);
+          setSeverity("warning");
+          setMessage("user not found");
+          setOpenSnackbar(true);
         });
     }
   }, [params]);
-
-  if (notFound) {
-    return <PageNotFound redirection="/profile" objectNotFound="player" />;
-  }
 
   if (isload) {
     return (
@@ -62,4 +67,4 @@ function ProfilePlayer() {
   }
 }
 
-export default ProfilePlayer;
+export default Profile;

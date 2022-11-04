@@ -15,11 +15,11 @@ import {
   TransitionContext,
   TransitionContextType,
 } from "./contexts/TransitionContext";
-import ProfilePlayer from "./components/profile/ProfilePlayer";
 import PageNotFound from "./components/menu/PageNotFound";
+import Profile from "./components/profile/Profile";
 
 export default function App() {
-  const { displayLocation, location, enableTransition } = useContext(
+  const { displayLocation } = useContext(
     TransitionContext
   ) as TransitionContextType;
 
@@ -31,10 +31,7 @@ export default function App() {
         <SnackbarProvider>
           <Routes location={displayLocation}>
             {/* 404 Page (public) */}
-            <Route
-              path="*"
-              element={<PageNotFound redirection="/" objectNotFound="page" />}
-            />
+            <Route path="*" element={<PageNotFound />} />
             {/* Auth Routes (public) */}
             <Route path="/auth" element={<LoginPage />} />
             <Route path="/2fa" element={<TwoFactorPage />} />
@@ -43,7 +40,11 @@ export default function App() {
 
             <Route
               path="/profile/:id"
-              element={<PrivateRoute component={ProfilePlayer} />}
+              element={<PrivateRoute component={Profile} />}
+            />
+            <Route
+              path="/profile"
+              element={<PrivateRoute component={PageNotFound} />}
             />
 
             <Route path="/chat" element={<PrivateRoute component={Home} />} />
