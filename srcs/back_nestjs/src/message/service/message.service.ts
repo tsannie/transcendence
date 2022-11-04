@@ -97,6 +97,7 @@ export class MessageService {
       .addSelect('author.profile_picture')
       .leftJoin(`message.${type}`, `${type}`)
       .addSelect(`${type}.id`)
+      .addSelect(`${type}.name`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
       .orderBy('message.createdAt', 'DESC')
       .getOne();
