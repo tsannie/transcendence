@@ -1,0 +1,152 @@
+import "./chat.style.scss"
+import { MessageContext } from "../../contexts/MessageContext";
+import { ChatStateContext } from "../../contexts/ChatContext";
+import { Fragment, useContext, useEffect, useRef, useState } from "react";
+import { IChannel, IDm, IMessageReceived, IMessageSent } from "./types";
+import { api } from "../../const/const";
+import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
+import  {ReactComponent as SendIcon} from "../../assets/img/icon/send.svg";
+
+
+function MessageForm(props: any) {
+  const user : User = props.user;
+  const conv = props.conv;
+  const isChannel = props.isChannel;
+  const [input, setInput] = useState<string>("");
+
+  const actualize_input = (e: any) => {
+    setInput(e.target.value);
+  }
+
+  const sendMessage = async () => {
+    console.log(conv);
+
+    const data : IMessageSent = {
+        convId: conv.id,
+        content: input,
+        isDm: !isChannel,
+    }
+
+    console.log(data);
+  }
+
+  return (
+    <form>
+        <input className="input__form" type="text" placeholder="add message..." value={input} onChange={actualize_input}/>
+          <SendIcon className="send__button" onClick={sendMessage}/>
+    </ form>
+  )
+}
+
+function MessageList(props: any) {
+    const user : User = props.user
+    const messages : IMessageReceived[] = props.messages;
+
+    return <Fragment>{messages.map( (message: IMessageReceived) => { 
+        let items_class : string;
+  
+        if (message.author?.id === user?.id)
+          items_class = "conversation__messages__items self";
+        else
+          items_class = "conversation__messages__items other";
+        return <li className={items_class} key={message.id}>
+                  <img src={message.author?.profile_picture + "&size=small"} className="avatar" />
+                  <div className="conversation__messages__text">{message.content}</div>
+                </ li>
+      })}</Fragment>;
+}
+
+function Channel() {
+    const { user } = useContext(AuthContext) as AuthContextType;
+    const { currentConvId, isChannel } = useContext(ChatStateContext);
+    const { newMessage } = useContext(MessageContext);
+    const messagesEndRef = useRef<null | HTMLDivElement>(null);
+    
+    const [channel, setChannel] = useState<IDm | IChannel>({} as IDm | IChannel);
+    const [offset, setOffset] = useState<number>(0);
+    const [messages, setMessages] = useState<IMessageReceived[]>([]);
+
+  
+  const scrollToBottom = (smooth: boolean = false) => {
+      setTimeout(() => {
+        if (!smooth)
+          messagesEndRef.current?.scrollIntoView(false);
+        else
+          messagesEndRef.current?.scrollIntoView({behavior: "smooth"})
+      }
+        , 200);
+    }
+
+  const loadChannel = async () => {
+    let route : string;
+
+    if (isChannel)
+        route = "/channel/datas";
+    else
+        route = "/dm/getById";
+
+    await api
+      .get(route, {params: {id: currentConvId}})
+      .then((res) => {
+        setChannel(res.data);
+      })
+      .catch( () => console.log("Axios Error"));
+  }
+
+  const loadMessage = async () => {
+    let route : string;
+
+    if (isChannel)
+        route = "/message/channel";
+    else
+        route = "/message/dm";
+    
+    await api
+      .get(route, {params: {id: currentConvId, offset: offset}})
+      .then((res) => {
+        setMessages(res.data);
+        setOffset(0);
+      })
+      .catch( () => console.log("Axios Error"));
+  }
+
+  const addMessage = (newMessage: IMessageReceived | null) => {
+    if (newMessage)
+      setMessages([...messages, newMessage]);
+  }
+
+
+  useEffect( () => {
+    const async_func = async () => {
+      await loadChannel();
+      await loadMessage();
+    };
+    
+    async_func();
+    scrollToBottom();
+  }, [currentConvId]);
+
+  useEffect ( () => {
+    if (newMessage && newMessage?.dm.id == channel.id)
+    { 
+      addMessage(newMessage);
+      scrollToBottom(true);
+    }
+  }, [newMessage]);
+
+
+
+  return (
+      <Fragment>
+        <div className="conversation__elems">
+          <ul className="conversation__messages__list">
+            <MessageList messages={messages} user={user}/>
+            <div ref={messagesEndRef}/>
+          </ul>
+          <MessageForm conv={channel} isChannel={isChannel} user={user} />
+        </div>
+      </ Fragment>
+      );
+}
+
+export default Channel;

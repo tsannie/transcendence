@@ -21,6 +21,10 @@ $width_chat: calc(450 * var(--res));
     height: $width_chat;
 }
 
+// .chat_bg {
+//     // width: 100%;
+// }
+
 .chat__list {
     display: flex;
     flex-direction: column;
