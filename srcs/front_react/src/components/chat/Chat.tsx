@@ -4,6 +4,7 @@ import { MessageProvider } from "../../contexts/MessageContext";
 import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
 import { useContext } from "react";
 import Conversation from "./Conversation";
+import NotifProvider from "../../contexts/NotificationsContext";
 
 function ChatBody() {
   const {display} = useContext(ChatStateContext);
@@ -21,8 +22,10 @@ function Chat() {
         <div className="chat_bg" /> */}
         <MessageProvider>
         <ChatStateProvider>
+        <NotifProvider>
           <MessageList />
           <ChatBody />
+        </NotifProvider>
         </ChatStateProvider>
         </MessageProvider>
       </div>

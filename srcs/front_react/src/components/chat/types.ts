@@ -26,6 +26,7 @@ export interface ICreateChannel {
 export interface IChannel {
   id: string;
   name: string;
+  createdAt: Date;
   updatedAt: Date;
   password: string;
   status: string;
@@ -34,7 +35,6 @@ export interface IChannel {
   admins: User[] | null;
   muted: User[] | null;
   banned: User[] | null;
-  notif: boolean;
 }
 
 export interface IChannelActions {

@@ -6,11 +6,13 @@ import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
 import  {ReactComponent as GroupChatIcon} from "../../assets/img/icon/groupchat.svg";
+import { NotifContext } from "../../contexts/NotificationsContext";
   
 function MessageList() {
     const { user } = useContext(AuthContext) as AuthContextType;
     const { newMessage } = useContext(MessageContext);
-    const { changeDisplay, changeCurrentConv, changeIsChannel } = useContext(ChatStateContext);
+    const { addChannel, changeNotif, isNotif } = useContext(NotifContext);
+    const { currentConvId, changeDisplay, changeCurrentConv, changeIsChannel } = useContext(ChatStateContext);
 
     const [chatList, setChatList] = useState<IChannel[]>([]);
   
@@ -18,38 +20,49 @@ function MessageList() {
       await api
       .get("/user/conversations")
       .then((res) => {
-        res.data.forEach((channel: IChannel) => {
-          channel.notif = false;
-        });
-        setChatList(res.data);
+        const copy_data: IChannel[] = res.data;
+        copy_data.forEach((channel: IChannel) => {
+          addChannel(channel.id, false);
+        })
+        setChatList(copy_data);
       })
       .catch( () => console.log("Axios Error"));
     }
   
     const updateList = () => {
       let newList = [...chatList];
-      let conv_id = newMessage?.channel ? newMessage?.channel.id : newMessage?.dm.id;
-      let editable_room = newList.find( (elem) => elem.id === conv_id);
+      let received_id = newMessage?.channel ? newMessage?.channel.id : newMessage?.dm.id;
+
+      let editable_room = newList.find( (elem) => elem.id === received_id);
       if (editable_room && newMessage)
       {
-        editable_room.notif = true;
         editable_room.updatedAt = newMessage.createdAt;
+        changeNotif(editable_room.id, true);
+        newList.sort( (a,b) => {
+          if (a.updatedAt < b.updatedAt)
+            return 1;
+          else
+            return -1;
+        })
       }
-      newList.sort( (a,b) => {
-        if (a.updatedAt < b.updatedAt)
-          return 1;
-        else
-          return -1;
-      })
+      else
+      {
+        if (!newList || !newMessage)
+          return ;
+        let new_elem;
+
+        if (newMessage?.dm)
+          new_elem = newMessage.dm;
+        if (newMessage?.channel)
+          new_elem = newMessage?.channel;
+        addChannel(new_elem.id, true);
+        newList = [new_elem, ...newList]
+      }
       setChatList(newList);
     }
 
     const disableNotif = (conv: IChannel) => {
-      let newList = [...chatList];
-      let editable_room = newList.find( (elem) => elem.id === conv.id);
-      if (editable_room)
-        editable_room.notif = false;
-      setChatList(newList);
+      changeNotif(conv.id, false);
     }
 
     const clickItem = (conv: IChannel) => {
@@ -59,8 +72,17 @@ function MessageList() {
         changeIsChannel(true);
       else
         changeIsChannel(false);
-      if (conv.notif)
-        disableNotif(conv);
+      disableNotif(conv);
+    }
+
+    const displayNotif = (convId: string) => {
+      console.log("convID: =", convId);
+      console.log("IsNotif = ", isNotif(convId));
+      if (isNotif(convId) && currentConvId == convId)
+        changeNotif(convId, false);
+      if (isNotif(convId))
+        return <div className="notif" />;
+      return null;
     }
   
     const MessageListItems = chatList.map( (conv: any) => {
@@ -78,7 +100,7 @@ function MessageList() {
             <li className="chat__list__items" key={conv.id} onClick={ () => clickItem(conv)}>
               {user2 ? <img src={user2.profile_picture + "&size=small"} className="avatar"/> : <GroupChatIcon className="avatar" />}
               {title}
-              {conv.notif ? <div className="notif" /> : null}
+              {displayNotif(conv.id)}
             </li>
             )
       });
