@@ -16,7 +16,7 @@ import {
 } from "../../contexts/SnackbarContext";
 
 export default function Sidebar() {
-  const { logout } = useContext(AuthContext) as AuthContextType;
+  const { logout, user } = useContext(AuthContext) as AuthContextType;
   const { setMessage, setOpenSnackbar, setSeverity } = useContext(
     SnackbarContext
   ) as SnackbarContextType;
@@ -43,7 +43,7 @@ export default function Sidebar() {
           <Link to="/">
             <HomeIcon className={path === "/" ? "selected" : ""} />
           </Link>
-          <Link to="/profile">
+          <Link to={"/profile/" + user?.username}>
             <ProfileIcon
               className={path.slice(0, 8) === "/profile" ? "selected" : ""}
             />
