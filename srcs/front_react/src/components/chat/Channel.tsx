@@ -9,30 +9,32 @@ import  {ReactComponent as SendIcon} from "../../assets/img/icon/send.svg";
 
 
 function MessageForm(props: any) {
-  const user : User = props.user;
   const conv = props.conv;
   const isChannel = props.isChannel;
+
+  const { socket } = useContext(MessageContext);
   const [input, setInput] = useState<string>("");
 
-  const actualize_input = (e: any) => {
-    setInput(e.target.value);
+  const actualize_input = (event: any) => {
+    setInput(event.target.value);
   }
 
-  const sendMessage = async () => {
-    console.log(conv);
-
+  const sendMessage = async (event: any) => {
+    event.preventDefault();
+    if (input === "")
+      return ;
     const data : IMessageSent = {
         convId: conv.id,
         content: input,
         isDm: !isChannel,
     }
-
-    console.log(data);
+    socket?.emit("message", data);
+    setInput("");
   }
 
   return (
-    <form>
-        <input className="input__form" type="text" placeholder="add message..." value={input} onChange={actualize_input}/>
+    <form onSubmit={sendMessage}>
+        <input className="input__form" type="text" placeholder="add message..." value={input} onChange={actualize_input} />
           <SendIcon className="send__button" onClick={sendMessage}/>
     </ form>
   )
@@ -143,7 +145,7 @@ function Channel() {
             <MessageList messages={messages} user={user}/>
             <div ref={messagesEndRef}/>
           </ul>
-          <MessageForm conv={channel} isChannel={isChannel} user={user} />
+          <MessageForm conv={channel} isChannel={isChannel} />
         </div>
       </ Fragment>
       );
