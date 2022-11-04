@@ -5,7 +5,7 @@ export class ChannelActionsDto {
 	@IsDefined()
 	@IsNotEmpty()
 	@IsString()
-	channel_name: string;
+	uuid: string;
 
 	@IsDefined()
 	@IsNotEmpty()

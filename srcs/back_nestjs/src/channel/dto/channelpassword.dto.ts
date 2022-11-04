@@ -5,9 +5,7 @@ export class ChannelPasswordDto {
     @IsDefined()
     @IsNotEmpty()
     @IsString()
-    @MinLength(1)
-    @MaxLength(50)
-    name: string;
+    uuid: string;
   
     @IsOptional()
     @IsNotEmpty()
