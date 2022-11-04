@@ -6,6 +6,7 @@ import {
   SnackbarContext,
   SnackbarContextType,
 } from "../../contexts/SnackbarContext";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
 interface IProps {
   setEnable2FA: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,6 +15,7 @@ interface IProps {
 export default function ActivationProcess(props: IProps) {
   const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
     useContext(SnackbarContext) as SnackbarContextType;
+  const { setReloadUser } = useContext(AuthContext) as AuthContextType;
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
 
@@ -28,16 +30,16 @@ export default function ActivationProcess(props: IProps) {
       });
   }
 
-  async function checkToken() {
-    await api
+  function checkToken() {
+    api
       .post("2fa/check-token", {
         token: token,
       })
       .then((res) => {
         setSeverity("success");
         setMessage("2FA activated");
-        setAfterReload(true);
-        window.location.reload();
+        setOpenSnackbar(true);
+        setReloadUser(true);
       })
       .catch((err) => {
         setSeverity("error");
