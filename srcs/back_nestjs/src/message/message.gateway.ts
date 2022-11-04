@@ -96,7 +96,7 @@ export class MessageGateway
     @ConnectedSocket() client: Socket,
   ) {
     const userId = client.handshake.query.userId;
-    console.log("client = ", client);
+
     if (data.isDm === true) {
       console.log(userId.toString());
       const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
