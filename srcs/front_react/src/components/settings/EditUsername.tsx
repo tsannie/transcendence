@@ -34,12 +34,11 @@ function EditUsername() {
     setNewUsername(e.target.value.slice(0, size_max));
   };
 
-  const handleVerifyUsername = (e: KeyboardEvent) => {
-    if (e.key !== "Enter") return;
-
+  const handleVerifyUsername = () => {
     api
       .post("user/edit-username", { username: newUsername })
       .then(({ data }) => {
+        setNewUsername("");
         setSeverity("success");
         setMessage("username updated");
         setOpenSnackbar(true);
@@ -54,6 +53,12 @@ function EditUsername() {
       });
   };
 
+  const handleEnter = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleVerifyUsername();
+    }
+  };
+
   return (
     <div className="settings__editable">
       {editUsername === true && (
@@ -64,7 +69,7 @@ function EditUsername() {
             type="text"
             value={newUsername}
             onChange={handleUsernameChange}
-            onKeyDown={handleVerifyUsername}
+            onKeyDown={handleEnter}
           ></input>
           <VerifIcon onClick={handleVerifyUsername} />
         </Fragment>

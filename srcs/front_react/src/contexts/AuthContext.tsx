@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }: IProps) => {
   };
 
   const logout = () => {
+    console.log("logout");
     setUser(null);
     setIsLogin(false);
   };
@@ -47,9 +48,11 @@ export const AuthProvider = ({ children }: IProps) => {
       api
         .get("auth/profile")
         .then((res) => {
+          console.log("reload user");
           setUser(res.data);
         })
         .catch((res) => {
+          logout();
           console.log("error update user");
         });
       setReloadUser(false);
