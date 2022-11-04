@@ -29,12 +29,14 @@ interface IPlayer {
 }
 
 let position_y = 0;
-let x = 1;
+
 export function GamePlayer_p1_p2() {
 
   let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
   let ratio_width = (XlowerSize /canvas_back_width);
   let ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
+  let start = true;
+  let x = 0;
 
   const game = useContext(GameContext);
   const canvasRef: any = createRef();
@@ -100,35 +102,24 @@ export function GamePlayer_p1_p2() {
       IPaddle_p2.x = (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
       IPaddle_p2.height = paddle_height * ratio_height;
       IPaddle_p2.width = paddle_width * ratio_width;
-
-      //console.log("IPaddle_p1.he", IPaddle_p1.height)
-      //console.log("XlowerSize", XlowerSize)
     });
 
 
     socket.on("player_give_upem", (set: any, status: number) => {
       IPlayer_p2.won = set.p2.won;
       IPlayer_p1.won = set.p1.won;
-
-      console.log("IPlayer_p2.won", IPlayer_p2.won)
-      console.log("IPlayer_p1.won", IPlayer_p1.won)
-
       game.setStatus(game.status);
-
-      console.log("status", status);
-      console.log("game.status", game.status);
-      //props.setgamestart(false);
-      //console.log("xxxplayer_give_upem", IPlayer_p2.won, IPlayer_p1.won);
     });
-
 
     socket.on("get_players", (p1: any, p2 : any) => {  
       IPlayer_p1 = p1;
       IPlayer_p2 = p2;
     });
+
     socket.on("get_paddle_p1", (y: number) => {
       IPaddle_p1.y = y * ratio_height;
     });
+
     socket.on("get_paddle_p2", (y: number) => {
       IPaddle_p2.y = y * ratio_height;
     });
@@ -149,68 +140,42 @@ export function GamePlayer_p1_p2() {
     }
  */
 
-    function ask_paddle_p1() {
+    function ask_paddle() {
 
       let data = {
         room: game.room,
         paddle_y: position_y,
         front_canvas_height: XlowerSize / screen_ratio,
       };
-
-        IPaddle_p1.y = position_y;
-        socket.emit("ask_paddle_p1", data);
-
-    }
-
-    function ask_paddle_p2() {
-
-      let data = {
-        room: game.room,
-        paddle_y: position_y,
-        front_canvas_height: XlowerSize / screen_ratio,
-      };
-
-
+      if (game.im_p2) {
         IPaddle_p2.y = position_y;
         socket.emit("ask_paddle_p2", data);
+      }
+      else {
+        IPaddle_p1.y = position_y;
+        socket.emit("ask_paddle_p1", data);
+      }
     }
 
-    function ask_ball(){
+    // set countdown timer
 
-      let data = {
-        room: game.room,
-        ball_y: IBall.y,
-        ball_x: IBall.x,
-        front_canvas_height: XlowerSize / screen_ratio,
-        front_canvas_width: XlowerSize,
-      };
-      socket.emit("ask_ball", data);
-    }
 
-let requestAnimationFrameId: any;
   useEffect(() => {
     let canvas: any = canvasRef.current;
-
+    
       const render = () => {
-        requestAnimationFrameId = requestAnimationFrame(render);
+        requestAnimationFrame(render);
         let ctx : any = null;
         ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
   
           if (ctx) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (IPlayer_p1.won === false && IPlayer_p2.won === false && game.room !== "") {
-              if (x >= 100) {
-                if (x === 100 && game.im_p2 === false)  {
-                  ask_ball();
-                }
-
-                if (game.im_p2 === false)
-                  ask_paddle_p2()
-                else
-                  ask_paddle_p1()
+              if (game.im_p2 === true && start === true) {
+                socket.emit("start_game_render", game.room);
+                start = false;
               }
-              x++;
-
+              ask_paddle()
               draw_line(ctx, canvas.height, canvas.width);
               draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
               draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
@@ -222,12 +187,8 @@ let requestAnimationFrameId: any;
       render();
   }, []);
 
-
-
-
   function leaveGame() {
     game.setStatus(RoomStatus.CLOSED);
-    x = 1;
     if (IPlayer_p1.won === true || IPlayer_p2.won === true)
     {
       console.log("end of game");
@@ -254,15 +215,11 @@ let requestAnimationFrameId: any;
       position_y = (XlowerSize / screen_ratio);
     else if (tmp_pos > (XlowerSize / screen_ratio) - (IPaddle_p2.height) ||
     tmp_pos < 0) {
-        console.log("out");
+        console.log("out of range");
     }
     else
       position_y = tmp_pos;
   }
-
-    //console.log("position_y", position_y);
-    //console.log("height paddle p1", IPaddle_p1);
-    //console.log("height paddle p2", IPaddle_p2);
 
   return (
     <div>
