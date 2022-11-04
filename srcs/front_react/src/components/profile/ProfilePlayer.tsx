@@ -43,6 +43,7 @@ function ProfilePlayer() {
   if (isload) {
     return (
       <div className="profile">
+        <div className="profile__size" />
         <ProfileHeader user={player} />
         <hr id="full" />
         <ProfileStatsBar user={player} />
