@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { api } from "../const/const";
 
 export type User = {
@@ -15,6 +15,7 @@ export type AuthContextType = {
   isLogin: boolean;
   user: User | null;
   setUser: (user: User) => void;
+  setReloadUser: (reload: boolean) => void;
   login: (user: User) => void;
   logout: () => void;
   //monitoringSocket: WebSocket | null;
@@ -28,7 +29,8 @@ interface IProps {
 
 export const AuthProvider = ({ children }: IProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [reloadUser, setReloadUser] = useState<boolean>(false);
 
   const login = (user: User) => {
     setUser(user);
@@ -40,8 +42,24 @@ export const AuthProvider = ({ children }: IProps) => {
     setIsLogin(false);
   };
 
+  useEffect(() => {
+    if (reloadUser && user) {
+      api
+        .get("auth/profile")
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch((res) => {
+          console.log("error update user");
+        });
+      setReloadUser(false);
+    }
+  }, [reloadUser]);
+
   return (
-    <AuthContext.Provider value={{ isLogin, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLogin, setReloadUser, user, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

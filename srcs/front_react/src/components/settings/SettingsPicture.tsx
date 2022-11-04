@@ -32,6 +32,7 @@ export default function SettingsPicture() {
           window.location.reload();
         })
         .catch((err) => {
+          console.log(err);
           setSeverity("error");
           setMessage("Error while uploading avatar");
           setOpenSnackbar(true);
