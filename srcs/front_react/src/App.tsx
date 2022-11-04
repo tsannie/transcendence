@@ -17,6 +17,7 @@ import {
 } from "./contexts/TransitionContext";
 import ProfilePlayer from "./components/profile/ProfilePlayer";
 import PageNotFound from "./components/menu/PageNotFound";
+import ProfilePlayerr from "./components/profile/ProfilePlayerr";
 
 export default function App() {
   const { displayLocation, location, enableTransition } = useContext(
@@ -40,14 +41,12 @@ export default function App() {
             <Route path="/2fa" element={<TwoFactorPage />} />
             {/* Main Routes (private) */}
             <Route path="/" element={<PrivateRoute component={Home} />} />
-            <Route
-              path="/profile"
-              element={<PrivateRoute component={ProfilePlayer} />}
-            />
+
             <Route
               path="/profile/:id"
-              element={<PrivateRoute component={ProfilePlayer} />}
+              element={<PrivateRoute component={ProfilePlayerr} />}
             />
+
             <Route path="/chat" element={<PrivateRoute component={Home} />} />
             <Route
               path="/game"
