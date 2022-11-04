@@ -15,11 +15,14 @@ function ProfilePlayer() {
 
   const [player, setPlayer] = useState<User | null>(null);
   const [isload, setIsLoad] = useState<boolean>(false);
-  const [isPerso, setIsPerso] = useState<boolean>(params ? false : true);
+  const [isPerso, setIsPerso] = useState<boolean>(false);
   const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isPerso) {
+    const perso = params === user?.username ? true : false;
+    setIsPerso(perso);
+
+    if (perso) {
       setPlayer(user);
       setIsLoad(true);
     } else {
@@ -34,7 +37,7 @@ function ProfilePlayer() {
           setNotFound(true);
         });
     }
-  }, []);
+  }, [params]);
 
   if (notFound) {
     return <PageNotFound redirection="/profile" objectNotFound="player" />;
