@@ -12,14 +12,10 @@ import {
 import "./settings.style.scss";
 
 export default function SettingsPicture() {
-  const { user, setReloadUser } = useContext(AuthContext) as AuthContextType;
+  const { user } = useContext(AuthContext) as AuthContextType;
   const { setMessage, setOpenSnackbar, setSeverity } = useContext(
     SnackbarContext
   ) as SnackbarContextType;
-  const [profilePicture, setProfilePicture] = useState<string | undefined>(
-    user?.profile_picture
-  );
-  const [reloadPicture, setReloadPicture] = useState<boolean>(false);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -34,8 +30,6 @@ export default function SettingsPicture() {
           setSeverity("success");
           setMessage("Avatar updated");
           setOpenSnackbar(true);
-          setProfilePicture(undefined);
-          setReloadPicture(true);
         })
         .catch(() => {
           setSeverity("error");
@@ -45,17 +39,11 @@ export default function SettingsPicture() {
     }
   };
 
-  useEffect(() => {
-    if (reloadPicture && user) {
-      setProfilePicture(user?.profile_picture);
-      setReloadPicture(false);
-    }
-  }, [reloadPicture]);
-
   return (
     <div className="settings__picture">
       <img
-        src={profilePicture + "&size=medium"}
+        key={Date.now()}
+        src={user?.profile_picture + "&size=medium"}
         className="settings__picture__profile"
       ></img>
       <label htmlFor="select-image">
