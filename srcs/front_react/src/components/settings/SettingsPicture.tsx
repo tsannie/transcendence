@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ReactComponent as UploadIcon } from "../../assets/img/icon/up.svg";
-import TestProfile from "../../assets/quatennens.jpg";
 import { api } from "../../const/const";
-import { Buffer } from "buffer";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import {
   SnackbarContext,

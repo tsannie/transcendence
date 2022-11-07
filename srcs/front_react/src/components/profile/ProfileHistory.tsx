@@ -3,7 +3,7 @@ import { User } from "../../contexts/AuthContext";
 import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
 
 interface IProps {
-  user: User | null;
+  player: User | null;
 }
 
 function ProfileHistory(props: IProps) {
@@ -20,7 +20,10 @@ function ProfileHistory(props: IProps) {
             <span>defeat</span>
             <div className="info__elo">-22PP</div>
           </div>
-          <img src={props.user?.profile_picture + "&size=small"} alt="avatar" />
+          <img
+            src={props.player?.profile_picture + "&size=small"}
+            alt="avatar"
+          />
           <span>6-10</span>
         </div>
         <hr />
@@ -32,7 +35,10 @@ function ProfileHistory(props: IProps) {
             <span>victory</span>
             <div className="info__elo">+22PP</div>
           </div>
-          <img src={props.user?.profile_picture + "&size=small"} alt="avatar" />
+          <img
+            src={props.player?.profile_picture + "&size=small"}
+            alt="avatar"
+          />
           <span>10-7</span>
         </div>
         <hr />
