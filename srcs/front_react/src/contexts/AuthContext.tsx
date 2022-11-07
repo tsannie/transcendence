@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import { api } from "../const/const";
 
 export type User = {
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }: IProps) => {
       value={{ isLogin, setReloadUser, user, login, logout }}
     >
       {children}
+      {/* Same as */}
     </AuthContext.Provider>
   );
 };

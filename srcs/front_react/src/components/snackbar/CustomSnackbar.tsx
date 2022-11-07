@@ -1,11 +1,11 @@
-import { Snackbar } from '@mui/material';
-import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
-import '../../app.style.scss';
-import React from "react";
+import { Snackbar } from "@mui/material";
+import MuiAlert, { AlertColor, AlertProps } from "@mui/material/Alert";
+import "../../app.style.scss";
+import React, { forwardRef } from "react";
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
-  ref,
+  ref
 ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -19,19 +19,25 @@ interface IProps {
 }
 
 export default function CustomSnackbar(props: IProps) {
-
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
       return;
     }
     props.setOpenSnackbar(false);
-  }
+  };
 
   return (
-  <Snackbar open={props.openSnackbar} autoHideDuration={2000} onClose={handleClose}>
-    <Alert onClose={handleClose} severity={props.severity}>
-      {props.message} !
-    </Alert>
-  </Snackbar>
+    <Snackbar
+      open={props.openSnackbar}
+      autoHideDuration={2000}
+      onClose={handleClose}
+    >
+      <Alert onClose={handleClose} severity={props.severity}>
+        {props.message} !
+      </Alert>
+    </Snackbar>
   );
 }

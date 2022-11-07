@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
 import ActivationProcess from "./ActivationProcess";
 import { api } from "../../const/const";
