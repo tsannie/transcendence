@@ -159,7 +159,7 @@ export class ChannelService {
   ): Promise<ChannelEntity> {
     let result = await this.channelRepository.findOne({
       where: {
-        name: channelUUID,
+        id: channelUUID,
       },
       relations: inputed_relations,
       select: {
@@ -223,8 +223,6 @@ export class ChannelService {
     if (!inputed_password)
       throw new UnauthorizedException('No password inputed');
 
-    console.log('inputed_password', inputed_password);
-    console.log('channel_pwd', channel_password);
     if (await bcrypt.compare(inputed_password, channel_password)) return true;
     else throw new UnauthorizedException('Wrong Password.');
   }
@@ -299,7 +297,7 @@ export class ChannelService {
   ): Promise<ChannelEntity> {
     if (this.isOwner(requested_channel.id, user)) {
       let to_delete = user.owner_of.find(
-        (channel) => channel.name === requested_channel.id,
+        (channel) => channel.id === requested_channel.id,
       );
       return await this.channelRepository.remove(to_delete);
     } else
@@ -324,14 +322,13 @@ export class ChannelService {
       throw new UnprocessableEntityException(
         'User is already member or owner of the channel.',
       );
-
+      
     let channel = await this.getProtectedChannel(requested_channel.id, {
       owner: true,
       users: true,
       banned: true,
     });
-    console.log('before verify banned name channel = ', channel);
-    await this.verifyBanned(channel, user.username);
+    await this.verifyBanned(channel, user.id);
 
     if (channel.status === 'Protected') {
       returned_channel = await this.joinProtectedChannels(
@@ -405,7 +402,7 @@ export class ChannelService {
 		this.verifyHierarchy(request.id, requester, target);
 		
 		let channel = await this.getChannel(request.id, {owner: true, admins: true, users: true, banned: true});
-		let banned = this.findBanned(channel, target.username)
+		let banned = this.findBanned(channel, target.id)
 		if (!banned)
 			throw new UnprocessableEntityException(`${request.target} is not banned.`);
 		else
@@ -592,21 +589,21 @@ export class ChannelService {
       );
   }
 
-	async verifyBanned(channel : ChannelEntity, target: string) : Promise<BanEntity>{
+	async verifyBanned(channel : ChannelEntity, targetId: string) : Promise<BanEntity>{
 		let banned : BanEntity;
-		if (banned = this.findBanned(channel, target))
+		if (banned = this.findBanned(channel, targetId))
 		{
 			if (!this.banmuteService.checkDuration(banned))
-				throw new ForbiddenException(`${target} is banned from ${channel.name}`);
+				throw new ForbiddenException(`Target is banned from ${channel.name}`);
 			else
 				return await this.banmuteService.remove(banned) as BanEntity;
 		}
 	}
 
-	findBanned(channel: ChannelEntity, target: string) : BanEntity{
-		if (channel.banned)
+	findBanned(channel: ChannelEntity, targetId: string) : BanEntity{
+    if (channel.banned)
 		{
-			let banned = channel.banned.find( banned_guy => banned_guy.user.username === target);
+			let banned = channel.banned.find( banned_guy => banned_guy.user.id === targetId);
 			if (banned)
 				return banned;
 		}

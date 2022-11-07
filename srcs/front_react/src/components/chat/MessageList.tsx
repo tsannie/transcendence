@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IChannel, IMessageReceived } from "./types";
 import { api } from "../../const/const";
 import "./chat.style.scss"
@@ -11,11 +11,18 @@ import { NotifContext } from "../../contexts/ChatNotificationContext";
 function MessageList() {
     const { user } = useContext(AuthContext) as AuthContextType;
     const { newMessage } = useContext(MessageContext);
-    const { addChannel, changeNotif, isNotif } = useContext(NotifContext);
+    const { channels, addChannel, changeNotif, isNotif } = useContext(NotifContext);
     const { currentConvId, changeDisplay, changeCurrentConv, changeIsChannel } = useContext(ChatStateContext);
+    const messagesTopRef = useRef<null | HTMLDivElement>(null);
 
     const [chatList, setChatList] = useState<IChannel[]>([]);
   
+    const scrollToTop = () => {
+      setTimeout( () => {
+        messagesTopRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
+    }
+
     const loadList = async () => {
       await api
       .get("/user/conversations")
@@ -91,6 +98,7 @@ function MessageList() {
         let title : string | undefined;
         let user2: User | null = null;
 
+
         if (conv.name)
           title = conv.name;
         else
@@ -99,13 +107,15 @@ function MessageList() {
           title = user2?.username;
         }
         return (
-          <div className="chat__list__items">
-            <li key={conv.id} onClick={ () => clickItem(conv)}>
+          <div className="chat__list__items" key={conv.id}>
+            <li onClick={ () => clickItem(conv)}>
               <div className="avatar">
                 {user2 ? <img src={user2.profile_picture + "&size=small"} /> : <GroupChatIcon />}
               </div>
-              <span>{title}</span>
-              {displayNotif(conv.id)}
+              <div className="text__notif">
+                <span>{title}</span>
+                {displayNotif(conv.id)}
+              </ div>
             </li>
           </ div>
             )
@@ -118,13 +128,18 @@ function MessageList() {
       }, []);
   
       useEffect( () => {
+        console.log("ICI", channels);
         updateList();
-      }, [newMessage])
-  
+        scrollToTop();
+      }, [newMessage]);
+
     return (
     <div className="chat__list">
       <div className="chat__list__header">Channels</div>
-      <ul className="chat__list__body">{MessageListItems}</ul>
+      <ul className="chat__list__body">
+        <div ref={messagesTopRef} />
+        {MessageListItems}
+      </ul>
     </div>)
   }
 
