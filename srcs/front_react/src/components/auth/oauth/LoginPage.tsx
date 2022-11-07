@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { api, COOKIE_NAME } from "../../../const/const";
