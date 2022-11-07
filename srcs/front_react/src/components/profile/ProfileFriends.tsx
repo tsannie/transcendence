@@ -6,13 +6,13 @@ import { ReactComponent as RemoveIcon } from "../../assets/img/icon/circle_remov
 import { Link } from "react-router-dom";
 
 interface IProps {
-  user: User | null;
+  player: User | null;
   isPerso: boolean;
 }
 
 function ProfileFriends(props: IProps) {
   let allFriendRequests;
-  let allFriends = props.user?.friends.map((friend, index) => {
+  let allFriends = props.player?.friends.map((friend, index) => {
     return (
       <img
         key={index}
@@ -23,7 +23,7 @@ function ProfileFriends(props: IProps) {
   });
 
   if (props.isPerso) {
-    allFriendRequests = props.user?.friend_requests.map((request, index) => {
+    allFriendRequests = props.player?.friend_requests.map((request, index) => {
       return (
         <Fragment key={index}>
           <div className="friend__request__item">
@@ -52,10 +52,10 @@ function ProfileFriends(props: IProps) {
     <div className="profile__body__friends">
       <div className="profile__body__friends__title">
         <h3>friends </h3>
-        <span>{props.user?.friends.length}</span>
+        <span>{props.player?.friends.length}</span>
       </div>
       <hr id="full" />
-      {props.isPerso && props.user?.friend_requests ? (
+      {props.isPerso && props.player?.friend_requests ? (
         <div className="profile__body__friend__request">
           {allFriendRequests}
         </div>
