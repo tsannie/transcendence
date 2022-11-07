@@ -1,17 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
+import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
+import {
+  canvas_back_height,
+  canvas_back_width,
+  rad,
+  gravity,
+} from '../const/const';
 import { BallEntity } from '../game_entity/ball.entity';
+import { PlayerEntity } from '../game_entity/players.entity';
 import { RoomEntity, RoomStatus } from '../game_entity/room.entity';
+import { SetEntity } from '../game_entity/set.entity';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(RoomEntity)
     private all_game: Repository<RoomEntity>,
-  )
-  {}
+  ) {}
 
   findAll(): Promise<RoomEntity[]> {
     return this.all_game.find();
@@ -27,40 +35,32 @@ export class GameService {
 
   async gameStarted(room_name: string): Promise<RoomEntity> {
     const game = await this.findByName(room_name);
-
-    
-
     return this.all_game.save(game);
   }
 
   async joinFastRoom(room: string): Promise<RoomEntity> {
-
     let room_game;
     const size = await this.all_game.count();
     if (size != 0) {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
-        if (room_db.fast_play === true && room_db.status === RoomStatus.WAITING) {
+        if (
+          room_db.fast_play === true &&
+          room_db.status === RoomStatus.WAITING
+        ) {
           room_game = room_db;
         }
       });
-      //console.log("1ICCCCCIII")
-
-    } 
+    }
     if (!room_game) {
       room_game = new RoomEntity();
       room_game.fast_play = true;
       room_game.room_name = randomUUID();
-
-      //console.log("2ICCCCCIII")
     }
-   // console.log("3ICCCCCIII")
-
     return room_game;
   }
 
   async joinInvitation(room: string): Promise<RoomEntity> {
-
     let room_game = await this.all_game.findOneBy({ room_name: room });
     if (!room_game) {
       room_game = new RoomEntity();
@@ -75,16 +75,40 @@ export class GameService {
   }
 
   async get_ball(room_name: string): Promise<BallEntity> {
-    console.log("ROOM NAME = ", room_name);
+    console.log('ROOM NAME = ', room_name);
     const room = await this.findByName(room_name);
     return room.set.ball;
   }
-//
+  //
   async deleteUser(id: number): Promise<void> {
     await this.all_game.delete(id);
   }
 
   async delete_room_name(room_name: string): Promise<void> {
     await this.all_game.delete({ room_name });
+  }
+
+  async InitSet(room: string, is_playing: any) {
+    const room_game = await this.all_game.findOneBy({ room_name: room });
+    if (!room_game.set) room_game.set = new SetEntity();
+    if (!room_game.set.ball) {
+      room_game.set.ball = new BallEntity();
+      room_game.set.ball.x = canvas_back_width / 2;
+      room_game.set.ball.y = canvas_back_height / 2;
+      room_game.set.ball.gravity = gravity;
+      room_game.set.ball.direction_x = 1;
+      room_game.set.ball.direction_y = 1;
+      room_game.set.ball.rad = rad;
+    }
+    if (!room_game.set.p1) {
+      room_game.set.p1 = new PlayerEntity();
+      room_game.set.p1.name = room_game.p1;
+    }
+    if (!room_game.set.p2) {
+      room_game.set.p2 = new PlayerEntity();
+      room_game.set.p2.name = room_game.p2;
+    }
+    is_playing[room] = true;
+    await this.all_game.save(room_game);
   }
 }

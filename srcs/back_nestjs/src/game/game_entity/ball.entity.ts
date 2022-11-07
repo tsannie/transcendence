@@ -29,18 +29,18 @@ export class BallEntity {
 
   @Column({ default: true })
   right: boolean = true;
-  
+
   ///////////////////
   @Column({ default: false })
   can_touch_paddle: boolean = true;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   direction_x: number;
-  
+
   // up == true / down == false
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   direction_y: number;
 
-  @Column({ nullable: true})
-  rad : number = 40;
+  @Column({ nullable: true })
+  rad: number = 40;
 }
