@@ -6,18 +6,18 @@ recent game and friend on profile (front)
 toaster for replace snackbar (front)
 friends and friends request (back)
 
-
 [-]
 chat dov (front)
-MUI (FUCK MUI)
+fuck mui (front)
 
 [fix]
-delog on one page (front)
+delog all page when one page logout (front)
 alignement for all BIIIG pseudo (front)
 bug with ball when page is reload (front)
 add magic code missed for jpg format (back)
 pseudo on register or on change is now full in lower case (back)
-pseudo already exist for a new player. Now tsannie will become tsannie{0-9} if tsannie already exist (back)
+pseudo already exist for a new player. Now phbdg will become phbdg{0-9} if phbdg already exist (back)
+2FA with new payload (back)
 
 [warn]
 active prettier on auto save
