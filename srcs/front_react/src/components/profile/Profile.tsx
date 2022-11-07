@@ -7,18 +7,12 @@ import ProfileFriends from "./ProfileFriends";
 import ProfileHistory from "./ProfileHistory";
 import { api } from "../../const/const";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../contexts/SnackbarContext";
 import ActionBar from "./ActionBar";
+import { toast } from "react-toastify";
 
 function Profile() {
   const params = useParams().id;
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { setSeverity, setMessage, setOpenSnackbar } = useContext(
-    SnackbarContext
-  ) as SnackbarContextType;
   const nav = useNavigate();
 
   const [player, setPlayer] = useState<User | null>(null);
@@ -40,10 +34,8 @@ function Profile() {
           setIsLoad(true);
         })
         .catch(() => {
+          toast.warning("user not found !");
           nav("/profile/" + user?.username);
-          setSeverity("warning");
-          setMessage("user not found");
-          setOpenSnackbar(true);
         });
     }
   }, [params]);

@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import ReactCodeInput from "react-verification-code-input";
 import { api } from "../../../const/const";
 import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../../contexts/SnackbarContext";
+
 import "./twofactor.style.scss";
 
 export default function TwoFactorCode() {
@@ -14,9 +12,6 @@ export default function TwoFactorCode() {
 
   const { login } = useContext(AuthContext) as AuthContextType;
   const nav = useNavigate();
-
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
 
   const inputRef = useRef<ReactCodeInput>(null);
 
@@ -39,16 +34,12 @@ export default function TwoFactorCode() {
       .post("/2fa/auth2fa", { token: up })
       .then((res) => {
         login(res.data);
-        setSeverity("success");
-        setMessage("success login");
-        setOpenSnackbar(true);
+        toast.success("success login !");
       })
       .catch((res) => {
         clearInput();
         setCheck(false);
-        setSeverity("error");
-        setMessage("invalid token");
-        setOpenSnackbar(true);
+        toast.error("invalid token !");
       });
   };
 
