@@ -18,8 +18,6 @@ function ChatBody() {
 function Chat() {
   return (
       <div className="chat">
-{/*      TODO
-        <div className="chat_bg" /> */}
         <MessageProvider>
         <ChatStateProvider>
         <NotifProvider>

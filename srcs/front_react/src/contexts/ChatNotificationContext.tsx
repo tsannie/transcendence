@@ -22,17 +22,20 @@ const NotifProvider = ({ children }: NotifProvider) => {
     const [channels, setChannels] = useState<INotif[]>([]);
 
     const addChannel = ( convId: string, notif: boolean ) => {
-        if (channels.find((channel) => channel.id === convId))
+        const copyChan = channels;
+        if (copyChan.find((channel) => channel.id === convId))
             return ;
-        setChannels([...channels, { id: convId, notif: notif }]);
+        copyChan.push({id: convId, notif: notif});
+        setChannels(copyChan);
     }
 
     const changeNotif = (convId: string, notif: boolean) => {
-        setChannels(channels.map( (channel: INotif) => {
+        const copyChan = channels.map( (channel: INotif) => {
             if (channel.id === convId)
                 channel.notif = notif;
             return channel;
-        }));
+        })
+        setChannels(copyChan);
     }
 
     const isNotif = (convId: string) => {
