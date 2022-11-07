@@ -53,7 +53,7 @@ function Profile() {
       <div className="profile">
         <div className="profile__size" />
         <ProfileHeader player={player} />
-        {!isPerso && <ActionBar />}
+        {!isPerso && <ActionBar user={user} player={player} />}
         <hr id="full" />
         <ProfileStatsBar player={player} />
         <hr id="full" />
