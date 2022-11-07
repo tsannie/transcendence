@@ -10,12 +10,7 @@ import { PlayerEntity } from './game_entity/players.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      RoomEntity,
-      SetEntity,
-      PlayerEntity,
-      BallEntity,
-    ]),
+    TypeOrmModule.forFeature([RoomEntity, SetEntity, PlayerEntity, BallEntity]),
   ],
   controllers: [GameController],
   providers: [GameService, GameGateway],

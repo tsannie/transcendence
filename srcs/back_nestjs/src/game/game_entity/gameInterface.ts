@@ -1,4 +1,3 @@
-
 interface IBallObj {
   x: number;
   y: number;
@@ -23,9 +22,7 @@ export interface IGame {
 
   paddleProps_p1: IPaddleProps;
   paddleProps_p2: IPaddleProps;
-  
+
   player_p1: IPlayer;
   player_p2: IPlayer;
 }
-
-//export default IGame;

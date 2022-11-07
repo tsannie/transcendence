@@ -39,10 +39,7 @@ export const GameContext = createContext<GameContextType>({
 
   im_p2: false,
   setim_p2: () => {},
-  
-
 });
-
 
 interface GameContextProps {
   children: JSX.Element | JSX.Element[];
@@ -65,26 +62,12 @@ export const GameProvider = ({ children }: GameContextProps) => {
       setStatus(RoomStatus.EMPTY);   
       setop_id("");
     });
-   // setisFull("");
-    socket.on("roomFull", (theroom: any) => {
-     // setisFull("This ROOM IS FULL MATE");
-    });
   }, [socket]);
 
-
-
-  // If the players are ready, start the game
-
   useEffect(() => {
-
-
     socket.on("joinedRoom", (theroom: any) => {
-
-      //console.log("theroom.status", theroom.status);
-      
       setStatus(theroom.status);
-      
-       setRoom(theroom.room_name);
+      setRoom(theroom.room_name);
       if (theroom.p2 === socket.id) {
         setop_id(theroom.p1);
          setim_p2(true);
@@ -92,17 +75,9 @@ export const GameProvider = ({ children }: GameContextProps) => {
         setop_id(theroom.p2);
          setim_p2(false);
       }
-
-/*       if (theroom.status === RoomStatus.PLAYING && im_p2 === false)
-      {
-        console.log("CONTEXT: PLAYING");
-        //socket.emit("startGameRoom",  theroom.room_name);
-      } */
     });
-     //setisFull("");
      setmy_id(socket.id);
   }, [socket]);
-
 
   return (
     <GameContext.Provider
