@@ -7,11 +7,11 @@ import ProfileFriends from "./ProfileFriends";
 import ProfileHistory from "./ProfileHistory";
 import { api } from "../../const/const";
 import { useNavigate, useParams } from "react-router-dom";
-import PageNotFound from "../menu/PageNotFound";
 import {
   SnackbarContext,
   SnackbarContextType,
 } from "../../contexts/SnackbarContext";
+import ActionBar from "./ActionBar";
 
 function Profile() {
   const params = useParams().id;
@@ -52,13 +52,14 @@ function Profile() {
     return (
       <div className="profile">
         <div className="profile__size" />
-        <ProfileHeader user={player} />
+        <ProfileHeader player={player} />
+        {!isPerso && <ActionBar />}
         <hr id="full" />
-        <ProfileStatsBar user={player} />
+        <ProfileStatsBar player={player} />
         <hr id="full" />
         <div className="profile__body">
-          <ProfileHistory user={player} />
-          <ProfileFriends user={player} isPerso={isPerso} />
+          <ProfileHistory player={player} />
+          <ProfileFriends player={player} isPerso={isPerso} />
         </div>
       </div>
     );

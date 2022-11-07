@@ -1,27 +1,35 @@
-
 !!!
 Edit username
 Friend system
 Game
-  . interface in front
-  . responsive game
-  . matchmaking
-  . power-ups
-  . map
-  . specs
+. interface in front
+. responsive game
+. matchmaking
+. power-ups
+. map
+. specs
 
 !!
 Profile page with:
-  . stats
-  . add friend button
-  . rank
-  . lvl
-  . achivements
-  . status (onfline/offline/ingame/...)
-  . match history
-  . block user
+. stats
+. add friend button
+. rank
+. lvl
+. achivements
+. status (onfline/offline/ingame/...)
+. match history
+. block user
 /profile/{username} can be possible
 
 !
 404 page or redirect ?
 Edit avatar
+
+TODAY
+check all nav for Profile
+friends status
+
+ADD action bar with:
+. block user
+. amical challenge
+. send dm

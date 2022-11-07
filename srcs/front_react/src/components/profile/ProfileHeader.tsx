@@ -4,7 +4,7 @@ import { User } from "../../contexts/AuthContext";
 import SearchBar from "./SearchBar";
 
 interface IProps {
-  user: User | null;
+  player: User | null;
 }
 
 function ProfileHeader(props: IProps) {
@@ -12,23 +12,28 @@ function ProfileHeader(props: IProps) {
     <div className="profile__header">
       <div className="profile__header__user">
         <div className="profile__header__user__avatar">
-          <img src={props.user?.profile_picture + "&size=large"} alt="avatar" />
+          <img
+            src={props.player?.profile_picture + "&size=large"}
+            alt="avatar"
+          />
         </div>
         <div className="profile__header__user__info">
           <div className="name">
-            <h2>{props.user?.username}</h2>
+            <h2>{props.player?.username}</h2>
           </div>
-          <div className="elo">
-            <div className="elo__item">
-              <MedalIcon />
-              <span>789 PP</span>
+          <div className="info__player">
+            <div className="elo">
+              <div className="elo__item">
+                <MedalIcon />
+                <span>789 PP</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div className="profile__header__right">
+        <span>search player:</span>
         <div className="profile__header__search">
-          <span>search player:</span>
           <SearchBar />
         </div>
       </div>
