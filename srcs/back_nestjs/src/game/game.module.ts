@@ -6,7 +6,6 @@ import { GameGateway } from './game.gateway';
 import { SetEntity } from './game_entity/set.entity';
 import { RoomEntity } from './game_entity/room.entity';
 import { BallEntity } from './game_entity/ball.entity';
-import { PaddleEntity } from './game_entity/paddle.entity';
 import { PlayerEntity } from './game_entity/players.entity';
 
 @Module({
@@ -15,7 +14,6 @@ import { PlayerEntity } from './game_entity/players.entity';
       RoomEntity,
       SetEntity,
       PlayerEntity,
-      PaddleEntity,
       BallEntity,
     ]),
   ],
