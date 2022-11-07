@@ -9,6 +9,10 @@ import "./settings.style.scss";
 export default function SettingsPicture() {
   const { user } = useContext(AuthContext) as AuthContextType;
 
+  const [picture, setPicture] = useState<string | undefined>(
+    user?.profile_picture
+  );
+
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const config = {
@@ -20,6 +24,7 @@ export default function SettingsPicture() {
         .post("/user/addAvatar", { avatar: e.target.files[0] }, config)
         .then(() => {
           toast.success("Avatar updated!");
+          setPicture(user?.profile_picture + "&?date=" + Date.now());
         })
         .catch(() => {
           toast.error("Error while updating avatar");
@@ -29,10 +34,7 @@ export default function SettingsPicture() {
 
   return (
     <div className="settings__picture">
-      <img
-        src={user?.profile_picture + "&size=large" + "&date=" + Date.now()}
-        className="settings__picture__profile"
-      ></img>
+      <img src={picture} className="settings__picture__profile"></img>
       <label htmlFor="select-image">
         <input
           accept="image/jpg image/jpeg image/png"
