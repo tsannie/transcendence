@@ -1,6 +1,5 @@
-import { Type } from "class-transformer";
-import { IsDefined, IsNotEmpty } from "class-validator";
-
+import { Type } from 'class-transformer';
+import { IsDefined, IsNotEmpty } from 'class-validator';
 
 export class PaddleDto {
   @IsDefined()

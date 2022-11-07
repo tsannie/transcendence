@@ -18,57 +18,55 @@ export enum RoomStatus {
   PLAYING = 2,
   CLOSED = 3,
 }
-  
 
 @Entity()
 export class RoomEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @Column({ default: RoomStatus.EMPTY})
+  @Column({ default: RoomStatus.EMPTY })
   status: RoomStatus = RoomStatus.EMPTY;
 
   @Column({ nullable: true })
-  p1?: string;  // TODO SWITCH IN USER ENTITY 
-  
+  p1?: string; // TODO SWITCH IN USER ENTITY
+
   @Column({ nullable: true })
-  p2?: string;  // same
-  
-  // TODO COUNTDOWN ?? 
+  p2?: string; // same
+
+  // TODO COUNTDOWN ??
   @Column('boolean', { default: false })
   p1_ready?: boolean;
-  
+
   @Column('boolean', { default: false })
   p2_ready?: boolean;
-  
+
   @OneToOne(() => SetEntity, { eager: true, cascade: true })
   @JoinColumn()
   set: SetEntity;
 
-  @Column({ nullable: true , default: -1})
+  @Column({ nullable: true, default: -1 })
   map: number;
-  
-/*   @Column({ nullable: true , default: -1})
+
+  /*   @Column({ nullable: true , default: -1})
   power: number; // TODO INSET 
  */
-//
-
+  //
 
   @Column({ nullable: true })
-  room_name: string;//TODO DELL
+  room_name: string; //TODO DELL
 
   @Column('boolean', { default: false })
-  fast_play: boolean;// TODO DELL
+  fast_play: boolean; // TODO DELL
 
   @Column({ default: 0 })
   spectator: number; // TODO DELL IF CAN EMIT WITOUT SPECTATOR
   //boolean
 
-/*   @Column('boolean', { default: false })
+  /*   @Column('boolean', { default: false })
   game_started?: boolean; // WHI STATUS -> 
 
  */
-/*   @OneToOne( () => StatEntity )
+  /*   @OneToOne( () => StatEntity )
   @JoinColumn()
   stat: StatEntity; */
 }

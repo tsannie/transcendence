@@ -1,17 +1,11 @@
-import React, { createRef, useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { createRef, useContext, useEffect, useState } from "react";
 import { socket } from "../Game";
 import {
-  draw_line,
-  draw_score,
-  draw_paddle,
-  draw_ball,
   draw_game_ended,
-  draw_countdown,
-  draw_borders,
+  draw_game,
 } from "./Draw";
 
 import { canvas_back_height, canvas_back_width, paddle_height, paddle_margin, paddle_width, rad, screen_ratio} from "../const/const";
-import { Button } from "@mui/material";
 import { GameContext, RoomStatus } from "../GameContext";
 
 interface IBall {
@@ -32,10 +26,9 @@ interface IPlayer {
   gave_up: boolean;
 }
 
-let position_y = 0;
-
 export function GamePlayer_p1_p2() {
-
+  
+  let position_y = 0;
   let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
   let ratio_width = (XlowerSize /canvas_back_width);
   let ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
@@ -46,6 +39,7 @@ export function GamePlayer_p1_p2() {
 
   let height = XlowerSize / screen_ratio
   let border_size = ((height) / 50);
+
   let IPlayer_p1 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
   let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
   let IPaddle_p1 : IPaddle = {
@@ -54,7 +48,7 @@ export function GamePlayer_p1_p2() {
     height: paddle_height * ratio_height,
     width: paddle_width * ratio_width
   };
-  let IPaddle_p2 : IPaddle = { 
+  let IPaddle_p2 : IPaddle = {
     x: (canvas_back_width - paddle_margin - paddle_width) * ratio_width,
     y: 0,
     height: paddle_height * ratio_height,
@@ -140,15 +134,6 @@ export function GamePlayer_p1_p2() {
 
     }, [socket]);
 
-
-/*     interface paddle_y {
-      room: string;
-      paddle_y: number;
-      im_p2: boolean;
-      front_canvas_height: number;
-    }
- */
-
     function ask_paddle() {
 
       let data = {
@@ -177,38 +162,26 @@ export function GamePlayer_p1_p2() {
     }, 1000);
 
     let canvas: any = canvasRef.current;
-    
-      const render = () => {
-        requestAnimationFrame(render);
-        let ctx : any = null;
-        ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  
-          if (ctx) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (IPlayer_p1.won === false && IPlayer_p2.won === false && game.room !== "") {
-              if (game.im_p2 === true && start === true) {
-                socket.emit("start_game_render", game.room);
-                start = false;
-              }
-              ask_paddle()
-              if (countdown != 0) 
-                draw_countdown(ctx, canvas.width, canvas.height, countdown);
-              else {
-                draw_line(ctx, canvas.height, canvas.width);
-                draw_ball(ctx, IBall, canvas.height, canvas.width);
-                draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-              }
-                draw_borders(ctx, canvas.height, canvas.width);
-                draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-                draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
-              }
-              else
-              {
-                draw_game_ended(game.im_p2, ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-              }
-            }
-      };
-      render();
+    const render = () => {
+      requestAnimationFrame(render);
+      let ctx : any = null;
+      ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (game.im_p2 === true && start === true) {
+          socket.emit("start_game_render", game.room);
+          start = false;
+        }
+        if (IPlayer_p1.won === false && IPlayer_p2.won === false && game.room !== "") {
+          ask_paddle()
+          draw_game(ctx, canvas, IBall, IPaddle_p1, IPaddle_p2, IPlayer_p1, IPlayer_p2, countdown);
+        }
+        else
+          draw_game_ended(game.im_p2, ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+      }
+    };
+    render();
   }, []);
 
   function leaveGame() {
@@ -248,17 +221,10 @@ export function GamePlayer_p1_p2() {
         onMouseMove={(e) => mouv_mouse(e)}
         style={{ backgroundColor: "black" }}
         ></canvas>
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: "black",
-          color: "white",
-          mt: "2vh",
-        }}
-        onClick={leaveGame}
-        >
+      <button
+        onClick={leaveGame}>
         Leave The Game
-      </Button>
+      </button>
     </div>
   );
 }
