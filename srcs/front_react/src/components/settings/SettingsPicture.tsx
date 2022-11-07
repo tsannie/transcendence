@@ -42,8 +42,7 @@ export default function SettingsPicture() {
   return (
     <div className="settings__picture">
       <img
-        key={Date.now()}
-        src={user?.profile_picture + "&size=medium"}
+        src={user?.profile_picture + "&size=large" + "&" + Date.now()}
         className="settings__picture__profile"
       ></img>
       <label htmlFor="select-image">
