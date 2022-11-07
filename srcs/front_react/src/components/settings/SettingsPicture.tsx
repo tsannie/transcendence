@@ -3,29 +3,11 @@ import { toast, ToastContainer, ToastOptions } from "react-toastify";
 import { ReactComponent as UploadIcon } from "../../assets/img/icon/up.svg";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../contexts/SnackbarContext";
 
 import "./settings.style.scss";
 
 export default function SettingsPicture() {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { setMessage, setOpenSnackbar, setSeverity } = useContext(
-    SnackbarContext
-  ) as SnackbarContextType;
-
-  const config_toast: ToastOptions = {
-    position: "bottom-left",
-    autoClose: 50000000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-  };
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -37,10 +19,10 @@ export default function SettingsPicture() {
       api
         .post("/user/addAvatar", { avatar: e.target.files[0] }, config)
         .then(() => {
-          toast.success("Avatar updated!", config_toast);
+          toast.success("Avatar updated!");
         })
         .catch(() => {
-          toast.error("Error while updating avatar", config_toast);
+          toast.error("Error while updating avatar");
         });
     }
   };

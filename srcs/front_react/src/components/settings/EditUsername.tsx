@@ -9,10 +9,7 @@ import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
 import { ReactComponent as VerifIcon } from "../../assets/img/icon/circle_check.svg";
 import { api } from "../../const/const";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../contexts/SnackbarContext";
+import { toast } from "react-toastify";
 
 function EditUsername() {
   const { user, setReloadUser } = React.useContext(
@@ -20,9 +17,6 @@ function EditUsername() {
   ) as AuthContextType;
   const [editUsername, setEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const { setMessage, setOpenSnackbar, setSeverity } = useContext(
-    SnackbarContext
-  ) as SnackbarContextType;
 
   const handleUsername = () => {
     setEditUsername(!editUsername);
@@ -39,16 +33,12 @@ function EditUsername() {
       .post("user/edit-username", { username: newUsername })
       .then(({ data }) => {
         setNewUsername("");
-        setSeverity("success");
-        setMessage("username updated");
-        setOpenSnackbar(true);
+        toast.success("username changed !");
         setReloadUser(true);
         setEditUsername(false);
       })
       .catch((error) => {
-        setSeverity("error");
-        setMessage("'" + newUsername + "' is already use or invalid");
-        setOpenSnackbar(true);
+        toast.error("'" + newUsername + "' is already taken or invalid !"); // TODO : check if username is already taken or invalid
         setNewUsername("");
       });
   };
