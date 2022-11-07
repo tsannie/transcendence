@@ -4,7 +4,7 @@ import { MessageProvider } from "../../contexts/MessageContext";
 import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
 import { useContext } from "react";
 import Conversation from "./Conversation";
-import NotifProvider from "../../contexts/NotificationsContext";
+import NotifProvider from "../../contexts/ChatNotificationContext";
 
 function ChatBody() {
   const {display} = useContext(ChatStateContext);
