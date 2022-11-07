@@ -1,3 +1,8 @@
+import React from "react";
+
+const white = "#fff8dc";
+
+
 export function draw_line(
   ctx: any,
   canvas_height: number,
@@ -5,13 +10,41 @@ export function draw_line(
 ) {
   ctx.beginPath();
 
-  for (let x = 10; x < canvas_height - 10; x += 40)
-    ctx.rect((canvas_width / 2) - 3, x, 6, 30);
-  ctx.fillStyle = "white";
+  for (let x = canvas_height / 50; x <= canvas_height + (canvas_height/ 2); x += canvas_height / 12)
+    ctx.rect((canvas_width / 2) - ((canvas_width/100)/2), x, canvas_width/100, canvas_height / 20);
+  ctx.fillStyle = white;
   ctx.lineWidth = 1;
   ctx.shadowBlur = 0;
   ctx.shadowColor = "grey";
   ctx.fill();
+} 
+
+export function draw_borders(
+  ctx: any,
+  canvas_height: number,
+  canvas_width: number
+) {
+  ctx.beginPath();
+  ctx.rect(0, 0, canvas_width, canvas_height/50);
+  ctx.rect(0, canvas_height - (canvas_height/50), canvas_width, canvas_height/50);
+  ctx.fillStyle = white;
+  ctx.fill();
+}
+
+export function draw_countdown(
+  ctx: any,
+  canvas_height: number,
+  canvas_width: number,
+  countdown: number,
+) {
+
+
+
+  ctx.beginPath();
+  ctx.font = (canvas_width/4) + "px Arcade";
+  ctx.fillStyle = white;
+  ctx.textAlign = "center";
+  ctx.fillText(countdown, canvas_height / 2, canvas_width / 2);
 }
 
 ////////////////////////
@@ -24,41 +57,19 @@ export function draw_game_ended(im_p2: boolean, ctx: any, player_p1: any, player
   ctx.rect(0, 0, canvas_width, canvas_height);
   ctx.fillStyle = "black";
   ctx.fill();
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "white";
+  ctx.font = (canvas_width/10) + "px Arcade";
+  ctx.fillStyle = white;
   ctx.textAlign = "center";
-  ctx.fillText("Game Ended", canvas_width / 2, canvas_height / 2);
-  if (player_p1.won === true && im_p2 === false)
-    ctx.fillText("YOU Won !", canvas_width / 2, canvas_height / 2 + 50);
-  else if (player_p2.won === true && im_p2 === true)
-    ctx.fillText("YOU Won !!", canvas_width / 2, canvas_height / 2 + 50);
+  ctx.fillText("Game Ended\n\n\n\n\n\n", canvas_width / 2, canvas_height / 2);
+  if ((player_p1.gave_up === true && im_p2 === true) || (player_p2.gave_up === true && im_p2 === false))
+    ctx.fillText("You Won, he GAVE UP", canvas_width / 2, (canvas_height / 2) + (canvas_height / 4));
+  else if ((player_p1.won === true && im_p2 === false) || (player_p2.won === true && im_p2 === true))
+    ctx.fillText("YOU Won !", canvas_width / 2, (canvas_height / 2) + (canvas_height / 4));
   else
-    ctx.fillText("YOU Lost", canvas_width / 2, canvas_height / 2 + 50);
+    ctx.fillText("YOU Lost", canvas_width / 2, (canvas_height / 2) + (canvas_height / 4));
+
 }
 
-export function draw_loading(
-  ctx: any,
-  canvas_height: number,
-  canvas_width: number
-) {
-  ctx.beginPath();
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "red";
-  ctx.textAlign = "center";
-  ctx.fillText("Loading...", canvas_width / 2, canvas_height / 2);
-}
-
-export function draw_giveup(
-  ctx: any,
-  canvas_height: number,
-  canvas_width: number
-) {
-  ctx.beginPath();
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "red";
-  ctx.textAlign = "center";
-  ctx.fillText("Opponent GAVE UP", canvas_width / 2, canvas_height / 2);
-}
 
 export function draw_score(
   ctx: any,
@@ -69,28 +80,20 @@ export function draw_score(
 ) {
   ctx.beginPath();
 
-  ctx.font = "30px Comic Sans MS";
-  ctx.fillStyle = "white";
+  ctx.font = (canvas_width/10) + "px Arcade";
+  ctx.fillStyle = white;
   ctx.textAlign = "center";
 
   ctx.fillText(
-    player_p1.score.toString() + "     " + player_p2.score.toString(),
-    canvas_width / 2,
+    player_p1.score.toString(),
+    canvas_width / 4,
     canvas_height / 4
   );
-
-  if (player_p1.won === 1)
-    ctx.fillText(
-      player_p1.name + " WON !!!",
-      canvas_width / 2,
-      canvas_height / 2
-    );
-  else if (player_p2.won === 1)
-    ctx.fillText(
-      player_p2.name + " WON !!!",
-      canvas_width / 2,
-      canvas_height / 2
-    );
+  ctx.fillText(
+    player_p2.score.toString(),
+    canvas_width - (canvas_width / 4),
+    canvas_height / 4
+  );
   ctx.fill();
 }
 
@@ -132,7 +135,7 @@ export function draw_paddle(ctx: any , IPaddle : any, height : any, width : any)
 
   ctx.beginPath();
   ctx.rect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
-  ctx.fillStyle = "white";
+  ctx.fillStyle = white;
   ctx.lineWidth = 1;
   ctx.shadowBlur = 0;
   ctx.shadowColor = "blue";
@@ -143,8 +146,11 @@ export function draw_paddle(ctx: any , IPaddle : any, height : any, width : any)
 export function draw_ball(ctx: any , IBall : any, height : any, width : any){
 
   ctx.beginPath();
-  ctx.fillStyle = "white";
-  ctx.arc(IBall.x, IBall.y, IBall.rad, 0, 2 * Math.PI);
+  ctx.fillStyle = white;
+  ctx.rect(IBall.x - (2 * (IBall.rad / 2)), IBall.y - (2*(IBall.rad / 2)),
+  IBall.rad * 2, IBall.rad * 2);
+
+  //ctx.arc(IBall.x, IBall.y, IBall.rad, 0, 2 * Math.PI);
   ctx.strokeStyle = "black";
   ctx.strokeWidth = 10;
   ctx.fill();
