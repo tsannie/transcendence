@@ -44,18 +44,20 @@ function MessageList(props: any) {
     const user : User = props.user
     const messages : IMessageReceived[] = props.messages;
 
-    return <Fragment>{messages.map( (message: IMessageReceived) => { 
-        let items_class : string;
-  
-        if (message.author?.id === user?.id)
-          items_class = "conversation__messages__items self";
-        else
-          items_class = "conversation__messages__items other";
-        return <li className={items_class} key={message.id}>
-                  <img src={message.author?.profile_picture + "&size=small"} className="avatar" />
-                  <div className="conversation__messages__text">{message.content}</div>
-                </ li>
-      })}</Fragment>;
+    return <Fragment>
+        {messages.map( (message: IMessageReceived) => { 
+          let items_class : string;
+    
+          if (message.author?.id === user?.id)
+            items_class = "conversation__messages__items self";
+          else
+            items_class = "conversation__messages__items other";
+          return <li className={items_class} key={message.id}>
+                    <img src={message.author?.profile_picture + "&size=small"} className="avatar" />
+                    <div className="conversation__messages__text">{message.content}</div>
+                  </ li>
+        })}
+      </Fragment>;
 }
 
 function MessageBody() {
