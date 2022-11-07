@@ -14,11 +14,13 @@ function ProfileFriends(props: IProps) {
   let allFriendRequests;
   let allFriends = props.player?.friends.map((friend, index) => {
     return (
-      <img
-        key={index}
-        src={friend.profile_picture + "&size=small"}
-        alt="avatar"
-      />
+      <Link to={"/profile/" + friend.username}>
+        <img
+          key={index}
+          src={friend.profile_picture + "&size=small"}
+          alt="avatar"
+        />
+      </Link>
     );
   });
 
@@ -55,7 +57,7 @@ function ProfileFriends(props: IProps) {
         <span>{props.player?.friends.length}</span>
       </div>
       <hr id="full" />
-      {props.isPerso && props.player?.friend_requests ? (
+      {props.isPerso && props.player?.friend_requests.length ? (
         <div className="profile__body__friend__request">
           {allFriendRequests}
         </div>

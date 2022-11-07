@@ -38,7 +38,10 @@ function EditUsername() {
         setEditUsername(false);
       })
       .catch((error) => {
-        toast.error("'" + newUsername + "' is already taken or invalid !"); // TODO : check if username is already taken or invalid
+        if (error.response.status === 422)
+          toast.error("'" + newUsername + "' is already taken !");
+        else toast.error("'" + newUsername + "' is invalid !");
+
         setNewUsername("");
       });
   };
