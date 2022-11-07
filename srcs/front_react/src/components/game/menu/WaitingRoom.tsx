@@ -23,8 +23,8 @@ export default function WaitingRoom(props: any) {
     <div className="queues">
       <h2> you are : {game.my_id} </h2>
 
-      <p> waiting for opponent in room {game.room} </p>
-      <button onClick={leaveRoom}>leave room {game.room}</button>
+      <p> waiting opponent for [PONG 1972] </p>
+      <button onClick={leaveRoom}>leave waiting room</button>
     </div>
   );
 }

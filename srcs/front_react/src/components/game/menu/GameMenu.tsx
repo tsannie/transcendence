@@ -14,7 +14,7 @@ export default function GameMenu(props: any) {
 
   function createFastGameRoom() {
     game.setRoom("");
-    if ( game.status === RoomStatus.EMPTY)
+    if (game.status === RoomStatus.EMPTY)
       socket.emit("createGameRoom",  game.room);
 
 
@@ -32,7 +32,7 @@ export default function GameMenu(props: any) {
       <div className="GameMenu">
         <h2> you are : {game.my_id} </h2>
         <br />
-        <button onClick={createFastGameRoom}>FAST GAME</button>
+        <button onClick={createFastGameRoom}>PONG 1972</button>
       </div>
     }
 

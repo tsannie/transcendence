@@ -5,6 +5,9 @@ import {
   draw_score,
   draw_paddle,
   draw_ball,
+  draw_game_ended,
+  draw_countdown,
+  draw_borders,
 } from "./Draw";
 
 import { canvas_back_height, canvas_back_width, paddle_height, paddle_margin, paddle_width, rad, screen_ratio} from "../const/const";
@@ -26,6 +29,7 @@ interface IPlayer {
   name: string;
   score: number;
   won: boolean;
+  gave_up: boolean;
 }
 
 let position_y = 0;
@@ -35,14 +39,15 @@ export function GamePlayer_p1_p2() {
   let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
   let ratio_width = (XlowerSize /canvas_back_width);
   let ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
-  let start = true;
-  let x = 0;
+  let start = false;
 
   const game = useContext(GameContext);
   const canvasRef: any = createRef();
 
-  let IPlayer_p1 : IPlayer = { name: "", score: 0, won: false };
-  let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false };
+  let height = XlowerSize / screen_ratio
+  let border_size = ((height) / 50);
+  let IPlayer_p1 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
+  let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
   let IPaddle_p1 : IPaddle = {
     x: paddle_margin * ratio_width,
     y: 0,
@@ -76,8 +81,9 @@ export function GamePlayer_p1_p2() {
       //setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
       XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
       ratio_width = (XlowerSize /canvas_back_width);
-      //ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height)
-    
+
+      let height = XlowerSize / screen_ratio
+      border_size = ((height) / 50);
       socket.emit("resize_ingame", game.room);
     }
   }, [HW])
@@ -108,7 +114,10 @@ export function GamePlayer_p1_p2() {
     socket.on("player_give_upem", (set: any, status: number) => {
       IPlayer_p2.won = set.p2.won;
       IPlayer_p1.won = set.p1.won;
-      game.setStatus(game.status);
+      if (IPlayer_p2.won)
+        IPlayer_p1.gave_up = true;
+      else if (IPlayer_p1.won)
+        IPlayer_p2.gave_up = true;
     });
 
     socket.on("get_players", (p1: any, p2 : any) => {  
@@ -145,7 +154,7 @@ export function GamePlayer_p1_p2() {
       let data = {
         room: game.room,
         paddle_y: position_y,
-        front_canvas_height: XlowerSize / screen_ratio,
+        front_canvas_height: height,
       };
       if (game.im_p2) {
         IPaddle_p2.y = position_y;
@@ -157,10 +166,16 @@ export function GamePlayer_p1_p2() {
       }
     }
 
-    // set countdown timer
-
-
   useEffect(() => {
+    let countdown = 5;
+    let countdownInterval = setInterval(() => {
+      countdown--;
+      if (countdown === 0) {
+        clearInterval(countdownInterval);
+        start = true;
+      }
+    }, 1000);
+
     let canvas: any = canvasRef.current;
     
       const render = () => {
@@ -176,11 +191,20 @@ export function GamePlayer_p1_p2() {
                 start = false;
               }
               ask_paddle()
-              draw_line(ctx, canvas.height, canvas.width);
-              draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
-              draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-              draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
-              draw_ball(ctx, IBall, canvas.height, canvas.width);
+              if (countdown != 0) 
+                draw_countdown(ctx, canvas.width, canvas.height, countdown);
+              else {
+                draw_line(ctx, canvas.height, canvas.width);
+                draw_ball(ctx, IBall, canvas.height, canvas.width);
+                draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+              }
+                draw_borders(ctx, canvas.height, canvas.width);
+                draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
+                draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+              }
+              else
+              {
+                draw_game_ended(game.im_p2, ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
               }
             }
       };
@@ -190,15 +214,9 @@ export function GamePlayer_p1_p2() {
   function leaveGame() {
     game.setStatus(RoomStatus.CLOSED);
     if (IPlayer_p1.won === true || IPlayer_p2.won === true)
-    {
-      console.log("end of game");
       socket.emit("end_of_the_game", game.room);
-    }
     else
-   {
-    console.log("give up")
-    socket.emit("player_give_up", game.room);
-    }
+      socket.emit("player_give_up", game.room);
     game.setRoom("");
   }
   ////////////////////////////////////////////////////
@@ -210,13 +228,12 @@ export function GamePlayer_p1_p2() {
     let tmp_pos = e.clientY - rect?.top - (IPaddle_p1.height / 2)
 
     if (tmp_pos > 0 && tmp_pos < (IPaddle_p1.height / 8))
-      position_y = 0;
-    else if (tmp_pos > (XlowerSize / screen_ratio) - (IPaddle_p2.height / 2))
-      position_y = (XlowerSize / screen_ratio);
-    else if (tmp_pos > (XlowerSize / screen_ratio) - (IPaddle_p2.height) ||
-    tmp_pos < 0) {
-        console.log("out of range");
-    }
+      position_y = border_size;
+    else if (tmp_pos > (height) - (IPaddle_p2.height))
+      position_y = (height) - (border_size) - (IPaddle_p2.height);
+    else if (tmp_pos > (height) - (IPaddle_p2.height) ||
+    tmp_pos < 0)
+      position_y = position_y;
     else
       position_y = tmp_pos;
   }
@@ -226,7 +243,7 @@ export function GamePlayer_p1_p2() {
       <canvas
         id="canvas"
         ref={canvasRef}
-        height={XlowerSize / screen_ratio}
+        height={height}
         width={XlowerSize}
         onMouseMove={(e) => mouv_mouse(e)}
         style={{ backgroundColor: "black" }}
