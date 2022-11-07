@@ -4,26 +4,18 @@ import { ReactComponent as UserIcon } from "../../assets/img/icon/user.svg";
 import { ReactComponent as BlockIcon } from "../../assets/img/icon/no_waiting_sign.svg";
 import { User } from "../../contexts/AuthContext";
 import { api } from "../../const/const";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../contexts/SnackbarContext";
+import { toast } from "react-toastify";
 
 interface IProps {
   player: User | null;
 }
 
 function ActionBar(props: IProps) {
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
-
   const handleAddFriend = () => {
     api
       .post("/user/create-friend-request", { id: props.player?.id })
       .then((res) => {
-        setMessage("friend request sent");
-        setSeverity("info");
-        setOpenSnackbar(true);
+        toast.info("friend request sent !");
         console.log(res);
       });
   };

@@ -3,11 +3,13 @@ search bar for user (front)
 404 page not found (front)
 route for search /profile/{username} (front)
 recent game and friend on profile (front)
+toaster for replace snackbar (front)
 friends and friends request (back)
 
 
 [-]
 chat dov (front)
+MUI (FUCK MUI)
 
 [fix]
 delog on one page (front)

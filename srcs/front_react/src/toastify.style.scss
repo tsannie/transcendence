@@ -1,5 +1,21 @@
 @import "./const.style.scss";
 
+// border dashed on toast
+.toast {
+  border-style: dashed;
+  border-color: $white-color;
+  color: $white-color;
+  background: transparent;
+  background: $bg-color;
+  border-width: calc(5 * var(--res));
+  letter-spacing: 0.1em;
+}
+
+.Toastify__close-button {
+  color: $white-color !important;
+  opacity: 1;
+}
+
 :root {
   --toastify-color-light: #{$white-color};
   --toastify-color-dark: #{$bg-color};

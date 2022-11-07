@@ -1,19 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Buffer } from "buffer";
 import { api } from "../../const/const";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../contexts/SnackbarContext";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 interface IProps {
   setEnable2FA: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function ActivationProcess(props: IProps) {
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
   const { setReloadUser } = useContext(AuthContext) as AuthContextType;
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
@@ -35,15 +30,11 @@ export default function ActivationProcess(props: IProps) {
         token: token,
       })
       .then((res) => {
-        setSeverity("success");
-        setMessage("2FA activated");
-        setOpenSnackbar(true);
+        toast.success("2FA activated !");
         setReloadUser(true);
       })
       .catch((err) => {
-        setSeverity("error");
-        setMessage("Invalid token");
-        setOpenSnackbar(true);
+        toast.error("invalid token !");
         setToken("");
       });
   }
