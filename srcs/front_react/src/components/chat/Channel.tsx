@@ -58,7 +58,7 @@ function MessageList(props: any) {
       })}</Fragment>;
 }
 
-function Channel() {
+function MessageBody() {
     const { user } = useContext(AuthContext) as AuthContextType;
     const { currentConvId, isChannel } = useContext(ChatStateContext);
     const { newMessage } = useContext(MessageContext);
@@ -140,4 +140,4 @@ function Channel() {
       );
 }
 
-export default Channel;
+export default MessageBody;

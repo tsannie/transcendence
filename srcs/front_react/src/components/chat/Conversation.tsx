@@ -1,10 +1,10 @@
-import Channel from "./Channel";
+import MessageBody from "./Channel";
 import Options from "./Options";
 
 function Conversation() {
     return (
       <div className="conversation">
-        <Channel />
+        <MessageBody />
         <Options />
       </ div>);
   }
