@@ -166,7 +166,7 @@ export class UserController {
     return await this.userService.getFriendRequest(req.user);
   }
 
-  @Delete('friend')
+  @Post('remove-friend')
   @UseGuards(JwtTwoFactorGuard)
   async removeFriend(
     @Request() req,
