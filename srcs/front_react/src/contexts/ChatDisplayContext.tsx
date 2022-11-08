@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { IChannel } from "../components/chat/types";
+import { IChannel, IDm } from "../components/chat/types";
 
 export enum ChatType {
     EMPTY,
@@ -7,27 +7,30 @@ export enum ChatType {
     FORM,
   }
   
-export interface ChatContextInterface {
+export interface ChatDisplayContextInterface {
     display: ChatType;
     changeDisplay: (newDisplay: ChatType) => void;
     currentConvId: string;
     changeCurrentConv: (newConv: string) => void;
     isChannel: boolean;
     changeIsChannel: (newIsChannel: boolean) => void;
+    newConv: IChannel | IDm;
+    changeNewConv : (newConv: IChannel | IDm) => void;
 }
 
 
-export const ChatStateContext = createContext<ChatContextInterface>({} as ChatContextInterface);
+export const ChatDisplayContext = createContext<ChatDisplayContextInterface>({} as ChatDisplayContextInterface);
 
-interface ChatStateProviderProps {
+interface ChatDisplayProviderProps {
     children: JSX.Element | JSX.Element[];
 }
 
-export const ChatStateProvider = ({ children }: ChatStateProviderProps) => {
+export const ChatStateProvider = ({ children }: ChatDisplayProviderProps) => {
     const [ display, setDisplay ] = useState<ChatType>(ChatType.EMPTY);
     const [ currentConvId, setCurrentConv ] = useState<string>("");
     const [ isChannel, setIsChannel ] = useState<boolean>(false);
-
+    const [ newConv, setNewConv ] = useState<IChannel | IDm>({} as IChannel | IDm);
+  
     const changeDisplay = (newDisplay: ChatType) => {
       setDisplay(newDisplay);
     }
@@ -39,8 +42,12 @@ export const ChatStateProvider = ({ children }: ChatStateProviderProps) => {
     const changeIsChannel = (newIsChannel: boolean) => {
       setIsChannel(newIsChannel);
     }
+
+    const changeNewConv = (newConv: IChannel | IDm) => {
+      setNewConv(newConv);
+    }
   
     return (
-      <ChatStateContext.Provider value={{display, changeDisplay, currentConvId, changeCurrentConv, isChannel, changeIsChannel}}>{children}</ChatStateContext.Provider>
+      <ChatDisplayContext.Provider value={{display, changeDisplay, currentConvId, changeCurrentConv, isChannel, changeIsChannel, newConv, changeNewConv}}>{children}</ChatDisplayContext.Provider>
     )
 } 

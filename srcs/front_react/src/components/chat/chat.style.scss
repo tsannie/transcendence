@@ -80,7 +80,6 @@ $width_chat: calc(450 * var(--res));
 
     &:hover {
         transform: scale(1.10);
-        // -webkit-transform: scale(1.10);
     }
     
     li {
@@ -228,6 +227,7 @@ form {
         flex: 0 0 13%;
         align-items: center;
     }
+    
 
     form {
         display: flex;
@@ -236,7 +236,7 @@ form {
         align-items: center;
 
         input {
-            min-width: 100%;
+            width: 100%;
             border-style: dashed;
             margin: 4%;
         }
@@ -267,8 +267,17 @@ form {
             }
         }
 
+        .create__chan__passwords{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70%;
+            transition: 70ms;
+        }
+
         .create__chan__validator{
             display: flex;
+            margin: 4%;
         }
     }
 }

@@ -1,6 +1,6 @@
 import "./chat.style.scss"
 import { MessageContext } from "../../contexts/MessageContext";
-import { ChatStateContext } from "../../contexts/ChatContext";
+import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { IChannel, IDm, IMessageReceived, IMessageSent } from "./types";
 import { api } from "../../const/const";
@@ -62,7 +62,7 @@ function MessageList(props: any) {
 
 function MessageBody() {
     const { user } = useContext(AuthContext) as AuthContextType;
-    const { currentConvId, isChannel } = useContext(ChatStateContext);
+    const { currentConvId, isChannel } = useContext(ChatDisplayContext);
     const { newMessage } = useContext(MessageContext);
     const messagesEndRef = useRef<null | HTMLDivElement>(null);
     
