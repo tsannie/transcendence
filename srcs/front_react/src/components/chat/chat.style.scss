@@ -225,18 +225,18 @@ form {
     
     h2 {
         display: flex;
-        flex: 0 0 18%;
+        flex: 0 0 13%;
         align-items: center;
     }
 
     form {
         display: flex;
-        flex: 0 0 50%;
+        flex: 0 0 34%;
         flex-direction: column;
         align-items: center;
 
         input {
-            width: 100%;
+            min-width: 100%;
             border-style: dashed;
             margin: 4%;
         }
@@ -246,17 +246,23 @@ form {
             justify-content: space-around;
             
             button{
+                min-width: 45%;
                 margin: 4%;
-    
-                &:active {
-                    color: green;
-                }
     
                 &:hover {
                     transform: scale(1.10);
                     filter: none;
                     background-color: green;
-                    
+                }
+
+                &:focus {
+                    @extend :hover;
+                    background-color: red;
+                }
+
+                &:active {
+                    @extend :hover;
+                    background-color: blue;
                 }
             }
         }
