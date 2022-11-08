@@ -56,9 +56,6 @@ export const TransitionProvider = ({ children }: IProps) => {
   useEffect(() => {
     const newLvl = getTransitionStage(location.pathname);
 
-    console.log("actual lvl: " + actualLvl);
-    console.log("new lvl: " + newLvl);
-
     if (newLvl !== actualLvl && actualLvl !== TransitionPageLvl.NULL) {
       if (actualLvl < newLvl) {
         setTransistionStage("exit-up");
@@ -66,7 +63,6 @@ export const TransitionProvider = ({ children }: IProps) => {
         setTransistionStage("exit-down");
       }
     } else {
-      console.log("no transition");
       setDisplayLocation(location);
     }
     setActualLvl(newLvl);
