@@ -5,12 +5,15 @@ import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/Ch
 import { useContext } from "react";
 import Conversation from "./Conversation";
 import NotifProvider from "../../contexts/ChatNotificationContext";
+import CreateChannelForm from "./CreateChannelForm";
 
 function ChatBody() {
   const {display} = useContext(ChatStateContext);
 
   if (display === ChatType.CONV)
     return <Conversation />;
+  else if (display === ChatType.FORM)
+    return <CreateChannelForm />
   else
     return <div></div>;
 }
