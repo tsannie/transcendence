@@ -8,15 +8,16 @@ import { toast } from "react-toastify";
 
 interface IProps {
   player: User | null;
+  setReloadPlayer: (reload: boolean) => void;
 }
 
 function ActionBar(props: IProps) {
-  const { user, setReloadUser } = useContext(AuthContext) as AuthContextType;
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   const handleRemoveFriend = () => {
     api.post("/user/remove-friend", { id: props.player?.id }).then(
       (res) => {
-        setReloadUser(true);
+        props.setReloadPlayer(true);
         toast.success("friend removed !");
       },
       (err) => {
@@ -32,8 +33,8 @@ function ActionBar(props: IProps) {
       api
         .post("/user/accept-friend-request", { id: props.player?.id })
         .then((res) => {
+          props.setReloadPlayer(true);
           toast.success("you are now friend with " + props.player?.username);
-          setReloadUser(true);
         })
         .catch((err) => {
           toast.error("error while accepting friend request");
@@ -56,7 +57,7 @@ function ActionBar(props: IProps) {
         <ChatIcon alt="chat" />
         <span>chat</span>
       </div>
-      {user?.friends.find((friend) => friend.id === props.player?.id) ? (
+      {props.player?.friends.find((friend) => friend.id === user?.id) ? (
         <div className="action-bar__item">
           {/* TODO EDIT ICON */}
           <BlockIcon alt="remove-friend" onClick={handleRemoveFriend} />

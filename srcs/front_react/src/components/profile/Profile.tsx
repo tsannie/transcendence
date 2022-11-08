@@ -12,12 +12,13 @@ import { toast } from "react-toastify";
 
 function Profile() {
   const params = useParams().id;
-  const { user } = useContext(AuthContext) as AuthContextType;
+  const { user, setReloadUser } = useContext(AuthContext) as AuthContextType;
   const nav = useNavigate();
 
   const [player, setPlayer] = useState<User | null>(null);
-  const [isload, setIsLoad] = useState<boolean>(false);
+  const [isLoad, setisLoad] = useState<boolean>(false);
   const [isPerso, setIsPerso] = useState<boolean>(false);
+  const [reloadPlayer, setReloadPlayer] = useState<boolean>(false);
 
   useEffect(() => {
     const perso = params === user?.username ? true : false;
@@ -25,33 +26,62 @@ function Profile() {
 
     if (perso) {
       setPlayer(user);
-      setIsLoad(true);
+      setisLoad(true);
     } else {
       api
         .get("/user/username", { params: { username: params } })
         .then((res) => {
           setPlayer(res.data as User);
-          setIsLoad(true);
+          setisLoad(true);
         })
         .catch(() => {
           toast.warning("user not found !");
           nav("/profile/" + user?.username);
         });
     }
+    setReloadPlayer(false);
   }, [params]);
 
-  if (isload) {
+  useEffect(() => {
+    if (player && isPerso && isLoad) setPlayer(user);
+  }, [user]);
+
+  useEffect(() => {
+    if (reloadPlayer && player && isLoad) {
+      if (isPerso) {
+        setReloadUser(true);
+      } else {
+        api
+          .get("/user/username", { params: { username: params } })
+          .then((res) => {
+            setPlayer(res.data as User);
+          })
+          .catch(() => {
+            console.log("error update user");
+          });
+      }
+      setReloadPlayer(false);
+    }
+  }, [reloadPlayer]);
+
+  if (isLoad) {
     return (
       <div className="profile">
         <div className="profile__size" />
         <ProfileHeader player={player} />
-        {!isPerso && <ActionBar player={player} />}
+        {!isPerso && (
+          <ActionBar player={player} setReloadPlayer={setReloadPlayer} />
+        )}
         <hr id="full" />
         <ProfileStatsBar player={player} />
         <hr id="full" />
         <div className="profile__body">
           <ProfileHistory player={player} />
-          <ProfileFriends player={player} isPerso={isPerso} />
+          <ProfileFriends
+            player={player}
+            isPerso={isPerso}
+            setReloadPlayer={setReloadPlayer}
+          />
         </div>
       </div>
     );

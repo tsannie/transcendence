@@ -1,28 +1,57 @@
 import userEvent from "@testing-library/user-event";
-import React, { Fragment } from "react";
-import { User } from "../../contexts/AuthContext";
+import React, { Fragment, MouseEvent, useContext } from "react";
+import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { ReactComponent as AddIcon } from "../../assets/img/icon/circle_check.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/img/icon/circle_remove.svg";
 import { Link } from "react-router-dom";
+import { api } from "../../const/const";
+import { toast } from "react-toastify";
 
 interface IProps {
   player: User | null;
   isPerso: boolean;
+  setReloadPlayer: (reload: boolean) => void;
 }
 
 function ProfileFriends(props: IProps) {
   let allFriendRequests;
   let allFriends = props.player?.friends.map((friend, index) => {
     return (
-      <Link to={"/profile/" + friend.username}>
-        <img
-          key={index}
-          src={friend.profile_picture + "&size=small"}
-          alt="avatar"
-        />
+      <Link to={"/profile/" + friend.username} key={index}>
+        <img src={friend.profile_picture + "&size=small"} alt="avatar" />
       </Link>
     );
   });
+
+  const handleRefuseRequest = (
+    e: MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    api
+      .post("/user/refuse-friend-request", { id: id })
+      .then((res) => {
+        toast.success("friend request refused");
+        props.setReloadPlayer(true);
+      })
+      .catch((err) => {
+        toast.error("error while refusing friend request");
+      });
+  };
+
+  const handleAcceptRequest = (
+    e: MouseEvent<HTMLButtonElement>,
+    id: number
+  ) => {
+    api
+      .post("/user/accept-friend-request", { id: id })
+      .then((res) => {
+        toast.success("friend request accepted");
+        props.setReloadPlayer(true);
+      })
+      .catch((err) => {
+        toast.error("Error while accepting friend request");
+      });
+  };
 
   if (props.isPerso) {
     allFriendRequests = props.player?.friend_requests.map((request, index) => {
@@ -41,8 +70,18 @@ function ProfileFriends(props: IProps) {
                 {request.username.length > 10 ? "..." : ""}
               </span>
             </div>
-            <AddIcon />
-            <RemoveIcon />
+            <AddIcon
+              alt="accept-friend-request"
+              onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                handleAcceptRequest(e, request.id)
+              }
+            />
+            <RemoveIcon
+              alt="refuse-friend-request"
+              onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                handleRefuseRequest(e, request.id)
+              }
+            />
           </div>
           <hr />
         </Fragment>
