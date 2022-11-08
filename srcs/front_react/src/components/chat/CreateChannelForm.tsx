@@ -1,5 +1,6 @@
 function CreateChannelForm () {
-    const createChannel = () => {
+    const createChannel = (event: any) => {
+        event.preventDefault();
         return ;
     }
 
