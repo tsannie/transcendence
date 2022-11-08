@@ -3,6 +3,7 @@ import React, {
   FormEvent,
   Fragment,
   KeyboardEvent,
+  MouseEvent,
   useState,
 } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -26,10 +27,12 @@ function SearchBar() {
 
   let suggestionsListComponent = [];
 
-  const handleClick = (e: any) => {
-    setActiveSuggestion(0);
-    setShowSuggestion(false);
-    setUserInput(e.currentTarget.innerText);
+  const handleClick = (e: MouseEvent, username: string) => {
+    nav("/profile/" + username);
+    // Reset props
+    setActiveSuggestion(-1);
+    searchInput.current?.blur();
+    setUserInput("");
   };
 
   if (showSuggestion && userInput) {
@@ -43,7 +46,13 @@ function SearchBar() {
               className = "suggestion-active";
             }
             return (
-              <li key={index} className={className} onClick={handleClick}>
+              <li
+                key={index}
+                className={className}
+                onClick={(e: MouseEvent) => {
+                  handleClick(e, suggestion.username);
+                }}
+              >
                 <img src={suggestion.picture + "&size=small"}></img>
                 <span>
                   {suggestion.username.substring(0, 10)}
