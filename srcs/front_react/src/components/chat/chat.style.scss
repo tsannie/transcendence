@@ -222,36 +222,47 @@ form {
     flex-direction: column;
     align-items: center;
     width: 100%;
-
-    input {
-        width: 100%;
-        border-style: dashed;
-        margin: 4%;
+    
+    h2 {
+        display: flex;
+        flex: 0 0 18%;
+        align-items: center;
     }
 
     form {
         display: flex;
+        flex: 0 0 50%;
         flex-direction: column;
         align-items: center;
-    }
 
-    .create__chan__status {
-        display: flex;
-        justify-content: space-around;
-        
-        button{
+        input {
+            width: 100%;
+            border-style: dashed;
             margin: 4%;
+        }
 
-            &:active {
-                color: green;
+        .create__chan__status {
+            display: flex;
+            justify-content: space-around;
+            
+            button{
+                margin: 4%;
+    
+                &:active {
+                    color: green;
+                }
+    
+                &:hover {
+                    transform: scale(1.10);
+                    filter: none;
+                    background-color: green;
+                    
+                }
             }
+        }
 
-            &:hover {
-                transform: scale(1.10);
-                filter: none;
-                background-color: green;
-                
-            }
+        .create__chan__validator{
+            display: flex;
         }
     }
 }
