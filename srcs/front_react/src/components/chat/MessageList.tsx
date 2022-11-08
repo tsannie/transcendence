@@ -7,7 +7,8 @@ import { MessageContext } from "../../contexts/MessageContext";
 import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
 import  {ReactComponent as GroupChatIcon} from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
-  
+import {ReactComponent as CirclePlusIcon} from "../../assets/img/icon/circle_plus.svg";
+
 function MessageList() {
     const { user } = useContext(AuthContext) as AuthContextType;
     const { newMessage } = useContext(MessageContext);
@@ -140,7 +141,20 @@ function MessageList() {
         <div ref={messagesTopRef} />
         {MessageListItems}
       </ul>
+      < CreateChannelButton />
     </div>)
+  }
+
+  function CreateChannelButton() {
+    const { changeDisplay } = useContext(ChatStateContext);
+
+    return (
+      <div className="chat__list__footer">
+        <button onClick={ () => changeDisplay(ChatType.FORM) }>
+          <CirclePlusIcon />  
+        </ button>
+      </div>
+    )
   }
 
   export default MessageList;
