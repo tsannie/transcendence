@@ -1,10 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { IChannel, IMessageReceived } from "./types";
+import { IChannel, IDm, IMessageReceived } from "./types";
 import { api } from "../../const/const";
 import "./chat.style.scss"
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
-import { ChatStateContext, ChatStateProvider, ChatType } from "../../contexts/ChatContext";
+import { ChatDisplayContext, ChatStateProvider, ChatType } from "../../contexts/ChatDisplayContext";
 import  {ReactComponent as GroupChatIcon} from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
 import {ReactComponent as CirclePlusIcon} from "../../assets/img/icon/circle_plus.svg";
@@ -13,10 +13,10 @@ function MessageList() {
     const { user } = useContext(AuthContext) as AuthContextType;
     const { newMessage } = useContext(MessageContext);
     const { channels, addChannel, changeNotif, isNotif } = useContext(NotifContext);
-    const { currentConvId, changeDisplay, changeCurrentConv, changeIsChannel } = useContext(ChatStateContext);
+    const { currentConvId, isChannel, changeDisplay, changeCurrentConv, changeIsChannel, newConv } = useContext(ChatDisplayContext);
     const messagesTopRef = useRef<null | HTMLDivElement>(null);
 
-    const [chatList, setChatList] = useState<IChannel[]>([]);
+    const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
   
     const scrollToTop = () => {
       setTimeout( () => {
@@ -37,7 +37,7 @@ function MessageList() {
       .catch( () => console.log("Axios Error"));
     }
     
-    const actualizeChannelList = (newList : IChannel[], editable_room : IChannel) => {
+    const actualizeChannelList = (newList : (IChannel | IDm)[], editable_room : IChannel | IDm) => {
       if (newMessage)
         editable_room.updatedAt = newMessage.createdAt;
       if (currentConvId && editable_room.id != currentConvId)
@@ -51,7 +51,7 @@ function MessageList() {
       return newList;
     }
 
-    const addToChannelList = (newList : IChannel[]) => {
+    const addToChannelList = (newList : (IChannel | IDm)[]) => {
       let new_elem;
 
       if (newMessage?.dm)
@@ -121,6 +121,16 @@ function MessageList() {
           </ div>
             )
       });
+
+      const addNewElemToList = () => {
+        if (chatList.find( (elem) => elem.id === currentConvId) || !isChannel)
+          return;
+        else
+        {
+          let newList = [newConv, ...chatList];
+          setChatList(newList);
+        }
+      }
   
       useEffect( () => {
         const async_fct = async () => await loadList(); 
@@ -129,10 +139,13 @@ function MessageList() {
       }, []);
   
       useEffect( () => {
-        console.log("ICI", channels);
         updateList();
         scrollToTop();
       }, [newMessage]);
+
+      useEffect( () => {
+        addNewElemToList();
+      }, [newConv]);
 
     return (
     <div className="chat__list">
@@ -146,7 +159,7 @@ function MessageList() {
   }
 
   function CreateChannelButton() {
-    const { changeDisplay } = useContext(ChatStateContext);
+    const { changeDisplay } = useContext(ChatDisplayContext);
 
     return (
       <div className="chat__list__footer">

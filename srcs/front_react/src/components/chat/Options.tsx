@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { ChatStateContext } from "../../contexts/ChatContext";
+import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 
 function Options() {
-  const {currentConvId} = useContext(ChatStateContext)
+  const {currentConvId} = useContext(ChatDisplayContext)
 
     return (
       <div className="conversation__options">
