@@ -88,7 +88,7 @@ export class GameService {
     await this.all_game.delete({ room_name });
   }
 
-  async InitSet(room: string, is_playing: any) {
+  async InitSet(room: string, is_playing: any, game_mode: string) {
     const room_game = await this.all_game.findOneBy({ room_name: room });
     if (!room_game.set) room_game.set = new SetEntity();
     if (!room_game.set.ball) {
@@ -108,6 +108,7 @@ export class GameService {
       room_game.set.p2 = new PlayerEntity();
       room_game.set.p2.name = room_game.p2;
     }
+    room_game.game_mode = game_mode;
     is_playing[room] = true;
     await this.all_game.save(room_game);
   }

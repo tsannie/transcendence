@@ -47,6 +47,9 @@ export class RoomEntity {
   @Column({ nullable: true, default: -1 })
   map: number;
 
+  @Column({ nullable: true })
+  game_mode: string;
+  
   /*   @Column({ nullable: true , default: -1})
   power: number; // TODO INSET 
  */

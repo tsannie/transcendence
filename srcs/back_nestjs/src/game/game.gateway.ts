@@ -48,20 +48,22 @@ export class GameGateway implements OnGatewayInit {
   ///////////////////////////////////////////////
 
   @SubscribeMessage('createGameRoom')
-  async CreateRoom(client: Socket, room: string) {
+  async CreateRoom(client: Socket, data: any) {
     let room_game: RoomEntity;
 
-    if (room === '')
-      room_game = await this.gameService.joinFastRoom(room);
+    if (data.room === '')
+      room_game = await this.gameService.joinFastRoom(data.room);
     else
-      room_game = await this.gameService.joinInvitation(room);
+      room_game = await this.gameService.joinInvitation(data.room);
 
-    console.log('room_game.status', room_game.status);
+    console.log("data.game_mode", data.game_mode);
+    //console.log('room_game.status', room_game.status);
     if (room_game) {
       if (room_game.status === RoomStatus.EMPTY) {
         room_game.status = RoomStatus.WAITING;
         room_game.p1 = client.id;
 
+        room_game.game_mode = data.game_mode;
         client.join(room_game.room_name);
         await this.all_game.save(room_game);
 
@@ -73,7 +75,7 @@ export class GameGateway implements OnGatewayInit {
         client.join(room_game.room_name);
         await this.all_game.save(room_game);
 
-        this.gameService.InitSet(room_game.room_name, this.is_playing);
+        this.gameService.InitSet(room_game.room_name, this.is_playing, data.game_mode);
         this.server.to(room_game.room_name).emit('joinedRoom', room_game);
       } else if (room_game.status === RoomStatus.PLAYING)
         client.emit('fullRoom', room_game);
