@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { socket } from "../Game";
 import { GameContext, RoomStatus } from "../GameContext";
 
-export default function WaitingRoom(props: any) {
+export default function WaitingRoom() {
 
   const game = useContext(GameContext);
 
@@ -13,17 +13,16 @@ export default function WaitingRoom(props: any) {
 
       game.setim_p2(false);
       game.setRoom("");
-
       socket.emit("leaveGameRoom", game.room);
     }
   }
 
-  console.log("game.status in WaitingRoom: ", game.status);
+  //console.log("game.status in WaitingRoom: ", game.status);
   return (
     <div className="queues">
       <h2> you are : {game.my_id} </h2>
 
-      <p> waiting opponent for [PONG 1972] </p>
+      <p> waiting opponent</p>
       <button onClick={leaveRoom}>leave waiting room</button>
     </div>
   );

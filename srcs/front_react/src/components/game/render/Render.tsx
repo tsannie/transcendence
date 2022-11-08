@@ -26,17 +26,18 @@ interface IPlayer {
   gave_up: boolean;
 }
 
+let position_y = 0;
+
 export function GamePlayer_p1_p2() {
   
-  let position_y = 0;
   let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
   let ratio_width = (XlowerSize /canvas_back_width);
   let ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
   let start = false;
-
+  
   const game = useContext(GameContext);
   const canvasRef: any = createRef();
-
+  
   let height = XlowerSize / screen_ratio
   let border_size = ((height) / 50);
 
@@ -44,13 +45,13 @@ export function GamePlayer_p1_p2() {
   let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
   let IPaddle_p1 : IPaddle = {
     x: paddle_margin * ratio_width,
-    y: 0,
+    y: height / 2,
     height: paddle_height * ratio_height,
     width: paddle_width * ratio_width
   };
   let IPaddle_p2 : IPaddle = {
     x: (canvas_back_width - paddle_margin - paddle_width) * ratio_width,
-    y: 0,
+    y: height / 2,
     height: paddle_height * ratio_height,
     width: paddle_width * ratio_width
   };
@@ -104,7 +105,6 @@ export function GamePlayer_p1_p2() {
       IPaddle_p2.width = paddle_width * ratio_width;
     });
 
-
     socket.on("player_give_upem", (set: any, status: number) => {
       IPlayer_p2.won = set.p2.won;
       IPlayer_p1.won = set.p1.won;
@@ -135,7 +135,6 @@ export function GamePlayer_p1_p2() {
     }, [socket]);
 
     function ask_paddle() {
-
       let data = {
         room: game.room,
         paddle_y: position_y,
@@ -150,11 +149,13 @@ export function GamePlayer_p1_p2() {
         socket.emit("ask_paddle_p1", data);
       }
     }
-
-  useEffect(() => {
-    let countdown = 5;
+    
+    let countdown = 3;
+  
+    useEffect(() => {
     let countdownInterval = setInterval(() => {
       countdown--;
+      console.log("count");
       if (countdown === 0) {
         clearInterval(countdownInterval);
         start = true;
@@ -170,6 +171,8 @@ export function GamePlayer_p1_p2() {
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (game.im_p2 === true && start === true) {
+          console.log("Iplayer2", IPlayer_p2);
+          console.log("Iplayer1", IPlayer_p1);
           socket.emit("start_game_render", game.room);
           start = false;
         }
@@ -185,12 +188,14 @@ export function GamePlayer_p1_p2() {
   }, []);
 
   function leaveGame() {
-    game.setStatus(RoomStatus.CLOSED);
-    if (IPlayer_p1.won === true || IPlayer_p2.won === true)
-      socket.emit("end_of_the_game", game.room);
-    else
-      socket.emit("player_give_up", game.room);
-    game.setRoom("");
+    if (countdown === 0) {
+      game.setStatus(RoomStatus.CLOSED);
+      if (IPlayer_p1.won === true || IPlayer_p2.won === true)
+        socket.emit("end_of_the_game", game.room);
+      else
+        socket.emit("player_give_up", game.room);
+      game.setRoom("");
+    }
   }
   ////////////////////////////////////////////////////
 
