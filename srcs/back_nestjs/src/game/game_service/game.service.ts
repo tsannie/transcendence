@@ -39,20 +39,23 @@ export class GameService {
   }
 
   async joinFastRoom(room: string): Promise<RoomEntity> {
-    let room_game;
+    let room_game : RoomEntity;
     const size = await this.all_game.count();
+    console.log("SIZE = ", size);
     if (size != 0) {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
         if (
           room_db.fast_play === true &&
-          room_db.status === RoomStatus.WAITING
+          room_db.status === RoomStatus.WAITING &&
+          !room_db.set  
         ) {
           room_game = room_db;
         }
       });
     }
     if (!room_game) {
+      console.log("CREATE NEW GAME");
       room_game = new RoomEntity();
       room_game.fast_play = true;
       room_game.room_name = randomUUID();
@@ -102,11 +105,11 @@ export class GameService {
     }
     if (!room_game.set.p1) {
       room_game.set.p1 = new PlayerEntity();
-      room_game.set.p1.name = room_game.p1;
+      room_game.set.p1.name = room_game.p1.username;
     }
     if (!room_game.set.p2) {
       room_game.set.p2 = new PlayerEntity();
-      room_game.set.p2.name = room_game.p2;
+      room_game.set.p2.name = room_game.p2.username;
     }
     room_game.game_mode = game_mode;
     is_playing[room] = true;

@@ -7,10 +7,14 @@ import { SetEntity } from './game_entity/set.entity';
 import { RoomEntity } from './game_entity/room.entity';
 import { BallEntity } from './game_entity/ball.entity';
 import { PlayerEntity } from './game_entity/players.entity';
+import { ConnectedUserModule } from 'src/connected-user/connected-user.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RoomEntity, SetEntity, PlayerEntity, BallEntity]),
+    ConnectedUserModule,
+    UserModule,
   ],
   controllers: [GameController],
   providers: [GameService, GameGateway],

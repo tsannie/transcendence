@@ -27,11 +27,13 @@ export class RoomEntity {
   @Column({ default: RoomStatus.EMPTY })
   status: RoomStatus = RoomStatus.EMPTY;
 
-  @Column({ nullable: true })
-  p1?: string; // TODO SWITCH IN USER ENTITY
+  @OneToOne(() => UserEntity, { eager: true, cascade: true })
+  @JoinColumn()
+  p1: UserEntity;  // TODO SWITCH IN USER ENTITY
 
-  @Column({ nullable: true })
-  p2?: string; // same
+  @OneToOne(() => UserEntity, { eager: true, cascade: true })
+  @JoinColumn()
+  p2: UserEntity;  // TODO SWITCH IN USER ENTITY
 
   // TODO COUNTDOWN ??
   @Column('boolean', { default: false })
