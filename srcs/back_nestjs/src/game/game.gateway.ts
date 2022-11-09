@@ -1,9 +1,10 @@
-import { ConsoleLogger, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -20,9 +21,9 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
-import { delay } from 'rxjs';
+import { CreateRoomDto } from './dto/createRoom.dto';
 
-interface double_pos {
+export interface PaddlePos {
   y1: number;
   y2: number;
 }
@@ -30,10 +31,10 @@ interface double_pos {
 @WebSocketGateway({
   namespace: '/game',
   cors: {
-    origin: '*',
+    origin: 'http://localhost:3000',
   },
 })
-export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @InjectRepository(RoomEntity)
     private all_game: Repository<RoomEntity>,
@@ -45,96 +46,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('GameGateway');
 
-  afterInit(server: any) {
-    this.logger.log('Initialized');
-  }
-
-  paddle_pos = new Map<string, double_pos>();
+  paddle_pos = new Map<string, PaddlePos>();
   is_playing = new Map<string, boolean>();
-
-  ////////////////////////////////////////////////
-  //////////////// CREATE ROOM
-  ///////////////////////////////////////////////
-
-  @SubscribeMessage('createGameRoom')
-  async CreateRoom(client: Socket, data: any) {
-    console.log("data = ", data);
-    console.log("client.id = ", client.id);
-    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
-    let room_game: RoomEntity;
-
-    if (data.room === '')
-      room_game = await this.gameService.joinFastRoom(data.room);
-    else
-      room_game = await this.gameService.joinInvitation(data.room);
-
-    if (room_game) {
-      if (room_game.status === RoomStatus.EMPTY) {
-        client.join(room_game.room_name);
-        room_game.status = RoomStatus.WAITING;
-        room_game.game_mode = data.game_mode;
-        room_game.p1 = user;
-        await this.all_game.save(room_game);
-      
-        client.emit('joinedRoom', room_game);
-      } else if (room_game.status === RoomStatus.WAITING) {
-        room_game.status = RoomStatus.PLAYING;
-        room_game.p2 = user;
-
-        client.join(room_game.room_name);
-        await this.all_game.save(room_game);
-
-        this.gameService.InitSet(room_game.room_name, this.is_playing, data.game_mode);
-        this.server.in(room_game.room_name).emit('joinedRoom', room_game);
-      } else if (room_game.status === RoomStatus.PLAYING)
-        client.emit('fullRoom', room_game);
-    }
-  }
-
-  ///////////////////////////////////////////////
-  //////////////// INGAME ROOM
-  ///////////////////////////////////////////////
-
-  ///////////////////////////////////////////////
-  //////////////// LEAVE ROOM
-  ///////////////////////////////////////////////
-
-  @SubscribeMessage('leaveGameRoom')
-  async LeaveRoom(client: Socket, room: string) {
-    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
-    const room_game = await this.all_game.findOneBy({ room_name: room });
-    
-    if (!room_game)
-      return;
-      if (
-      room_game.status === RoomStatus.WAITING ||
-      room_game.status === RoomStatus.CLOSED
-    )
-    room_game.status = RoomStatus.EMPTY;
-    room_game.room_name = room;
-    room_game.p2_ready = false;
-    room_game.p1_ready = false;
-    
-    if (room_game.p1.id === user.id) {
-      room_game.p1 = room_game.p2;
-      room_game.p2 = null;
-    } else if (room_game.p2.id === user.id)
-    room_game.p2 = null;
-
-    if (room_game.status === RoomStatus.EMPTY) {
-      await this.all_game.remove(room_game);
-      this.server.in(room).emit('leftRoomEmpty');
-      client.leave(room);
-      return;
-    }
-    await this.all_game.save(room_game);
-    this.server.in(room).emit('leftRoom', room_game);
-    client.leave(room);
-  }
-
-  ///////////////////////////////////////////////
-  //////////////// PLAYER GIVE UP
-  /////////////////////////////////////////////////
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
@@ -159,8 +72,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
-
-  async handleDisconnect(client: Socket) {
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
     let room: string;
     const room_game = await this.all_game.findOneBy({ room_name: room });
@@ -169,9 +81,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         room_game.status === RoomStatus.WAITING ||
         room_game.status === RoomStatus.CLOSED
       )
-        this.EndOfTheGame(client, room_game.room_name);
+        this.endGame(client, room_game.room_name);
       else if (room_game.status === RoomStatus.PLAYING)
-        this.PlayerGiveUp(client, room_game.room_name);
+        this.giveUp(client, room_game.room_name);
     }
     this.disconnect(client);
   }
@@ -181,49 +93,117 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     client.disconnect();
   }
 
-  @SubscribeMessage('player_give_up')
-  async PlayerGiveUp(client: Socket, room: string) {
-    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
+  ////////////////////////////////////////////////
+  //////////////// CREATE ROOM
+  ///////////////////////////////////////////////
 
-    console.log('player_give_up');
+  @SubscribeMessage('createGameRoom')
+  async createRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: CreateRoomDto,
+  ) {
+    const user = (await this.connectedUserService.findBySocketId(client.id))
+      .user;
+    let room_game: RoomEntity;
+
+    if (data.room === '')
+      room_game = await this.gameService.joinFastRoom(data.room);
+    else room_game = await this.gameService.joinInvitation(data.room);
+
+    if (room_game) {
+      if (room_game.status === RoomStatus.EMPTY) {
+        client.join(room_game.room_name);
+        room_game.status = RoomStatus.WAITING;
+        room_game.game_mode = data.mode;
+        room_game.p1 = user;
+        await this.all_game.save(room_game);
+
+        client.emit('joinedRoom', room_game);
+      } else if (room_game.status === RoomStatus.WAITING) {
+        client.join(room_game.room_name);
+        room_game.status = RoomStatus.PLAYING;
+        room_game.p2 = user;
+
+        await this.all_game.save(room_game);
+
+        this.gameService.initSet(
+          room_game.room_name,
+          this.is_playing,
+          data.mode,
+        );
+        this.server.in(room_game.room_name).emit('joinedRoom', room_game);
+      }
+    }
+  }
+
+  ///////////////////////////////////////////////
+  //////////////// LEAVE ROOM
+  ///////////////////////////////////////////////
+
+  @SubscribeMessage('leaveGameRoom')
+  async leaveRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
     const room_game = await this.all_game.findOneBy({ room_name: room });
-    
-    if (this.is_playing[room])
-    this.is_playing[room] = false;
-    
-    if (room_game.status === RoomStatus.PLAYING)
-    room_game.status = RoomStatus.CLOSED;
-    if (room_game.set.p1.name === user.username) {
-      room_game.p1 = null;
-      room_game.set.p2.won = true;
-    }
-    else if (room_game.set.p2.name === user.username) {
+
+    if (!room_game)
+      return;
+    if (room_game.status === RoomStatus.WAITING ||
+    room_game.status === RoomStatus.CLOSED)
+      room_game.status = RoomStatus.EMPTY;
+    room_game.room_name = room;
+
+    if (room_game.p1.id === user.id) {
+      room_game.p1 = room_game.p2;
       room_game.p2 = null;
-      room_game.set.p1.won = true;
+    } else if (room_game.p2.id === user.id)
+      room_game.p2 = null;
+
+    if (room_game.status === RoomStatus.EMPTY) {
+      await this.all_game.remove(room_game);
+      this.server.in(room).emit('leftRoomEmpty');
+      client.leave(room);
+      return;
     }
-    
     await this.all_game.save(room_game);
-    
-    this.server.in(room).emit('player_give_upem', room_game.set, room_game.status);
+    this.server.in(room).emit('leftRoom', room_game);
+    client.leave(room);
+  }
+
+  ///////////////////////////////////////////////
+  //////////////// PLAYER GIVE UP
+  /////////////////////////////////////////////////
+
+  @SubscribeMessage('giveUp')
+  async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
+    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    const room_game = await this.all_game.findOneBy({ room_name: room });
+
+    this.gameService.giveUp(room, this.is_playing, room_game, user);
+
+    this.server.in(room).emit('giveUp', room_game.set, room_game.status);
     client.emit('leftRoomEmpty');
     client.leave(room);
   }
 
-  @SubscribeMessage('end_of_the_game')
-  async EndOfTheGame(client: Socket, room: string) {
+  @SubscribeMessage('endGame')
+  async endGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
     client.leave(room);
-    console.log('end_of_the_game');
+    console.log('endGame');
     const room_game = await this.all_game.findOneBy({ room_name: room });
-    
+
     if (this.is_playing[room]) {
       this.is_playing[room] = false;
       console.log('clearInterval end of GAME');
     }
     if (room_game) {
-      if (this.paddle_pos[room])
-        delete this.paddle_pos[room];
-      if (this.is_playing[room])
-      delete this.is_playing[room];
+      if (this.paddle_pos[room]) delete this.paddle_pos[room];
+      if (this.is_playing[room]) delete this.is_playing[room];
       await this.all_game.remove(room_game);
     }
     client.emit('leftRoomEmpty');
@@ -234,39 +214,43 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   //////////////// PADDLE DATA
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('ask_paddle_p1')
-  async ask_paddle_p1(client: Socket, data: PaddleDto) {
-    client.to(data.room).emit('get_paddle_p1',
-    (data.paddle_y * canvas_back_height) / data.front_canvas_height);
+  @SubscribeMessage('askPaddleP1')
+  async askPaddleP1(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: PaddleDto,
+  ) {
+    client.to(data.room).emit('getPaddleP1',(data.positionY * canvas_back_height) / data.front_canvas_height);
     if (!this.paddle_pos[data.room])
       this.paddle_pos[data.room] = { y1: 0, y2: 0 };
     this.paddle_pos[data.room] = {
-      y1: (data.paddle_y * canvas_back_height) / data.front_canvas_height,
+      y1: (data.positionY * canvas_back_height) / data.front_canvas_height,
       y2: this.paddle_pos[data.room].y2,
     };
   }
 
-  @SubscribeMessage('ask_paddle_p2')
-  async ask_paddle_p2(client: Socket, data: PaddleDto) {
-    client.to(data.room).emit('get_paddle_p2',
-    (data.paddle_y * canvas_back_height) / data.front_canvas_height);
+  @SubscribeMessage('askPaddleP2')
+  async askPaddleP2(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: PaddleDto,
+  ) {
+    client.to(data.room).emit('getPaddleP2',(data.positionY * canvas_back_height) / data.front_canvas_height);
     if (!this.paddle_pos[data.room])
       this.paddle_pos[data.room] = { y1: 0, y2: 0 };
     this.paddle_pos[data.room] = {
       y1: this.paddle_pos[data.room].y1,
-      y2: (data.paddle_y * canvas_back_height) / data.front_canvas_height,
+      y2: (data.positionY * canvas_back_height) / data.front_canvas_height,
     };
   }
 
   ///////////////////////////////////////////////
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('start_game_render')
-  async start_game_render(client: Socket, room: string) {
+  @SubscribeMessage('gameRender')
+  async gameRender(@MessageBody() room: string) {
     let room_game = await this.all_game.findOneBy({ room_name: room });
 
     if (!room_game)
-      return console.log(' start_game_render !!!!! NO ROOM !!!! [' + room + ']',);
+      return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
     if (room_game.set) {
       while (
         room_game.set.p1.score !== victory_score &&
@@ -285,13 +269,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     return;
   }
 
-  @SubscribeMessage('resize_ingame')
-  async resize_ingame(client: Socket, room: string) {
+  @SubscribeMessage('resizeIngame')
+  async resizeIngame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
     const room_game = await this.all_game.findOneBy({ room_name: room });
-    if (!room_game) {
-      console.log('NO ROOM GAME', room);
+    if (!room_game)
       return;
-    }
     client.emit('resize_game');
   }
 }

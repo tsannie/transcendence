@@ -5,17 +5,17 @@ export class PaddleDto {
   @IsDefined()
   @IsNotEmpty()
   @Type(() => String)
-  room: string; // id du dm ou du channel
+  room: string;
 
   @IsDefined()
   @IsNotEmpty()
   @Type(() => Number)
-  paddle_y: number;
+  positionY: number;
 
   @IsDefined()
   @IsNotEmpty()
   @Type(() => Boolean)
-  im_p2: boolean;
+  isP2: boolean;
 
   @IsDefined()
   @IsNotEmpty()
