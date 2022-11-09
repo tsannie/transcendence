@@ -103,9 +103,10 @@
 .settings__2fa__validation {
   display: flex;
   button {
-    margin-left: 2vw;
+    border-left: none;
   }
   input {
+    font-size: calc(30 * var(--res));
     text-align: center;
   }
 }
