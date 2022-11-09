@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { ReactComponent as ChatIcon } from "../../assets/img/icon/chat.svg";
-import { ReactComponent as UserIcon } from "../../assets/img/icon/user.svg";
+import { ReactComponent as AddFriendIcon } from "../../assets/img/icon/add-friend.svg";
+import { ReactComponent as RemoveFriendIcon } from "../../assets/img/icon/remove-friend.svg";
 import { ReactComponent as BlockIcon } from "../../assets/img/icon/no_waiting_sign.svg";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { api } from "../../const/const";
@@ -60,13 +61,13 @@ function ActionBar(props: IProps) {
       {props.player?.friends.find((friend) => friend.id === user?.id) ? (
         <div className="action-bar__item">
           {/* TODO EDIT ICON */}
-          <BlockIcon alt="remove-friend" onClick={handleRemoveFriend} />
+          <RemoveFriendIcon alt="remove-friend" onClick={handleRemoveFriend} />
           <span>remove friend</span>
         </div>
       ) : (
         <div className="action-bar__item">
           {/* TODO EDIT ICON */}
-          <UserIcon alt="add-friend" onClick={handleAddFriend} />
+          <AddFriendIcon alt="add-friend" onClick={handleAddFriend} />
           <span>add friend</span>
         </div>
       )}

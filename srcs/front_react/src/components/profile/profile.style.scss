@@ -307,7 +307,7 @@ $height__title: calc(60 * var(--res));
   width: 60%;
   margin-bottom: calc(5 * var(--res));
   svg {
-    padding: 5%;
+    padding: calc(7 * var(--res));
     border-radius: 50%;
     border-width: calc(3 * var(--res)) !important;
     border-style: dashed;
