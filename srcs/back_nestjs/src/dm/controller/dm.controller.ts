@@ -27,14 +27,8 @@ export class DmController {
 
 	// get a dm by id
 	@UseGuards( JwtTwoFactorGuard )
-	@Get('getById')
+	@Get('datas')
 	async getDmById(@Query() data: DmIdDto): Promise<DmEntity> {
 		return await this.dmService.getDmById(data.id);
-	}
-
-	@UseGuards( JwtTwoFactorGuard )
-	@Get('getByTarget')
-	async getDmByTarget( @Query() data: DmNameDto, @Request() req): Promise<DmEntity> {
-		return await this.dmService.getDmByTarget(data, req.user);
 	}
 }
