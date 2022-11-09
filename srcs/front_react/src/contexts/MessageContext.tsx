@@ -8,7 +8,6 @@ export const MessageContext = createContext<MessageContextInterface>({} as Messa
 export interface MessageContextInterface {
   socket: Socket | null;
   newMessage: IMessageReceived | null;
-  changeNewMessage: (newMessage: IMessageReceived | null) => void;
 } 
 
 interface MessageProviderProps {
@@ -18,10 +17,6 @@ interface MessageProviderProps {
 export const MessageProvider = ({ children }: MessageProviderProps) => {
   const { user } = useContext(AuthContext) as AuthContextType;
   const [ newMessage, setNewMessage ] = useState<IMessageReceived | null>(null);
-
-  const changeNewMessage = (newMessage: IMessageReceived | null) => {
-    setNewMessage(newMessage);
-  }
 
   const socket : Socket = io("http://localhost:4000/chat", {
     query: {
@@ -47,6 +42,6 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   }, []);
 
   return (
-    <MessageContext.Provider value={{socket, newMessage, changeNewMessage}}>{children}</MessageContext.Provider>
+    <MessageContext.Provider value={{socket, newMessage}}>{children}</MessageContext.Provider>
   );
 };
