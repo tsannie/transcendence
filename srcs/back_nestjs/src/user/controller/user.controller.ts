@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,6 +10,7 @@ import {
   Query,
   Request,
   Res,
+  SerializeOptions,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -23,13 +25,12 @@ import { UpdateResult } from 'typeorm';
 import { NewUsernameDto } from '../dto/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express } from 'express';
-import {
-  AvatarFormatValidator,
-} from '../pipes/filevalidation.validator';
+import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
 import { UserSearchDto } from '../dto/usersearch.dto';
 import { IUserSearch } from '../models/iusersearch.interface';
 
 @Controller('user')
+//@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -52,6 +53,7 @@ export class UserController {
   }
 
   @Get('id')
+  @SerializeOptions({ groups: ['user'] })
   async getUserById(@Query() body: TargetIdDto): Promise<UserEntity> {
     return await this.userService.findById(body.id, { friends: true });
   }
@@ -123,12 +125,12 @@ export class UserController {
     return this.userService.deleteAvatar(req.user);
   }
 
-  @Get("conversations")
-  @UseGuards( JwtTwoFactorGuard )
+  @Get('conversations')
+  @UseGuards(JwtTwoFactorGuard)
   async getConvos(@Request() req) {
     return this.userService.getConversations(req.user);
   }
-  
+
   @Get('friendlist')
   @UseGuards(JwtTwoFactorGuard)
   async friendList(@Request() req): Promise<UserEntity[]> {

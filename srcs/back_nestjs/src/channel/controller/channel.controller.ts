@@ -1,11 +1,13 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Post,
   Query,
   Request,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateChannelDto } from '../dto/createchannel.dto';
 import { ChannelDto } from '../dto/channel.dto';
@@ -38,6 +40,7 @@ export class ChannelController {
     return await this.channelService.getUserList(req.user);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtTwoFactorGuard)
   @Get('list')
   async getList(@Request() req): Promise<ChannelEntity[]> {

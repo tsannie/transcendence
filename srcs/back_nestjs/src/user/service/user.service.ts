@@ -1,4 +1,11 @@
-import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  forwardRef,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+  UseInterceptors,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindOneOptions,
@@ -39,13 +46,13 @@ export interface IAvatarOptions {
 @Injectable()
 export class UserService {
   constructor(
-	@InjectRepository(UserEntity)
-	private allUser: Repository<UserEntity>,
-  private readonly httpService: HttpService,
-  @Inject(forwardRef(() => ChannelService))
-  private readonly channelService: ChannelService,
-  @Inject(forwardRef(() => DmService))
-  private readonly dmService: DmService,
+    @InjectRepository(UserEntity)
+    private allUser: Repository<UserEntity>,
+    private readonly httpService: HttpService,
+    @Inject(forwardRef(() => ChannelService))
+    private readonly channelService: ChannelService,
+    @Inject(forwardRef(() => DmService))
+    private readonly dmService: DmService,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -272,30 +279,28 @@ export class UserService {
           fs.unlinkSync(`${AVATAR_DEST}/${user.id}_${size}.jpg`);
         });
         user.profile_picture = null;
-			}
-			catch (err)
-			{
-				throw new UnprocessableEntityException(`Cannot delete old avatar from server.`);
-			}
-		}
-	}
+      } catch (err) {
+        throw new UnprocessableEntityException(
+          `Cannot delete old avatar from server.`,
+        );
+      }
+    }
+  }
 
   /* This returns a mix of DM and Channels of users, ordered by DESC Date. */
-  async getConversations(user: UserEntity) : Promise<Array<ChannelEntity | DmEntity>>{
+  async getConversations(
+    user: UserEntity,
+  ): Promise<Array<ChannelEntity | DmEntity>> {
     let convos: Array<ChannelEntity | DmEntity>;
-    
 
     convos = await this.channelService.getUserList(user);
     convos = convos.concat(await this.dmService.getDmsList(user));
-    convos.sort( (a,b) => {
-      if (a.updatedAt < b.updatedAt)
-        return 1;
-      else
-        return -1;
-    })
+    convos.sort((a, b) => {
+      if (a.updatedAt < b.updatedAt) return 1;
+      else return -1;
+    });
     return convos;
   }
-
 
   /* search user with filter for search bar */
   async searchUser(search: string): Promise<IUserSearch[]> {
