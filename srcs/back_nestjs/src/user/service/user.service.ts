@@ -116,6 +116,18 @@ export class UserService {
       where: {
         id: input_id,
       },
+      select: {
+        friends: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+        friend_requests: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+      },
       relations: relations_ToLoad,
     });
 
@@ -140,22 +152,18 @@ export class UserService {
     });
   }
 
-  async cleanAllUser(): Promise<void> {
-    return await this.allUser.clear();
-  }
-
   // turn enabled2FA to true for user
-  async enable2FA(userId: number) {
+  async enable2FA(userId: number): Promise<UpdateResult> {
     // TODO update user ?
     return await this.allUser.update(userId, { enabled2FA: true });
   }
 
   // turn enabled2FA to false for user TODO delete in front ??
-  async disable2FA(userId: number) {
+  async disable2FA(userId: number): Promise<UpdateResult> {
     return await this.allUser.update(userId, { enabled2FA: false });
   }
 
-  async setSecret2FA(userId: string, secret: string) {
+  async setSecret2FA(userId: string, secret: string): Promise<UpdateResult> {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 

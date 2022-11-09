@@ -23,15 +23,15 @@ import { AuthService } from '../service/auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @SerializeOptions({ groups: ['user'] })
-  @UseGuards(JwtTwoFactorGuard)
   @Get('profile')
+  @SerializeOptions({ groups: ['me'] })
+  @UseGuards(JwtTwoFactorGuard)
   getProfile(@Request() req): UserEntity {
     return req.user;
   }
 
-  @UseGuards(JwtGuard)
   @Get('isTwoFactor')
+  @UseGuards(JwtGuard)
   isTwoFactor(@Request() req): { isTwoFactor: boolean } {
     const user = req.user;
     let isTwoFactor = false;
@@ -41,10 +41,11 @@ export class AuthController {
     return { isTwoFactor: isTwoFactor };
   }
 
-  @UseGuards(FortyTwoGuard)
   @Get('oauth42')
+  @SerializeOptions({ groups: ['me'] })
+  @UseGuards(FortyTwoGuard)
   @Redirect(process.env.FRONT_URL, 301)
-  async oauthFortyTwo(@Req() req) {
+  async oauthFortyTwo(@Req() req): Promise<UserEntity> {
     // TODO Interface
     const user = req.user;
     if (!user) throw new UnauthorizedException('User not found');
@@ -57,10 +58,11 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(GoogleGuard)
   @Get('oauthGoogle')
+  @SerializeOptions({ groups: ['me'] })
+  @UseGuards(GoogleGuard)
   @Redirect(process.env.FRONT_URL, 301)
-  async oauthGoogle(@Req() req) {
+  async oauthGoogle(@Req() req): Promise<UserEntity> {
     const user = req.user;
     if (!user) throw new UnauthorizedException('User not found');
     const accessToken = await this.authService.getCookie(user);
@@ -72,9 +74,9 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(JwtGuard)
   @Get('logout')
-  async logout(@Request() req) {
+  @UseGuards(JwtGuard)
+  logout(@Request() req): { message: string } {
     req.res.clearCookie(process.env.COOKIE_NAME);
     return { message: 'Logout' };
   }
