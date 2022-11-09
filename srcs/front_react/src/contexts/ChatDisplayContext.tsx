@@ -4,7 +4,8 @@ import { IChannel, IDm } from "../components/chat/types";
 export enum ChatType {
   EMPTY,
   CONV,
-  FORM,
+  CREATEFORM,
+  JOINFORM,
 }
 
 export interface ChatDisplayContextInterface {

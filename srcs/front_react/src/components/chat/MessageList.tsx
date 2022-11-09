@@ -6,12 +6,12 @@ import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import {
   ChatDisplayContext,
-  ChatStateProvider,
   ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
 import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/circle_plus.svg";
+import { ReactComponent as ListIcon } from "../../assets/img/icon/list.svg";
 
 function MessageList() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -172,8 +172,11 @@ function CreateChannelButton() {
 
   return (
     <div className="chat__list__footer">
-      <button onClick={() => setDisplay(ChatType.FORM)}>
+      <button onClick={() => setDisplay(ChatType.CREATEFORM)}>
         <CirclePlusIcon />
+      </button>
+      <button onClick={() => setDisplay(ChatType.JOINFORM)}>
+        <ListIcon />
       </button>
     </div>
   );
