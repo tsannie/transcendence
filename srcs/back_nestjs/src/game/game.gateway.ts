@@ -12,9 +12,9 @@ import {
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { canvas_back_height, victory_score } from './const/const';
+import { canvas_back_height, RoomStatus, victory_score } from './const/const';
 import { BallCol_p1, BallCol_p2, mouv_ball } from './gamefunction';
-import { RoomEntity, RoomStatus } from './entity/room.entity';
+import { RoomEntity} from './entity/room.entity';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
 import { UserEntity } from 'src/user/models/user.entity';
@@ -49,6 +49,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   paddle_pos = new Map<string, PaddlePos>();
   is_playing = new Map<string, boolean>();
 
+  
+
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
     try {
@@ -75,15 +77,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
     let room: string;
-    const room_game = await this.all_game.findOneBy({ room_name: room });
+    const room_game = await this.all_game.findOneBy({ id: room });
     if (room_game) {
       if (
         room_game.status === RoomStatus.WAITING ||
         room_game.status === RoomStatus.CLOSED
       )
-        this.endGame(client, room_game.room_name);
+        this.endGame(client, room_game.id);
       else if (room_game.status === RoomStatus.PLAYING)
-        this.giveUp(client, room_game.room_name);
+        this.giveUp(client, room_game.id);
     }
     this.disconnect(client);
   }
@@ -106,32 +108,26 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       .user;
     let room_game: RoomEntity;
 
-    if (data.room === '')
-      room_game = await this.gameService.joinFastRoom(data.room);
-    else room_game = await this.gameService.joinInvitation(data.room);
+    room_game = await this.gameService.joinFastRoom();
 
     if (room_game) {
       if (room_game.status === RoomStatus.EMPTY) {
-        client.join(room_game.room_name);
         room_game.status = RoomStatus.WAITING;
         room_game.game_mode = data.mode;
         room_game.p1 = user;
+        
         await this.all_game.save(room_game);
-
+        client.join(room_game.id);
         client.emit('joinedRoom', room_game);
       } else if (room_game.status === RoomStatus.WAITING) {
-        client.join(room_game.room_name);
+        client.join(room_game.id);
         room_game.status = RoomStatus.PLAYING;
         room_game.p2 = user;
 
         await this.all_game.save(room_game);
 
-        this.gameService.initSet(
-          room_game.room_name,
-          this.is_playing,
-          data.mode,
-        );
-        this.server.in(room_game.room_name).emit('joinedRoom', room_game);
+        this.gameService.initSet(room_game.id, this.is_playing, data.mode);
+        this.server.in(room_game.id).emit('joinedRoom', room_game);
       }
     }
   }
@@ -146,14 +142,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() room: string,
   ) {
     const user = (await this.connectedUserService.findBySocketId(client.id)).user;
-    const room_game = await this.all_game.findOneBy({ room_name: room });
+    const room_game = await this.all_game.findOneBy({ id: room });
 
     if (!room_game)
       return;
     if (room_game.status === RoomStatus.WAITING ||
     room_game.status === RoomStatus.CLOSED)
       room_game.status = RoomStatus.EMPTY;
-    room_game.room_name = room;
+    room_game.id = room;
 
     if (room_game.p1.id === user.id) {
       room_game.p1 = room_game.p2;
@@ -179,8 +175,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('giveUp')
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
     const user = (await this.connectedUserService.findBySocketId(client.id)).user;
-    const room_game = await this.all_game.findOneBy({ room_name: room });
-
+    const room_game = await this.all_game.findOneBy({ id: room });
+    
+    console.log('giveUp');
     this.gameService.giveUp(room, this.is_playing, room_game, user);
 
     this.server.in(room).emit('giveUp', room_game.set, room_game.status);
@@ -195,7 +192,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     client.leave(room);
     console.log('endGame');
-    const room_game = await this.all_game.findOneBy({ room_name: room });
+    const room_game = await this.all_game.findOneBy({ id: room });
 
     if (this.is_playing[room]) {
       this.is_playing[room] = false;
@@ -247,7 +244,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('gameRender')
   async gameRender(@MessageBody() room: string) {
-    let room_game = await this.all_game.findOneBy({ room_name: room });
+    let room_game = await this.all_game.findOneBy({ id: room });
 
     if (!room_game)
       return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
@@ -274,7 +271,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
-    const room_game = await this.all_game.findOneBy({ room_name: room });
+    const room_game = await this.all_game.findOneBy({ id: room });
     if (!room_game)
       return;
     client.emit('resize_game');
