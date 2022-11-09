@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { GameService } from './game_service/game.service';
-import { GameController } from './game_controller/game.controller';
+import { GameService } from './service/game.service';
+import { GameController } from './controller/game.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GameGateway } from './game.gateway';
-import { SetEntity } from './game_entity/set.entity';
-import { RoomEntity } from './game_entity/room.entity';
-import { BallEntity } from './game_entity/ball.entity';
-import { PlayerEntity } from './game_entity/players.entity';
+import { SetEntity } from './entity/set.entity';
+import { RoomEntity } from './entity/room.entity';
+import { BallEntity } from './entity/ball.entity';
+import { PlayerEntity } from './entity/players.entity';
 import { ConnectedUserModule } from 'src/connected-user/connected-user.module';
 import { UserModule } from 'src/user/user.module';
 
