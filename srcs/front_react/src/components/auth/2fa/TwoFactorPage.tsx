@@ -6,8 +6,8 @@ import "../oauth/login.style.scss";
 import TwoFactorCode from "./TwoFactorCode";
 
 export default function TwoFactorPage() {
-  const [is2FA, setIs2FA] = useState(true);
-  const [isAlreadyLog, setIsAlreadyLog] = useState(false);
+  const [is2FA, setIs2FA] = useState<boolean>(true);
+  const [isAlreadyLog, setIsAlreadyLog] = useState<boolean>(false);
 
   const { isLogin } = useContext(AuthContext) as AuthContextType;
 
