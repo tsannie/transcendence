@@ -19,7 +19,9 @@ interface IProps {
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const {} = useContext(ChatDisplayContext) as ChatDisplayContextInterface;
+  const { setRedirection, setTargetRedirection } = useContext(
+    ChatDisplayContext
+  ) as ChatDisplayContextInterface;
   const nav = useNavigate();
 
   const handleRemoveFriend = () => {
@@ -60,7 +62,9 @@ function ActionBar(props: IProps) {
   };
 
   const handleDm = () => {
-    console.log("dm");
+    nav("/chat");
+    setRedirection(true);
+    setTargetRedirection(props.player?.id as string);
   };
 
   return (
