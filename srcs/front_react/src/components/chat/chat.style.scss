@@ -197,24 +197,32 @@ $width_chat: calc(450 * var(--res));
     flex: 0 0 25%;
     padding-bottom: 4%;
     border-bottom-style: dashed;
-    justify-content: space-evenly;
-
+    justify-content: center;
+    
     img {
         width: calc(40 * var(--res));
         height: calc(40 * var(--res));
         border-radius: 100%;
         align-self: center;
     }
+
+
+    .text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        span {
+            width: fit-content;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         
-    span {
-        width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .date {
-        font-size: calc(11 * var(--res));
+        .date {
+            font-size: calc(11 * var(--res));
+        }
     }
 }
 
