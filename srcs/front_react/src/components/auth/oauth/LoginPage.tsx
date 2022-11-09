@@ -9,8 +9,8 @@ import ButtonLogin from "./ButtonLogin";
 import "./login.style.scss";
 
 export default function LoginPage() {
-  const [is2FA, setIs2FA] = useState(false);
-  const [isAlreadyLog, setIsAlreadyLog] = useState(false);
+  const [is2FA, setIs2FA] = useState<boolean>(false);
+  const [isAlreadyLog, setIsAlreadyLog] = useState<boolean>(false);
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {

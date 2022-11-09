@@ -32,8 +32,6 @@
   display: flex;
   align-items: center;
   svg {
-    margin-left: calc(5 * var(--res));
-    cursor: pointer;
     width: calc(25 * var(--res));
   }
   svg:hover {
@@ -42,6 +40,19 @@
 
   svg:active {
     filter: invert(70%);
+  }
+  button {
+    display: flex;
+    align-items: center;
+    margin-left: calc(5 * var(--res));
+    padding: 0;
+    border-style: none;
+  }
+  form {
+    display: flex;
+  }
+  input {
+    width: 50%;
   }
 }
 
