@@ -9,10 +9,10 @@ import {
   rad,
   gravity,
 } from '../const/const';
-import { BallEntity } from '../game_entity/ball.entity';
-import { PlayerEntity } from '../game_entity/players.entity';
-import { RoomEntity, RoomStatus } from '../game_entity/room.entity';
-import { SetEntity } from '../game_entity/set.entity';
+import { BallEntity } from '../entity/ball.entity';
+import { PlayerEntity } from '../entity/players.entity';
+import { RoomEntity, RoomStatus } from '../entity/room.entity';
+import { SetEntity } from '../entity/set.entity';
 
 @Injectable()
 export class GameService {
