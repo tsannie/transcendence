@@ -1,7 +1,9 @@
 import React, {
+  ChangeEvent,
   FormEvent,
   Fragment,
   KeyboardEvent,
+  MouseEvent,
   useContext,
   useState,
 } from "react";
@@ -18,17 +20,20 @@ function EditUsername() {
   const [editUsername, setEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState("");
 
-  const handleUsername = () => {
+  const handleUsername = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setEditUsername(!editUsername);
   };
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const size_max = 20;
 
     setNewUsername(e.target.value.slice(0, size_max));
   };
 
-  const handleVerifyUsername = () => {
+  const handleVerifyUsername = (e: FormEvent<HTMLFormElement>) => {
+    console.log("handleVerifyUsername");
+    e.preventDefault();
     api
       .post("user/edit-username", { username: newUsername })
       .then(({ data }) => {
@@ -46,31 +51,30 @@ function EditUsername() {
       });
   };
 
-  const handleEnter = (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleVerifyUsername();
-    }
-  };
-
   return (
     <div className="settings__editable">
       {editUsername === true && (
         <Fragment>
-          <input
-            id="username"
-            maxLength={20}
-            type="text"
-            value={newUsername}
-            onChange={handleUsernameChange}
-            onKeyDown={handleEnter}
-          ></input>
-          <VerifIcon onClick={handleVerifyUsername} />
+          <form onSubmit={handleVerifyUsername}>
+            <input
+              id="username"
+              maxLength={20}
+              type="text"
+              value={newUsername}
+              onChange={handleUsernameChange}
+            ></input>
+            <button type="submit">
+              <VerifIcon />
+            </button>
+          </form>
         </Fragment>
       )}
       {editUsername === false && (
         <Fragment>
           <span>{user?.username}</span>
-          <EditIcon onClick={handleUsername} />
+          <button onClick={handleUsername}>
+            <EditIcon />
+          </button>
         </Fragment>
       )}
     </div>

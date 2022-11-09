@@ -5,14 +5,15 @@ import {
 import "./login.style.scss";
 import { ReactComponent as FTLogo } from "../../../assets/img/42_Logo.svg";
 import { ReactComponent as GoogleLogo } from "../../../assets/img/Google_Logo.svg";
+import { MouseEvent } from "react";
 
 export default function ButtonLogin() {
-  function handleFTLogin(event: any) {
+  function handleFTLogin(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     window.location.href = FT_REDIRECT_LINK_AUTH;
   }
 
-  function handleGoogleLogin(event: any) {
+  function handleGoogleLogin(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     window.location.href = GOOGLE_REDIRECT_LINK_AUTH;
   }

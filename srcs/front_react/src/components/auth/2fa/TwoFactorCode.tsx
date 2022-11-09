@@ -8,7 +8,7 @@ import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 import "./twofactor.style.scss";
 
 export default function TwoFactorCode() {
-  const [check, setCheck] = useState(false);
+  const [check, setCheck] = useState<boolean>(false);
 
   const { login } = useContext(AuthContext) as AuthContextType;
   const nav = useNavigate();

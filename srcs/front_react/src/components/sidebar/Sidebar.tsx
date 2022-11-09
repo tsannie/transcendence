@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { MouseEvent, useContext, useEffect, useState } from "react";
 import { ReactComponent as HomeIcon } from "../../assets/img/icon/home.svg";
 import { ReactComponent as ChatIcon } from "../../assets/img/icon/chat.svg";
 import { ReactComponent as GameIcon } from "../../assets/img/icon/play.svg";
@@ -16,14 +16,15 @@ export default function Sidebar() {
   const { logout, user } = useContext(AuthContext) as AuthContextType;
   const path = useLocation().pathname;
 
-  const handleLogout = () => {
+  const handleLogout = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     api
       .get("/auth/logout")
-      .then((res) => {
+      .then(() => {
         toast.info("bye bye !");
         logout();
       })
-      .catch((err) => {
+      .catch(() => {
         logout();
       });
   };

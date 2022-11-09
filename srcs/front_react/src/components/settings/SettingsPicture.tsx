@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
 import { toast, ToastContainer, ToastOptions } from "react-toastify";
 import { ReactComponent as UploadIcon } from "../../assets/img/icon/up.svg";
 import { api } from "../../const/const";
@@ -13,7 +13,7 @@ export default function SettingsPicture() {
     user?.profile_picture
   );
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const config = {
         headers: {
