@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import React, {
   createRef,
   FormEvent,
@@ -28,6 +29,7 @@ function SearchBar() {
   let suggestionsListComponent = [];
 
   const handleClick = (e: MouseEvent, username: string) => {
+    e.preventDefault();
     nav("/profile/" + username);
     // Reset props
     setActiveSuggestion(-1);
@@ -75,8 +77,11 @@ function SearchBar() {
   async function getDictionary(search: string): Promise<IUserSearch[]> {
     return await api
       .get("/user/search", { params: { search: search } })
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         return res.data;
+      })
+      .catch(() => {
+        return [];
       });
   }
 

@@ -27,13 +27,14 @@ function ProfileFriends(props: IProps) {
     e: MouseEvent<HTMLButtonElement>,
     id: number
   ) => {
+    e.preventDefault();
     api
       .post("/user/refuse-friend-request", { id: id })
-      .then((res) => {
+      .then(() => {
         toast.success("friend request refused");
         props.setReloadPlayer(true);
       })
-      .catch((err) => {
+      .catch(() => {
         toast.error("error while refusing friend request");
       });
   };
@@ -42,13 +43,14 @@ function ProfileFriends(props: IProps) {
     e: MouseEvent<HTMLButtonElement>,
     id: number
   ) => {
+    e.preventDefault();
     api
       .post("/user/accept-friend-request", { id: id })
-      .then((res) => {
+      .then(() => {
         toast.success("friend request accepted");
         props.setReloadPlayer(true);
       })
-      .catch((err) => {
+      .catch(() => {
         toast.error("Error while accepting friend request");
       });
   };

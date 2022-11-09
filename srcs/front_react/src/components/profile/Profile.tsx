@@ -9,6 +9,7 @@ import { api } from "../../const/const";
 import { useNavigate, useParams } from "react-router-dom";
 import ActionBar from "./ActionBar";
 import { toast } from "react-toastify";
+import { AxiosResponse } from "axios";
 
 function Profile() {
   const params = useParams().id;
@@ -30,7 +31,7 @@ function Profile() {
     } else {
       api
         .get("/user/username", { params: { username: params } })
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           setPlayer(res.data as User);
           setisLoad(true);
         })
@@ -53,7 +54,7 @@ function Profile() {
       } else {
         api
           .get("/user/username", { params: { username: params } })
-          .then((res) => {
+          .then((res: AxiosResponse) => {
             setPlayer(res.data as User);
           })
           .catch(() => {

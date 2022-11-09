@@ -5,7 +5,7 @@ import { ReactComponent as GameIcon } from "../../assets/img/icon/play.svg";
 import { ReactComponent as SettingsIcon } from "../../assets/img/icon/settings.svg";
 import { ReactComponent as LogOutIcon } from "../../assets/img/icon/logout.svg";
 import { ReactComponent as ProfileIcon } from "../../assets/img/icon/user.svg";
-import { api, COOKIE_NAME } from "../../const/const";
+import { api } from "../../const/const";
 import "./sidebar.style.scss";
 import { Link } from "react-router-dom";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
