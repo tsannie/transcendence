@@ -10,57 +10,35 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { RoomStatus } from '../const/const';
 import { SetEntity } from './set.entity';
-
-export enum RoomStatus {
-  EMPTY = 0,
-  WAITING = 1,
-  PLAYING = 2,
-  CLOSED = 3,
-}
 
 @Entity()
 export class RoomEntity {
-  @PrimaryGeneratedColumn()
-  id?: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({ default: RoomStatus.EMPTY })
   status: RoomStatus = RoomStatus.EMPTY;
 
   @OneToOne(() => UserEntity, { eager: true, cascade: true })
   @JoinColumn()
-  p1: UserEntity;  // TODO SWITCH IN USER ENTITY
+  p1: UserEntity;  
 
   @OneToOne(() => UserEntity, { eager: true, cascade: true })
   @JoinColumn()
-  p2: UserEntity;  // TODO SWITCH IN USER ENTITY
+  p2: UserEntity;
 
   @OneToOne(() => SetEntity, { eager: true, cascade: true })
   @JoinColumn()
   set: SetEntity;
 
-  @Column({ nullable: true, default: -1 })
-  map: number;
-
   @Column({ nullable: true })
   game_mode: string;
   
-  /*   @Column({ nullable: true , default: -1})
-  power: number; // TODO INSET 
- */
-  //
-
-  @Column({ nullable: true })
-  room_name: string; //TODO DELL
-
   @Column({ default: 0 })
-  spectator: number; // TODO DELL IF CAN EMIT WITOUT SPECTATOR
-  //boolean
+  spectator: number;
 
-  /*   @Column('boolean', { default: false })
-  game_started?: boolean; // WHI STATUS -> 
-
- */
   /*   @OneToOne( () => StatEntity )
   @JoinColumn()
   stat: StatEntity; */
