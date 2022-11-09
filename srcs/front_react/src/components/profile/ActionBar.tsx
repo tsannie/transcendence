@@ -6,6 +6,11 @@ import { ReactComponent as BlockIcon } from "../../assets/img/icon/no_waiting_si
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { api } from "../../const/const";
 import { toast } from "react-toastify";
+import {
+  ChatDisplayContext,
+  ChatDisplayContextInterface,
+} from "../../contexts/ChatDisplayContext";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   player: User | null;
@@ -14,6 +19,8 @@ interface IProps {
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
+  const {} = useContext(ChatDisplayContext) as ChatDisplayContextInterface;
+  const nav = useNavigate();
 
   const handleRemoveFriend = () => {
     api.post("/user/remove-friend", { id: props.player?.id }).then(
@@ -52,10 +59,14 @@ function ActionBar(props: IProps) {
     }
   };
 
+  const handleDm = () => {
+    console.log("dm");
+  };
+
   return (
     <div className="action-bar">
       <div className="action-bar__item">
-        <ChatIcon alt="chat" />
+        <ChatIcon alt="chat" onClick={handleDm} />
         <span>chat</span>
       </div>
       {props.player?.friends.find((friend) => friend.id === user?.id) ? (
