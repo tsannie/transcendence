@@ -393,7 +393,6 @@ export class ChannelService {
       await this.checkPassword(channel_requested.password, channel.password)
     ) {
       channel.status = 'Public';
-      channel.password = undefined;
     }
     return await this.channelRepository.save(channel);
   }

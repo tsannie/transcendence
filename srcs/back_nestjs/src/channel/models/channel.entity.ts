@@ -16,6 +16,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class ChannelEntity {
@@ -34,6 +35,7 @@ export class ChannelEntity {
   @Column({ nullable: false })
   status: string;
 
+  @Exclude()
   @Column({ select: false, nullable: true }) // remettre le select null si solution trouve
   password: string;
 
