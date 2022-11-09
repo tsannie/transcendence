@@ -58,9 +58,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
   useEffect(() => {
     socket.on("joinedRoom", (theroom: any) => {
       setStatus(theroom.status);
-      setRoom(theroom.room_name);
-      console.log("theroom", theroom);
-      console.log("user.username = ", user?.username);
+      setRoom(theroom.id);
+      console.log("theroomxxxxxxxxxxxxxxxxx", theroom);
       if (theroom.p2 && theroom.p2.username === user?.username) {
         console.log("user is p2");
         setisP2(true);
