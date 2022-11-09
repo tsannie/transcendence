@@ -1,6 +1,5 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import ActivationProcess from "./ActivationProcess";
-import { api } from "../../const/const";
 import "./settings.style.scss";
 import SettingsPicture from "./SettingsPicture";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
@@ -33,7 +32,7 @@ export default function Settings() {
         <button onClick={activate2fa}>Activate 2FA</button>
       )}
       {/* 2FA activatione process */}
-      {enable2FA && <ActivationProcess setEnable2FA={setEnable2FA} />}
+      {enable2FA && <ActivationProcess />}
     </div>
   );
 }

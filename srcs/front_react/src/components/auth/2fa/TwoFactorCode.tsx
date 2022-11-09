@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { AxiosResponse } from "axios";
+import React, { useContext, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ReactCodeInput from "react-verification-code-input";
 import { api } from "../../../const/const";
@@ -22,7 +23,7 @@ export default function TwoFactorCode() {
   };
 
   const handleCancel = () => {
-    api.get("/auth/logout").then((res) => {
+    api.get("/auth/logout").then(() => {
       nav("/");
     });
   };
@@ -32,11 +33,11 @@ export default function TwoFactorCode() {
 
     api
       .post("/2fa/auth2fa", { token: up })
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         login(res.data);
         toast.success("success login !");
       })
-      .catch((res) => {
+      .catch(() => {
         clearInput();
         setCheck(false);
         toast.error("invalid token !");

@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import React, { createContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { api } from "../const/const";
@@ -48,13 +49,11 @@ export const AuthProvider = ({ children }: IProps) => {
     if (reloadUser && user) {
       api
         .get("auth/profile")
-        .then((res) => {
-          console.log("reload user");
+        .then((res: AxiosResponse) => {
           setUser(res.data);
         })
-        .catch((res) => {
+        .catch(() => {
           logout();
-          console.log("error update user");
         });
       setReloadUser(false);
     }

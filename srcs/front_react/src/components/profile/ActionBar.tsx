@@ -17,11 +17,11 @@ function ActionBar(props: IProps) {
 
   const handleRemoveFriend = () => {
     api.post("/user/remove-friend", { id: props.player?.id }).then(
-      (res) => {
+      () => {
         props.setReloadPlayer(true);
         toast.success("friend removed !");
       },
-      (err) => {
+      () => {
         toast.error("error while removing friend");
       }
     );
@@ -33,20 +33,20 @@ function ActionBar(props: IProps) {
     ) {
       api
         .post("/user/accept-friend-request", { id: props.player?.id })
-        .then((res) => {
+        .then(() => {
           props.setReloadPlayer(true);
           toast.success("you are now friend with " + props.player?.username);
         })
-        .catch((err) => {
+        .catch(() => {
           toast.error("error while accepting friend request");
         });
     } else {
       api
         .post("/user/create-friend-request", { id: props.player?.id })
-        .then((res) => {
+        .then(() => {
           toast.info("friend request sent !");
         })
-        .catch((err) => {
+        .catch(() => {
           toast.error("error while sending friend request");
         });
     }
