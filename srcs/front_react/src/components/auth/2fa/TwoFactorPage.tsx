@@ -13,7 +13,7 @@ export default function TwoFactorPage() {
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
-      api.get("auth/profile").then((res) => {
+      api.get("auth/profile").then(() => {
         setIsAlreadyLog(true);
       });
 

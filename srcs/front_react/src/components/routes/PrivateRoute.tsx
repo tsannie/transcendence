@@ -1,5 +1,6 @@
+import { AxiosResponse } from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { Route, RouteProps, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { api, COOKIE_NAME } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import {
@@ -26,21 +27,21 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
     if (document.cookie.includes(COOKIE_NAME)) {
       api
         .get("auth/isTwoFactor")
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           setIs2FA(res.data.isTwoFactor);
         })
-        .catch((res) => {
+        .catch(() => {
           logout();
           setIsLoad(true);
         });
 
       api
         .get("auth/profile")
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           login(res.data);
           setIsLoad(true);
         })
-        .catch((res) => {
+        .catch(() => {
           setIsLoad(true);
         });
     } else {

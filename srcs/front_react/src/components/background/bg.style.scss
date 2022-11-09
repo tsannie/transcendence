@@ -11,6 +11,7 @@ $number_ball: 11;
 
 .bg__hideball {
   svg {
+    cursor: pointer;
     width: calc(50 * var(--res));
     fill: $white-color;
   }

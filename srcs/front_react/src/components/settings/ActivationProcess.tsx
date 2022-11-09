@@ -10,12 +10,9 @@ import { Buffer } from "buffer";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
+import { AxiosResponse } from "axios";
 
-interface IProps {
-  setEnable2FA: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function ActivationProcess(props: IProps) {
+export default function ActivationProcess() {
   const { setReloadUser } = useContext(AuthContext) as AuthContextType;
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
@@ -25,9 +22,12 @@ export default function ActivationProcess(props: IProps) {
       .get("2fa/generate", {
         responseType: "arraybuffer",
       })
-      .then((res) => {
+      .then((res: AxiosResponse) => {
         const base64 = Buffer.from(res.data, "utf8").toString("base64");
         setQrCode(base64);
+      })
+      .catch(() => {
+        console.log("Impossible to get QR code");
       });
   }
 
@@ -37,11 +37,11 @@ export default function ActivationProcess(props: IProps) {
       .post("2fa/check-token", {
         token: token,
       })
-      .then((res) => {
+      .then(() => {
         toast.success("2FA activated !");
         setReloadUser(true);
       })
-      .catch((err) => {
+      .catch(() => {
         toast.error("invalid token !");
         setToken("");
       });
