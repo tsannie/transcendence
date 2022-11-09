@@ -1,5 +1,4 @@
 import React, { createRef, useContext, useEffect, useState } from "react";
-import { socket } from "../Game";
 import {
   draw_game_ended,
   draw_game,
@@ -7,6 +6,7 @@ import {
 
 import { canvas_back_height, canvas_back_width, paddle_height, paddle_margin, paddle_width, rad, screen_ratio} from "../const/const";
 import { GameContext, RoomStatus } from "../GameContext";
+import { SocketGameContext } from "../../../contexts/SocketGameContext";
 
 interface IBall {
   x: number;
@@ -36,6 +36,7 @@ export function GamePlayer_p1_p2() {
   let start = false;
   
   const game = useContext(GameContext);
+  const socket = useContext(SocketGameContext);
   const canvasRef: any = createRef();
   
   let height = XlowerSize / screen_ratio

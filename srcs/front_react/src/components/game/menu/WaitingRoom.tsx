@@ -1,11 +1,13 @@
 import { useContext, useEffect } from "react";
-import { socket } from "../Game";
+import { AuthContext } from "../../../contexts/AuthContext";
+import { SocketGameContext } from "../../../contexts/SocketGameContext";
 import { GameContext, RoomStatus } from "../GameContext";
 
 export default function WaitingRoom() {
 
   const game = useContext(GameContext);
-
+  const socket = useContext(SocketGameContext);
+  const { user } = useContext(AuthContext);
 
   function leaveRoom() {
     if (game.status === RoomStatus.WAITING) {
@@ -20,7 +22,7 @@ export default function WaitingRoom() {
   //console.log("game.status in WaitingRoom: ", game.status);
   return (
     <div className="queues">
-      <h2> you are : {game.my_id} </h2>
+      <h2> you are : {user?.username} </h2>
 
       <p> waiting opponent</p>
       <button onClick={leaveRoom}>leave waiting room</button>

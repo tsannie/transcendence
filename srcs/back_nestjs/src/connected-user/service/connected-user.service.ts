@@ -16,6 +16,15 @@ export class ConnectedUserService {
     return this.connectedUserRepository.save(connectedUser);
   }
 
+  async findBySocketId(socketId: string): Promise<ConnectedUserEntity> {
+    return this.connectedUserRepository.findOne({
+      where: {
+        socketId: socketId,
+      },
+      relations: ['user'],
+    });
+  }
+
   async deleteBySocketId(socketId: string) {
     return this.connectedUserRepository.delete({ socketId });
   }
