@@ -20,7 +20,7 @@ function ChatBody() {
 
 function Chat() {
   return (
-      <div className="chat">
+      <div className="chat">                       
         <MessageProvider>
         <ChatStateProvider>
         <NotifProvider>

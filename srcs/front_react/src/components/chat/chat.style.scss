@@ -183,19 +183,39 @@ $width_chat: calc(450 * var(--res));
 
 .conversation__options {
     display: flex;
+    flex: 0 0 20%;
     flex-direction: column;
-    flex: 0 0 23.3%;
     border-left-style: dashed;
     padding: 1%;
-    // margin-left: 1%;
+    min-width: 0;
 }
+
 
 .conversation__options__title {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     flex: 0 0 25%;
     padding-bottom: 4%;
     border-bottom-style: dashed;
+    justify-content: space-evenly;
+
+    img {
+        width: calc(40 * var(--res));
+        height: calc(40 * var(--res));
+        border-radius: 100%;
+        align-self: center;
+    }
+        
+    span {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .date {
+        font-size: calc(11 * var(--res));
+    }
 }
 
 form {
