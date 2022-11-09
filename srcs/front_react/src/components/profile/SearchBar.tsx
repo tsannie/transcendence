@@ -141,6 +141,7 @@ function SearchBar() {
         <SearchIcon />
         <input
           type="text"
+          spellCheck="false"
           onChange={handleOnChange}
           onKeyDown={handleOnKeyDown}
           placeholder="pseudo"
