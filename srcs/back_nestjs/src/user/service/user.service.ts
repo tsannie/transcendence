@@ -1,4 +1,11 @@
-import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  forwardRef,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+  UseInterceptors,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindOneOptions,
@@ -39,13 +46,13 @@ export interface IAvatarOptions {
 @Injectable()
 export class UserService {
   constructor(
-	@InjectRepository(UserEntity)
-	private allUser: Repository<UserEntity>,
-  private readonly httpService: HttpService,
-  @Inject(forwardRef(() => ChannelService))
-  private readonly channelService: ChannelService,
-  @Inject(forwardRef(() => DmService))
-  private readonly dmService: DmService,
+    @InjectRepository(UserEntity)
+    private allUser: Repository<UserEntity>,
+    private readonly httpService: HttpService,
+    @Inject(forwardRef(() => ChannelService))
+    private readonly channelService: ChannelService,
+    @Inject(forwardRef(() => DmService))
+    private readonly dmService: DmService,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -109,6 +116,18 @@ export class UserService {
       where: {
         id: input_id,
       },
+      select: {
+        friends: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+        friend_requests: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+      },
       relations: relations_ToLoad,
     });
 
@@ -133,22 +152,18 @@ export class UserService {
     });
   }
 
-  async cleanAllUser(): Promise<void> {
-    return await this.allUser.clear();
-  }
-
   // turn enabled2FA to true for user
-  async enable2FA(userId: number) {
+  async enable2FA(userId: number): Promise<UpdateResult> {
     // TODO update user ?
     return await this.allUser.update(userId, { enabled2FA: true });
   }
 
   // turn enabled2FA to false for user TODO delete in front ??
-  async disable2FA(userId: number) {
+  async disable2FA(userId: number): Promise<UpdateResult> {
     return await this.allUser.update(userId, { enabled2FA: false });
   }
 
-  async setSecret2FA(userId: string, secret: string) {
+  async setSecret2FA(userId: string, secret: string): Promise<UpdateResult> {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 
@@ -272,30 +287,28 @@ export class UserService {
           fs.unlinkSync(`${AVATAR_DEST}/${user.id}_${size}.jpg`);
         });
         user.profile_picture = null;
-			}
-			catch (err)
-			{
-				throw new UnprocessableEntityException(`Cannot delete old avatar from server.`);
-			}
-		}
-	}
+      } catch (err) {
+        throw new UnprocessableEntityException(
+          `Cannot delete old avatar from server.`,
+        );
+      }
+    }
+  }
 
   /* This returns a mix of DM and Channels of users, ordered by DESC Date. */
-  async getConversations(user: UserEntity) : Promise<Array<ChannelEntity | DmEntity>>{
+  async getConversations(
+    user: UserEntity,
+  ): Promise<Array<ChannelEntity | DmEntity>> {
     let convos: Array<ChannelEntity | DmEntity>;
-    
 
     convos = await this.channelService.getUserList(user);
     convos = convos.concat(await this.dmService.getDmsList(user));
-    convos.sort( (a,b) => {
-      if (a.updatedAt < b.updatedAt)
-        return 1;
-      else
-        return -1;
-    })
+    convos.sort((a, b) => {
+      if (a.updatedAt < b.updatedAt) return 1;
+      else return -1;
+    });
     return convos;
   }
-
 
   /* search user with filter for search bar */
   async searchUser(search: string): Promise<IUserSearch[]> {
