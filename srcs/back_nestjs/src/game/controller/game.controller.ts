@@ -16,11 +16,6 @@ export class GameController {
     return this.gameService.findAll();
   }
 
-  @Get('/ball')
-  ball(@Query() room_name: any) {
-    console.log('qweqwe', room_name);
-    return this.gameService.get_ball(room_name.room);
-  }
 
   @Get('/del')
   detail() {

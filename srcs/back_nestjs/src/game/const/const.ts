@@ -2,7 +2,7 @@ export const screen_ratio: number = 16 / 9;
 export const canvas_back_width: number = 1920;
 export const canvas_back_height: number = canvas_back_width * screen_ratio;
 
-export const victory_score: number = 2;
+export const victory_score: number = 10;
 
 // BALL DATA
 
@@ -25,4 +25,15 @@ export enum RoomStatus {
   WAITING = 1,
   PLAYING = 2,
   CLOSED = 3,
+}
+
+export interface IBall {
+  x: number;
+  y: number;
+  gravity: number;
+  first_col: boolean;
+  col_paddle: boolean;
+  can_touch_paddle: boolean;
+  direction_x: number;
+  direction_y: number;
 }

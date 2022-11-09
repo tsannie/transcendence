@@ -8,4 +8,4 @@ export const paddle_margin: number = 100;
 export const paddle_width: number = 50;
 export const paddle_height: number = 600;
 
-export const victory_score: number = 2;
+export const victory_score: number = 10;
