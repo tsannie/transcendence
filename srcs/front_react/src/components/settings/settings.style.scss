@@ -52,7 +52,8 @@
     display: flex;
   }
   input {
-    width: 50%;
+    display: flex;
+    width: calc(180 * var(--res));
   }
 }
 

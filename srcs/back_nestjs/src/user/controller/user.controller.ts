@@ -28,14 +28,17 @@ import { Express } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
 import { UserSearchDto } from '../dto/usersearch.dto';
 import { IUserSearch } from '../models/iusersearch.interface';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
 
 @Controller('user')
-//@UseInterceptors(ClassSerializerInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private userService: UserService) {}
 
   // edit username
   @Post('edit-username')
+  @SerializeOptions({ groups: ['me'] })
   @UseGuards(JwtTwoFactorGuard)
   async editUsername(
     @Request() req,
@@ -48,6 +51,7 @@ export class UserController {
   }
 
   @Get('username')
+  @SerializeOptions({ groups: ['user'] })
   async getUserByUsername(@Query() body: TargetNameDto): Promise<UserEntity> {
     return await this.userService.findByName(body.username, { friends: true });
   }
@@ -59,22 +63,20 @@ export class UserController {
   }
 
   @Get()
+  @SerializeOptions({ groups: ['user'] })
   async getAllUser(): Promise<UserEntity[]> {
     return await this.userService.getAllUser();
   }
 
   @Get('search')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async searchUser(@Query() body: UserSearchDto): Promise<IUserSearch[]> {
     return await this.userService.searchUser(body.search);
   }
 
-  @Delete()
-  async cleanAllUser(): Promise<void> {
-    return await this.userService.cleanAllUser();
-  }
-
   @Post('blockUser') // TODO to lower cases everywhere
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async blockUser(
     @Body() body: TargetNameDto,
@@ -84,6 +86,7 @@ export class UserController {
   }
 
   @Post('unBlockUser')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async unBlockUser(
     @Body() body: TargetNameDto,
@@ -93,6 +96,7 @@ export class UserController {
   }
 
   @Post('addAvatar')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   @UseInterceptors(FileInterceptor('avatar'))
   async addAvatar(
@@ -119,59 +123,72 @@ export class UserController {
     );
   }
 
-  @Post('deleteAvatar') // TODO useless ?
-  @UseGuards(JwtTwoFactorGuard)
-  deleteAvatar(@Request() req) {
-    return this.userService.deleteAvatar(req.user);
-  }
-
   @Get('conversations')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getConvos(@Request() req) {
+  async getConvos(@Request() req): Promise<(ChannelEntity | DmEntity)[]> {
     return this.userService.getConversations(req.user);
   }
 
   @Get('friendlist')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async friendList(@Request() req): Promise<UserEntity[]> {
     return await this.userService.getFriendList(req.user);
   }
 
   @Post('accept-friend-request')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async acceptFriendRequest(@Request() req, @Body() target: TargetIdDto) {
+  async acceptFriendRequest(
+    @Request() req,
+    @Body() target: TargetIdDto,
+  ): Promise<UserEntity> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
       friends: true,
     });
     await this.userService.acceptFriendRequest(req.user, userTarget);
+    return userTarget;
   }
 
   @Post('refuse-friend-request')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async refuseFriendRequest(@Request() req, @Body() target: TargetIdDto) {
+  async refuseFriendRequest(
+    @Request() req,
+    @Body() target: TargetIdDto,
+  ): Promise<UserEntity> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
     });
     await this.userService.refuseFriendRequest(req.user, userTarget);
+    return userTarget;
   }
 
   @Post('create-friend-request')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async createFriendRequest(@Request() req, @Body() target: TargetIdDto) {
+  async createFriendRequest(
+    @Request() req,
+    @Body() target: TargetIdDto,
+  ): Promise<UserEntity> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
     });
     await this.userService.createFriendRequest(req.user, userTarget);
+    return userTarget;
   }
 
   @Get('friend-request')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async getFriendRequest(@Request() req): Promise<UserEntity[]> {
     return await this.userService.getFriendRequest(req.user);
   }
 
   @Post('remove-friend')
+  @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async removeFriend(
     @Request() req,
