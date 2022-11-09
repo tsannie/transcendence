@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  Fragment,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Buffer } from "buffer";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
@@ -24,7 +31,8 @@ export default function ActivationProcess(props: IProps) {
       });
   }
 
-  function checkToken() {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     api
       .post("2fa/check-token", {
         token: token,
@@ -37,36 +45,35 @@ export default function ActivationProcess(props: IProps) {
         toast.error("invalid token !");
         setToken("");
       });
-  }
-  const handleClick = () => {
-    checkToken();
   };
 
   useEffect(() => {
     getQrCode();
   }, []);
 
-  const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTokenChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     const size_max = 6;
 
     setToken(e.target.value.slice(0, size_max));
   };
 
   return (
-    <div>
+    <Fragment>
       <h2>Scan the QR token with your auth app</h2>
       <img src={`data:;base64,${qrCode}`}></img>
       <h2>Enter the token from your app</h2>
-      <div className="settings__2fa__validation">
+
+      <form className="settings__2fa__validation" onSubmit={handleSubmit}>
         <input
           id="token"
           maxLength={6}
           type="number"
           value={token}
           onChange={handleTokenChange}
-        ></input>
-        <button onClick={handleClick}>Validate</button>
-      </div>
-    </div>
+        />
+        <button type="submit">Validate</button>
+      </form>
+    </Fragment>
   );
 }
