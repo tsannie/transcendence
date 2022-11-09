@@ -28,12 +28,6 @@ enum TransitionPageLvl {
   SETTINGS = 5,
 }
 
-enum Action {
-  NULL = 0,
-  MUTE = 1,
-  BAN = 2,
-}
-
 export const TransitionProvider = ({ children }: IProps) => {
   const location = useLocation();
 
@@ -43,16 +37,16 @@ export const TransitionProvider = ({ children }: IProps) => {
   const [actualLvl, setActualLvl] = useState(TransitionPageLvl.NULL);
 
   function getTransitionStage(path: string) {
-    switch (path) {
-      case "/":
+    switch (path.split("/")[1]) {
+      case "":
         return TransitionPageLvl.HOME;
-      case "/profile":
+      case "profile":
         return TransitionPageLvl.PROFILE;
-      case "/chat":
+      case "chat":
         return TransitionPageLvl.CHAT;
-      case "/game":
+      case "game":
         return TransitionPageLvl.GAME;
-      case "/settings":
+      case "settings":
         return TransitionPageLvl.SETTINGS;
       default:
         return TransitionPageLvl.NULL;
@@ -60,16 +54,14 @@ export const TransitionProvider = ({ children }: IProps) => {
   }
 
   useEffect(() => {
-    console.log("location changed:", location);
-
     const newLvl = getTransitionStage(location.pathname);
 
     if (newLvl !== actualLvl && actualLvl !== TransitionPageLvl.NULL) {
-        if (actualLvl < newLvl) {
-          setTransistionStage("exit-up");
-        } else if (actualLvl > newLvl) {
-          setTransistionStage("exit-down");
-        }
+      if (actualLvl < newLvl) {
+        setTransistionStage("exit-up");
+      } else if (actualLvl > newLvl) {
+        setTransistionStage("exit-down");
+      }
     } else {
       setDisplayLocation(location);
     }
