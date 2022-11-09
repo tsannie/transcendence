@@ -224,6 +224,26 @@ $width_chat: calc(450 * var(--res));
             font-size: calc(11 * var(--res));
         }
     }
+
+    .actions {
+        display: flex;
+        justify-content: space-evenly;
+        padding-top: 4%;
+
+        button {
+            font-size: calc(10 * var(--res));
+            border-style: none;
+        }
+
+        svg {
+            padding: calc(7 * var(--res));
+            border-radius: 50%;
+            border-width: calc(3 * var(--res)) !important;
+            border-style: dashed;
+            width: calc(15 * var(--res));
+            cursor: pointer;
+        }
+    }
 }
 
 form {

@@ -4,21 +4,26 @@ import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { IDm } from "./types";
+import {ReactComponent as UserIcon} from "../../assets/img/icon/user.svg";
+import {ReactComponent as BlockIcon} from "../../assets/img/icon/no_waiting_sign.svg";
 
 function DmUserProfile(props: {dm: IDm}) {
   const { user } = useContext(AuthContext);
   const dm = props.dm;
   const user2 = dm?.users?.find( (elem) => elem.id !== user?.id)  
 
-  console.log(dm);
-
-  return <div className="conversation__options__title">
+  return (
+  <div className="conversation__options__title">
     <img src={user2?.profile_picture} />
     <div className="text"> 
       <span>{user2?.username}</span>
       <div className="date">conv started at: {dm?.createdAt?.toLocaleString()}</div>
     </div>
-  </div>
+    <div className="actions">
+      <button><UserIcon />Profile</button>
+      <button><BlockIcon />Block</button>
+    </div>
+  </div>);
 }
 
 function DmOptions() {
