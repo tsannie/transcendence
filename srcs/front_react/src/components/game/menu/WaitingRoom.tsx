@@ -13,7 +13,7 @@ export default function WaitingRoom() {
     if (game.status === RoomStatus.WAITING) {
       game.setStatus(RoomStatus.EMPTY);
 
-      game.setim_p2(false);
+      game.setisP2(false);
       game.setRoom("");
       socket.emit("leaveGameRoom", game.room);
     }

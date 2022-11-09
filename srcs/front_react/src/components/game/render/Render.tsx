@@ -73,40 +73,46 @@ export function GamePlayer_p1_p2() {
   useEffect(() => {
     window.addEventListener('resize', detectSize)
     return () => {
+      console.log("je change de taille");
       window.removeEventListener('resize', detectSize)
       //setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
       XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
       ratio_width = (XlowerSize /canvas_back_width);
-
+      
       let height = XlowerSize / screen_ratio
       border_size = ((height) / 50);
-      socket.emit("resize_ingame", game.room);
+      socket.emit("resizeIngame", game.room);
+
     }
   }, [HW])
-
+  
+  
+  function resizeGame(){
+    XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
+    ratio_width = (XlowerSize /canvas_back_width);
+    ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height)
+  
+    IBall.x =(canvas_back_width / 2) * ratio_width;
+    IBall.y = (canvas_back_height / 2) * ratio_height;
+    IBall.rad = rad * ratio_width;
+  
+    IPaddle_p1.x = paddle_margin * ratio_width;
+    IPaddle_p1.height = paddle_height * ratio_height;
+    IPaddle_p1.width =  paddle_width * ratio_width;
+  
+    IPaddle_p2.x = (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
+    IPaddle_p2.height = paddle_height * ratio_height;
+    IPaddle_p2.width = paddle_width * ratio_width;
+  }
 
   useEffect(() => {
+    
+     socket.on("resize_game", () => {
+      resizeGame();
 
-    socket.on("resize_game", () => {
-
-      XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
-      ratio_width = (XlowerSize /canvas_back_width);
-      ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height)
-
-      IBall.x =(canvas_back_width / 2) * ratio_width;
-      IBall.y = (canvas_back_height / 2) * ratio_height;
-      IBall.rad = rad * ratio_width;
-
-      IPaddle_p1.x = paddle_margin * ratio_width;
-      IPaddle_p1.height = paddle_height * ratio_height;
-      IPaddle_p1.width =  paddle_width * ratio_width;
-  
-      IPaddle_p2.x = (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
-      IPaddle_p2.height = paddle_height * ratio_height;
-      IPaddle_p2.width = paddle_width * ratio_width;
     });
 
-    socket.on("player_give_upem", (set: any, status: number) => {
+    socket.on("giveUp", (set: any, status: number) => {
       IPlayer_p2.won = set.p2.won;
       IPlayer_p1.won = set.p1.won;
       if (IPlayer_p2.won)
@@ -120,11 +126,11 @@ export function GamePlayer_p1_p2() {
       IPlayer_p2 = p2;
     });
 
-    socket.on("get_paddle_p1", (y: number) => {
+    socket.on("getPaddleP1", (y: number) => {
       IPaddle_p1.y = y * ratio_height;
     });
 
-    socket.on("get_paddle_p2", (y: number) => {
+    socket.on("getPaddleP2", (y: number) => {
       IPaddle_p2.y = y * ratio_height;
     });
 
@@ -138,16 +144,16 @@ export function GamePlayer_p1_p2() {
     function ask_paddle() {
       let data = {
         room: game.room,
-        paddle_y: position_y,
+        positionY: position_y,
         front_canvas_height: height,
       };
-      if (game.im_p2) {
+      if (game.isP2) {
         IPaddle_p2.y = position_y;
-        socket.emit("ask_paddle_p2", data);
+        socket.emit("askPaddleP2", data);
       }
       else {
         IPaddle_p1.y = position_y;
-        socket.emit("ask_paddle_p1", data);
+        socket.emit("askPaddleP1", data);
       }
     }
     
@@ -171,10 +177,10 @@ export function GamePlayer_p1_p2() {
 
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (game.im_p2 === true && start === true) {
+        if (game.isP2 === true && start === true) {
           console.log("Iplayer2", IPlayer_p2);
           console.log("Iplayer1", IPlayer_p1);
-          socket.emit("start_game_render", game.room);
+          socket.emit("gameRender", game.room);
           start = false;
         }
         if (IPlayer_p1.won === false && IPlayer_p2.won === false && game.room !== "") {
@@ -182,7 +188,7 @@ export function GamePlayer_p1_p2() {
           draw_game(ctx, canvas, IBall, IPaddle_p1, IPaddle_p2, IPlayer_p1, IPlayer_p2, countdown);
         }
         else
-          draw_game_ended(game.im_p2, ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+          draw_game_ended(game.isP2, ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
       }
     };
     render();
@@ -192,9 +198,9 @@ export function GamePlayer_p1_p2() {
     if (countdown === 0) {
       game.setStatus(RoomStatus.CLOSED);
       if (IPlayer_p1.won === true || IPlayer_p2.won === true)
-        socket.emit("end_of_the_game", game.room);
+        socket.emit("endGame", game.room);
       else
-        socket.emit("player_give_up", game.room);
+        socket.emit("giveUp", game.room);
       game.setRoom("");
     }
   }

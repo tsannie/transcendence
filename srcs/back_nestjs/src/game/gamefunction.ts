@@ -1,3 +1,4 @@
+import { Server } from 'socket.io';
 import {
   canvas_back_height,
   canvas_back_width,
@@ -11,6 +12,7 @@ import {
   speed,
   victory_score,
 } from './const/const';
+import { PaddlePos } from './game.gateway';
 import { BallEntity } from './game_entity/ball.entity';
 import { PlayerEntity } from './game_entity/players.entity';
 import { SetEntity } from './game_entity/set.entity';
@@ -40,7 +42,7 @@ function increment_score_player(
   ball: BallEntity,
   p1: PlayerEntity,
   p2: PlayerEntity,
-  server: any,
+  server: Server,
   room: string,
 ) {
   ball.x = canvas_back_width / 2;
@@ -72,8 +74,8 @@ function colision_paddle_player(y: number, ball: BallEntity) {
 
 export function BallCol_p1(
   set: SetEntity,
-  paddle: any,
-  server: any,
+  paddle: PaddlePos,
+  server: Server,
   room: string,
 ) {
   if (set.ball.can_touch_paddle === true &&
@@ -88,8 +90,8 @@ export function BallCol_p1(
 
 export function BallCol_p2(
   set: SetEntity,
-  paddle: any,
-  server: any,
+  paddle: PaddlePos,
+  server: Server,
   room: string,
 ) {
   if (set.ball.can_touch_paddle === true &&

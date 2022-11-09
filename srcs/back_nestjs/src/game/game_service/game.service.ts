@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
-import { Socket } from 'socket.io';
+import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import {
   canvas_back_height,
@@ -46,7 +46,6 @@ export class GameService {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
         if (
-          room_db.fast_play === true &&
           room_db.status === RoomStatus.WAITING &&
           !room_db.set  
         ) {
@@ -57,7 +56,6 @@ export class GameService {
     if (!room_game) {
       console.log("CREATE NEW GAME");
       room_game = new RoomEntity();
-      room_game.fast_play = true;
       room_game.room_name = randomUUID();
     }
     return room_game;
@@ -67,7 +65,6 @@ export class GameService {
     let room_game = await this.all_game.findOneBy({ room_name: room });
     if (!room_game) {
       room_game = new RoomEntity();
-      room_game.fast_play = true;
       room_game.room_name = room;
     }
     return room_game;
@@ -91,9 +88,10 @@ export class GameService {
     await this.all_game.delete({ room_name });
   }
 
-  async InitSet(room: string, is_playing: any, game_mode: string) {
+  async initSet(room: string, is_playing: Map<string, boolean>, game_mode: string) {
     const room_game = await this.all_game.findOneBy({ room_name: room });
-    if (!room_game.set) room_game.set = new SetEntity();
+    if (!room_game.set)
+      room_game.set = new SetEntity();
     if (!room_game.set.ball) {
       room_game.set.ball = new BallEntity();
       room_game.set.ball.x = canvas_back_width / 2;
@@ -113,6 +111,23 @@ export class GameService {
     }
     room_game.game_mode = game_mode;
     is_playing[room] = true;
+    await this.all_game.save(room_game);
+  }
+
+  async giveUp(room: string, is_playing: Map<string, boolean>, room_game: RoomEntity, user: UserEntity) {
+    if (is_playing[room])
+      is_playing[room] = false;
+    
+    if (room_game.status === RoomStatus.PLAYING)
+      room_game.status = RoomStatus.CLOSED;
+    if (room_game.set.p1.name === user.username) {
+      room_game.p1 = null;
+      room_game.set.p2.won = true;
+    }
+    else if (room_game.set.p2.name === user.username) {
+      room_game.p2 = null;
+      room_game.set.p1.won = true;
+    }
     await this.all_game.save(room_game);
   }
 }
