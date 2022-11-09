@@ -34,7 +34,7 @@ export const ChatStateProvider = ({ children }: ChatDisplayProviderProps) => {
   const [isChannel, setIsChannel] = useState<boolean>(false);
   const [newConv, setNewConv] = useState<IChannel | IDm>({} as IChannel | IDm);
   const [isRedirection, setRedirection] = useState<boolean>(false);
-  const [targetRedirection, setTargetRedirection] = useState<string>("");
+  const [targetRedirection, setTargetRedirection] = useState<string>();
 
   return (
     <ChatDisplayContext.Provider
