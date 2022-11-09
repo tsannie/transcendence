@@ -6,6 +6,7 @@ import {
   Post,
   Query,
   Request,
+  SerializeOptions,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,11 +20,13 @@ import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { BanEntity, MuteEntity } from '../models/ban.entity';
 
 @Controller('channel')
+@UseInterceptors(ClassSerializerInterceptor)
 export class ChannelController {
   constructor(private channelService: ChannelService) {}
 
-  @UseGuards(JwtTwoFactorGuard)
   @Get('datas')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async getDatas(
     @Query() query_channel: ChannelDto,
     @Request() req,
@@ -34,22 +37,24 @@ export class ChannelController {
     return await this.channelService.getDatas(query_channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Get('userList')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async getUserList(@Request() req): Promise<ChannelEntity[]> {
     return await this.channelService.getUserList(req.user);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
-  @UseGuards(JwtTwoFactorGuard)
   @Get('list')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async getList(@Request() req): Promise<ChannelEntity[]> {
     return await this.channelService.getList(req.user);
   }
 
   //CREATE A CHANNEL, LINKED TO AN OWNER (THE REQUESTER OF THE CREATION)
-  @UseGuards(JwtTwoFactorGuard)
   @Post('create')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async createChannel(
     @Body() channel: CreateChannelDto,
     @Request() req,
@@ -57,8 +62,9 @@ export class ChannelController {
     return await this.channelService.createChannel(channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('banUser')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async banUser(
     @Body() ban_request: ChannelActionsDto,
     @Request() req,
@@ -66,8 +72,9 @@ export class ChannelController {
     return await this.channelService.banUser(ban_request, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('unBanUser')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async unBanUser(
     @Body() ban_request: ChannelActionsDto,
     @Request() req,
@@ -75,8 +82,9 @@ export class ChannelController {
     return await this.channelService.unBanUser(ban_request, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('makeAdmin')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async makeAdmin(
     @Body() channel: ChannelActionsDto,
     @Request() req,
@@ -84,8 +92,9 @@ export class ChannelController {
     return await this.channelService.makeAdmin(channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('muteUser')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async muteUser(
     @Body() channel: ChannelActionsDto,
     @Request() req,
@@ -93,8 +102,9 @@ export class ChannelController {
     return await this.channelService.muteUser(channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('unMuteUser')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async unMuteUser(
     @Body() channel: ChannelActionsDto,
     @Request() req,
@@ -102,8 +112,9 @@ export class ChannelController {
     return await this.channelService.unMuteUser(channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('revokeAdmin')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async revokeAdmin(
     @Body() channel: ChannelActionsDto,
     @Request() req,
@@ -112,39 +123,45 @@ export class ChannelController {
   }
 
   //ENTER IN A PUBLIC ROOM,
-  @UseGuards(JwtTwoFactorGuard)
   @Post('join')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async joinChannel(@Body() query_channel: ChannelDto, @Request() req) {
     return await this.channelService.joinChannel(query_channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('leave')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async leaveChannel(@Body() query_channel: ChannelDto, @Request() req) {
     return await this.channelService.leaveChannel(query_channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('delete')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async deleteChannel(@Body() query_channel: ChannelDto, @Request() req) {
     return await this.channelService.deleteChannel(query_channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('addPassword')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async addPassword(@Body() channel: ChannelPasswordDto, @Request() req) {
     return await this.channelService.addPassword(channel, req.user);
   }
 
   //USE SAME FUNCTION THAN ADDPASSWORD
-  @UseGuards(JwtTwoFactorGuard)
   @Post('modifyPassword')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async modifyPassword(@Body() channel: ChannelPasswordDto, @Request() req) {
     return await this.channelService.addPassword(channel, req.user);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Post('deletePassword')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
   async deletePassword(@Body() channel: ChannelDto, @Request() req) {
     return await this.channelService.deletePassword(channel, req.user);
   }
@@ -160,6 +177,7 @@ export class ChannelController {
 	}
 	*/
   @Post('falseUsergenerator')
+  @SerializeOptions({ groups: ['user'] })
   async addFalseUser(@Body() data) {
     let new_user = await this.channelService.createFalseUser(data.username);
     return await this.channelService.joinChannel(data.channel, new_user);
@@ -167,6 +185,7 @@ export class ChannelController {
 
   //RETURN ALL ROOMS AVAILABLE (PUBLIC/PRIVATE/ETC...)
   @Get('all')
+  @SerializeOptions({ groups: ['user'] })
   async getAllChannels(): Promise<ChannelEntity[]> {
     return this.channelService.getAllChannels();
   }
