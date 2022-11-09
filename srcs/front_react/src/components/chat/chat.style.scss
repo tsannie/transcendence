@@ -194,6 +194,7 @@ $width_chat: calc(450 * var(--res));
     display: flex;
     flex-wrap: wrap;
     flex: 0 0 25%;
+    padding-bottom: 4%;
     border-bottom-style: dashed;
 }
 
