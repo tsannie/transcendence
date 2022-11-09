@@ -1,22 +1,49 @@
-import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  SerializeOptions,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { LoadMessagesDto } from '../dto/loadmessages.dto';
+import { MessageEntity } from '../models/message.entity';
 import { MessageService } from '../service/message.service';
 
 @Controller('message')
+@UseInterceptors(ClassSerializerInterceptor)
 export class MessageController {
-  constructor(private messageService: MessageService,
-    ) {}
+  constructor(private messageService: MessageService) {}
 
-	@UseGuards( JwtTwoFactorGuard )
-	@Get("dm")
-	async loadDmMessages(@Query() data: LoadMessagesDto, @Request() req) {
-		return await this.messageService.loadMessages("dm", data.id, data.offset, req.user);
-	}
+  @Get('dm')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async loadDmMessages(
+    @Query() data: LoadMessagesDto,
+    @Request() req,
+  ): Promise<MessageEntity[]> {
+    return await this.messageService.loadMessages(
+      'dm',
+      data.id,
+      data.offset,
+      req.user,
+    );
+  }
 
-	@UseGuards( JwtTwoFactorGuard )
-	@Get("channel")
-	async loadChannelMessages(@Query() data: LoadMessagesDto, @Request() req) {
-		return await this.messageService.loadMessages("channel", data.id, data.offset, req.user);
-	}
+  @Get('channel')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async loadChannelMessages(@Query() data: LoadMessagesDto, @Request() req) {
+    return await this.messageService.loadMessages(
+      'channel',
+      data.id,
+      data.offset,
+      req.user,
+    );
+  }
 }
