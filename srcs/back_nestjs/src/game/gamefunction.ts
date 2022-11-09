@@ -11,35 +11,35 @@ import {
   spawn_speed,
   speed,
   victory_score,
+  IBall,
 } from './const/const';
 import { PaddlePos } from './game.gateway';
-import { BallEntity } from './entity/ball.entity';
 import { PlayerEntity } from './entity/players.entity';
 import { SetEntity } from './entity/set.entity';
 
-export function mouv_ball(set: SetEntity) {
-  if (set.ball.x > canvas_back_width / 2 - 10 &&
-    set.ball.x < canvas_back_width / 2 + 10 &&
-    set.ball.can_touch_paddle == false) {
-    set.ball.can_touch_paddle = true;
+export function mouv_ball(ball: IBall) {
+  if (ball.x > canvas_back_width / 2 - 10 &&
+    ball.x < canvas_back_width / 2 + 10 &&
+    ball.can_touch_paddle == false) {
+    ball.can_touch_paddle = true;
   }
-  if (set.ball.first_col === false) {
-    set.ball.x += spawn_speed * set.ball.direction_x;
-    set.ball.y += gravity * set.ball.direction_y;
+  if (ball.first_col === false) {
+    ball.x += spawn_speed * ball.direction_x;
+    ball.y += gravity * ball.direction_y;
   } else {
-    set.ball.x += speed * set.ball.direction_x;
-    set.ball.y += set.ball.gravity * set.ball.direction_y;
+    ball.x += speed * ball.direction_x;
+    ball.y += ball.gravity * ball.direction_y;
   }
 
-  if (set.ball.y + rad >= canvas_back_height - canvas_back_height / 40)
-    set.ball.direction_y *= -1;
-  else if (set.ball.y - rad <= canvas_back_height / 40)
-    set.ball.direction_y *= -1;
+  if (ball.y + rad >= canvas_back_height - canvas_back_height / 40)
+    ball.direction_y *= -1;
+  else if (ball.y - rad <= canvas_back_height / 40)
+    ball.direction_y *= -1;
 }
 
 function increment_score_player(
   player: PlayerEntity,
-  ball: BallEntity,
+  ball: IBall,
   p1: PlayerEntity,
   p2: PlayerEntity,
   server: Server,
@@ -57,7 +57,7 @@ function increment_score_player(
   server.in(room).emit('get_players', p1, p2);
 }
 
-function colision_paddle_player(y: number, ball: BallEntity) {
+function colision_paddle_player(y: number, ball: IBall) {
   let res = y + paddle_height - ball.y;
   ball.gravity = -(res / 10 - paddle_height / 20);
   Math.abs(ball.gravity);
@@ -74,32 +74,34 @@ function colision_paddle_player(y: number, ball: BallEntity) {
 
 export function BallCol_p1(
   set: SetEntity,
+  ball: IBall,
   paddle: PaddlePos,
   server: Server,
   room: string,
 ) {
-  if (set.ball.can_touch_paddle === true &&
-    set.ball.x - rad <= paddle_p1_x + paddle_width &&
-    set.ball.x + rad / 3 >= paddle_p1_x &&
-    set.ball.y + rad >= paddle.y1 &&
-    set.ball.y - rad <= paddle.y1 + paddle_height) {
-    colision_paddle_player(paddle.y1, set.ball);
-  } else if (set.ball.x - rad <= -(rad * 3))
-    increment_score_player(set.p2, set.ball, set.p1, set.p2, server, room);
+  if (ball.can_touch_paddle === true &&
+    ball.x - rad <= paddle_p1_x + paddle_width &&
+    ball.x + rad / 3 >= paddle_p1_x &&
+    ball.y + rad >= paddle.y1 &&
+    ball.y - rad <= paddle.y1 + paddle_height) {
+    colision_paddle_player(paddle.y1, ball);
+  } else if (ball.x - rad <= -(rad * 3))
+    increment_score_player(set.p2, ball, set.p1, set.p2, server, room);
 }
 
 export function BallCol_p2(
   set: SetEntity,
+  ball: IBall,
   paddle: PaddlePos,
   server: Server,
   room: string,
 ) {
-  if (set.ball.can_touch_paddle === true &&
-    set.ball.x + rad >= paddle_p2_x &&
-    set.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
-    set.ball.y + rad >= paddle.y2 &&
-    set.ball.y - rad <= paddle.y2 + paddle_height) {
-    colision_paddle_player(paddle.y2, set.ball);
-  } else if (set.ball.x + rad >= canvas_back_width + rad * 3)
-    increment_score_player(set.p1, set.ball, set.p1, set.p2, server, room);
+  if (ball.can_touch_paddle === true &&
+    ball.x + rad >= paddle_p2_x &&
+    ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
+    ball.y + rad >= paddle.y2 &&
+    ball.y - rad <= paddle.y2 + paddle_height) {
+    colision_paddle_player(paddle.y2, ball);
+  } else if (ball.x + rad >= canvas_back_width + rad * 3)
+    increment_score_player(set.p1, ball, set.p1, set.p2, server, room);
 }

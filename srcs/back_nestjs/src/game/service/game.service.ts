@@ -10,7 +10,6 @@ import {
   gravity,
   RoomStatus,
 } from '../const/const';
-import { BallEntity } from '../entity/ball.entity';
 import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
@@ -73,11 +72,6 @@ export class GameService {
     return await this.findByName(id);
   }
 
-  async get_ball(id: string): Promise<BallEntity> {
-    console.log('ROOM NAME = ', id);
-    const room = await this.findByName(id);
-    return room.set.ball;
-  }
   //
   async deleteUser(id: number): Promise<void> {
     await this.all_game.delete(id);
@@ -91,15 +85,6 @@ export class GameService {
     const room_game = await this.all_game.findOneBy({ id: room });
     if (!room_game.set)
       room_game.set = new SetEntity();
-    if (!room_game.set.ball) {
-      room_game.set.ball = new BallEntity();
-      room_game.set.ball.x = canvas_back_width / 2;
-      room_game.set.ball.y = canvas_back_height / 2;
-      room_game.set.ball.gravity = gravity;
-      room_game.set.ball.direction_x = 1;
-      room_game.set.ball.direction_y = 1;
-      room_game.set.ball.rad = rad;
-    }
     if (!room_game.set.p1) {
       room_game.set.p1 = new PlayerEntity();
       room_game.set.p1.name = room_game.p1.username;

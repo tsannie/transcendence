@@ -12,7 +12,7 @@ import {
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { canvas_back_height, RoomStatus, victory_score } from './const/const';
+import { canvas_back_height, canvas_back_width, gravity, IBall, rad, RoomStatus, victory_score } from './const/const';
 import { BallCol_p1, BallCol_p2, mouv_ball } from './gamefunction';
 import { RoomEntity} from './entity/room.entity';
 import { GameService } from './service/game.service';
@@ -246,6 +246,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async gameRender(@MessageBody() room: string) {
     let room_game = await this.all_game.findOneBy({ id: room });
 
+    let BallObj: IBall = {
+      x : canvas_back_width / 2,
+      y : canvas_back_height / 2,
+      gravity : gravity,
+      first_col: false,
+      col_paddle: false,
+      can_touch_paddle: true,
+      direction_x : 1,
+      direction_y : 1,
+    };
+
     if (!room_game)
       return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
     if (room_game.set) {
@@ -254,11 +265,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room_game.set.p2.score !== victory_score &&
         this.is_playing[room] === true
       ) {
-        mouv_ball(room_game.set);
-        BallCol_p1(room_game.set, this.paddle_pos[room], this.server, room);
-        BallCol_p2(room_game.set, this.paddle_pos[room], this.server, room);
+        mouv_ball(BallObj);
+        BallCol_p1(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
+        BallCol_p2(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
 
-        this.server.in(room).emit('get_ball', room_game.set.ball.x, room_game.set.ball.y);
+        this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
         await new Promise((f) => setTimeout(f, 8));
       }
       await this.all_game.save(room_game);
