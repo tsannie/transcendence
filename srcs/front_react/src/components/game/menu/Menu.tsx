@@ -10,6 +10,11 @@ enum GameMode {
   PONG_TRANS = "TRANS",
 }
 
+interface ICreateRoom {
+  room: string,
+  mode: GameMode,
+}
+
 export default function GameMenu(props: any) {
 
   const game = useContext(GameContext);
@@ -19,9 +24,9 @@ export default function GameMenu(props: any) {
   let game_mode = GameMode.PONG_1972;
   
   function createGameRoom() {
-    let data = {
+    let data: ICreateRoom = {
       room : game.room,
-      game_mode : game_mode,
+      mode : game_mode,
     }
 
     game.setRoom("");

@@ -14,7 +14,7 @@ export function draw_game(ctx:any, canvas: any, IBall:any, IPaddle_p1: any, IPad
   draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
 }
 
-export function draw_game_ended(im_p2: boolean, ctx: any, player_p1: any, player_p2: any, canvas_height: number, canvas_width: number)
+export function draw_game_ended(isP2: boolean, ctx: any, player_p1: any, player_p2: any, canvas_height: number, canvas_width: number)
 {
   ctx.beginPath();
   ctx.rect(0, 0, canvas_width, canvas_height);
@@ -24,9 +24,9 @@ export function draw_game_ended(im_p2: boolean, ctx: any, player_p1: any, player
   ctx.fillStyle = white;
   ctx.textAlign = "center";
   ctx.fillText("Game Ended\n\n\n\n\n\n", canvas_width / 2, canvas_height / 2);
-  if ((player_p1.gave_up === true && im_p2 === true) || (player_p2.gave_up === true && im_p2 === false))
+  if ((player_p1.gave_up === true && isP2 === true) || (player_p2.gave_up === true && isP2 === false))
     ctx.fillText("You Won, he GAVE UP", canvas_width / 2, (canvas_height / 2) + (canvas_height / 4));
-  else if ((player_p1.won === true && im_p2 === false) || (player_p2.won === true && im_p2 === true))
+  else if ((player_p1.won === true && isP2 === false) || (player_p2.won === true && isP2 === true))
     ctx.fillText("YOU Won !", canvas_width / 2, (canvas_height / 2) + (canvas_height / 4));
   else
     ctx.fillText("YOU Lost", canvas_width / 2, (canvas_height / 2) + (canvas_height / 4));

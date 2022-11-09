@@ -35,13 +35,6 @@ export class RoomEntity {
   @JoinColumn()
   p2: UserEntity;  // TODO SWITCH IN USER ENTITY
 
-  // TODO COUNTDOWN ??
-  @Column('boolean', { default: false })
-  p1_ready?: boolean;
-
-  @Column('boolean', { default: false })
-  p2_ready?: boolean;
-
   @OneToOne(() => SetEntity, { eager: true, cascade: true })
   @JoinColumn()
   set: SetEntity;
@@ -59,9 +52,6 @@ export class RoomEntity {
 
   @Column({ nullable: true })
   room_name: string; //TODO DELL
-
-  @Column('boolean', { default: false })
-  fast_play: boolean; // TODO DELL
 
   @Column({ default: 0 })
   spectator: number; // TODO DELL IF CAN EMIT WITOUT SPECTATOR

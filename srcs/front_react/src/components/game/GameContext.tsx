@@ -18,8 +18,8 @@ export type GameContextType = {
   room: string;
   setRoom: (room: string) => void;
 
-  im_p2: boolean;
-  setim_p2: (im_p2: boolean) => void;
+  isP2: boolean;
+  setisP2: (isP2: boolean) => void;
 };
 
 export const GameContext = createContext<GameContextType>({
@@ -30,8 +30,8 @@ export const GameContext = createContext<GameContextType>({
   setRoom: () => {},
 
 
-  im_p2: false,
-  setim_p2: () => {},
+  isP2: false,
+  setisP2: () => {},
 });
 
 interface GameContextProps {
@@ -41,7 +41,7 @@ interface GameContextProps {
 export const GameProvider = ({ children }: GameContextProps) => {
   const [status, setStatus] = useState(RoomStatus.EMPTY);
   const [room, setRoom] = useState("");
-  const [im_p2, setim_p2] = useState(false);
+  const [isP2, setisP2] = useState(false);
   const { user } = useContext(AuthContext);
   const socket = useContext(SocketGameContext);
 
@@ -63,10 +63,10 @@ export const GameProvider = ({ children }: GameContextProps) => {
       console.log("user.username = ", user?.username);
       if (theroom.p2 && theroom.p2.username === user?.username) {
         console.log("user is p2");
-        setim_p2(true);
+        setisP2(true);
       } else if (theroom.p1.username === user?.username) {
         console.log("user is p1");
-        setim_p2(false);
+        setisP2(false);
       }
     });
   }, [socket]);
@@ -79,8 +79,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
         room,
         setRoom,
 
-        im_p2,
-        setim_p2,
+        isP2,
+        setisP2,
       }}
     >
       {children}
