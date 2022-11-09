@@ -1,12 +1,13 @@
+import { Fragment } from "react";
 import MessageBody from "./Channel";
 import Options from "./Options";
 
 function Conversation() {
     return (
-      <div className="conversation">
+      <Fragment>
         <MessageBody />
         <Options />
-      </ div>);
+      </Fragment>);
   }
 
   export default Conversation;

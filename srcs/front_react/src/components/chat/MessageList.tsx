@@ -115,7 +115,7 @@ function MessageList() {
     }
     return (
       <div className="chat__list__items" key={conv.id}>
-        <li onClick={() => clickItem(conv)}>
+        <li title={title} onClick={() => clickItem(conv)}>
           <div className="avatar">
             {user2 ? (
               <img src={user2.profile_picture + "&size=small"} />
