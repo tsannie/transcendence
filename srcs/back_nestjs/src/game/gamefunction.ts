@@ -13,9 +13,9 @@ import {
   victory_score,
 } from './const/const';
 import { PaddlePos } from './game.gateway';
-import { BallEntity } from './game_entity/ball.entity';
-import { PlayerEntity } from './game_entity/players.entity';
-import { SetEntity } from './game_entity/set.entity';
+import { BallEntity } from './entity/ball.entity';
+import { PlayerEntity } from './entity/players.entity';
+import { SetEntity } from './entity/set.entity';
 
 export function mouv_ball(set: SetEntity) {
   if (set.ball.x > canvas_back_width / 2 - 10 &&
