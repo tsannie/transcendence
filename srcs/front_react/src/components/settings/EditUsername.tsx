@@ -1,43 +1,52 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  Fragment,
+  KeyboardEvent,
+  MouseEvent,
+  useContext,
+  useState,
+} from "react";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import {ReactComponent as EditIcon} from "../../assets/img/icon/edit.svg";
-import {ReactComponent as VerifIcon} from "../../assets/img/icon/circle_check.svg";
+import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
+import { ReactComponent as VerifIcon } from "../../assets/img/icon/circle_check.svg";
 import { api } from "../../const/const";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../contexts/SnackbarContext";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 function EditUsername() {
-  const { user } = React.useContext(AuthContext) as AuthContextType;
+  const { user, setReloadUser } = React.useContext(
+    AuthContext
+  ) as AuthContextType;
   const [editUsername, setEditUsername] = useState(false);
   const [newUsername, setNewUsername] = useState("");
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
 
-  const handleUsername = () => {
+  const handleUsername = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setEditUsername(!editUsername);
   };
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const size_max = 20;
 
     setNewUsername(e.target.value.slice(0, size_max));
   };
 
-  const handleVerifyUsername = () => {
+  const handleVerifyUsername = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     api
       .post("user/edit-username", { username: newUsername })
-      .then(({ data }) => {
-        setSeverity("success");
-        setMessage("username updated");
-        setAfterReload(true);
-        window.location.reload();
+      .then(() => {
+        setNewUsername("");
+        toast.success("username changed !");
+        setReloadUser(true);
+        setEditUsername(false);
       })
-      .catch((error) => {
-        setSeverity("error");
-        setMessage("'" + newUsername + "' is already use or invalid");
-        setOpenSnackbar(true);
+      .catch((error: AxiosError) => {
+        if (error.response?.status === 422)
+          toast.error("'" + newUsername + "' is already taken !");
+        else toast.error("'" + newUsername + "' is invalid !");
+
         setNewUsername("");
       });
   };
@@ -46,20 +55,26 @@ function EditUsername() {
     <div className="settings__editable">
       {editUsername === true && (
         <Fragment>
-          <input
-            id="username"
-            maxLength={20}
-            type="text"
-            value={newUsername}
-            onChange={handleUsernameChange}
-          ></input>
-          <VerifIcon onClick={handleVerifyUsername}/>
+          <form onSubmit={handleVerifyUsername}>
+            <input
+              id="username"
+              maxLength={20}
+              type="text"
+              value={newUsername}
+              onChange={handleUsernameChange}
+            />
+            <button type="submit">
+              <VerifIcon />
+            </button>
+          </form>
         </Fragment>
       )}
       {editUsername === false && (
         <Fragment>
           <span>{user?.username}</span>
-          <EditIcon onClick={handleUsername} />
+          <button onClick={handleUsername}>
+            <EditIcon />
+          </button>
         </Fragment>
       )}
     </div>
