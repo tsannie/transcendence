@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
