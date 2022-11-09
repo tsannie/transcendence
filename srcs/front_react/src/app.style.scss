@@ -54,4 +54,13 @@ body {
     border-color: $white-color;
     background: transparent;
   }
+
+  ::-webkit-scrollbar {
+    width: calc(7 * var(--res));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $white-color;
+    border-radius: 10px;
+  }
 }

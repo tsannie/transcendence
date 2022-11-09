@@ -16,7 +16,7 @@ export class DmService {
   ) {}
 
   async checkifBlocked(user: UserEntity, target: string): Promise<UserEntity> {
-    let user2 = await this.userService.findUser(target, { blocked: true });
+    let user2 = await this.userService.findByName(target, { blocked: true });
 
     if (
       user.blocked &&

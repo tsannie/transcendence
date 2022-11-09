@@ -2,7 +2,7 @@ import React from "react";
 import { User } from "../../contexts/AuthContext";
 
 interface IProps {
-  user: User | null;
+  player: User | null;
 }
 
 function ProfileStatsBar(props: IProps) {

@@ -1,5 +1,6 @@
+import { AxiosResponse } from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { Route, RouteProps, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { api, COOKIE_NAME } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import {
@@ -18,7 +19,7 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
 }) => {
   const [isLoad, setIsLoad] = useState(false);
   const [is2FA, setIs2FA] = useState(false);
-  const { isLogin, login } = useContext(AuthContext) as AuthContextType;
+  const { isLogin, login, logout } = useContext(AuthContext) as AuthContextType;
   const { transitionStage, setTransistionStage, setDisplayLocation, location } =
     useContext(TransitionContext) as TransitionContextType;
 
@@ -26,26 +27,28 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
     if (document.cookie.includes(COOKIE_NAME)) {
       api
         .get("auth/isTwoFactor")
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           setIs2FA(res.data.isTwoFactor);
         })
-        .catch((res) => {
+        .catch(() => {
+          logout();
           setIsLoad(true);
         });
 
       api
         .get("auth/profile")
-        .then((res) => {
+        .then((res: AxiosResponse) => {
           login(res.data);
           setIsLoad(true);
         })
-        .catch((res) => {
+        .catch(() => {
           setIsLoad(true);
         });
     } else {
+      logout();
       setIsLoad(true);
     }
-  }, []);
+  }, [location]);
 
   if (isLoad === true) {
     if (isLogin) {
@@ -53,20 +56,22 @@ export const PrivateRoute: React.FC<IPrivateComponentProps> = ({
         <div className="menu">
           <Sidebar />
           <div className="content">
-          <div
-            className={`${transitionStage}`}
-            onAnimationEnd={() => {
-              if (transitionStage === "exit-up") {
-                setTransistionStage("bounce-in-up");
-                setDisplayLocation(location);
-              } else if (transitionStage === "exit-down") {
-                setTransistionStage("bounce-in-down");
-                setDisplayLocation(location);
-              }
-            }}
-          >
-            <div className="content__bg"></div>
-              <RouteComponent />
+            <div className="content__rel">
+              <div className="content__bg" />
+              <div
+                className={`${transitionStage}`}
+                onAnimationEnd={() => {
+                  if (transitionStage === "exit-up") {
+                    setTransistionStage("bounce-in-up");
+                    setDisplayLocation(location);
+                  } else if (transitionStage === "exit-down") {
+                    setTransistionStage("bounce-in-down");
+                    setDisplayLocation(location);
+                  }
+                }}
+              >
+                <RouteComponent />
+              </div>
             </div>
           </div>
         </div>
