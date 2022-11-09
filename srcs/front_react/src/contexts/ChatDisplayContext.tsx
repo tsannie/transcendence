@@ -2,52 +2,56 @@ import { createContext, useState } from "react";
 import { IChannel, IDm } from "../components/chat/types";
 
 export enum ChatType {
-    EMPTY,
-    CONV,
-    FORM,
-  }
-  
-export interface ChatDisplayContextInterface {
-    display: ChatType;
-    changeDisplay: (newDisplay: ChatType) => void;
-    currentConvId: string;
-    changeCurrentConv: (newConv: string) => void;
-    isChannel: boolean;
-    changeIsChannel: (newIsChannel: boolean) => void;
-    newConv: IChannel | IDm;
-    changeNewConv : (newConv: IChannel | IDm) => void;
+  EMPTY,
+  CONV,
+  FORM,
 }
 
+export interface ChatDisplayContextInterface {
+  display: ChatType;
+  setDisplay: (display: ChatType) => void;
+  currentConv: string;
+  setCurrentConv: (conv: string) => void;
+  isChannel: boolean;
+  setIsChannel: (isChannel: boolean) => void;
+  newConv: IChannel | IDm;
+  setNewConv: (newConv: IChannel | IDm) => void;
+  setTargetRedirection: (target: string) => void;
+  setRedirection: (redirection: boolean) => void;
+}
 
-export const ChatDisplayContext = createContext<ChatDisplayContextInterface>({} as ChatDisplayContextInterface);
+export const ChatDisplayContext = createContext<ChatDisplayContextInterface>(
+  {} as ChatDisplayContextInterface
+);
 
 interface ChatDisplayProviderProps {
-    children: JSX.Element | JSX.Element[];
+  children: JSX.Element | JSX.Element[];
 }
 
 export const ChatStateProvider = ({ children }: ChatDisplayProviderProps) => {
-    const [ display, setDisplay ] = useState<ChatType>(ChatType.EMPTY);
-    const [ currentConvId, setCurrentConv ] = useState<string>("");
-    const [ isChannel, setIsChannel ] = useState<boolean>(false);
-    const [ newConv, setNewConv ] = useState<IChannel | IDm>({} as IChannel | IDm);
-  
-    const changeDisplay = (newDisplay: ChatType) => {
-      setDisplay(newDisplay);
-    }
+  const [display, setDisplay] = useState<ChatType>(ChatType.EMPTY);
+  const [currentConv, setCurrentConv] = useState<string>("");
+  const [isChannel, setIsChannel] = useState<boolean>(false);
+  const [newConv, setNewConv] = useState<IChannel | IDm>({} as IChannel | IDm);
+  const [isRedirection, setRedirection] = useState<boolean>(false);
+  const [targetRedirection, setTargetRedirection] = useState<string>("");
 
-    const changeCurrentConv = (newConv: string) => {
-        setCurrentConv(newConv);
-    }
-
-    const changeIsChannel = (newIsChannel: boolean) => {
-      setIsChannel(newIsChannel);
-    }
-
-    const changeNewConv = (newConv: IChannel | IDm) => {
-      setNewConv(newConv);
-    }
-  
-    return (
-      <ChatDisplayContext.Provider value={{display, changeDisplay, currentConvId, changeCurrentConv, isChannel, changeIsChannel, newConv, changeNewConv}}>{children}</ChatDisplayContext.Provider>
-    )
-} 
+  return (
+    <ChatDisplayContext.Provider
+      value={{
+        display,
+        setDisplay,
+        currentConv,
+        setCurrentConv,
+        isChannel,
+        setIsChannel,
+        newConv,
+        setNewConv,
+        setTargetRedirection,
+        setRedirection,
+      }}
+    >
+      {children}
+    </ChatDisplayContext.Provider>
+  );
+};
