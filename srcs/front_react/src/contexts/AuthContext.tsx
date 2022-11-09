@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 import { api } from "../const/const";
 
 export type User = {
-  id: number;
+  id: string;
   username: string;
   email: string;
   enabled2FA: boolean;
