@@ -12,6 +12,7 @@ import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
 import { ReactComponent as VerifIcon } from "../../assets/img/icon/circle_check.svg";
 import { api } from "../../const/const";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 function EditUsername() {
   const { user, setReloadUser } = React.useContext(
@@ -32,18 +33,17 @@ function EditUsername() {
   };
 
   const handleVerifyUsername = (e: FormEvent<HTMLFormElement>) => {
-    console.log("handleVerifyUsername");
     e.preventDefault();
     api
       .post("user/edit-username", { username: newUsername })
-      .then(({ data }) => {
+      .then(() => {
         setNewUsername("");
         toast.success("username changed !");
         setReloadUser(true);
         setEditUsername(false);
       })
-      .catch((error) => {
-        if (error.response.status === 422)
+      .catch((error: AxiosError) => {
+        if (error.response?.status === 422)
           toast.error("'" + newUsername + "' is already taken !");
         else toast.error("'" + newUsername + "' is invalid !");
 
@@ -62,7 +62,7 @@ function EditUsername() {
               type="text"
               value={newUsername}
               onChange={handleUsernameChange}
-            ></input>
+            />
             <button type="submit">
               <VerifIcon />
             </button>

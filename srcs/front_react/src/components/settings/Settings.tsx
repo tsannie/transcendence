@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import ActivationProcess from "./ActivationProcess";
 import { api } from "../../const/const";
 import "./settings.style.scss";
@@ -10,7 +10,7 @@ export default function Settings() {
   // request api on profile to set new state
   const [enable2FA, setEnable2FA] = useState(false);
 
-  const { user } = React.useContext(AuthContext) as AuthContextType;
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   async function activate2fa() {
     setEnable2FA(true);
