@@ -336,20 +336,53 @@ form {
   align-items: center;
   width: 100%;
 
-  table {
-    font-family: arial, sans-serif;
+  .table {
+    display: flex;
     border-collapse: collapse;
     width: 95%;
+
+    min-width: 0;
   }
 
-  td,
-  th {
+  .table__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
     border: dashed;
-    text-align: left;
-    padding: 8px;
+    min-width: 0;
   }
 
-  tr:nth-child(even) {
-    background-color: #dddddd;
+  .table__item__owner,
+  .table__item__name,
+  .table__item__status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1%;
+    min-width: 0;
+
+    span {
+      width: fit-content;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:nth-child(1n + 2) {
+      border-left: dashed;
+    }
+  }
+
+  .table__item__name {
+    flex: 0 0 50%;
+  }
+
+  .table__item__owner {
+    flex: 0 0 20%;
+  }
+  .table__item__status {
+    flex: 0 0 20%;
   }
 }
