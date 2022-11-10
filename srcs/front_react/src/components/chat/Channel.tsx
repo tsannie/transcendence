@@ -6,23 +6,49 @@ import { IChannel, IDm, IMessageReceived, IMessageSent } from "./types";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { ReactComponent as SendIcon } from "../../assets/img/icon/send.svg";
+import { toast } from "react-toastify";
 
 function MessageForm(props: any) {
   const convId = props.convId;
   const isChannel = props.isChannel;
 
   const { socket } = useContext(MessageContext);
+  const { isRedirection, setRedirection, targetRedirection, setNewConv, setCurrentConv } = useContext(ChatDisplayContext);
   const [input, setInput] = useState<string>("");
 
   const actualize_input = (event: any) => {
     setInput(event.target.value);
   };
 
+  const createConv = async () => {
+    let createdId : string | null = null;
+
+    await api
+      .post("/dm/create", {targetId: targetRedirection.toString()})
+      .then((res) => {
+        setRedirection(false);
+        setNewConv(res.data);
+        setCurrentConv(res.data.id);
+        createdId = res.data.id;
+      })
+      .catch((err) => {
+        toast.error("HTTP error: " + err);
+      })
+      return createdId;
+  }
+
   const sendMessage = async (event: any) => {
+    let inputConvId : string | null = convId;
+  
     event.preventDefault();
     if (input === "") return;
+    if (isRedirection && targetRedirection)
+      inputConvId = await createConv();
+    if (!inputConvId)
+      return ;
+
     const data: IMessageSent = {
-      convId: convId,
+      convId: inputConvId,
       content: input,
       isDm: !isChannel,
     };
@@ -91,6 +117,9 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
   const loadMessage = async () => {
     let route: string;
 
+    if (!currentConvId)
+      return ;
+
     if (isChannel) route = "/message/channel";
     else route = "/message/dm";
 
@@ -106,7 +135,7 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
         );
         setOffset(0);
       })
-      .catch(() => console.log("Axios Error"));
+      .catch(() => console.log("Axios Error while loading messages"));
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {

@@ -50,20 +50,16 @@ export class DmService {
   }
 
   /* This function loads the Dm based on name of target*/
-  async getDmByTarget(data: DmTargetDto, user: UserEntity): Promise<DmEntity> {
+  async getDmByTarget(data: DmTargetDto, user: UserEntity): Promise<DmEntity | null> {
     if (user.dms) {
       let convo = user.dms.find(
         (dm) =>
-          (dm.users[0].id === user.id &&
-            dm.users[1].id === data.targetId) ||
-          (dm.users[0].id === data.targetId &&
-            dm.users[1].id === user.id),
+          dm.users[0].id === data.targetId ||
+          dm.users[1].id === data.targetId,
       );
       if (convo) return await this.getDmById(convo.id);
-    } else
-      throw new UnprocessableEntityException(
-        `No conversation with ${data.targetId}`,
-      );
+    }
+    return null;
   }
 
   // get all conversations of a user
@@ -88,18 +84,18 @@ export class DmService {
 	createDM is used to create a new conv between two users, checking if they can, based on their blocked relationship.
 	*/
   async createDm(data: DmTargetDto, user: UserEntity): Promise<DmEntity> {
-    console.log('create DM');
     let user2 = await this.checkifBlocked(user, data.targetId);
     if (user.dms) {
-      const convo = user.dms.find(
-        (dm) =>
-          (dm.users[0].id === user.id &&
-            dm.users[1].id === data.targetId) ||
-          (dm.users[0].id === data.targetId &&
-            dm.users[1].id === user.id),
-      );
-      if (convo) return await this.getDmById(convo.id);
-    }
+        const convo = user.dms.find(
+          (dm) =>
+            (dm.users[0].id === user.id &&
+              dm.users[1].id === data.targetId) ||
+            (dm.users[0].id === data.targetId &&
+              dm.users[1].id === user.id),
+        );
+        if (convo) return await this.getDmById(convo.id);
+      }
+      
     let new_dm = new DmEntity();
 
     new_dm.users = [user, user2];
