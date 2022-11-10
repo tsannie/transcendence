@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { RoomStatus } from '../const/const';
 import { SetEntity } from './set.entity';
+import { GameStatEntity } from './gameStat.entity';
 
 @Entity()
 export class RoomEntity {
@@ -23,7 +24,7 @@ export class RoomEntity {
 
   @OneToOne(() => UserEntity, { eager: true, cascade: true })
   @JoinColumn()
-  p1: UserEntity;  
+  p1: UserEntity;
 
   @OneToOne(() => UserEntity, { eager: true, cascade: true })
   @JoinColumn()
@@ -35,43 +36,17 @@ export class RoomEntity {
 
   @Column({ nullable: true })
   game_mode: string;
-  
+
   @Column({ default: 0 })
   spectator: number;
 
-  /*   @OneToOne( () => StatEntity )
+  @OneToOne( () => GameStatEntity )
   @JoinColumn()
-  stat: StatEntity; */
+  stat: GameStatEntity;
 }
 
 /* //USER
 @ManyToMany( () => StatEntity )
 @JoinTable()
 stat : StatEntity[]
-
-@Entity()
-export class StatEntity {
-  @PrimaryGeneratedColumn()
-  id?: number;
-
-  @Column('time', { nullable: true })
-  date?: Date;
-
-  @OneToOne(() => UserEntity )
-  @JoinColumn()
-  player1: UserEntity;
-
-  @OneToOne(() => UserEntity )
-  @JoinColumn()
-  player2: UserEntity;
-
-  @OneToOne(() => UserEntity )
-  @JoinColumn()
-  winner: UserEntity;
-
-  @Column()
-  player1_score : number;
-
-  @Column()
-  player2_score : number;
-} */
+*/

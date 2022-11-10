@@ -8,10 +8,11 @@ import { RoomEntity } from './entity/room.entity';
 import { PlayerEntity } from './entity/players.entity';
 import { ConnectedUserModule } from 'src/connected-user/connected-user.module';
 import { UserModule } from 'src/user/user.module';
+import { GameStatEntity } from './entity/gameStat.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoomEntity, SetEntity, PlayerEntity]),
+    TypeOrmModule.forFeature([RoomEntity, SetEntity, PlayerEntity, GameStatEntity]),
     ConnectedUserModule,
     UserModule,
   ],

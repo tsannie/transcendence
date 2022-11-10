@@ -22,7 +22,7 @@ function ProfileStatsBar(props: IProps) {
       </div>
       <div className="profile__stats__item">
         <h3>54</h3>
-        <span>Classement</span>
+        <span>Leaderboard</span>
       </div>
     </div>
   );
