@@ -16,17 +16,17 @@ export class DmService {
   ) {}
 
   async checkifBlocked(user: UserEntity, target: string): Promise<UserEntity> {
-    let user2 = await this.userService.findByName(target, { blocked: true });
+    let user2 = await this.userService.findById(target, { blocked: true });
 
     if (
       user.blocked &&
-      user.blocked.find((blocked_guys) => blocked_guys.username === target)
+      user.blocked.find((blocked_guys) => blocked_guys.id === target)
     )
       throw new UnprocessableEntityException(`You've blocked ${target}`);
     if (
       user2.blocked &&
       user2.blocked.find(
-        (blocked_guys) => blocked_guys.username === user.username,
+        (blocked_guys) => blocked_guys.id === user.id,
       )
     )
       throw new UnprocessableEntityException(
@@ -54,15 +54,15 @@ export class DmService {
     if (user.dms) {
       let convo = user.dms.find(
         (dm) =>
-          (dm.users[0].username === user.username &&
-            dm.users[1].username === data.target) ||
-          (dm.users[0].username === data.target &&
-            dm.users[1].username === user.username),
+          (dm.users[0].id === user.id &&
+            dm.users[1].id === data.targetId) ||
+          (dm.users[0].id === data.targetId &&
+            dm.users[1].id === user.id),
       );
       if (convo) return await this.getDmById(convo.id);
     } else
       throw new UnprocessableEntityException(
-        `No conversation with ${data.target}`,
+        `No conversation with ${data.targetId}`,
       );
   }
 
@@ -89,14 +89,14 @@ export class DmService {
 	*/
   async createDm(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
     console.log('create DM');
-    let user2 = await this.checkifBlocked(user, data.target);
+    let user2 = await this.checkifBlocked(user, data.targetId);
     if (user.dms) {
       const convo = user.dms.find(
         (dm) =>
-          (dm.users[0].username === user.username &&
-            dm.users[1].username === data.target) ||
-          (dm.users[0].username === data.target &&
-            dm.users[1].username === user.username),
+          (dm.users[0].id === user.id &&
+            dm.users[1].id === data.targetId) ||
+          (dm.users[0].id === data.targetId &&
+            dm.users[1].id === user.id),
       );
       if (convo) return await this.getDmById(convo.id);
     }

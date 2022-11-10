@@ -10,7 +10,7 @@ export class ChannelActionsDto {
 	@IsDefined()
 	@IsNotEmpty()
 	@IsString()
-	target: string;
+	targetId: string;
 
 	/* We set time of banishment in minutes through this param in query.
 	If not set, time is set to infinity */
