@@ -3,11 +3,11 @@ import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
-import { IDm } from "./types";
+import { IChannel, IDm } from "./types";
 import {ReactComponent as UserIcon} from "../../assets/img/icon/user.svg";
 import {ReactComponent as BlockIcon} from "../../assets/img/icon/no_waiting_sign.svg";
 
-function DmUserProfile(props: {dm: IDm}) {
+function DmUserProfile(props: {dm: IDm | IChannel}) {
   const { user } = useContext(AuthContext);
   const dm = props.dm;
   const user2 = dm?.users?.find( (elem) => elem.id !== user?.id)  
@@ -26,40 +26,24 @@ function DmUserProfile(props: {dm: IDm}) {
   </div>);
 }
 
-function DmOptions() {
-  const { currentConv } = useContext(ChatDisplayContext);
-  const [dm, setDm] = useState<IDm>({} as IDm);
-
-  const loadDm = async () => {
-    await api
-      .get("dm/datas", {params: {id: currentConv}})
-      .then((res) => {
-        setDm(res.data);
-      })
-      .catch((err) => {toast.error("HTTP error:" + err)});
-  };
-
-  useEffect(() => {
-    const async_fct = async () => { await loadDm() };
-
-    async_fct();
-  }, []);
+function DmOptions(props: {currentConvId: string, dm: IDm | IChannel}) {
+  const {dm} = props;
 
   return <Fragment>
       <DmUserProfile dm={dm}/>
     </Fragment>
 }
 
-function ChannelOptions() {
+function ChannelOptions(props: {currentConvId: string, channel: IDm | IChannel}) {
   return <Fragment></Fragment>
 }
 
-function Options() {
-  const { isChannel } = useContext(ChatDisplayContext);
+function Options(props: {currentConvId: string, isChannel: boolean, data: IDm| IChannel}) {
+  const {currentConvId, isChannel, data} = props;
 
   return (
     <div className="conversation__options">
-      {isChannel? <ChannelOptions /> : <DmOptions />}
+      {isChannel? <ChannelOptions currentConvId={currentConvId} channel={data} /> : <DmOptions currentConvId={currentConvId} dm={data}/>}
     </div>
   );
 }

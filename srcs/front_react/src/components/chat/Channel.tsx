@@ -72,9 +72,9 @@ function MessageList(props: any) {
   );
 }
 
-function MessageBody() {
+function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
+  const {currentConvId, isChannel} = props;
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { currentConv, isChannel } = useContext(ChatDisplayContext);
   const { newMessage } = useContext(MessageContext);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
@@ -95,7 +95,7 @@ function MessageBody() {
     else route = "/message/dm";
 
     await api
-      .get(route, { params: { id: currentConv, offset: offset } })
+      .get(route, { params: { id: currentConvId, offset: offset } })
       .then((res) => {
         const unorderedMessages: IMessageReceived[] = res.data;
         setMessages(
@@ -120,13 +120,13 @@ function MessageBody() {
 
     async_func();
     scrollToBottom();
-  }, [currentConv]);
+  }, [currentConvId]);
 
   useEffect(() => {
     if (
       newMessage &&
-      (newMessage?.dm?.id == currentConv ||
-        newMessage?.channel?.id == currentConv)
+      (newMessage?.dm?.id == currentConvId ||
+        newMessage?.channel?.id == currentConvId)
     ) {
       addMessage(newMessage);
       scrollToBottom(true);
@@ -140,7 +140,7 @@ function MessageBody() {
           <MessageList messages={messages} user={user} />
           <div ref={messagesEndRef} />
         </ul>
-        <MessageForm convId={currentConv} isChannel={isChannel} />
+        <MessageForm convId={currentConvId} isChannel={isChannel} />
       </div>
     </Fragment>
   );
