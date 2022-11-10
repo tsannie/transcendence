@@ -7,14 +7,14 @@ import { IChannel } from "./types";
 function JoinChannelForm() {
   const [channelDictionnary, setChannelDictionnary] = useState<IChannel[]>([]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     api
       .get("/channel/list")
       .then((res: AxiosResponseHeaders) => {
         setChannelDictionnary(res.data);
       })
       .catch(() => console.log("Axios Error"));
-  }, []);
+  }, []);/*/
 
   return (
     <div className="channel_table">
