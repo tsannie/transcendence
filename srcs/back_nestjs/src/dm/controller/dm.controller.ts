@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
-import { DmIdDto, DmNameDto } from '../dto/dm.dto';
+import { DmIdDto, DmTargetDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 import { DmService } from '../service/dm.service';
 
@@ -33,10 +33,17 @@ export class DmController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async createDm(
-    @Body() data: DmNameDto,
+    @Body() data: DmTargetDto,
     @Request() req,
   ): Promise<void | DmEntity> {
     return await this.dmService.createDm(data, req.user);
+  }
+
+  @Get("target")
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async getDmByTarget(@Query() data: DmTargetDto, @Request() req){
+    return await this.dmService.getDmByTarget(data, req.user);
   }
 
   // get a dm by id
