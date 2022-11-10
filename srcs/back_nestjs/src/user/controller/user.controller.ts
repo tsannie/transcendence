@@ -177,4 +177,6 @@ export class UserController {
     });
     return await this.userService.removeFriend(req.user, userTarget);
   }
+
+  /* @Get('stat') */
 }

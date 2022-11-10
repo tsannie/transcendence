@@ -2,6 +2,7 @@ import { Expose } from 'class-transformer';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import {
   Column,
   CreateDateColumn,
@@ -75,4 +76,12 @@ export class UserEntity {
 
   @Column({ nullable: true })
   profile_picture: string;
+
+  /* @ManyToMany( () => GameStatEntity)
+  @JoinTable()
+  game_stat : GameStatEntity[]; */ // pas utile ?
+
+  /* @OneToOne( () => UserStatEntity)
+  @JoinColumn()
+  player_stat : UserStatEntity; */
 }

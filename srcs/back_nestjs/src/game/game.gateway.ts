@@ -49,7 +49,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   paddle_pos = new Map<string, PaddlePos>();
   is_playing = new Map<string, boolean>();
 
-  
+
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
@@ -115,7 +115,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room_game.status = RoomStatus.WAITING;
         room_game.game_mode = data.mode;
         room_game.p1 = user;
-        
+
         await this.all_game.save(room_game);
         client.join(room_game.id);
         client.emit('joinedRoom', room_game);
@@ -176,7 +176,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
     const user = (await this.connectedUserService.findBySocketId(client.id)).user;
     const room_game = await this.all_game.findOneBy({ id: room });
-    
+
     console.log('giveUp');
     this.gameService.giveUp(room, this.is_playing, room_game, user);
 
@@ -204,6 +204,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       await this.all_game.remove(room_game);
     }
     client.emit('leftRoomEmpty');
+
+    this.gameService.getStat(room_game);
     return;
   }
 

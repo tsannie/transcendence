@@ -10,6 +10,7 @@ import {
   gravity,
   RoomStatus,
 } from '../const/const';
+import { GameStatEntity } from '../entity/gameStat.entity';
 import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
@@ -46,7 +47,7 @@ export class GameService {
       all_rooms.forEach((room_db) => {
         if (
           room_db.status === RoomStatus.WAITING &&
-          !room_db.set  
+          !room_db.set
         ) {
           room_game = room_db;
         }
@@ -101,7 +102,7 @@ export class GameService {
   async giveUp(room: string, is_playing: Map<string, boolean>, room_game: RoomEntity, user: UserEntity) {
     if (is_playing[room])
       is_playing[room] = false;
-    
+
     if (room_game.status === RoomStatus.PLAYING)
       room_game.status = RoomStatus.CLOSED;
     if (room_game.set.p1.name === user.username) {
@@ -113,5 +114,21 @@ export class GameService {
       room_game.set.p1.won = true;
     }
     await this.all_game.save(room_game);
+  }
+
+  async getStat(room_game: RoomEntity) {
+    console.log("room game = ", room_game);
+    let statGame = new GameStatEntity();
+
+    statGame.p1 = room_game.p1;
+    statGame.p2 = room_game.p2;
+    statGame.p1_score = room_game.set.p1.score;
+    statGame.p2_score = room_game.set.p2.score;
+    if (room_game.set.p1.won)
+      statGame.winner = room_game.p1;
+    else
+      statGame.winner = room_game.p2;
+
+    room_game.stat = statGame;
   }
 }
