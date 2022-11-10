@@ -1,12 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { Request } from "express";
-import { ExtractJwt, Strategy } from "passport-jwt";
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Request } from 'express';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/user/service/user.service';
-import { IPayload } from "../models/payload.interface";
+import { IPayload } from '../models/payload.interface';
 
 @Injectable()
-export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
+export class JwtTwoFactorStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-2fa',
+) {
   constructor(private userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -21,12 +24,15 @@ export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-2fa') 
   }
 
   async validate(payload: IPayload) {
-    const user = await this.userService.findById(payload.sub, {  // TODO add check for user
+    const user = await this.userService.findById(payload.sub, {
+      // TODO add check for user
       owner_of: true,
       admin_of: true,
       channels: true,
       blocked: true,
-      dms: true
+      dms: true,
+      friends: true,
+      friend_requests: true,
     });
     if (!user.enabled2FA) {
       return user;
