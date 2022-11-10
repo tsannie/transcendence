@@ -12,7 +12,7 @@ export class DmNameDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  target: string;
+  targetId: string;
 }
 
 export class DmIdDto {
