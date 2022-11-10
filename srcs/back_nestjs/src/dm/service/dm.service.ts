@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { In, Repository } from 'typeorm';
-import { DmNameDto } from '../dto/dm.dto';
+import { DmTargetDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
 
 @Injectable()
@@ -50,7 +50,7 @@ export class DmService {
   }
 
   /* This function loads the Dm based on name of target*/
-  async getDmByTarget(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+  async getDmByTarget(data: DmTargetDto, user: UserEntity): Promise<DmEntity> {
     if (user.dms) {
       let convo = user.dms.find(
         (dm) =>
@@ -87,7 +87,7 @@ export class DmService {
   /*
 	createDM is used to create a new conv between two users, checking if they can, based on their blocked relationship.
 	*/
-  async createDm(data: DmNameDto, user: UserEntity): Promise<DmEntity> {
+  async createDm(data: DmTargetDto, user: UserEntity): Promise<DmEntity> {
     console.log('create DM');
     let user2 = await this.checkifBlocked(user, data.targetId);
     if (user.dms) {

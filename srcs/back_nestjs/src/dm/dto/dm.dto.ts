@@ -8,7 +8,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class DmNameDto {
+export class DmTargetDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
