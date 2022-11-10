@@ -17,8 +17,10 @@ export interface ChatDisplayContextInterface {
   setIsChannel: React.Dispatch<React.SetStateAction<boolean>>;
   newConv: IChannel | IDm;
   setNewConv: React.Dispatch<React.SetStateAction<IChannel | IDm>>;
+
   isRedirection: boolean;
   setRedirection: React.Dispatch<React.SetStateAction<boolean>>;
+  
   targetRedirection: string;
   setTargetRedirection: React.Dispatch<React.SetStateAction<string>>;
 }
