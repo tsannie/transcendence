@@ -1,34 +1,36 @@
-import { AxiosResponse } from "axios";
-import React, { useEffect, useState } from "react";
-import { api } from "../../const/const";
-import { IChannel } from "./types";
+import React from "react";
+import "./chat.style.scss";
 
-const columns = [
-  { Header: "title", accessor: "title" },
-  { Header: "owner", accessor: "owner" },
-  { Header: "status", accessor: "status" },
-  { Header: "members", accessor: "members" },
-  { Header: "join", accessor: "join" },
-];
+export type Data = {
+  name: string;
+  owner: string;
+  status: string;
+};
 
 function ChannelTable() {
-  const [channelDictionnary, setChannelDictionnary] = useState<IChannel[]>([]);
-
-  /*const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });*/
-
-  useEffect(() => {
-    api
-      .get("/channel/list")
-      .then((res: AxiosResponse) => {
-        setChannelDictionnary(res.data);
-      })
-      .catch(() => console.log("Axios Error"));
-  }, []);
-
-  console.log(channelDictionnary);
-
-  return <div></div>;
+  return (
+    <>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>name</th>
+            <th>title</th>
+            <th>owner</th>
+            <th>status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SalutName</td>
+            <td>with two columns</td>
+            <td>with two columns</td>
+            <td>with two columns</td>
+          </tr>
+        </tbody>
+      </table>
+    </>
+  );
 }
 
 export default ChannelTable;
