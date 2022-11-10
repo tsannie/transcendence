@@ -98,7 +98,6 @@ export class MessageGateway
     const userId = client.handshake.query.userId;
 
     if (data.isDm === true) {
-      console.log(userId.toString());
       const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
 
       await this.messageService.emitMessageDm(this.server, lastMsg);
