@@ -6,6 +6,9 @@ export class GameStatEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column()
+  date: Date;
+
   @OneToOne(() => UserEntity )
   @JoinColumn()
   p1: UserEntity;
