@@ -1,15 +1,19 @@
-import { FT_REDIRECT_LINK_AUTH, GOOGLE_REDIRECT_LINK_AUTH } from "../../../const/const";
+import {
+  FT_REDIRECT_LINK_AUTH,
+  GOOGLE_REDIRECT_LINK_AUTH,
+} from "../../../const/const";
 import "./login.style.scss";
 import { ReactComponent as FTLogo } from "../../../assets/img/42_Logo.svg";
 import { ReactComponent as GoogleLogo } from "../../../assets/img/Google_Logo.svg";
+import { MouseEvent } from "react";
 
 export default function ButtonLogin() {
-  function handleFTLogin(event: any) {
+  function handleFTLogin(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     window.location.href = FT_REDIRECT_LINK_AUTH;
   }
 
-  function handleGoogleLogin(event: any) {
+  function handleGoogleLogin(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     window.location.href = GOOGLE_REDIRECT_LINK_AUTH;
   }
@@ -23,17 +27,13 @@ export default function ButtonLogin() {
         <button onClick={handleFTLogin}>
           <div className="login-list__content__item">
             <FTLogo />
-            <span>
-              Continue with 42
-            </span>
+            <span>Continue with 42</span>
           </div>
         </button>
         <button onClick={handleGoogleLogin}>
           <div className="login-list__content__item">
-          <GoogleLogo />
-            <span>
-              Continue with Google
-            </span>
+            <GoogleLogo />
+            <span>Continue with Google</span>
           </div>
         </button>
       </div>
