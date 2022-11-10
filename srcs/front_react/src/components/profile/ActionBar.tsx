@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import {
   ChatDisplayContext,
   ChatDisplayContextInterface,
+  ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
@@ -20,7 +21,7 @@ interface IProps {
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { setRedirection, setTargetRedirection } = useContext(
+  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection } = useContext(
     ChatDisplayContext
   ) as ChatDisplayContextInterface;
   const nav = useNavigate();
@@ -65,9 +66,11 @@ function ActionBar(props: IProps) {
   };
 
   const handleDm = () => {
-    nav("/chat");
     setRedirection(true);
+    setDisplay(ChatType.CONV);
+    setIsChannel(false);
     setTargetRedirection(props.player?.id as string);
+    nav("/chat");
   };
 
   return (
