@@ -1,4 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import MessageBody from "./Channel";
@@ -6,28 +7,46 @@ import Options from "./Options";
 import { IChannel, IDm } from "./types";
 
 function Conversation() {
-  const { currentConv, isChannel, targetRedirection } = useContext(ChatDisplayContext);
+  const { currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDm | IChannel>({} as IDm | IChannel);
 
-  // const loadTarget = async () => {
-  //   await api
-  //     .get("dm/")
-  // }
+  const loadContent = async() => {
+    let route: string = isChannel? "channel/datas" : "dm/datas";
+    
+    api
+      .get(route, {params: {id: currentConv}})
+      .then((res) => {
+        setDm(res.data);
+      })
+      .catch((err) => {
+          toast.error("HTTP error: " + err);
+      })
+  }
 
-  // const loadContent = async() => {
-  //   let route: string = isChannel? "channel/datas" : "dm/datas";
-  //   let id;
+  const searchExistingConv = async () => {
+    await api
+      .get("/dm/target", {params: {id: targetRedirection}})
+      .then((res) => {
+        setRedirection(false);
+        setCurrentConv();
+      })
+      .catch( () => {
 
-  //   if (targetRedirection.length != 0)
-  //     loadTarget()
-  // }
+      })
+  }
 
-  // useEffect(() => {
-  //   const async_fct = async () => {
-  //     await loadContent();
-  //   }
-  //   async_fct;
-  // }, [currentConv, targetRedirection])
+  useEffect(() => {
+    const async_fct = async () => {
+      await loadContent();
+    }
+    async_fct;
+  }, [currentConv])
+
+  useEffect( () => {
+    const async_fct = async () => {
+      await searchExistingConv();
+    }
+  }, [targetRedirection])
 
     return (
       <Fragment>

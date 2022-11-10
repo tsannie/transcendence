@@ -1,16 +1,15 @@
-import MessageList from "./MessageList";
 import "./chat.style.scss";
 import { MessageProvider } from "../../contexts/MessageContext";
 import {
   ChatDisplayContext,
-  ChatDisplayProvider,
   ChatType,
 } from "../../contexts/ChatDisplayContext";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Conversation from "./Conversation";
 import NotifProvider from "../../contexts/ChatNotificationContext";
 import CreateChannelForm from "./CreateChannelForm";
 import JoinChannelForm from "./JoinChannelForm";
+import ChannelList from "./ChannelList";
 
 function ChatBody() {
   const { display } = useContext(ChatDisplayContext);
@@ -32,7 +31,7 @@ function Chat() {
     <div className="chat">                       
         <MessageProvider>
           <NotifProvider>
-            <MessageList />
+            <ChannelList />
             <ChatBody />
           </NotifProvider>
       </MessageProvider>
