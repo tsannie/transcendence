@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { api } from "../const/const";
 import { AuthContext } from "./AuthContext";
-import { MessagesContext } from "./MessagesContext";
 
 export const SocketGameContext = createContext<Socket>(io("http://localhost:4000/game"));
 
