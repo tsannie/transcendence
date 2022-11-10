@@ -35,14 +35,15 @@ export class DmController {
   async createDm(
     @Body() data: DmTargetDto,
     @Request() req,
-  ): Promise<void | DmEntity> {
+  ): Promise<DmEntity> {
+    console.log('create DM');
     return await this.dmService.createDm(data, req.user);
   }
 
   @Get("target")
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getDmByTarget(@Query() data: DmTargetDto, @Request() req){
+  async getDmByTarget(@Query() data: DmTargetDto, @Request() req) : Promise<DmEntity | null>{
     return await this.dmService.getDmByTarget(data, req.user);
   }
 

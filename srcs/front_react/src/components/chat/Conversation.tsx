@@ -13,6 +13,8 @@ function Conversation() {
   const loadContent = async() => {
     let route: string = isChannel? "channel/datas" : "dm/datas";
     
+    if (!currentConv)
+      return ;
     api
       .get(route, {params: {id: currentConv}})
       .then((res) => {
@@ -25,27 +27,28 @@ function Conversation() {
 
   const searchExistingConv = async () => {
     await api
-      .get("/dm/target", {params: {id: targetRedirection}})
+      .get("/dm/target", {params: {targetId: targetRedirection}})
       .then((res) => {
+        if (!res.data) return;
         setRedirection(false);
-        setCurrentConv();
-      })
-      .catch( () => {
-
+        setCurrentConv(res.data);
       })
   }
 
-  useEffect(() => {
+  useEffect( () => {
+    if (!currentConv) return ;
     const async_fct = async () => {
-      await loadContent();
+      await loadContent(); 
     }
-    async_fct;
+    async_fct();
   }, [currentConv])
 
   useEffect( () => {
+    if (!targetRedirection) return ;
     const async_fct = async () => {
       await searchExistingConv();
     }
+    async_fct();
   }, [targetRedirection])
 
     return (
