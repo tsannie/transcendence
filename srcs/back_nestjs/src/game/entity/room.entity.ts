@@ -39,14 +39,4 @@ export class RoomEntity {
 
   @Column({ default: 0 })
   spectator: number;
-
-  @OneToOne( () => GameStatEntity )
-  @JoinColumn()
-  stat: GameStatEntity;
 }
-
-/* //USER
-@ManyToMany( () => StatEntity )
-@JoinTable()
-stat : StatEntity[]
-*/

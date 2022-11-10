@@ -178,5 +178,9 @@ export class UserController {
     return await this.userService.removeFriend(req.user, userTarget);
   }
 
-  /* @Get('stat') */
+  @Get('stat')
+  @UseGuards(JwtTwoFactorGuard)
+  getStat(@Request() req) {
+    return this.userService.getStat(req.user);
+  }
 }

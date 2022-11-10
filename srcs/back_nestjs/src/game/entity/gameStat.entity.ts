@@ -21,9 +21,9 @@ export class GameStatEntity {
   @JoinColumn()
   winner: UserEntity;
 
-  @Column()
-  p1_score : number;
+  @Column( {nullable: true} )
+  p1_score?: number;
 
-  @Column()
-  p2_score : number;
+  @Column( {nullable: true} )
+  p2_score?: number;
 }

@@ -199,14 +199,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log('clearInterval end of GAME');
     }
     if (room_game) {
-      if (this.paddle_pos[room]) delete this.paddle_pos[room];
-      if (this.is_playing[room]) delete this.is_playing[room];
+      if (this.paddle_pos[room])
+        delete this.paddle_pos[room];
+      if (this.is_playing[room])
+        delete this.is_playing[room];
+      await this.gameService.getStat(room_game);
       await this.all_game.remove(room_game);
     }
     client.emit('leftRoomEmpty');
-
-    this.gameService.getStat(room_game);
-    return;
   }
 
   ///////////////////////////////////////////////

@@ -12,6 +12,7 @@ import * as fs from 'fs';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 import { IUserSearch } from '../models/iusersearch.interface';
+//import { GameService } from 'src/game/service/game.service';
 
 const AVATAR_DEST: string = '/nestjs/datas/users/avatars';
 
@@ -392,4 +393,39 @@ export class UserService {
 
     await this.allUser.save(user);
   }
+
+  getStat(user: UserEntity) {
+    const matches = this.getMatches(user);
+    const winRate = this.getWinRate(user);
+    // leadeboard
+
+    const stat = {
+      matches: matches,
+      winRate: winRate,
+      // leaderboard: leaderboard
+    };
+    return stat;
+  }
+
+  getMatches(user: UserEntity): number {
+
+    //let history = user.history;
+    //console.log("history = ", history);
+
+    //return user.history.length;
+    return 0;
+  }
+  getWinRate(user: UserEntity): number {
+
+    let winRate: number = 0;
+
+    /* if (user.history.length > 0) {
+      winRate = user.history.filter((game) => game.winner.id === user.id).length / user.history.length;
+    } */
+    return winRate;
+  }
+  /* getLeaderBoard(user: UserEntity) {
+
+    return user.history.length;
+  } */
 }
