@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { User } from "../../contexts/AuthContext";
 import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
 
@@ -7,6 +7,11 @@ interface IProps {
 }
 
 function ProfileHistory(props: IProps) {
+
+  function getMatchHistory() {
+    console.log("getMatchHistory");
+  }
+
   return (
     <div className="profile__body__history">
       <div className="profile__body__history__title">
