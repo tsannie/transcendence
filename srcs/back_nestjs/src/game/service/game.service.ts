@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
 import { UserEntity } from 'src/user/models/user.entity';
+import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import {
-  canvas_back_height,
-  canvas_back_width,
-  rad,
-  gravity,
   RoomStatus,
 } from '../const/const';
 import { GameStatEntity } from '../entity/gameStat.entity';
@@ -20,6 +16,11 @@ export class GameService {
   constructor(
     @InjectRepository(RoomEntity)
     private all_game: Repository<RoomEntity>,
+
+    @InjectRepository(GameStatEntity)
+    private gameStatRepository: Repository<GameStatEntity>,
+
+    private readonly userService: UserService,
   ) {}
 
   findAll(): Promise<RoomEntity[]> {
@@ -74,8 +75,13 @@ export class GameService {
   }
 
   //
-  async deleteUser(id: number): Promise<void> {
-    await this.all_game.delete(id);
+  async deleteUser(): Promise<void> {
+
+    const all_game = await this.all_game.find();
+
+    all_game.forEach(async (game) => {
+      await this.all_game.delete({ id: game.id });
+    });
   }
 
   async delete_room_name(room_name: string): Promise<void> {
@@ -129,25 +135,57 @@ export class GameService {
 
 
   async getStat(room_game: RoomEntity) {
-    console.log("room game = ", room_game);
+    //console.log("room game = ", room_game);
     let statGame = new GameStatEntity();
+    let eloDiff: number;
+    const p1: UserEntity = await this.userService.findByName(room_game.set.p1.name);
+    const p2: UserEntity = await this.userService.findByName(room_game.set.p2.name);
 
-    statGame.p1 = room_game.p1;
-    statGame.p2 = room_game.p2;
+    statGame.date = new Date();
+    statGame.p1 = p1;
+    statGame.p2 = p2;
     statGame.p1_score = room_game.set.p1.score;
     statGame.p2_score = room_game.set.p2.score;
-    if (room_game.set.p1.won)
-      statGame.winner = room_game.p1;
-    else
-      statGame.winner = room_game.p2;
 
-    room_game.stat = statGame;
+    if (room_game.set.p1.won) {
+      eloDiff = this.updateElo(statGame.p1.elo, statGame.p2.elo, true);
+
+      p1.elo += eloDiff;
+      p2.elo -= eloDiff;
+      statGame.winner = statGame.p1;
+    }
+    else {
+      eloDiff = this.updateElo(statGame.p1.elo, statGame.p2.elo, false);
+      p1.elo -= eloDiff;
+      p2.elo += eloDiff;
+      statGame.winner = statGame.p2;
+    }
+    //console.log("game stat = ", statGame);
+    // save user elo in db with new elo
+    await this.userService.add(p1);
+    await this.userService.add(p2);
+    await this.gameStatRepository.save(statGame); //duplicate key value violates
   }
 
-  updateElo(eloP1: number, eloP2: number): number {
-    const eloDiff = eloP1 - eloP2;
+  probaToWinWithElo(eloP1: number, eloP2: number): number {
+    return (
+      (1.0 * 1.0) / (1 + 1.0 * Math.pow(10, (1.0 * (eloP1 - eloP2)) / 400))
+    );
+  }
 
+  updateElo(eloP1: number, eloP2: number, isWinnerP1: boolean): number {
+    let eloDiff: number = 0;
+    const p1 = this.probaToWinWithElo(eloP1, eloP2);
+    const p2 = this.probaToWinWithElo(eloP2, eloP1);
 
-    return 1;
+    if (isWinnerP1 === true) {
+      eloDiff = 30 * (1 - p1);
+    }
+    else {
+      eloDiff = 30 * (1 - p2);
+    }
+    // round elodiff to be a number
+    console.log("elo diff = ", eloDiff, " == ", Math.round(eloDiff));
+    return Math.round(eloDiff);
   }
 }

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { api } from "../../const/const";
 import { User } from "../../contexts/AuthContext";
 
 interface IProps {
@@ -6,6 +7,20 @@ interface IProps {
 }
 
 function ProfileStatsBar(props: IProps) {
+
+  const [stat, setStat] = React.useState({});
+
+  console.log(props.player);
+  useEffect(() => {
+    api.get("user/stat").then((res) => {
+      setStat(res.data);
+    })
+    .catch(() => {
+      console.log("error");
+    });
+
+  }, [props.player]);
+
   return (
     <div className="profile__stats">
       <div className="profile__stats__item">
@@ -17,7 +32,7 @@ function ProfileStatsBar(props: IProps) {
         <span>Win Rate</span>
       </div>
       <div className="profile__stats__item">
-        <h3>789</h3>
+        <h3> {props.player?.elo} </h3>
         <span>elo</span>
       </div>
       <div className="profile__stats__item">
