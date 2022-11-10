@@ -1,4 +1,5 @@
 import { useContext, useEffect } from "react";
+import { toast } from "react-toastify";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
 import { GameContext, RoomStatus } from "../GameContext";
@@ -16,6 +17,7 @@ export default function WaitingRoom() {
       game.setisP2(false);
       game.setRoom("");
       socket.emit("leaveGameRoom", game.room);
+      toast.success("Room left !");
     }
   }
 

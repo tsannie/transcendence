@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { toast } from "react-toastify";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
 import { GameContext, RoomStatus } from "../GameContext";
@@ -22,7 +23,7 @@ export default function GameMenu(props: any) {
   const { user } = useContext(AuthContext);
 
   let game_mode = GameMode.PONG_1972;
-  
+
   function createGameRoom() {
     let data: ICreateRoom = {
       room : game.room,
@@ -30,8 +31,10 @@ export default function GameMenu(props: any) {
     }
 
     game.setRoom("");
-    if (game.status === RoomStatus.EMPTY)
+    if (game.status === RoomStatus.EMPTY) {
       socket.emit("createGameRoom", data);
+      toast.success("Room created for pong " + game_mode);
+    }
   }
 
   function createGameRoomTRANS() {
