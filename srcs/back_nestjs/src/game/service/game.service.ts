@@ -139,26 +139,24 @@ export class GameService {
     const p1: UserEntity = await this.userService.findByName(room_game.set.p1.name);
     const p2: UserEntity = await this.userService.findByName(room_game.set.p2.name);
 
-    statGame.date = new Date();
-    statGame.p1 = p1;
-    statGame.p2 = p2;
+    statGame.players = [p1, p2];
     statGame.p1_score = room_game.set.p1.score;
     statGame.p2_score = room_game.set.p2.score;
 
     if (room_game.set.p1.won) {
-      eloDiff = this.updateElo(statGame.p1.elo, statGame.p2.elo, true);
+      eloDiff = this.updateElo(statGame.players[0].elo, statGame.players[1].elo, true);
 
       p1.elo += eloDiff;
       p2.elo -= eloDiff;
       p1.wins++;
-      //statGame.winner = statGame.p1;
+      statGame.winner_id = statGame.players[0].id;
     }
     else {
-      eloDiff = this.updateElo(statGame.p1.elo, statGame.p2.elo, false);
+      eloDiff = this.updateElo(statGame.players[0].elo, statGame.players[1].elo, false);
       p1.elo -= eloDiff;
       p2.elo += eloDiff;
       p2.wins++;
-      //statGame.winner = statGame.p2;
+      statGame.winner_id = statGame.players[1].id;
     }
     p1.matches++;
     p2.matches++;
@@ -167,7 +165,6 @@ export class GameService {
     await this.userService.add(p1);
     await this.userService.add(p2);
     return statGame;
-    //await this.gameStatRepository.save(statGame); //duplicate key value violates
   }
 
   probaToWinWithElo(eloP1: number, eloP2: number): number {
@@ -192,14 +189,9 @@ export class GameService {
     return Math.round(eloDiff);
   }
 
-  async getHistory(user: UserEntity): Promise<GameStatEntity[]> {
+  async getHistory(): Promise<GameStatEntity[]> {
 
-    const hist = await this.gameStatRepository.find({
-      where: [
-        { p1: user },
-        { p2: user }
-      ]
-    });
+    const hist = await this.gameStatRepository.find();
     console.log("hist = ", hist);
     return hist;
   }

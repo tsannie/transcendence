@@ -1,25 +1,21 @@
 import { UserEntity } from "src/user/models/user.entity";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class GameStatEntity { // stat d'une game
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @CreateDateColumn()
   date: Date;
 
-  @OneToOne(() => UserEntity )
-  @JoinColumn()
-  p1: UserEntity;
+  @ManyToMany(() => UserEntity, (players) => players.history, { eager: true })
+  @JoinTable()
+  players: UserEntity[];
 
-  @OneToOne(() => UserEntity )
-  @JoinColumn()
-  p2: UserEntity;
-
-  @OneToOne(() => UserEntity )
-  @JoinColumn()
-  winner: UserEntity;
+  // winner = p1 or p2
+  @Column()
+  winner_id: number; // winner id
 
   @Column( {nullable: true} )
   p1_score?: number;

@@ -10,6 +10,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -86,7 +87,7 @@ export class UserEntity {
   @Column( { default: 0 } )
   wins: number;
 
-  @ManyToMany( () => GameStatEntity)
+  @ManyToMany( () => GameStatEntity, gameStat => gameStat.players )
   @JoinTable()
   history: GameStatEntity[];
 }
