@@ -1,15 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomUUID } from 'crypto';
 import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
-import {
-  canvas_back_height,
-  canvas_back_width,
-  rad,
-  gravity,
-  RoomStatus,
-} from '../const/const';
+import { RoomStatus } from '../const/const';
 import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
@@ -38,21 +31,22 @@ export class GameService {
     return this.all_game.save(game);
   }
 
-  async joinFastRoom(): Promise<RoomEntity> {
+  async joinFastRoom(user: UserEntity): Promise<RoomEntity> {
     let room_game : RoomEntity;
+    let already_in_game: boolean = false;
     const size = await this.all_game.count();
     if (size != 0) {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
-        if (
-          room_db.status === RoomStatus.WAITING &&
-          !room_db.set  
-        ) {
+        if ((room_db.p1 && user.id === room_db.p1.id) || (room_db.p2 && user.id === room_db.p2.id))
+          already_in_game = true;
+        else if (room_db.status === RoomStatus.WAITING && !room_db.set) {
           room_game = room_db;
         }
+        
       });
     }
-    if (!room_game) {
+    if (!room_game && already_in_game === false) {
       console.log("CREATE NEW GAME");
       room_game = new RoomEntity();
     }
@@ -72,9 +66,13 @@ export class GameService {
     return await this.findByName(id);
   }
 
-  //
-  async deleteUser(id: number): Promise<void> {
-    await this.all_game.delete(id);
+  async deleteUser(): Promise<void> {
+
+    const all_game = await this.all_game.find();
+
+    all_game.forEach(async (game) => {
+      await this.all_game.delete({ id: game.id });
+    });
   }
 
   async delete_room_name(room_name: string): Promise<void> {
