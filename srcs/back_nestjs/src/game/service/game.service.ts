@@ -3,10 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
-import {
-  RoomStatus,
-} from '../const/const';
 import { GameStatEntity } from '../entity/gameStat.entity';
+import { RoomStatus } from '../const/const';
 import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
@@ -52,7 +50,6 @@ export class GameService {
         else if (room_db.status === RoomStatus.WAITING && !room_db.set) {
           room_game = room_db;
         }
-
       });
     }
     if (!room_game && already_in_game === false) {
@@ -75,7 +72,6 @@ export class GameService {
     return await this.findByName(id);
   }
 
-  //
   async deleteUser(): Promise<void> {
 
     const all_game = await this.all_game.find();
