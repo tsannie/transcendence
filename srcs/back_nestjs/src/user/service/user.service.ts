@@ -95,7 +95,7 @@ export class UserService {
 
   // edit username for user
   async editUsername(
-    userId: number,
+    userId: string,
     newUsername: string,
   ): Promise<UpdateResult> {
     try {
@@ -153,13 +153,13 @@ export class UserService {
   }
 
   // turn enabled2FA to true for user
-  async enable2FA(userId: number): Promise<UpdateResult> {
+  async enable2FA(userId: string): Promise<UpdateResult> {
     // TODO update user ?
     return await this.allUser.update(userId, { enabled2FA: true });
   }
 
   // turn enabled2FA to false for user TODO delete in front ??
-  async disable2FA(userId: number): Promise<UpdateResult> {
+  async disable2FA(userId: string): Promise<UpdateResult> {
     return await this.allUser.update(userId, { enabled2FA: false });
   }
 

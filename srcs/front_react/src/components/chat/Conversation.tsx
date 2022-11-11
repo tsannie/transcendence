@@ -1,16 +1,16 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
-import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
+import { ChatDisplayContext, ChatDisplayContextInterface } from "../../contexts/ChatDisplayContext";
 import MessageBody from "./Channel";
 import Options from "./Options";
 import { IChannel, IDm } from "./types";
 
 function Conversation() {
-  const { currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } = useContext(ChatDisplayContext);
+  const { currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDm | IChannel>({} as IDm | IChannel);
 
-  const loadContent = async() => {
+  const loadContent = async () => {
     let route: string = isChannel? "channel/datas" : "dm/datas";
     
     if (!currentConv)
@@ -29,9 +29,10 @@ function Conversation() {
     await api
       .get("/dm/target", {params: {targetId: targetRedirection}})
       .then((res) => {
-        if (!res.data) return;
+        if (!res.data) 
+          return;
         setRedirection(false);
-        setCurrentConv(res.data);
+        setCurrentConv(res.data.id);
       })
   }
 
@@ -54,7 +55,7 @@ function Conversation() {
     return (
       <Fragment>
         <MessageBody currentConvId={currentConv} isChannel={isChannel}/>
-        <Options currentConvId={currentConv} isChannel={isChannel} data={dm}/>
+        <Options currentConvId={currentConv} isChannel={isChannel} data={dm} targetRedirection={targetRedirection}/>
       </Fragment>);
   }
 
