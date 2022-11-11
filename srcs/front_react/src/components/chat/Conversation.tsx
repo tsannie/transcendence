@@ -2,13 +2,18 @@ import { Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { ChatDisplayContext, ChatDisplayContextInterface } from "../../contexts/ChatDisplayContext";
-import MessageBody from "./Channel";
+import MessageBody from "./MessageBody";
 import Options from "./Options";
 import { IChannel, IDm } from "./types";
 
+export interface IDatas{
+  status: string,
+  data: IChannel,
+}
+
 function Conversation() {
   const { currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
-  const [dm, setDm] = useState<IDm | IChannel>({} as IDm | IChannel);
+  const [dm, setDm] = useState<IDatas | IDm | null >(null);
 
   const loadContent = async () => {
     let route: string = isChannel? "channel/datas" : "dm/datas";
