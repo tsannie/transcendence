@@ -53,8 +53,8 @@ export class DmService {
   async getDmByTarget(data: DmTargetDto, user: UserEntity): Promise<DmEntity | null> {
     if (user.dms) {
       let convo = user.dms.find(
-        (dm) => (dm.users[0].id == data.targetId ||
-          dm.users[1].id == data.targetId)
+        (dm) => (dm.users[0].id === data.targetId ||
+          dm.users[1].id === data.targetId)
       );
       if (convo) return await this.getDmById(convo.id);
     }
