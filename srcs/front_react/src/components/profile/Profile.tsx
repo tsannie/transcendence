@@ -10,6 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ActionBar from "./ActionBar";
 import { toast } from "react-toastify";
 import { AxiosResponse } from "axios";
+import { ChatDisplayContext, ChatDisplayProvider } from "../../contexts/ChatDisplayContext";
 
 function Profile() {
   const params = useParams().id;
@@ -71,7 +72,7 @@ function Profile() {
         <div className="profile__size" />
         <ProfileHeader player={player} />
         {!isPerso && (
-          <ActionBar player={player} setReloadPlayer={setReloadPlayer} />
+            <ActionBar player={player} setReloadPlayer={setReloadPlayer} />
         )}
         <hr id="full" />
         <ProfileStatsBar player={player} />
