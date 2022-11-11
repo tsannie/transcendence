@@ -2,7 +2,7 @@ import { UserEntity } from "src/user/models/user.entity";
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class GameStatEntity {
+export class GameStatEntity { // stat d'une game
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
