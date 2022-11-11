@@ -1,48 +1,10 @@
 import "./chat.style.scss";
 import { MessageContext } from "../../contexts/MessageContext";
-import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
-import { IChannel, IDm, IMessageReceived, IMessageSent } from "./types";
+import { IMessageReceived } from "./types";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
-import { ReactComponent as SendIcon } from "../../assets/img/icon/send.svg";
-
-function MessageForm(props: any) {
-  const convId = props.convId;
-  const isChannel = props.isChannel;
-
-  const { socket } = useContext(MessageContext);
-  const [input, setInput] = useState<string>("");
-
-  const actualize_input = (event: any) => {
-    setInput(event.target.value);
-  };
-
-  const sendMessage = async (event: any) => {
-    event.preventDefault();
-    if (input === "") return;
-    const data: IMessageSent = {
-      convId: convId,
-      content: input,
-      isDm: !isChannel,
-    };
-    socket?.emit("message", data);
-    setInput("");
-  };
-
-  return (
-    <form onSubmit={sendMessage}>
-      <input
-        className="input__form"
-        type="text"
-        placeholder="add message..."
-        value={input}
-        onChange={actualize_input}
-      />
-      <SendIcon className="send__button" onClick={sendMessage} />
-    </form>
-  );
-}
+import SendMessageForm from "./SendMessageForm";
 
 function MessageList(props: any) {
   const user: User = props.user;
@@ -72,9 +34,9 @@ function MessageList(props: any) {
   );
 }
 
-function MessageBody() {
+function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
+  const {currentConvId, isChannel} = props;
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { currentConv, isChannel } = useContext(ChatDisplayContext);
   const { newMessage } = useContext(MessageContext);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
@@ -91,11 +53,13 @@ function MessageBody() {
   const loadMessage = async () => {
     let route: string;
 
+    if (!currentConvId)
+      return ;
     if (isChannel) route = "/message/channel";
     else route = "/message/dm";
 
     await api
-      .get(route, { params: { id: currentConv, offset: offset } })
+      .get(route, { params: { id: currentConvId, offset: offset } })
       .then((res) => {
         const unorderedMessages: IMessageReceived[] = res.data;
         setMessages(
@@ -106,7 +70,7 @@ function MessageBody() {
         );
         setOffset(0);
       })
-      .catch(() => console.log("Axios Error"));
+      .catch(() => console.log("Axios Error while loading messages"));
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {
@@ -120,13 +84,13 @@ function MessageBody() {
 
     async_func();
     scrollToBottom();
-  }, [currentConv]);
+  }, [currentConvId]);
 
   useEffect(() => {
     if (
       newMessage &&
-      (newMessage?.dm?.id == currentConv ||
-        newMessage?.channel?.id == currentConv)
+      (newMessage?.dm?.id == currentConvId ||
+        newMessage?.channel?.id == currentConvId)
     ) {
       addMessage(newMessage);
       scrollToBottom(true);
@@ -140,7 +104,7 @@ function MessageBody() {
           <MessageList messages={messages} user={user} />
           <div ref={messagesEndRef} />
         </ul>
-        <MessageForm convId={currentConv} isChannel={isChannel} />
+        <SendMessageForm convId={currentConvId} isChannel={isChannel} />
       </div>
     </Fragment>
   );

@@ -8,6 +8,7 @@ import { TransitionProvider } from "./contexts/TransitionContext";
 import "react-toastify/dist/ReactToastify.css";
 import "./app.style.scss";
 import "./toastify.style.scss";
+import { ChatDisplayProvider } from "./contexts/ChatDisplayContext";
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -15,7 +16,9 @@ root.render(
   <BrowserRouter>
     <AuthProvider>
       <TransitionProvider>
-        <App />
+        <ChatDisplayProvider>
+          <App />
+        </ChatDisplayProvider>
       </TransitionProvider>
     </AuthProvider>
   </BrowserRouter>
