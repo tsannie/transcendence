@@ -68,7 +68,7 @@ function ChannelList() {
 
     if (newMessage?.dm) new_elem = newMessage.dm;
     if (newMessage?.channel) new_elem = newMessage?.channel;
-    addChannel(new_elem.id, true);
+    if (newMessage?.author?.id === user?.id) addChannel(new_elem.id, false); else addChannel(new_elem.id, true);
     newList = [new_elem, ...newList];
     return newList;
   };
@@ -147,13 +147,15 @@ function ChannelList() {
   }, []);
 
   useEffect(() => {
+    if (!newConv) return ;
+    addNewElemToList();
+  }, [newConv]);
+
+  useEffect(() => {
+    if (!newMessage) return ;
     updateList();
     scrollToTop();
   }, [newMessage]);
-
-  useEffect(() => {
-    addNewElemToList();
-  }, [newConv]);
 
   return (
     <div className="chat__list">

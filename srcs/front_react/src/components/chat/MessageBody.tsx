@@ -74,10 +74,11 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {
-    if (newMessage) setMessages([...messages, newMessage]);
+    if (newMessage && !messages.map( (elem) => elem.id).includes(newMessage.id)) setMessages([...messages, newMessage]);
   };
 
   useEffect(() => {
+    if (!currentConvId) return;
     const async_func = async () => {
       await loadMessage();
     };
@@ -87,8 +88,8 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
   }, [currentConvId]);
 
   useEffect(() => {
+    if (!newMessage) return;
     if (
-      newMessage &&
       (newMessage?.dm?.id == currentConvId ||
         newMessage?.channel?.id == currentConvId)
     ) {

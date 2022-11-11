@@ -26,7 +26,6 @@ function SendMessageForm(props: any) {
         .post("/dm/create", {targetId: targetRedirection.toString()})
         .then((res) => {
           setRedirection(false);
-          setNewConv(res.data);
           setCurrentConv(res.data.id);
           createdId = res.data.id;
         })

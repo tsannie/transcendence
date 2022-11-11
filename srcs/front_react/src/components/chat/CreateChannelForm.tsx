@@ -3,6 +3,7 @@ import { api } from "../../const/const";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { ICreateChannel } from "./types";
 import { ChatType } from "../../contexts/ChatDisplayContext";
+import { toast } from "react-toastify";
 
 function CreateChannelForm() {
   const { setDisplay, setCurrentConv, setIsChannel, setNewConv } =
@@ -16,7 +17,7 @@ function CreateChannelForm() {
   const createChannel = async (event: any) => {
     event.preventDefault();
     if (channelPassword.length > 0 && channelPassword !== passwordVerifier) {
-      console.log("Passwords don't match"); //TODO SNACKBAR ERROR
+      toast.error("Passwords don't match");
       return;
     }
     const channel: Partial<ICreateChannel> = {
@@ -33,7 +34,7 @@ function CreateChannelForm() {
         setIsChannel(true);
         setNewConv(res.data);
       })
-      .catch((err) => console.log(err.response.data));
+      .catch((err) => toast.error("HTTP error: " + err.response.data));
   };
 
   const actualizeChannelName = (event: any) => {
