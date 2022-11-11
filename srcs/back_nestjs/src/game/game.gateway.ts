@@ -180,7 +180,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const room_game = await this.all_game.findOneBy({ id: room });
 
     console.log('giveUp');
-    this.gameService.giveUp(room, this.is_playing, room_game, user);
+    await this.gameService.giveUp(room, this.is_playing, room_game, user);
 
     this.server.in(room).emit('giveUp', room_game.set, room_game.status);
     client.emit('leftRoom');
