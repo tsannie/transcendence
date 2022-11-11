@@ -18,7 +18,7 @@ import {
 @Entity()
 export class UserEntity {
   @Expose({ groups: ['user', 'me'] })
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Expose({ groups: ['user', 'me'] })

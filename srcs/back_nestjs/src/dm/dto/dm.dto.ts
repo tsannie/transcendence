@@ -1,18 +1,14 @@
-import { Type } from 'class-transformer';
 import {
   IsDefined,
   IsNotEmpty,
-  IsNumber,
-  IsOptional,
   IsString,
-  Min,
 } from 'class-validator';
 
-export class DmNameDto {
+export class DmTargetDto {
   @IsDefined()
   @IsNotEmpty()
   @IsString()
-  target: string;
+  targetId: string;
 }
 
 export class DmIdDto {

@@ -13,10 +13,10 @@ import { NotifContext } from "../../contexts/ChatNotificationContext";
 import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/circle_plus.svg";
 import { ReactComponent as ListIcon } from "../../assets/img/icon/list.svg";
 
-function MessageList() {
+function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
   const { newMessage } = useContext(MessageContext);
-  const { channels, addChannel, changeNotif, isNotif } =
+  const { addChannel, changeNotif, isNotif } =
     useContext(NotifContext);
   const {
     currentConv,
@@ -182,4 +182,4 @@ function CreateChannelButton() {
   );
 }
 
-export default MessageList;
+export default ChannelList;
