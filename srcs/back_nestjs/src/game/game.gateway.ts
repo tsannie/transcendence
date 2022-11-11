@@ -54,8 +54,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   paddle_pos = new Map<string, PaddlePos>();
   is_playing = new Map<string, boolean>();
 
-
-
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
     try {
@@ -157,13 +155,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     room_game.id = room;
 
     if (room_game.p1.id === user.id) {
-      room_game.p2 = null;
+      room_game.p1 = null;
     } else if (room_game.p2.id === user.id)
       room_game.p2 = null;
 
     if (room_game.status === RoomStatus.EMPTY) {
       await this.all_game.remove(room_game);
-      this.server.in(room).emit('leftRoomEmpty');
+      this.server.in(room).emit('leftRoom');
       client.leave(room);
       return;
     }
@@ -185,7 +183,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.gameService.giveUp(room, this.is_playing, room_game, user);
 
     this.server.in(room).emit('giveUp', room_game.set, room_game.status);
-    client.emit('leftRoomEmpty');
+    client.emit('leftRoom');
     client.leave(room);
   }
 
@@ -214,7 +212,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       await this.all_game.remove(room_game);
       await this.gameStatRepository.save(statGame); //duplicate key value violates
     }
-    client.emit('leftRoomEmpty');
+    client.emit('leftRoom');
+    return;
   }
 
   ///////////////////////////////////////////////
@@ -255,6 +254,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('gameRender')
   async gameRender(@MessageBody() room: string) {
     let room_game = await this.all_game.findOneBy({ id: room });
+    if (!room_game)
+      return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
 
     let BallObj: IBall = {
       x : canvas_back_width / 2,
@@ -267,14 +268,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       direction_y : 1,
     };
 
-    if (!room_game)
-      return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
     if (room_game.set) {
-      while (
-        room_game.set.p1.score !== victory_score &&
-        room_game.set.p2.score !== victory_score &&
-        this.is_playing[room] === true
-      ) {
+      while (room_game.set.p1.score !== victory_score &&
+      room_game.set.p2.score !== victory_score &&
+      this.is_playing[room] === true) {
         mouv_ball(BallObj);
         BallCol_p1(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
         BallCol_p2(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
