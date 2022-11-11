@@ -29,7 +29,7 @@ export class GameController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('/history')
-  history(@Request() req) {
-    this.gameService.getHistory(req.user);
+  async history() {
+    return await this.gameService.getHistory();
   }
 }
