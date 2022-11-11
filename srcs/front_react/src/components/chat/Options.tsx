@@ -3,9 +3,10 @@ import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
+import { IDatas } from "./Conversation";
 import { IChannel, IDm } from "./types";
 
-function DmUserProfile(props: {dm: IDm | IChannel, targetRedirection: string}) {
+function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
   const { user } = useContext(AuthContext);
   const { dm, targetRedirection } = props;
   const {isRedirection} = useContext(ChatDisplayContext);
@@ -29,19 +30,18 @@ function DmUserProfile(props: {dm: IDm | IChannel, targetRedirection: string}) {
     }
     else
     {
-      console.log(dm);
       let searched_user = dm?.users?.find( (elem) => elem.id !== user?.id);
       if (searched_user)
         setUser2(searched_user);
       else
-        toast.error("HTTP error while chargin user's profile.");
+        toast.error("Couldn't fiend a conversation with that user...");
     }
   }
 
   useEffect( () => {
-    console.log(dm);
+    if (!dm) return;
     findUser2();
-  }, [])
+  }, [isRedirection, dm])
 
   return (
   <div className="conversation__options__title">
@@ -53,7 +53,7 @@ function DmUserProfile(props: {dm: IDm | IChannel, targetRedirection: string}) {
   </div>);
 }
 
-function DmOptions(props: {currentConvId: string, dm: IDm | IChannel, targetRedirection: string}) {
+function DmOptions(props: {currentConvId: string, dm: IDm | null, targetRedirection: string}) {
   const {dm, targetRedirection} = props;
 
   return <Fragment>
@@ -61,16 +61,16 @@ function DmOptions(props: {currentConvId: string, dm: IDm | IChannel, targetRedi
     </Fragment>
 }
 
-function ChannelOptions(props: {currentConvId: string, channel: IDm | IChannel}) {
+function ChannelOptions(props: {currentConvId: string, channel: IDatas | null}) {
   return <Fragment></Fragment>
 }
 
-function Options(props: {currentConvId: string, isChannel: boolean, data: IDm| IChannel, targetRedirection: string}) {
+function Options(props: {currentConvId: string, isChannel: boolean, data: IDatas | IDm | null, targetRedirection: string}) {
   const {currentConvId, isChannel, data, targetRedirection} = props;
 
   return (
     <div className="conversation__options">
-      {isChannel? <ChannelOptions currentConvId={currentConvId} channel={data} /> : <DmOptions currentConvId={currentConvId} dm={data} targetRedirection={targetRedirection} />}
+      {isChannel? <ChannelOptions currentConvId={currentConvId} channel={data as IDatas | null} /> : <DmOptions currentConvId={currentConvId} dm={data as IDm | null} targetRedirection={targetRedirection} />}
     </div>
   );
 }
