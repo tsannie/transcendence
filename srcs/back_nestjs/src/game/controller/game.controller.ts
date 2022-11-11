@@ -27,7 +27,6 @@ export class GameController {
     this.gameService.delete_room_name(room_name);
   }
 
-  @UseGuards(JwtTwoFactorGuard)
   @Get('/history')
   async history() {
     return await this.gameService.getHistory();
