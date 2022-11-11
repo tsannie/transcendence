@@ -12,6 +12,8 @@ export type User = {
   friends: User[];
   friend_requests: User[];
   elo: number;
+  matches: number;
+  wins: number;
 };
 
 export type AuthContextType = {

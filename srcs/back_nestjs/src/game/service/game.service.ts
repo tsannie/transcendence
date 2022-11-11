@@ -40,21 +40,22 @@ export class GameService {
     return this.all_game.save(game);
   }
 
-  async joinFastRoom(): Promise<RoomEntity> {
+  async joinFastRoom(user: UserEntity): Promise<RoomEntity> {
     let room_game : RoomEntity;
+    let already_in_game: boolean = false;
     const size = await this.all_game.count();
     if (size != 0) {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
-        if (
-          room_db.status === RoomStatus.WAITING &&
-          !room_db.set
-        ) {
+        if ((room_db.p1 && user.id === room_db.p1.id) || (room_db.p2 && user.id === room_db.p2.id))
+          already_in_game = true;
+        else if (room_db.status === RoomStatus.WAITING && !room_db.set) {
           room_game = room_db;
         }
+
       });
     }
-    if (!room_game) {
+    if (!room_game && already_in_game === false) {
       console.log("CREATE NEW GAME");
       room_game = new RoomEntity();
     }
@@ -119,6 +120,7 @@ export class GameService {
       room_game.p2 = null;
       room_game.set.p1.won = true;
     }
+    console.log("avant le save giveup")
     await this.all_game.save(room_game);
   }
 
@@ -152,19 +154,24 @@ export class GameService {
 
       p1.elo += eloDiff;
       p2.elo -= eloDiff;
-      statGame.winner = statGame.p1;
+      p1.wins++;
+      //statGame.winner = statGame.p1;
     }
     else {
       eloDiff = this.updateElo(statGame.p1.elo, statGame.p2.elo, false);
       p1.elo -= eloDiff;
       p2.elo += eloDiff;
-      statGame.winner = statGame.p2;
+      p2.wins++;
+      //statGame.winner = statGame.p2;
     }
+    p1.matches++;
+    p2.matches++;
     //console.log("game stat = ", statGame);
     // save user elo in db with new elo
     await this.userService.add(p1);
     await this.userService.add(p2);
-    await this.gameStatRepository.save(statGame); //duplicate key value violates
+    return statGame;
+    //await this.gameStatRepository.save(statGame); //duplicate key value violates
   }
 
   probaToWinWithElo(eloP1: number, eloP2: number): number {
@@ -187,5 +194,17 @@ export class GameService {
     // round elodiff to be a number
     console.log("elo diff = ", eloDiff, " == ", Math.round(eloDiff));
     return Math.round(eloDiff);
+  }
+
+  async getHistory(user: UserEntity): Promise<GameStatEntity[]> {
+
+    const hist = await this.gameStatRepository.find({
+      where: [
+        { p1: user },
+        { p2: user }
+      ]
+    });
+    console.log("hist = ", hist);
+    return hist;
   }
 }

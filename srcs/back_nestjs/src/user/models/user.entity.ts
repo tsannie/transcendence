@@ -77,8 +77,14 @@ export class UserEntity {
   @Column({ nullable: true })
   profile_picture: string;
 
-  @Column( { nullable: true, default: 1000 } )
-  elo?: number;
+  @Column( { default: 1000 } )
+  elo: number;
+
+  @Column( { default: 0 } )
+  matches: number;
+
+  @Column( { default: 0 } )
+  wins: number;
 
   @ManyToMany( () => GameStatEntity)
   @JoinTable()

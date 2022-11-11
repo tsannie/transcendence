@@ -22,6 +22,7 @@ import { UserService } from 'src/user/service/user.service';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { CreateRoomDto } from './dto/createRoom.dto';
+import { GameStatEntity } from './entity/gameStat.entity';
 
 export interface PaddlePos {
   y1: number;
@@ -38,6 +39,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @InjectRepository(RoomEntity)
     private all_game: Repository<RoomEntity>,
+
+    @InjectRepository(GameStatEntity)
+    private gameStatRepository: Repository<GameStatEntity>,
+
     private gameService: GameService,
     private connectedUserService: ConnectedUserService,
     private userService: UserService,
@@ -108,7 +113,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       .user;
     let room_game: RoomEntity;
 
-    room_game = await this.gameService.joinFastRoom();
+    room_game = await this.gameService.joinFastRoom(user);
 
     if (room_game) {
       if (room_game.status === RoomStatus.EMPTY) {
@@ -152,7 +157,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     room_game.id = room;
 
     if (room_game.p1.id === user.id) {
-      room_game.p1 = room_game.p2;
       room_game.p2 = null;
     } else if (room_game.p2.id === user.id)
       room_game.p2 = null;
@@ -190,6 +194,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
+    let statGame: GameStatEntity;
     client.leave(room);
     console.log('endGame');
     const room_game = await this.all_game.findOneBy({ id: room });
@@ -199,12 +204,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log('clearInterval end of GAME');
     }
     if (room_game) {
+      statGame = await this.gameService.getStat(room_game);
+
+      console.log("stat de la game : ", statGame);
       if (this.paddle_pos[room])
         delete this.paddle_pos[room];
       if (this.is_playing[room])
         delete this.is_playing[room];
-      await this.gameService.getStat(room_game);
       await this.all_game.remove(room_game);
+      await this.gameStatRepository.save(statGame); //duplicate key value violates
     }
     client.emit('leftRoomEmpty');
   }

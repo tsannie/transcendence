@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Request, UseGuards } from '@nestjs/common';
+import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { RoomEntity } from '../entity/room.entity';
 import { GameService } from '../service/game.service';
 
@@ -16,7 +17,6 @@ export class GameController {
     return this.gameService.findAll();
   }
 
-
   @Get('/del')
   detail() {
     this.gameService.deleteUser();
@@ -25,5 +25,11 @@ export class GameController {
   @Get('/dell/:room_name')
   detail2(room_name: string) {
     this.gameService.delete_room_name(room_name);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/history')
+  history(@Request() req) {
+    this.gameService.getHistory(req.user);
   }
 }
