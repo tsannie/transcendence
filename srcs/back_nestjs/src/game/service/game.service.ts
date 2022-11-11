@@ -39,7 +39,10 @@ export class GameService {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
         if ((room_db.p1 && user.id === room_db.p1.id) || (room_db.p2 && user.id === room_db.p2.id))
+        {
+          console.log("already in game");
           already_in_game = true;
+        }
         else if (room_db.status === RoomStatus.WAITING && !room_db.set) {
           room_game = room_db;
         }
@@ -103,8 +106,10 @@ export class GameService {
     if (room_game.status === RoomStatus.PLAYING)
       room_game.status = RoomStatus.CLOSED;
     if (room_game.set.p1.name === user.username) {
+      console.log("room_game.p1", room_game.set.p2.won);
       room_game.p1 = null;
       room_game.set.p2.won = true;
+      console.log("room_game.p1", room_game.set.p2.won);
     }
     else if (room_game.set.p2.name === user.username) {
       room_game.p2 = null;
