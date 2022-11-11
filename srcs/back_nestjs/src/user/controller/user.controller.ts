@@ -145,7 +145,7 @@ export class UserController {
       friend_requests: true,
       friends: true,
     });
-    return await this.userService.acceptFriendRequest(req.user, userTarget);
+    await this.userService.acceptFriendRequest(req.user, userTarget);
   }
 
   @Post('refuse-friend-request')
