@@ -44,8 +44,8 @@ function ActionBar(props: IProps) {
       api
         .post("/user/accept-friend-request", { id: props.player?.id + "" })
         .then(() => {
-          props.setReloadPlayer(true);
           toast.success("you are now friend with " + props.player?.username);
+          props.setReloadPlayer(true);
         })
         .catch(() => {
           toast.error("error while accepting friend request");
