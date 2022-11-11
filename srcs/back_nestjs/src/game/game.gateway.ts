@@ -93,7 +93,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.disconnect();
   }
 
-  ////////////////////////////////////////////////
+  ///////////////////////////////////////////////
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
 
@@ -102,17 +102,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: CreateRoomDto,
   ) {
-    const user = (await this.connectedUserService.findBySocketId(client.id))
-      .user;
-    let room_game: RoomEntity;
+    let user: UserEntity = new UserEntity();
+    if (client.id)
+       user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    if (!user)
+      return;
+    const room_game: RoomEntity = await this.gameService.joinFastRoom(user);
 
-    room_game = await this.gameService.joinFastRoom(user);
-
-    if (room_game) {
+    if (room_game && user) {
       if (room_game.status === RoomStatus.EMPTY) {
         room_game.status = RoomStatus.WAITING;
         room_game.game_mode = data.mode;
         room_game.p1 = user;
+
         
         await this.all_game.save(room_game);
         client.join(room_game.id);
@@ -121,7 +123,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.join(room_game.id);
         room_game.status = RoomStatus.PLAYING;
         room_game.p2 = user;
-
         await this.all_game.save(room_game);
 
         this.gameService.initSet(room_game.id, this.is_playing, data.mode);
@@ -173,10 +174,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
     const user = (await this.connectedUserService.findBySocketId(client.id)).user;
     const room_game = await this.all_game.findOneBy({ id: room });
-    
-    console.log('giveUp');
-    this.gameService.giveUp(room, this.is_playing, room_game, user);
 
+    console.log('giveUp');
+    if (this.is_playing[room])
+      this.is_playing[room] = false;
+    if (room_game.status === RoomStatus.PLAYING)
+      room_game.status = RoomStatus.CLOSED;
+    if (room_game.set.p1.name === user.username) {
+      console.log("room_game.p1", room_game.set.p2.won);
+      room_game.p1 = null;
+      room_game.set.p2.won = true;
+      console.log("room_game.p1", room_game.set.p2.won);
+    }
+    else if (room_game.set.p2.name === user.username) {
+      room_game.p2 = null;
+      room_game.set.p1.won = true;
+    }
+    await this.all_game.save(room_game);
     this.server.in(room).emit('giveUp', room_game.set, room_game.status);
     client.emit('leftRoom');
     client.leave(room);
