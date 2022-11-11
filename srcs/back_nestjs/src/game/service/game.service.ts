@@ -120,18 +120,6 @@ export class GameService {
     await this.all_game.save(room_game);
   }
 
-  /* @Column()
-  matches: number;
-
-  @Column()
-  winrate: number;
-
-  /* @Column()
-  leaderboard: number; */  //
-
-   // faire des routes
-
-
   async getStat(room_game: RoomEntity) {
     //console.log("room game = ", room_game);
     let statGame = new GameStatEntity();

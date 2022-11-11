@@ -9,7 +9,7 @@ export class GameStatEntity { // stat d'une game
   @CreateDateColumn()
   date: Date;
 
-  @ManyToMany(() => UserEntity, (players) => players.history, { eager: true })
+  @ManyToMany(() => UserEntity, (players) => players.history, { eager: true})
   @JoinTable()
   players: UserEntity[];
 
