@@ -415,7 +415,10 @@ export class UserService {
     return user.friends;
   }
 
-  async refuseFriendRequest(user: UserEntity, target: UserEntity) {
+  async refuseFriendRequest(
+    user: UserEntity,
+    target: UserEntity,
+  ): Promise<UserEntity> {
     if (
       !user.friend_requests ||
       !user.friend_requests.find((elem) => elem.id === target.id)
@@ -428,6 +431,6 @@ export class UserService {
       (elem) => elem.id !== target.id,
     );
 
-    await this.allUser.save(user);
+    return await this.allUser.save(user);
   }
 }

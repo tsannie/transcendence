@@ -140,16 +140,12 @@ export class UserController {
   @Post('accept-friend-request')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async acceptFriendRequest(
-    @Request() req,
-    @Body() target: TargetIdDto,
-  ): Promise<UserEntity> {
+  async acceptFriendRequest(@Request() req, @Body() target: TargetIdDto) {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
       friends: true,
     });
-    await this.userService.acceptFriendRequest(req.user, userTarget);
-    return userTarget;
+    return await this.userService.acceptFriendRequest(req.user, userTarget);
   }
 
   @Post('refuse-friend-request')
@@ -162,8 +158,7 @@ export class UserController {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
     });
-    await this.userService.refuseFriendRequest(req.user, userTarget);
-    return userTarget;
+    return await this.userService.refuseFriendRequest(req.user, userTarget);
   }
 
   @Post('create-friend-request')
