@@ -12,10 +12,15 @@ import { DmService } from './service/dm.service';
 @Module({
   imports: [
     UserModule,
-    TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity]),
+    TypeOrmModule.forFeature([
+      DmEntity,
+      ChannelEntity,
+      UserEntity,
+      MessageEntity,
+    ]),
   ],
   controllers: [DmController],
   providers: [DmService],
-  exports: [DmService]
+  exports: [DmService],
 })
 export class DmModule {}
