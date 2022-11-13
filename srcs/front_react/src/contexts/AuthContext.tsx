@@ -1,4 +1,6 @@
-import React, { createContext, useState } from "react";
+import { AxiosResponse } from "axios";
+import React, { createContext, useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import { api } from "../const/const";
 
 export type User = {
@@ -7,21 +9,19 @@ export type User = {
   email: string;
   enabled2FA: boolean;
   profile_picture: string;
-  channels: any[]; // changer en IUser[] plus tard ou a retirer
-  owner_of: any; // changer en IUser plus tard ou a retirer
-}
+  friends: User[];
+  friend_requests: User[];
+};
 
 export type AuthContextType = {
   isLogin: boolean;
   user: User | null;
   setUser: (user: User) => void;
+  setReloadUser: (reload: boolean) => void;
   login: (user: User) => void;
   logout: () => void;
-  users: any[];
-  getAllUsers: () => void;
-  getUser: () => void;
   //monitoringSocket: WebSocket | null;
-}
+};
 
 export const AuthContext = createContext<Partial<AuthContextType>>({});
 
@@ -30,50 +30,41 @@ interface IProps {
 }
 
 export const AuthProvider = ({ children }: IProps) => {
-
   const [user, setUser] = useState<User | null>(null);
-  const [isLogin, setIsLogin] = useState(false);
-  const [users, setUsers] = useState<any[]>([]);
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [reloadUser, setReloadUser] = useState<boolean>(false);
 
   const login = (user: User) => {
     setUser(user);
     setIsLogin(true);
-  }
+  };
 
   const logout = () => {
+    console.log("logout");
     setUser(null);
     setIsLogin(false);
-  }
+  };
 
-  async function getAllUsers() {
-    await api
-      .get("user")
-      .then((res) => {
-        setUsers(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-        console.log(res);
-      });
-  }
-
-  async function getUser() {
-    console.log("get user");
-    await api
-      .get("auth/profile")
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((res) => {
-        console.log("invalid jwt");
-      });
-  }
+  useEffect(() => {
+    if (reloadUser && user) {
+      api
+        .get("auth/profile")
+        .then((res: AxiosResponse) => {
+          setUser(res.data);
+        })
+        .catch(() => {
+          logout();
+        });
+      setReloadUser(false);
+    }
+  }, [reloadUser]);
 
   return (
-
-    <AuthContext.Provider value={{ isLogin, user, login, logout, users, getAllUsers, getUser }}>
+    <AuthContext.Provider
+      value={{ isLogin, setReloadUser, user, login, logout }}
+    >
       {children}
+      {/* Same as */}
     </AuthContext.Provider>
   );
-
-}
+};

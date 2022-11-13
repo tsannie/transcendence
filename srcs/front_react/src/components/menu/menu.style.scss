@@ -1,4 +1,4 @@
-@import '../../const.style.scss';
+@import "../../const.style.scss";
 
 .menu {
   display: flex;
@@ -6,12 +6,14 @@
 }
 
 .content {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   overflow: hidden;
+  z-index: 1;
 
   h1 {
     font-size: calc(60 * var(--res));
@@ -20,24 +22,34 @@
   h2 {
     font-size: calc(35 * var(--res));
   }
-  p {
-    font-size: calc(22 * var(--res));
+  h3 {
+    font-size: calc(28 * var(--res));
   }
-  button, input, span {
+  p,
+  button,
+  input,
+  span {
+    font-size: calc(23 * var(--res));
+  }
+
+  li {
     font-size: calc(22 * var(--res));
   }
 
-  /*animation: grow 1s ease;
-  @keyframes grow {
-    0% { transform: scale(0); }
-    100% { transform: scale(1); }
-  }*/
+  em {
+    font-size: calc(17 * var(--res));
+  }
 
   hr {
-    width: 97%;
+    margin-top: calc(5 * var(--res));
+    margin-bottom: calc(5 * var(--res));
+    width: 95%;
     border-style: none none dashed;
   }
+}
 
+.content__rel {
+  position: relative;
 }
 
 .content__bg {
@@ -66,8 +78,12 @@
   50% {
     transform: translateY(-8vh);
   }
-  80% { transform: translateY(4vh); }
-  100% { transform: translateY(0); }
+  80% {
+    transform: translateY(4vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .bounce-in-down {
@@ -81,30 +97,36 @@
   50% {
     transform: translateY(8vh);
   }
-  80% { transform: translateY(-4vh); }
-  100% { transform: translateY(0); }
+  80% {
+    transform: translateY(-4vh);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .exit-up {
-  animation: 0.2s exit-up forwards;
+  animation: 0.3s exit-up forwards;
 }
 
 @keyframes exit-up {
   0% {
     transform: translateY(0);
   }
-  100% { transform: translateY(-80vh); }
+  100% {
+    transform: translateY(-100vh);
+  }
 }
 
 .exit-down {
-  animation: 0.2s exit-down forwards;
+  animation: 0.3s exit-down forwards;
 }
 
 @keyframes exit-down {
   0% {
     transform: translateY(0);
   }
-  100% { transform: translateY(80vh); }
+  100% {
+    transform: translateY(100vh);
+  }
 }
-
-
