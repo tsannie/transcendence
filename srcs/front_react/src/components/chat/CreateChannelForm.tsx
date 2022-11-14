@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { api } from "../../const/const";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { ICreateChannel } from "./types";
@@ -29,10 +29,10 @@ function CreateChannelForm() {
     await api
       .post("channel/create", channel)
       .then((res) => {
-        setDisplay(ChatType.CONV);
         setCurrentConv(res.data.id);
         setIsChannel(true);
         setNewConv(res.data);
+        setDisplay(ChatType.CONV);
       })
       .catch((err) => toast.error("HTTP error: " + err.response.data));
   };

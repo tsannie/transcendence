@@ -5,6 +5,7 @@ import { IMessageReceived } from "./types";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import SendMessageForm from "./SendMessageForm";
+import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 
 function MessageList(props: any) {
   const user: User = props.user;
@@ -36,6 +37,7 @@ function MessageList(props: any) {
 
 function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
   const {currentConvId, isChannel} = props;
+  const { isRedirection } = useContext(ChatDisplayContext);
   const { user } = useContext(AuthContext) as AuthContextType;
   const { newMessage } = useContext(MessageContext);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -78,7 +80,7 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
   };
 
   useEffect(() => {
-    if (!currentConvId) return;
+    if (!currentConvId || isRedirection) return;
     const async_func = async () => {
       await loadMessage();
     };

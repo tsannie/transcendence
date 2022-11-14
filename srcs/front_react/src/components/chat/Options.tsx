@@ -30,18 +30,20 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
     }
     else
     {
+      if (!dm || !dm?.users)
+        return ;
       let searched_user = dm?.users?.find( (elem) => elem.id !== user?.id);
       if (searched_user)
         setUser2(searched_user);
       else
-        toast.error("Couldn't fiend a conversation with that user...");
+        toast.error("Couldn't find a conversation with that user...");
     }
   }
 
   useEffect( () => {
-    if (!dm) return;
     findUser2();
   }, [isRedirection, dm])
+
 
   return (
   <div className="conversation__options__title">
