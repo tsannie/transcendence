@@ -19,8 +19,8 @@ import {
 
 @Entity()
 export class UserEntity {
-  @PrimaryGeneratedColumn()
-  id: number; // TODO remove :? ith new object
+  @PrimaryGeneratedColumn('uuid')
+  id: string; // TODO remove :? ith new object
 
   @Column({ unique: true })
   username: string;
@@ -78,16 +78,18 @@ export class UserEntity {
   @Column({ nullable: true })
   profile_picture: string;
 
-  @Column( { default: 1000 } )
+  @Column({ default: 1000 })
   elo: number;
 
-  @Column( { default: 0 } )
+  @Column({ default: 0 })
   matches: number;
 
-  @Column( { default: 0 } )
+  @Column({ default: 0 })
   wins: number;
 
-  @ManyToMany( () => GameStatEntity, gameStat => gameStat.players )
+  @ManyToMany(() => GameStatEntity, (gameStat) => gameStat.players, {
+    nullable: true,
+  })
   @JoinTable()
   history: GameStatEntity[];
 }

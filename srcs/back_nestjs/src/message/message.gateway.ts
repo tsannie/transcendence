@@ -62,7 +62,7 @@ export class MessageGateway
       let user: UserEntity;
       console.log('userId = ', userId);
       if (typeof userId === 'string') {
-        user = await this.userService.findById(parseInt(userId));
+        user = await this.userService.findById(userId);
       }
       if (!user) {
         return this.disconnect(client);
