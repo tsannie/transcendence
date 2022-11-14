@@ -12,6 +12,7 @@ import * as fs from 'fs';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 import { IUserSearch } from '../models/iusersearch.interface';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 //import { GameService } from 'src/game/service/game.service';
 
 const AVATAR_DEST: string = '/nestjs/datas/users/avatars';
@@ -39,6 +40,9 @@ export class UserService {
     @InjectRepository(UserEntity)
     private allUser: Repository<UserEntity>,
     private readonly httpService: HttpService,
+
+    @InjectRepository(GameStatEntity)
+    private allGame: Repository<GameStatEntity>,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -392,6 +396,10 @@ export class UserService {
     );
 
     await this.allUser.save(user);
+  }
+
+  async getGameHistory(user: UserEntity): Promise<GameStatEntity[]> {
+    return user.history;
   }
 
   /* getLeaderBoard(user: UserEntity) {

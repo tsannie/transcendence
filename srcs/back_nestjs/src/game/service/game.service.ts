@@ -124,6 +124,7 @@ export class GameService {
     //console.log("room game = ", room_game);
     let statGame = new GameStatEntity();
     let eloDiff: number;
+
     const p1: UserEntity = await this.userService.findByName(room_game.set.p1.name);
     const p2: UserEntity = await this.userService.findByName(room_game.set.p2.name);
 
@@ -132,26 +133,37 @@ export class GameService {
     statGame.p2_score = room_game.set.p2.score;
 
     if (room_game.set.p1.won) {
-      eloDiff = this.updateElo(statGame.players[0].elo, statGame.players[1].elo, true);
+      eloDiff = this.updateElo(p1.elo, p2.elo, true);
 
       p1.elo += eloDiff;
       p2.elo -= eloDiff;
       p1.wins++;
-      statGame.winner_id = statGame.players[0].id;
+      statGame.winner_id = p1.id;
     }
     else {
-      eloDiff = this.updateElo(statGame.players[0].elo, statGame.players[1].elo, false);
+      eloDiff = this.updateElo(p1.elo, p2.elo, false);
       p1.elo -= eloDiff;
       p2.elo += eloDiff;
       p2.wins++;
-      statGame.winner_id = statGame.players[1].id;
+      statGame.winner_id = p2.id;
     }
     p1.matches++;
     p2.matches++;
+    statGame.eloDiff = eloDiff;
     //console.log("game stat = ", statGame);
     // save user elo in db with new elo
+    // save game stat in history db
+    if (!p1.history)
+      p1.history = [];
+    if (!p2.history)
+      p2.history = [];
+    p1.history.push(statGame);
+    p2.history.push(statGame);
+
     await this.userService.add(p1);
     await this.userService.add(p2);
+
+    // save game stat in db
     return statGame;
   }
 
@@ -163,8 +175,8 @@ export class GameService {
 
   updateElo(eloP1: number, eloP2: number, isWinnerP1: boolean): number {
     let eloDiff: number = 0;
-    const p1 = this.probaToWinWithElo(eloP1, eloP2);
-    const p2 = this.probaToWinWithElo(eloP2, eloP1);
+    const p1 = this.probaToWinWithElo(eloP2, eloP1);
+    const p2 = this.probaToWinWithElo(eloP1, eloP2);
 
     if (isWinnerP1 === true) {
       eloDiff = 30 * (1 - p1);
@@ -175,12 +187,5 @@ export class GameService {
     // round elodiff to be a number
     console.log("elo diff = ", eloDiff, " == ", Math.round(eloDiff));
     return Math.round(eloDiff);
-  }
-
-  async getHistory(): Promise<GameStatEntity[]> {
-
-    const hist = await this.gameStatRepository.find();
-    console.log("hist = ", hist);
-    return hist;
   }
 }

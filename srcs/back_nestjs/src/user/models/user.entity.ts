@@ -89,6 +89,7 @@ export class UserEntity {
 
   @ManyToMany(() => GameStatEntity, (gameStat) => gameStat.players, {
     nullable: true,
+    eager: true,
   })
   @JoinTable()
   history: GameStatEntity[];

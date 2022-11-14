@@ -26,9 +26,4 @@ export class GameController {
   detail2(room_name: string) {
     this.gameService.delete_room_name(room_name);
   }
-
-  @Get('/history')
-  async history() {
-    return await this.gameService.getHistory();
-  }
 }

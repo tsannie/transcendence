@@ -25,6 +25,7 @@ import { DmModule } from './dm/dm.module';
 import { DmEntity } from './dm/models/dm.entity';
 import { ConnectedUserModule } from './connected-user/connected-user.module';
 import { HttpModule } from '@nestjs/axios';
+import { GameStatEntity } from './game/entity/gameStat.entity';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { HttpModule } from '@nestjs/axios';
       autoLoadEntities: true,
       synchronize: true, //TODO deploiement false
     }),
-    TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity]),
+    TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity, GameStatEntity]),
     HttpModule,
     UserModule,
     AuthModule,
