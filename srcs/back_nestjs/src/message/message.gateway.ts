@@ -95,7 +95,7 @@ export class MessageGateway
     @MessageBody() data: MessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = client.handshake.query.userId;
+    const userId = client.handshake.query.userId; //todo PROTEGER TRYCATCH
 
     if (data.isDm === true) {
       const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
