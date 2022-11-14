@@ -5,11 +5,12 @@ import {
   Get,
   Post,
   Query,
-  Request,
+  Req,
   SerializeOptions,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { Request } from 'express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { LoadMessagesDto } from '../dto/loadmessages.dto';
 import { MessageEntity } from '../models/message.entity';
@@ -25,7 +26,7 @@ export class MessageController {
   @UseGuards(JwtTwoFactorGuard)
   async loadDmMessages(
     @Query() data: LoadMessagesDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<MessageEntity[]> {
     return await this.messageService.loadMessages(
       'dm',
@@ -38,7 +39,10 @@ export class MessageController {
   @Get('channel')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async loadChannelMessages(@Query() data: LoadMessagesDto, @Request() req) {
+  async loadChannelMessages(
+    @Query() data: LoadMessagesDto,
+    @Req() req: Request,
+  ) {
     return await this.messageService.loadMessages(
       'channel',
       data.id,

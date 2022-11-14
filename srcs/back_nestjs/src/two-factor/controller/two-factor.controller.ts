@@ -36,10 +36,7 @@ export class TwoFactorController {
   @Post('auth2fa')
   @SerializeOptions({ groups: ['me'] })
   @UseGuards(JwtGuard)
-  async auth2fa(
-    @Body() tokenBody: TokenDto,
-    @Request() req,
-  ): Promise<UserEntity> {
+  async auth2fa(@Body() tokenBody: TokenDto, @Req() req): Promise<UserEntity> {
     const validToken = await this.twoFactorService.codeIsValid(
       tokenBody.token,
       req.user,
@@ -49,8 +46,8 @@ export class TwoFactorController {
         'Authentication failed - invalid token !',
       );
     }
-    const accessToken = await this.authService.getCookie(req.user, true);
-    req.res.cookie('AuthToken', accessToken, {
+    const accessToken = await this.authService.getToken(req.user, true);
+    req.res.cookie(process.env.COOKIE_NAME, accessToken.access_token, {
       httpOnly: false,
       path: '/',
     });
@@ -60,7 +57,7 @@ export class TwoFactorController {
   // generate a new qrcode for the user
   @Get('generate')
   @UseGuards(JwtTwoFactorGuard)
-  async generate(@Res() response: Response, @Request() req): Promise<any> {
+  async generate(@Res() response: Response, @Req() req): Promise<any> {
     const { otpauthUrl } = await this.twoFactorService.generateTwoFactorSecret(
       req.user,
     );
@@ -74,7 +71,7 @@ export class TwoFactorController {
   @UseGuards(JwtTwoFactorGuard)
   async verifyToken(
     @Body() tokenBody: TokenDto,
-    @Request() req,
+    @Req() req,
   ): Promise<UpdateResult> {
     const valid = await this.twoFactorService.codeIsValid(
       tokenBody.token,
@@ -93,7 +90,7 @@ export class TwoFactorController {
   @Post('disable')
   @SerializeOptions({ groups: ['me'] })
   @UseGuards(JwtTwoFactorGuard)
-  async disable(@Request() req): Promise<UpdateResult> {
+  async disable(@Req() req): Promise<UpdateResult> {
     logger2FA.log(`2FA disabled for user ${req.user.username}`);
     return await this.userService.disable2FA(req.user.id);
   }
