@@ -354,7 +354,7 @@ export class UserService {
       target.friend_requests &&
       target.friend_requests.find((elem) => elem.id === target.id)
     )
-      throw new UnprocessableEntityException(
+      throw new UnprocessableEntityException( // TODO : add direct acceptation
         `You already received a friend request from ${target.username}`,
       );
 
