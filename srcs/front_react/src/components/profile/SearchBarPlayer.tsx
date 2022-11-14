@@ -16,7 +16,7 @@ interface IUserSearch {
   picture: string;
 }
 
-function SearchBar() {
+function SearchBarPlayer() {
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
   const [lengthDictionary, setLengthDictionary] = useState<number>(0);
   const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
@@ -154,4 +154,4 @@ function SearchBar() {
   );
 }
 
-export default SearchBar;
+export default SearchBarPlayer;
