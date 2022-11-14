@@ -25,6 +25,7 @@ function ChannelList() {
     setCurrentConv,
     setIsChannel,
     newConv,
+    setRedirection,
   } = useContext(ChatDisplayContext);
   const messagesTopRef = useRef<null | HTMLDivElement>(null);
 
@@ -91,6 +92,7 @@ function ChannelList() {
   const clickItem = (conv: IChannel) => {
     setDisplay(ChatType.CONV);
     setCurrentConv(conv.id);
+    setRedirection(false);
     if (conv.name) setIsChannel(true);
     else setIsChannel(false);
     changeNotif(conv.id, false);
@@ -101,12 +103,15 @@ function ChannelList() {
     return null;
   };
 
-  const MessageListItems = chatList.map((conv: any) => {
+  const MessageListItems = chatList?.map((conv: any) => {
     let title: string | undefined;
     let user2: User | null = null;
 
+    if (!conv) return;
     if (conv.name) title = conv.name;
     else {
+      if (!conv.users)
+        return;
       user2 =
         conv.users[0].username !== user?.username
           ? conv.users[0]
@@ -170,14 +175,14 @@ function ChannelList() {
 }
 
 function CreateChannelButton() {
-  const { setDisplay } = useContext(ChatDisplayContext);
+  const { setDisplay, setRedirection } = useContext(ChatDisplayContext);
 
   return (
     <div className="chat__list__footer">
-      <button onClick={() => setDisplay(ChatType.CREATEFORM)}>
+      <button onClick={() => {setDisplay(ChatType.CREATEFORM); setRedirection(false);}}>
         <CirclePlusIcon />
       </button>
-      <button onClick={() => setDisplay(ChatType.JOINFORM)}>
+      <button onClick={() => {setDisplay(ChatType.JOINFORM); setRedirection(false);}}>
         <ListIcon />
       </button>
     </div>
