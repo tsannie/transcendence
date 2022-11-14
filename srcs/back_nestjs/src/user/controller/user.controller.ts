@@ -26,7 +26,6 @@ import { NewUsernameDto } from '../dto/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express, Request } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
-import { UserSearchDto } from '../dto/usersearch.dto';
 import { IUserSearch } from '../models/iusersearch.interface';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
@@ -71,8 +70,8 @@ export class UserController {
   @Get('search')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async searchUser(@Query() body: UserSearchDto): Promise<IUserSearch[]> {
-    return await this.userService.searchUser(body.search);
+  async searchUser(@Query() body: TargetNameDto): Promise<IUserSearch[]> {
+    return await this.userService.searchUser(body.username);
   }
 
   @Post('blockUser') // TODO to lower cases everywhere

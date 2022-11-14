@@ -65,7 +65,6 @@ export class UserService {
     return await this.allUser.findOne(findOptions);
   }
 
-  // TODO delete and replace by id
   async findByName(
     username: string,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
@@ -154,7 +153,6 @@ export class UserService {
 
   // turn enabled2FA to true for user
   async enable2FA(userId: string): Promise<UpdateResult> {
-    // TODO update user ?
     return await this.allUser.update(userId, { enabled2FA: true });
   }
 

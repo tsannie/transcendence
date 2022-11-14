@@ -6,7 +6,7 @@ import { UserService } from 'src/user/service/user.service';
 import { IPayload } from '../models/payload.interface';
 
 export const cookieExtractor = function (req: Request) {
-  let token: string = null; // TODO type
+  let token: string = null;
   if (req && req.cookies) token = req.cookies[process.env.COOKIE_NAME];
   return token;
 };
@@ -22,11 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: IPayload) {
-    // TODO all check for validate jeton
-    //console.log(payload)
-    //console.log( await this.userService.findByName(payload.username));
     return await this.userService.findById(payload.sub, {
-      // TODO add check for user
       owner_of: true,
       admin_of: true,
       channels: true,
