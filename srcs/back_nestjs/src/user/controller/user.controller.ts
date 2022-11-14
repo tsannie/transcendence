@@ -31,6 +31,7 @@ import {
 } from '../pipes/filevalidation.validator';
 import { UserSearchDto } from '../dto/usersearch.dto';
 import { IUserSearch } from '../models/iusersearch.interface';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 
 @Controller('user')
 export class UserController {
@@ -176,5 +177,11 @@ export class UserController {
       friends: true,
     });
     return await this.userService.removeFriend(req.user, userTarget);
+  }
+
+  @Get('gameHistory')
+  @UseGuards(JwtTwoFactorGuard)
+  async getGameHistory(@Request() req): Promise<GameStatEntity[]> {
+    return await this.userService.getGameHistory(req.user);
   }
 }

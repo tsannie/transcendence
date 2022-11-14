@@ -218,7 +218,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (this.paddle_pos[room]) delete this.paddle_pos[room];
       if (this.is_playing[room]) delete this.is_playing[room];
       await this.all_game.remove(room_game);
-      await this.gameStatRepository.save(statGame); //duplicate key value violates
+      await this.gameStatRepository.save(statGame);
     }
     client.emit('leftRoom');
     return;

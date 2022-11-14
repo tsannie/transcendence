@@ -22,9 +22,11 @@ export class GameStatEntity {
   @ManyToMany(() => UserEntity, (players) => players.history)
   players: UserEntity[];
 
-  // winner = p1 or p2
-  @Column()
-  winner_id: string; // winner id
+  @Column( {nullable: true} )
+  winner_id?: string;
+
+  @Column( {nullable: true} )
+  eloDiff?: number;
 
   @Column({ nullable: true })
   p1_score?: number;

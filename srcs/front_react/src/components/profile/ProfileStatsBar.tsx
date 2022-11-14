@@ -8,7 +8,6 @@ interface IProps {
 
 function ProfileStatsBar(props: IProps) {
 
-  console.log(props.player);
   function calculWinrate() {
     if (props.player?.matches === 0)
       return 0;

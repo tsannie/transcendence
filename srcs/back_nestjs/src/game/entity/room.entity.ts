@@ -12,7 +12,6 @@ import {
 } from 'typeorm';
 import { RoomStatus } from '../const/const';
 import { SetEntity } from './set.entity';
-import { GameStatEntity } from './gameStat.entity';
 
 @Entity()
 export class RoomEntity {
