@@ -21,9 +21,8 @@ interface IProps {
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection } = useContext(
-    ChatDisplayContext
-  ) as ChatDisplayContextInterface;
+  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection } =
+    useContext(ChatDisplayContext) as ChatDisplayContextInterface;
   const nav = useNavigate();
 
   const handleRemoveFriend = () => {
@@ -81,13 +80,11 @@ function ActionBar(props: IProps) {
       </div>
       {props.player?.friends.find((friend) => friend.id === user?.id) ? (
         <div className="action-bar__item">
-          {/* TODO EDIT ICON */}
           <RemoveFriendIcon alt="remove-friend" onClick={handleRemoveFriend} />
           <span>remove friend</span>
         </div>
       ) : (
         <div className="action-bar__item">
-          {/* TODO EDIT ICON */}
           <AddFriendIcon alt="add-friend" onClick={handleAddFriend} />
           <span>add friend</span>
         </div>

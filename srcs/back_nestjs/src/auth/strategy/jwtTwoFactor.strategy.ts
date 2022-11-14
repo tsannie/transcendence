@@ -21,7 +21,6 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
 
   async validate(payload: IPayload) {
     const user = await this.userService.findById(payload.sub, {
-      // TODO add check for user
       owner_of: true,
       admin_of: true,
       channels: true,
