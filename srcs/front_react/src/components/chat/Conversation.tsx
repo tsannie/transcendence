@@ -12,7 +12,7 @@ export interface IDatas{
 }
 
 function Conversation() {
-  const { currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
+  const { currentConv, setCurrentConv, isChannel, targetRedirection, isRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDatas | IDm | null >(null);
 
   const loadContent = async () => {
@@ -31,6 +31,7 @@ function Conversation() {
   }
 
   const searchExistingConv = async () => {
+    console.log("MONSIEUR MOUTARDE DANS LA CUISINE");
     await api
       .get("/dm/target", {params: {targetId: targetRedirection}})
       .then((res) => {
@@ -50,7 +51,7 @@ function Conversation() {
   }, [currentConv])
 
   useEffect( () => {
-    if (!targetRedirection) return ;
+    if (!targetRedirection || !isRedirection) return ;
     const async_fct = async () => {
       await searchExistingConv();
     }
