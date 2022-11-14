@@ -29,7 +29,7 @@ function ProfileFriends(props: IProps) {
   ) => {
     e.preventDefault();
     api
-      .post("/user/refuse-friend-request", { id: id + "" })
+      .post("/user/refuse-friend-request", { id: id })
       .then(() => {
         toast.success("friend request refused");
         props.setReloadPlayer(true);
@@ -45,7 +45,7 @@ function ProfileFriends(props: IProps) {
   ) => {
     e.preventDefault();
     api
-      .post("/user/accept-friend-request", { id: id + "" })
+      .post("/user/accept-friend-request", { id: id })
       .then(() => {
         toast.success("friend request accepted");
         props.setReloadPlayer(true);

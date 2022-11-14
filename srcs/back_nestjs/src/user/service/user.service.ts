@@ -73,6 +73,18 @@ export class UserService {
       where: {
         username: username,
       },
+      select: {
+        friends: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+        friend_requests: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+      },
       relations: relations_ToLoad,
     });
 
@@ -333,7 +345,10 @@ export class UserService {
     return user.friends;
   }
 
-  async createFriendRequest(user: UserEntity, target: UserEntity) {
+  async createFriendRequest(
+    user: UserEntity,
+    target: UserEntity,
+  ): Promise<UserEntity[]> {
     if (user.id === target.id)
       throw new UnprocessableEntityException(`You cannot add yourself.`);
     if (user.friends && user.friends.find((elem) => elem.id === target.id))
@@ -348,28 +363,22 @@ export class UserService {
       throw new UnprocessableEntityException(
         `You already sent a friend request to ${target.username}`,
       );
-    else if (
-      target.friend_requests &&
-      target.friend_requests.find((elem) => elem.id === target.id)
-    )
-      throw new UnprocessableEntityException( // TODO : add direct acceptation
-        `You already received a friend request from ${target.username}`,
-      );
 
     if (!target.friend_requests) target.friend_requests = [user];
     else target.friend_requests.push(user);
 
-    /* return await this.allUser.update(target.id, {    // method to update is ok but not working bc typeorm bug
-      friend_requests: target.friend_requests,
-    }); */
     await this.allUser.save(target);
+    return await this.getFriendList(user);
   }
 
-  async getFriendRequest(user: UserEntity): Promise<UserEntity[]> {
+  async getFriendRequest(user: UserEntity) {
     return user.friend_requests;
   }
 
-  async acceptFriendRequest(user: UserEntity, target: UserEntity) {
+  async acceptFriendRequest(
+    user: UserEntity,
+    target: UserEntity,
+  ): Promise<UserEntity[]> {
     if (user.friends && user.friends.find((elem) => elem.id === target.id))
       throw new UnprocessableEntityException(
         `You are already friends with ${target.username}`,
@@ -394,6 +403,9 @@ export class UserService {
 
     await this.allUser.save(user);
     await this.allUser.save(target);
+
+    const userFriends = await this.findById(user.id, { friends: true });
+    return userFriends.friends;
   }
 
   async removeFriend(

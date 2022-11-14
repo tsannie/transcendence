@@ -24,7 +24,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateResult } from 'typeorm';
 import { NewUsernameDto } from '../dto/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
-import { Express, Request } from 'express';
+import { Express, Request, Response } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
 import { IUserSearch } from '../models/iusersearch.interface';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
@@ -116,7 +116,10 @@ export class UserController {
   @Get('avatar')
   @UseGuards(JwtTwoFactorGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getAvatar(@Query() data: AvatarDto, @Res() res): Promise<void> {
+  async getAvatar(
+    @Query() data: AvatarDto,
+    @Res() res: Response,
+  ): Promise<void> {
     res.sendFile(
       await this.userService.getAvatar(data.id, { size: data.size }),
     );
@@ -166,12 +169,19 @@ export class UserController {
   async createFriendRequest(
     @Req() req: Request,
     @Body() target: TargetIdDto,
-  ): Promise<UserEntity> {
+  ): Promise<UserEntity[]> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
     });
-    await this.userService.createFriendRequest(req.user, userTarget);
-    return userTarget;
+
+    if (
+      req.user.friend_requests &&
+      req.user.friend_requests.find((elem) => elem.id === target.id)
+    ) {
+      return await this.userService.acceptFriendRequest(req.user, userTarget);
+    } else {
+      return await this.userService.createFriendRequest(req.user, userTarget);
+    }
   }
 
   @Get('friend-request')

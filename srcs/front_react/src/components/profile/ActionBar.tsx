@@ -12,7 +12,7 @@ import {
   ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 
 interface IProps {
   player: User | null;
@@ -26,7 +26,7 @@ function ActionBar(props: IProps) {
   const nav = useNavigate();
 
   const handleRemoveFriend = () => {
-    api.post("/user/remove-friend", { id: props.player?.id + "" }).then(
+    api.post("/user/remove-friend", { id: props.player?.id }).then(
       () => {
         props.setReloadPlayer(true);
         toast.success("friend removed !");
@@ -42,24 +42,23 @@ function ActionBar(props: IProps) {
       user?.friend_requests.find((req_user) => req_user.id === props.player?.id)
     ) {
       api
-        .post("/user/accept-friend-request", { id: props.player?.id + "" })
+        .post("/user/accept-friend-request", { id: props.player?.id })
         .then(() => {
-          toast.success("you are now friend with " + props.player?.username);
           props.setReloadPlayer(true);
+          toast.success("you are now friend with " + props.player?.username);
         })
         .catch(() => {
           toast.error("error while accepting friend request");
         });
     } else {
       api
-        .post("/user/create-friend-request", { id: props.player?.id + "" })
+        .post("/user/create-friend-request", { id: props.player?.id })
         .then(() => {
+          props.setReloadPlayer(true);
           toast.info("friend request sent !");
         })
-        .catch((err: AxiosError) => {
-          if (err.response?.status === 422)
-            toast.error("you already sent a friend request");
-          else toast.error("error while sending friend request");
+        .catch(() => {
+          toast.error("error while sending friend request");
         });
     }
   };
