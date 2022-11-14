@@ -5,12 +5,12 @@ import {
   Get,
   Post,
   Query,
-  Request,
+  Req,
   SerializeOptions,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { DmIdDto, DmTargetDto } from '../dto/dm.dto';
 import { DmEntity } from '../models/dm.entity';
@@ -25,7 +25,7 @@ export class DmController {
   @Get('list')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getDmsList(@Request() req): Promise<DmEntity[]> {
+  async getDmsList(@Req() req: Request): Promise<DmEntity[]> {
     return await this.dmService.getDmsList(req.user);
   }
 
@@ -34,16 +34,19 @@ export class DmController {
   @UseGuards(JwtTwoFactorGuard)
   async createDm(
     @Body() data: DmTargetDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<DmEntity> {
     console.log('create DM');
     return await this.dmService.createDm(data, req.user);
   }
 
-  @Get("target")
+  @Get('target')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getDmByTarget(@Query() data: DmTargetDto, @Request() req) : Promise<DmEntity | null>{
+  async getDmByTarget(
+    @Query() data: DmTargetDto,
+    @Req() req: Request,
+  ): Promise<DmEntity | null> {
     return await this.dmService.getDmByTarget(data, req.user);
   }
 

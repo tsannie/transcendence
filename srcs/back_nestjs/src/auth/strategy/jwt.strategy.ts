@@ -5,17 +5,17 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/user/service/user.service';
 import { IPayload } from '../models/payload.interface';
 
+export const cookieExtractor = function (req: Request) {
+  let token: string = null; // TODO type
+  if (req && req.cookies) token = req.cookies[process.env.COOKIE_NAME];
+  return token;
+};
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private userService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        //TODO add baerer ?
-        (request: Request) => {
-          const cookie = request?.cookies['AuthToken'];
-          return cookie ? cookie.access_token : null;
-        },
-      ]),
+      jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET,
     });
