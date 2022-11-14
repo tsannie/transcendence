@@ -74,7 +74,8 @@ $width_chat: calc(450 * var(--res));
   border-style: dashed;
   justify-content: space-around;
   align-items: center;
-  padding: 1% 0% 1% 0%;
+  padding-top: calc(10 * var(--res));
+  padding-bottom: calc(10 * var(--res));
   margin: 2.4%;
   transition: 70ms;
   min-width: 0;
@@ -95,12 +96,12 @@ $width_chat: calc(450 * var(--res));
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 0% 2% 0% 2%;
+      padding-left: 2%;
     }
 
     svg,
     img {
-      width: calc(20 * var(--res));
+      width: calc(25 * var(--res));
       border-radius: 50%;
     }
 
@@ -330,6 +331,62 @@ form {
   }
 }
 
+.join-channel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.join-channel__action {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.join-channel__action__refresh {
+  svg {
+    width: calc(35 * var(--res));
+  }
+  button {
+    display: flex;
+    padding: calc(5 * var(--res));
+    border-radius: 50%;
+  }
+}
+
+.join-channel__navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: calc(35 * var(--res));
+  }
+  button {
+    display: flex;
+    padding: calc(5 * var(--res));
+    margin-left: calc(20 * var(--res));
+    margin-right: calc(20 * var(--res));
+    margin-bottom: calc(15 * var(--res));
+    border-radius: 50%;
+  }
+}
+
+.join-channel__action__search {
+  display: flex;
+  width: calc(200 * var(--res));
+  border-style: dashed;
+
+  svg {
+    width: calc(35 * var(--res));
+  }
+  input {
+    width: 100%;
+    border-style: none;
+  }
+}
+
 .channel_table {
   display: flex;
   justify-content: center; // maybe delete
@@ -344,7 +401,7 @@ form {
     align-items: center;
     border-collapse: collapse;
     width: 90%;
-    height: 50%;
+    height: calc(320 * var(--res));
     min-width: 0;
     border: dashed;
   }
@@ -353,20 +410,29 @@ form {
     display: flex;
     width: 100%;
     flex-direction: column;
-    overflow-y: scroll;
+    overflow-y: overlay;
   }
 
   .table__item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     width: 100%;
+    border-bottom-style: dashed;
 
     //border: dashed;
     min-width: 0;
 
-    &:not(:last-child) {
-      border-bottom-style: dashed;
+    svg {
+      width: calc(40 * var(--res));
+    }
+  }
+
+  .channel {
+    &:hover {
+      span,
+      svg {
+        opacity: 0.6;
+      }
     }
   }
 
@@ -376,26 +442,25 @@ form {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    //padding: 1%;
     min-width: 0;
+    height: calc(50 * var(--res));
 
     span {
-      width: fit-content;
-      max-width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    padding-top: 3%;
-    padding-bottom: 3%;
 
     &:nth-child(1n + 2) {
       border-left: dashed;
     }
   }
+  .header {
+    justify-content: center;
+  }
 
   .table__item__name {
-    flex: 0 0 50%;
+    width: 100%;
   }
 
   .table__item__owner {
@@ -403,5 +468,6 @@ form {
   }
   .table__item__status {
     flex: 0 0 20%;
+    justify-content: center;
   }
 }
