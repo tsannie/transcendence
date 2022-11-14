@@ -12,11 +12,12 @@ import { FortyTwoStrategy } from './strategy/fortyTwo.strategy';
 import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
 import { HttpModule } from '@nestjs/axios';
 import { GoogleStrategy } from './strategy/google.strategy';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, GameStatEntity]),
     UserModule,
     PassportModule,
   ],

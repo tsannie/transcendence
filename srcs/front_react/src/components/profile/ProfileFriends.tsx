@@ -25,7 +25,7 @@ function ProfileFriends(props: IProps) {
 
   const handleRefuseRequest = (
     e: MouseEvent<HTMLButtonElement>,
-    id: number
+    id: string
   ) => {
     e.preventDefault();
     api
@@ -41,7 +41,7 @@ function ProfileFriends(props: IProps) {
 
   const handleAcceptRequest = (
     e: MouseEvent<HTMLButtonElement>,
-    id: number
+    id: string
   ) => {
     e.preventDefault();
     api
