@@ -55,7 +55,7 @@ export default function App() {
           />
         </Routes>
       </div>
-      <ToastContainer toastClassName={"toast"} />
+      <ToastContainer toastClassName={"toast"} pauseOnFocusLoss={false} />
     </div>
   );
 }

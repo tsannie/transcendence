@@ -76,7 +76,7 @@ function SearchBar() {
 
   async function getDictionary(search: string): Promise<IUserSearch[]> {
     return await api
-      .get("/user/search", { params: { search: search } })
+      .get("/user/search", { params: { username: search } })
       .then((res: AxiosResponse) => {
         return res.data;
       })
