@@ -192,6 +192,43 @@ $width_chat: calc(450 * var(--res));
     min-width: 0;
 }
 
+.conversation__options__members {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: 5%;
+  overflow-x: auto;
+
+  .category {
+    display: flex;
+    flex-direction: column;
+    border-style: dashed;
+    border-width: calc(3 * var(--res)) !important;
+
+    .title {
+      font-size: calc(14 * var(--res));
+      align-self: center;
+    }
+
+    .members{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border-style: none;
+      padding: 0%;
+    }
+
+    img {
+      border-radius: 100%;
+      width: calc(22 * var(--res));
+      padding: 1%;
+    }
+  }
+}
+
 
 .conversation__options__title {
     display: flex;
@@ -221,12 +258,23 @@ $width_chat: calc(450 * var(--res));
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        
+
+        .owner {
+          padding-top: 5%;
+          padding-bottom: 3%;
+          font-size: calc(14 * var(--res));
+        }
+  
         .date {
             font-size: calc(11 * var(--res));
         }
     }
 
+    .clickable_profile {
+        border-style: none;
+        padding: 0%;
+    }
+    
     .actions {
         display: flex;
         justify-content: space-evenly;
