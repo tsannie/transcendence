@@ -16,17 +16,17 @@ import { GameStatEntity } from './gameStat.entity';
 
 @Entity()
 export class RoomEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ default: RoomStatus.EMPTY })
   status: RoomStatus = RoomStatus.EMPTY;
 
-  @OneToOne(() => UserEntity, { eager: true, cascade: true })
+  @OneToOne(() => UserEntity, { eager: true })
   @JoinColumn()
   p1: UserEntity;
 
-  @OneToOne(() => UserEntity, { eager: true, cascade: true })
+  @OneToOne(() => UserEntity, { eager: true })
   @JoinColumn()
   p2: UserEntity;
 

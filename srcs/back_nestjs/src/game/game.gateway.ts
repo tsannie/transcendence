@@ -12,9 +12,17 @@ import {
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { canvas_back_height, canvas_back_width, gravity, IBall, rad, RoomStatus, victory_score } from './const/const';
+import {
+  canvas_back_height,
+  canvas_back_width,
+  gravity,
+  IBall,
+  rad,
+  RoomStatus,
+  victory_score,
+} from './const/const';
 import { BallCol_p1, BallCol_p2, mouv_ball } from './gamefunction';
-import { RoomEntity} from './entity/room.entity';
+import { RoomEntity } from './entity/room.entity';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
 import { UserEntity } from 'src/user/models/user.entity';
@@ -61,7 +69,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let user: UserEntity;
       console.log('userId = ', userId);
       if (typeof userId === 'string') {
-        user = await this.userService.findById(parseInt(userId));
+        user = await this.userService.findById(userId);
       }
       if (!user) {
         return this.disconnect(client);
@@ -144,20 +152,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
-    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    const user = (await this.connectedUserService.findBySocketId(client.id))
+      .user;
     const room_game = await this.all_game.findOneBy({ id: room });
 
-    if (!room_game)
-      return;
-    if (room_game.status === RoomStatus.WAITING ||
-    room_game.status === RoomStatus.CLOSED)
+    if (!room_game) return;
+    if (
+      room_game.status === RoomStatus.WAITING ||
+      room_game.status === RoomStatus.CLOSED
+    )
       room_game.status = RoomStatus.EMPTY;
     room_game.id = room;
 
     if (room_game.p1.id === user.id) {
       room_game.p1 = null;
-    } else if (room_game.p2.id === user.id)
-      room_game.p2 = null;
+    } else if (room_game.p2.id === user.id) room_game.p2 = null;
 
     if (room_game.status === RoomStatus.EMPTY) {
       await this.all_game.remove(room_game);
@@ -176,7 +185,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('giveUp')
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
-    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    const user = (await this.connectedUserService.findBySocketId(client.id))
+      .user;
     const room_game = await this.all_game.findOneBy({ id: room });
 
     console.log('giveUp');
@@ -204,11 +214,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (room_game) {
       statGame = await this.gameService.getStat(room_game);
 
-      console.log("stat de la game : ", statGame);
-      if (this.paddle_pos[room])
-        delete this.paddle_pos[room];
-      if (this.is_playing[room])
-        delete this.is_playing[room];
+      console.log('stat de la game : ', statGame);
+      if (this.paddle_pos[room]) delete this.paddle_pos[room];
+      if (this.is_playing[room]) delete this.is_playing[room];
       await this.all_game.remove(room_game);
       await this.gameStatRepository.save(statGame); //duplicate key value violates
     }
@@ -225,7 +233,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    client.to(data.room).emit('getPaddleP1',(data.positionY * canvas_back_height) / data.front_canvas_height);
+    client
+      .to(data.room)
+      .emit(
+        'getPaddleP1',
+        (data.positionY * canvas_back_height) / data.front_canvas_height,
+      );
     if (!this.paddle_pos[data.room])
       this.paddle_pos[data.room] = { y1: 0, y2: 0 };
     this.paddle_pos[data.room] = {
@@ -239,7 +252,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    client.to(data.room).emit('getPaddleP2',(data.positionY * canvas_back_height) / data.front_canvas_height);
+    client
+      .to(data.room)
+      .emit(
+        'getPaddleP2',
+        (data.positionY * canvas_back_height) / data.front_canvas_height,
+      );
     if (!this.paddle_pos[data.room])
       this.paddle_pos[data.room] = { y1: 0, y2: 0 };
     this.paddle_pos[data.room] = {
@@ -258,23 +276,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
 
     let BallObj: IBall = {
-      x : canvas_back_width / 2,
-      y : canvas_back_height / 2,
-      gravity : gravity,
+      x: canvas_back_width / 2,
+      y: canvas_back_height / 2,
+      gravity: gravity,
       first_col: false,
       col_paddle: false,
       can_touch_paddle: true,
-      direction_x : 1,
-      direction_y : 1,
+      direction_x: 1,
+      direction_y: 1,
     };
 
     if (room_game.set) {
-      while (room_game.set.p1.score !== victory_score &&
-      room_game.set.p2.score !== victory_score &&
-      this.is_playing[room] === true) {
+      while (
+        room_game.set.p1.score !== victory_score &&
+        room_game.set.p2.score !== victory_score &&
+        this.is_playing[room] === true
+      ) {
         mouv_ball(BallObj);
-        BallCol_p1(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
-        BallCol_p2(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
+        BallCol_p1(
+          room_game.set,
+          BallObj,
+          this.paddle_pos[room],
+          this.server,
+          room,
+        );
+        BallCol_p2(
+          room_game.set,
+          BallObj,
+          this.paddle_pos[room],
+          this.server,
+          room,
+        );
 
         this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
         await new Promise((f) => setTimeout(f, 8));
@@ -290,8 +322,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() room: string,
   ) {
     const room_game = await this.all_game.findOneBy({ id: room });
-    if (!room_game)
-      return;
+    if (!room_game) return;
     client.emit('resize_game');
   }
 }

@@ -95,7 +95,7 @@ export class UserService {
 
   // find user by id
   async findById(
-    input_id: number,
+    input_id: string,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
   ): Promise<UserEntity> {
     const user = await this.allUser.findOne({
@@ -131,17 +131,17 @@ export class UserService {
   }
 
   // turn enabled2FA to true for user
-  async enable2FA(userId: number) {
+  async enable2FA(userId: string) {
     // TODO update user ?
     return await this.allUser.update(userId, { enabled2FA: true });
   }
 
   // turn enabled2FA to false for user TODO delete in front ??
-  async disable2FA(userId: number) {
+  async disable2FA(userId: string) {
     return await this.allUser.update(userId, { enabled2FA: false });
   }
 
-  async setSecret2FA(userId: number, secret: string) {
+  async setSecret2FA(userId: string, secret: string) {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 
@@ -237,7 +237,7 @@ export class UserService {
   /* This function is querying the DB to find the name of the file then send the wright path according to
 	request of user ("medium" or "small") */
   async getAvatar(
-    inputed_id: number,
+    inputed_id: string,
     avatarOptions: IAvatarOptions,
   ): Promise<string> {
     let user = await this.allUser
