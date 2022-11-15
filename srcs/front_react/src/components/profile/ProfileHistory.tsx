@@ -1,7 +1,5 @@
-import React, { useEffect } from "react";
 import { User } from "../../contexts/AuthContext";
 import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
-import { api } from "../../const/const";
 
 interface IProps {
   player: User | null;
@@ -12,7 +10,7 @@ function ProfileHistory(props: IProps) {
   console.log(props.player?.history);
 
   if (props.player?.history.length !== 0) {
-    allHistory = props.player?.history.reverse().map((game, index) => {
+    allHistory = props.player?.history.map((game, index) => {
       return (
         <li className="profile__body__history__list" key={index}>
           <div className="profile__body__history__item">
