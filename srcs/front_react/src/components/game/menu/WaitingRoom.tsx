@@ -19,7 +19,6 @@ export default function WaitingRoom() {
     }
   }
 
-  //console.log("game.status in WaitingRoom: ", game.status);
   return (
     <div className="queues">
       <h2> you are : {user?.username} </h2>

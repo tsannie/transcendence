@@ -3,28 +3,10 @@ import {
   draw_game_ended,
   draw_game,
 } from "./Draw";
-
 import { canvas_back_height, canvas_back_width, paddle_height, paddle_margin, paddle_width, rad, screen_ratio} from "../const/const";
 import { GameContext, RoomStatus } from "../GameContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
-
-interface IBall {
-  x: number;
-  y: number;
-  rad : number;
-}
-interface IPaddle {
-  x: number;
-  y: number;
-  height: number;
-  width: number;
-}
-interface IPlayer {
-  name: string;
-  score: number;
-  won: boolean;
-  gave_up: boolean;
-}
+import { IaskPaddle, IBall, IPaddle, IPlayer } from "../types";
 
 let position_y = 0;
 
@@ -34,35 +16,49 @@ export function GamePlayer_p1_p2() {
   let ratio_width = (XlowerSize /canvas_back_width);
   let ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
   let start = false;
-  
+  let height = XlowerSize / screen_ratio;
+  let border_size = ((height) / 50);
+
   const game = useContext(GameContext);
   const socket = useContext(SocketGameContext);
   const canvasRef: any = createRef();
   
-  let height = XlowerSize / screen_ratio
-  let border_size = ((height) / 50);
+  let IBall = initBall();
+  let IPaddle_p1 = initPaddle1();
+  let IPaddle_p2 = initPaddle2();
+
+  function initBall() {
+    let ball : IBall = {
+      x: (canvas_back_width / 2) * ratio_width,
+      y: (canvas_back_height / 2) * ratio_height,
+      rad: rad * ratio_width,
+    };
+    return ball;
+  }
+
+  function initPaddle1() {
+    let IPaddle_p1 : IPaddle = {
+      x: paddle_margin * ratio_width,
+      y: height / 2,
+      height: paddle_height * ratio_height,
+      width: paddle_width * ratio_width
+    };
+    return IPaddle_p1;
+  }
+
+  function initPaddle2() {
+    let IPaddle_p2 : IPaddle = {
+      x: (canvas_back_width - paddle_margin - paddle_width) * ratio_width,
+      y: height / 2,
+      height: paddle_height * ratio_height,
+      width: paddle_width * ratio_width
+    };
+    return IPaddle_p2;
+  }
 
   let IPlayer_p1 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
   let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
-  let IPaddle_p1 : IPaddle = {
-    x: paddle_margin * ratio_width,
-    y: height / 2,
-    height: paddle_height * ratio_height,
-    width: paddle_width * ratio_width
-  };
-  let IPaddle_p2 : IPaddle = {
-    x: (canvas_back_width - paddle_margin - paddle_width) * ratio_width,
-    y: height / 2,
-    height: paddle_height * ratio_height,
-    width: paddle_width * ratio_width
-  };
-  let IBall : IBall = {
-    x: (canvas_back_width / 2) * ratio_width,
-    y: (canvas_back_height / 2) * ratio_height,
-    rad: rad * ratio_width,
-  };
 
-  //const [lowerSize, setLowerSize] = useState((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth));
   const [HW, setdetectHW] = useState({winWidth: window.innerWidth, winHeight: window.innerHeight,})
   const detectSize = () => {
     setdetectHW({
@@ -73,7 +69,6 @@ export function GamePlayer_p1_p2() {
   useEffect(() => {
     window.addEventListener('resize', detectSize)
     return () => {
-      console.log("je change de taille");
       window.removeEventListener('resize', detectSize)
       //setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
       XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
@@ -107,9 +102,8 @@ export function GamePlayer_p1_p2() {
 
   useEffect(() => {
     
-     socket.on("resize_game", () => {
+    socket.on("resize_game", () => {
       resizeGame();
-
     });
 
     socket.on("giveUp", (set: any, status: number) => {
@@ -121,7 +115,7 @@ export function GamePlayer_p1_p2() {
         IPlayer_p2.gave_up = true;
     });
 
-    socket.on("get_players", (p1: any, p2 : any) => {  
+    socket.on("get_players", (p1: IPlayer, p2 : IPlayer) => {  
       IPlayer_p1 = p1;
       IPlayer_p2 = p2;
     });
@@ -134,15 +128,14 @@ export function GamePlayer_p1_p2() {
       IPaddle_p2.y = y * ratio_height;
     });
 
-    socket.on("get_ball", (x: any, y: any) => {
+    socket.on("get_ball", (x: number, y: number) => {
       IBall.x = x * ratio_width;
       IBall.y = y * ratio_height;
     });
-
-    }, [socket]);
+  }, [socket]);
 
     function ask_paddle() {
-      let data = {
+      let data: IaskPaddle = {
         room: game.room,
         positionY: position_y,
         front_canvas_height: height,
@@ -158,11 +151,11 @@ export function GamePlayer_p1_p2() {
     }
     
     let countdown = 3;
-  
     useEffect(() => {
+      
+
     let countdownInterval = setInterval(() => {
       countdown--;
-      console.log("count");
       if (countdown === 0) {
         clearInterval(countdownInterval);
         start = true;
@@ -172,14 +165,11 @@ export function GamePlayer_p1_p2() {
     let canvas: any = canvasRef.current;
     const render = () => {
       requestAnimationFrame(render);
-      let ctx : any = null;
-      ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      let ctx : CanvasRenderingContext2D = canvas.getContext('2d');
 
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (game.isP2 === true && start === true) {
-          console.log("Iplayer2", IPlayer_p2);
-          console.log("Iplayer1", IPlayer_p1);
           socket.emit("gameRender", game.room);
           start = false;
         }
@@ -206,7 +196,7 @@ export function GamePlayer_p1_p2() {
   }
   ////////////////////////////////////////////////////
 
-  function mouv_mouse(e: any) {
+  function mouv_mouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     const canvas = document.getElementById("canvas");
     var rect = canvas?.getBoundingClientRect() || {top: 0, left: 0};
 
