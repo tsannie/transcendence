@@ -21,7 +21,6 @@ import {
   RoomStatus,
   victory_score,
 } from './const/const';
-import { BallCol_p1, BallCol_p2, mouv_ball } from './gamefunction';
 import { RoomEntity } from './entity/room.entity';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
@@ -291,15 +290,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room_game.set.p2.score !== victory_score &&
         this.is_playing[room] === true
       ) {
-        mouv_ball(BallObj);
-        BallCol_p1(
+        this.gameService.mouv_ball(BallObj);
+        this.gameService.BallCol_p1(
           room_game.set,
           BallObj,
           this.paddle_pos[room],
           this.server,
           room,
         );
-        BallCol_p2(
+        this.gameService.BallCol_p2(
           room_game.set,
           BallObj,
           this.paddle_pos[room],

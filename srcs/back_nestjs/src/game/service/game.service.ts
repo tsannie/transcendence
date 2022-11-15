@@ -4,10 +4,12 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { GameStatEntity } from '../entity/gameStat.entity';
-import { RoomStatus } from '../const/const';
+import { canvas_back_height, canvas_back_width, gravity, IBall, paddle_height, paddle_p1_x, paddle_p2_x, paddle_width, rad, RoomStatus, spawn_speed, speed, victory_score } from '../const/const';
 import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
+import { Server } from 'socket.io';
+import { PaddlePos } from '../game.gateway';
 
 @Injectable()
 export class GameService {
@@ -17,6 +19,9 @@ export class GameService {
 
     @InjectRepository(GameStatEntity)
     private gameStatRepository: Repository<GameStatEntity>,
+
+    @InjectRepository(PlayerEntity)
+    private all_player: Repository<PlayerEntity>,
 
     private readonly userService: UserService,
   ) {}
@@ -120,37 +125,125 @@ export class GameService {
     await this.all_game.save(room_game);
   }
 
-  async getStat(room_game: RoomEntity) {
-    //console.log("room game = ", room_game);
-    let statGame = new GameStatEntity();
-    let eloDiff: number;
+  mouv_ball(ball: IBall) {
+    if (ball.x > canvas_back_width / 2 - 10 &&
+      ball.x < canvas_back_width / 2 + 10 &&
+      ball.can_touch_paddle == false) {
+      ball.can_touch_paddle = true;
+    }
+    if (ball.first_col === false) {
+      ball.x += spawn_speed * ball.direction_x;
+      ball.y += gravity * ball.direction_y;
+    } else {
+      ball.x += speed * ball.direction_x;
+      ball.y += ball.gravity * ball.direction_y;
+    }
 
+    if (ball.y + rad >= canvas_back_height - canvas_back_height / 40)
+      ball.direction_y *= -1;
+    else if (ball.y - rad <= canvas_back_height / 40)
+      ball.direction_y *= -1;
+  }
+
+  colision_paddle_player(y: number, ball: IBall) {
+    let res = y + paddle_height - ball.y;
+    ball.gravity = -(res / 10 - paddle_height / 20);
+    Math.abs(ball.gravity);
+
+    ball.direction_x *= -1;
+
+    if (ball.y < y - paddle_height / 2)
+      ball.direction_y = -1;
+    else
+      ball.direction_y = 1;
+    ball.first_col = true;
+    ball.can_touch_paddle = false;
+  }
+
+  BallCol_p1(
+    set: SetEntity,
+    ball: IBall,
+    paddle: PaddlePos,
+    server: Server,
+    room: string,
+  ) {
+    if (ball.can_touch_paddle === true &&
+      ball.x - rad <= paddle_p1_x + paddle_width &&
+      ball.x + rad / 3 >= paddle_p1_x &&
+      ball.y + rad >= paddle.y1 &&
+      ball.y - rad <= paddle.y1 + paddle_height) {
+      this.colision_paddle_player(paddle.y1, ball);
+    } else if (ball.x - rad <= -(rad * 3))
+      this.losePoint(set.p2, ball, set.p1, set.p2, server, room);
+  }
+
+  BallCol_p2(
+    set: SetEntity,
+    ball: IBall,
+    paddle: PaddlePos,
+    server: Server,
+    room: string,
+  ) {
+    if (ball.can_touch_paddle === true &&
+      ball.x + rad >= paddle_p2_x &&
+      ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
+      ball.y + rad >= paddle.y2 &&
+      ball.y - rad <= paddle.y2 + paddle_height) {
+      this.colision_paddle_player(paddle.y2, ball);
+    } else if (ball.x + rad >= canvas_back_width + rad * 3)
+      this.losePoint(set.p1, ball, set.p1, set.p2, server, room);
+  }
+
+  async losePoint(
+    player: PlayerEntity,
+    ball: IBall,
+    p1: PlayerEntity,
+    p2: PlayerEntity,
+    server: Server,
+    room: string,
+  ) {
+    ball.x = canvas_back_width / 2;
+    ball.y = canvas_back_height / 2;
+
+    ball.direction_y = 1;
+    ball.first_col = false;
+
+    player.score += 1;
+    if (player.score === victory_score)
+      player.won = true;
+    await this.all_player.save(player);
+    server.in(room).emit('get_players', p1, p2);
+  }
+
+  async getStat(room_game: RoomEntity) {
+    if (room_game && (!room_game.set || !room_game.set)) { // partie annule, 1 mec a rejoint, l'autre handleDisconnect
+      await this.all_game.remove(room_game);
+      return ;
+    }
     const p1: UserEntity = await this.userService.findByName(room_game.set.p1.name);
     const p2: UserEntity = await this.userService.findByName(room_game.set.p2.name);
-    console.log("room_name end game = ", room_game);
+    let statGame: GameStatEntity = this.getGameStat(p1, p2, room_game.set);
+
+    await this.updateHistory(p1, p2, statGame);
+    await this.gameStatRepository.save(statGame);
+  }
+
+  getGameStat(p1: UserEntity, p2: UserEntity, set: SetEntity): GameStatEntity {
+
+    let statGame = new GameStatEntity();
 
     statGame.players = [p1, p2];
-    statGame.p1_score = room_game.set.p1.score;
-    statGame.p2_score = room_game.set.p2.score;
-
-    if (room_game.set.p1.won) {
-      eloDiff = this.calculateElo(p1.elo, p2.elo, true);
-
-      p1.elo += eloDiff;
-      p2.elo -= eloDiff;
-      p1.wins++;
+    statGame.p1_score = set.p1.score;
+    statGame.p2_score = set.p2.score;
+    if (set.p1.won)
       statGame.winner_id = p1.id;
-    }
-    else {
-      eloDiff = this.calculateElo(p1.elo, p2.elo, false);
-      p1.elo -= eloDiff;
-      p2.elo += eloDiff;
-      p2.wins++;
+    else
       statGame.winner_id = p2.id;
-    }
-    p1.matches++;
-    p2.matches++;
-    statGame.eloDiff = eloDiff;
+    statGame.eloDiff = this.getElo(set, p1, p2);
+    return statGame;
+  }
+
+  async updateHistory(p1: UserEntity, p2: UserEntity, statGame: GameStatEntity) {
     if (!p1.history)
       p1.history = [];
     if (!p2.history)
@@ -160,8 +253,27 @@ export class GameService {
 
     await this.userService.add(p1);
     await this.userService.add(p2);
-    // save game stat in db
-    await this.gameStatRepository.save(statGame);
+  }
+
+  getElo(set: SetEntity, p1: UserEntity, p2: UserEntity): number {
+
+    let eloDiff: number = 0;
+    if (set.p1.won) {
+      eloDiff = this.calculateElo(p1.elo, p2.elo, true);
+
+      p1.elo += eloDiff;
+      p2.elo -= eloDiff;
+      p1.wins++;
+    }
+    else {
+      eloDiff = this.calculateElo(p1.elo, p2.elo, false);
+      p1.elo -= eloDiff;
+      p2.elo += eloDiff;
+      p2.wins++;
+    }
+    p1.matches++;
+    p2.matches++;
+    return eloDiff;
   }
 
   probaToWinWithElo(eloP1: number, eloP2: number): number {
