@@ -1,5 +1,11 @@
 import { AxiosError, AxiosResponse } from "axios";
-import React, { FormEvent, useContext, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { api } from "../../const/const";
 import ChannelTable from "./ChannelTable";
 import { ReactComponent as RefreshIcon } from "../../assets/img/icon/refresh.svg";
@@ -30,7 +36,7 @@ function JoinChannelForm() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
+    // TODO password
     if (selectChannel) {
       api
         .post(`/channels/${selectChannel.id}/join`)
@@ -83,7 +89,13 @@ function JoinChannelForm() {
       </div>
       <form className="join-channel__footer" onSubmit={handleSubmit}>
         {selectChannel && selectChannel.status === "Protected" && (
-          <input type="password" placeholder="password" />
+          <input
+            type="password"
+            placeholder="password"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+          />
         )}
         {selectChannel && <button>join</button>}
       </form>
