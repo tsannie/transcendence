@@ -202,7 +202,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
-    let statGame: GameStatEntity;
     client.leave(room);
     console.log('endGame');
     const room_game = await this.all_game.findOneBy({ id: room });
@@ -212,13 +211,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       console.log('clearInterval end of GAME');
     }
     if (room_game) {
-      statGame = await this.gameService.getStat(room_game);
+      await this.gameService.getStat(room_game);
 
-      console.log('stat de la game : ', statGame);
-      if (this.paddle_pos[room]) delete this.paddle_pos[room];
-      if (this.is_playing[room]) delete this.is_playing[room];
+      if (this.paddle_pos[room])
+        delete this.paddle_pos[room];
+      if (this.is_playing[room])
+        delete this.is_playing[room];
       await this.all_game.remove(room_game);
-      await this.gameStatRepository.save(statGame);
     }
     client.emit('leftRoom');
     return;
@@ -311,7 +310,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
         await new Promise((f) => setTimeout(f, 8));
       }
-      await this.all_game.save(room_game);
     }
     return;
   }
