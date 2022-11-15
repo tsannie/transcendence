@@ -1,17 +1,16 @@
-const white = "#fff8dc";
-
+import { white } from "../const/const";
 
 export function draw_game(ctx:any, canvas: any, IBall:any, IPaddle_p1: any, IPaddle_p2:any, IPlayer_p1:any, IPlayer_p2:any , countdown: any){
   if (countdown != 0) 
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
-    draw_ball(ctx, IBall, canvas.height, canvas.width);
+    draw_ball(ctx, IBall);
     draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
   }
   draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, IPaddle_p1, canvas.height, canvas.width);
-  draw_paddle(ctx, IPaddle_p2, canvas.height, canvas.width);
+  draw_paddle(ctx, IPaddle_p1);
+  draw_paddle(ctx, IPaddle_p2);
 }
 
 export function draw_game_ended(isP2: boolean, ctx: any, player_p1: any, player_p2: any, canvas_height: number, canvas_width: number)
@@ -112,7 +111,7 @@ function draw_score(
 //////// DRAW ELEMENTS
 ////////////////////////
 
-function draw_paddle(ctx: any , IPaddle : any, height : any, width : any){
+function draw_paddle(ctx: any , IPaddle : any){
 
   ctx.beginPath();
   ctx.rect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
@@ -124,7 +123,7 @@ function draw_paddle(ctx: any , IPaddle : any, height : any, width : any){
   ctx.fill();
 }
 
-function draw_ball(ctx: any , IBall : any, height : any, width : any){
+function draw_ball(ctx: any , IBall : any){
 
   ctx.beginPath();
   ctx.fillStyle = white;

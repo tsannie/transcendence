@@ -9,3 +9,10 @@ export const paddle_width: number = 50;
 export const paddle_height: number = 600;
 
 export const victory_score: number = 10;
+
+export const white = "#fff8dc";
+
+export enum GameMode {
+  PONG_1972 = "1972",
+  PONG_TRANS = "TRANS",
+}
