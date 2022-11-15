@@ -9,17 +9,25 @@ import { Link } from "react-router-dom";
 
 interface IProps {
   data: IChannel[];
+  setSelectChannel: (channel: IChannel) => void;
 }
 
 function ChannelTable(props: IProps) {
   let allFriends = props.data.map((channel) => {
     return (
-      <div className="table__item channel" key={channel.id}>
+      <div
+        className="table__item channel"
+        key={channel.id}
+        onClick={() => props.setSelectChannel(channel)}
+      >
         <div className="table__item__name">
           <span>{channel.name}</span>
         </div>
         <div className="table__item__owner">
-          <Link to={`/profile/${channel.owner?.username}`}>
+          <Link
+            style={{ textDecoration: "none" }}
+            to={`/profile/${channel.owner?.username}`}
+          >
             <span>{channel.owner?.username}</span>
           </Link>
         </div>
