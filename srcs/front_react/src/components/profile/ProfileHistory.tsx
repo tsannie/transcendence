@@ -12,7 +12,7 @@ function ProfileHistory(props: IProps) {
   console.log(props.player?.history);
 
   if (props.player?.history.length !== 0) {
-    allHistory = props.player?.history.map((game, index) => {
+    allHistory = props.player?.history.reverse().map((game, index) => {
       return (
         <li className="profile__body__history__list" key={index}>
           <div className="profile__body__history__item">
@@ -34,7 +34,7 @@ function ProfileHistory(props: IProps) {
               alt="avatar"
             />
             <span>
-              {game.p1_score} - {game.p2_score}
+              {props.player?.id === game.winner_id ? game.p1_score : game.p2_score } - {props.player?.id === game.winner_id ? game.p2_score : game.p1_score}
             </span>
           </div>
         </li>
