@@ -12,8 +12,7 @@ import {
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { canvas_back_height, canvas_back_width, gravity, IBall, rad, RoomStatus, victory_score } from './const/const';
-import { BallCol_p1, BallCol_p2, mouv_ball } from './gamefunction';
+import { canvas_back_height, RoomStatus, victory_score } from './const/const';
 import { RoomEntity} from './entity/room.entity';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
@@ -22,11 +21,7 @@ import { UserService } from 'src/user/service/user.service';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { CreateRoomDto } from './dto/createRoom.dto';
-
-export interface PaddlePos {
-  y1: number;
-  y2: number;
-}
+import { IBall, PaddlePos } from './const/interface';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -37,7 +32,7 @@ export interface PaddlePos {
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @InjectRepository(RoomEntity)
-    private all_game: Repository<RoomEntity>,
+    private all_game: Repository<RoomEntity>,  
     private gameService: GameService,
     private connectedUserService: ConnectedUserService,
     private userService: UserService,
@@ -54,7 +49,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       let userId = client.handshake.query.userId;
       let user: UserEntity;
-      console.log('userId = ', userId);
       if (typeof userId === 'string') {
         user = await this.userService.findById(parseInt(userId));
       }
@@ -115,7 +109,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room_game.game_mode = data.mode;
         room_game.p1 = user;
 
-        
         await this.all_game.save(room_game);
         client.join(room_game.id);
         client.emit('joinedRoom', room_game);
@@ -127,12 +120,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         this.gameService.initSet(room_game.id, this.is_playing, data.mode);
         this.server.in(room_game.id).emit('joinedRoom', room_game);
-      }
+     }
     }
   }
 
   ///////////////////////////////////////////////
-  //////////////// LEAVE ROOM
+  //////////////// LEAVE ROOM/
   ///////////////////////////////////////////////
 
   @SubscribeMessage('leaveGameRoom')
@@ -150,9 +143,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       room_game.status = RoomStatus.EMPTY;
     room_game.id = room;
 
-    if (room_game.p1.id === user.id) {
+    if (room_game.p1.id === user.id)
       room_game.p1 = null;
-    } else if (room_game.p2.id === user.id)
+    else if (room_game.p2.id === user.id)
       room_game.p2 = null;
 
     if (room_game.status === RoomStatus.EMPTY) {
@@ -173,24 +166,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('giveUp')
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
     const user = (await this.connectedUserService.findBySocketId(client.id)).user;
-    const room_game = await this.all_game.findOneBy({ id: room });
+    let room_game = await this.all_game.findOneBy({ id: room });
 
-    console.log('giveUp');
-    if (this.is_playing[room])
-      this.is_playing[room] = false;
-    if (room_game.status === RoomStatus.PLAYING)
-      room_game.status = RoomStatus.CLOSED;
-    if (room_game.set.p1.name === user.username) {
-      console.log("room_game.p1", room_game.set.p2.won);
-      room_game.p1 = null;
-      room_game.set.p2.won = true;
-      console.log("room_game.p1", room_game.set.p2.won);
-    }
-    else if (room_game.set.p2.name === user.username) {
-      room_game.p2 = null;
-      room_game.set.p1.won = true;
-    }
-    await this.all_game.save(room_game);
+    await this.gameService.giveUp(room, this.is_playing, room_game, user);
+
     this.server.in(room).emit('giveUp', room_game.set, room_game.status);
     client.emit('leftRoom');
     client.leave(room);
@@ -202,20 +181,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() room: string,
   ) {
     client.leave(room);
-    console.log('endGame');
     const room_game = await this.all_game.findOneBy({ id: room });
 
-    if (this.is_playing[room]) {
+    if (this.is_playing[room])
       this.is_playing[room] = false;
-      console.log('clearInterval end of GAME');
-    }
     if (room_game) {
       if (this.paddle_pos[room]) delete this.paddle_pos[room];
       if (this.is_playing[room]) delete this.is_playing[room];
       await this.all_game.remove(room_game);
     }
     client.emit('leftRoom');
-    return;
   }
 
   ///////////////////////////////////////////////
@@ -251,7 +226,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   ///////////////////////////////////////////////
-  ///////////////////////////////////////////////
 
   @SubscribeMessage('gameRender')
   async gameRender(@MessageBody() room: string) {
@@ -259,31 +233,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!room_game)
       return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
 
-    let BallObj: IBall = {
-      x : canvas_back_width / 2,
-      y : canvas_back_height / 2,
-      gravity : gravity,
-      first_col: false,
-      col_paddle: false,
-      can_touch_paddle: true,
-      direction_x : 1,
-      direction_y : 1,
-    };
-
+    let BallObj: IBall = this.gameService.createBall();
     if (room_game.set) {
       while (room_game.set.p1.score !== victory_score &&
       room_game.set.p2.score !== victory_score &&
       this.is_playing[room] === true) {
-        mouv_ball(BallObj);
-        BallCol_p1(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
-        BallCol_p2(room_game.set, BallObj, this.paddle_pos[room], this.server, room);
-
+        this.gameService.updateGame(BallObj, room_game.set, this.paddle_pos[room], this.server, room);
         this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
         await new Promise((f) => setTimeout(f, 8));
       }
-      await this.all_game.save(room_game);
     }
-    return;
   }
 
   @SubscribeMessage('resizeIngame')
