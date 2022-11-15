@@ -342,6 +342,7 @@ form {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  flex: 0 0 20%;
 }
 
 .join-channel__action__refresh {
@@ -401,7 +402,7 @@ form {
     align-items: center;
     border-collapse: collapse;
     width: 90%;
-    height: calc(320 * var(--res));
+    height: 90%;
     min-width: 0;
     border: dashed;
   }
@@ -446,6 +447,7 @@ form {
     height: calc(50 * var(--res));
 
     span {
+      font-size: calc(20 * var(--res));
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -457,6 +459,7 @@ form {
   }
   .header {
     justify-content: center;
+    height: calc(30 * var(--res));
   }
 
   .table__item__name {
@@ -465,9 +468,26 @@ form {
 
   .table__item__owner {
     flex: 0 0 20%;
+    justify-content: center;
   }
   .table__item__status {
     flex: 0 0 20%;
     justify-content: center;
+  }
+}
+
+.join-channel__footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 20%;
+
+  input {
+    width: 30%;
+    border-style: dashed;
+  }
+
+  button {
+    margin-left: 3%;
   }
 }
