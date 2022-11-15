@@ -127,13 +127,14 @@ export class GameService {
 
     const p1: UserEntity = await this.userService.findByName(room_game.set.p1.name);
     const p2: UserEntity = await this.userService.findByName(room_game.set.p2.name);
+    console.log("room_name end game = ", room_game);
 
     statGame.players = [p1, p2];
     statGame.p1_score = room_game.set.p1.score;
     statGame.p2_score = room_game.set.p2.score;
 
     if (room_game.set.p1.won) {
-      eloDiff = this.updateElo(p1.elo, p2.elo, true);
+      eloDiff = this.calculateElo(p1.elo, p2.elo, true);
 
       p1.elo += eloDiff;
       p2.elo -= eloDiff;
@@ -141,7 +142,7 @@ export class GameService {
       statGame.winner_id = p1.id;
     }
     else {
-      eloDiff = this.updateElo(p1.elo, p2.elo, false);
+      eloDiff = this.calculateElo(p1.elo, p2.elo, false);
       p1.elo -= eloDiff;
       p2.elo += eloDiff;
       p2.wins++;
@@ -150,9 +151,6 @@ export class GameService {
     p1.matches++;
     p2.matches++;
     statGame.eloDiff = eloDiff;
-    //console.log("game stat = ", statGame);
-    // save user elo in db with new elo
-    // save game stat in history db
     if (!p1.history)
       p1.history = [];
     if (!p2.history)
@@ -162,9 +160,8 @@ export class GameService {
 
     await this.userService.add(p1);
     await this.userService.add(p2);
-
     // save game stat in db
-    return statGame;
+    await this.gameStatRepository.save(statGame);
   }
 
   probaToWinWithElo(eloP1: number, eloP2: number): number {
@@ -173,7 +170,7 @@ export class GameService {
     );
   }
 
-  updateElo(eloP1: number, eloP2: number, isWinnerP1: boolean): number {
+  calculateElo(eloP1: number, eloP2: number, isWinnerP1: boolean): number {
     let eloDiff: number = 0;
     const p1 = this.probaToWinWithElo(eloP2, eloP1);
     const p2 = this.probaToWinWithElo(eloP1, eloP2);
