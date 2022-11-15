@@ -331,6 +331,18 @@ form {
   }
 }
 
+.create__channel__header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+
+  h2 {
+    white-space: nowrap;
+  }
+}
+
 .join-channel {
   display: flex;
   flex-direction: column;
@@ -435,6 +447,22 @@ form {
         opacity: 0.6;
       }
     }
+
+    &:focus {
+      @extend :hover;
+      span,
+      svg {
+        opacity: 1;
+      }
+    }
+
+    &:active {
+      @extend :hover;
+      span,
+      svg {
+        opacity: 0.3;
+      }
+    }
   }
 
   .table__item__owner,
@@ -485,9 +513,6 @@ form {
   input {
     width: 30%;
     border-style: dashed;
-  }
-
-  button {
-    margin-left: 3%;
+    margin-right: 3%;
   }
 }
