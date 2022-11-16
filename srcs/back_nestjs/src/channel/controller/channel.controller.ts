@@ -5,7 +5,7 @@ import {
   Get,
   Post,
   Query,
-  Request,
+  Req,
   SerializeOptions,
   UseGuards,
   UseInterceptors,
@@ -18,6 +18,7 @@ import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { BanEntity, MuteEntity } from '../models/ban.entity';
+import { Request } from 'express';
 
 @Controller('channel')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -29,7 +30,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async getDatas(
     @Query() query_channel: ChannelDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<{
     status: string;
     data: ChannelEntity;
@@ -40,14 +41,14 @@ export class ChannelController {
   @Get('userList')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getUserList(@Request() req): Promise<ChannelEntity[]> {
+  async getUserList(@Req() req: Request): Promise<ChannelEntity[]> {
     return await this.channelService.getUserList(req.user);
   }
 
   @Get('list')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getList(@Request() req): Promise<ChannelEntity[]> {
+  async getList(@Req() req: Request): Promise<ChannelEntity[]> {
     return await this.channelService.getList(req.user);
   }
 
@@ -57,7 +58,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async createChannel(
     @Body() channel: CreateChannelDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<void | ChannelEntity> {
     return await this.channelService.createChannel(channel, req.user);
   }
@@ -67,7 +68,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async banUser(
     @Body() ban_request: ChannelActionsDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<BanEntity> {
     return await this.channelService.banUser(ban_request, req.user);
   }
@@ -77,7 +78,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async unBanUser(
     @Body() ban_request: ChannelActionsDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<BanEntity> {
     return await this.channelService.unBanUser(ban_request, req.user);
   }
@@ -87,7 +88,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async makeAdmin(
     @Body() channel: ChannelActionsDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<ChannelEntity> {
     return await this.channelService.makeAdmin(channel, req.user);
   }
@@ -97,7 +98,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async muteUser(
     @Body() channel: ChannelActionsDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<MuteEntity> {
     return await this.channelService.muteUser(channel, req.user);
   }
@@ -107,7 +108,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async unMuteUser(
     @Body() channel: ChannelActionsDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<MuteEntity> {
     return await this.channelService.unMuteUser(channel, req.user);
   }
@@ -117,7 +118,7 @@ export class ChannelController {
   @UseGuards(JwtTwoFactorGuard)
   async revokeAdmin(
     @Body() channel: ChannelActionsDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<ChannelEntity> {
     return await this.channelService.revokeAdmin(channel, req.user);
   }
@@ -126,28 +127,28 @@ export class ChannelController {
   @Post('join')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async joinChannel(@Body() query_channel: ChannelDto, @Request() req) {
+  async joinChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
     return await this.channelService.joinChannel(query_channel, req.user);
   }
 
   @Post('leave')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async leaveChannel(@Body() query_channel: ChannelDto, @Request() req) {
+  async leaveChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
     return await this.channelService.leaveChannel(query_channel, req.user);
   }
 
   @Post('delete')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async deleteChannel(@Body() query_channel: ChannelDto, @Request() req) {
+  async deleteChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
     return await this.channelService.deleteChannel(query_channel, req.user);
   }
 
   @Post('addPassword')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async addPassword(@Body() channel: ChannelPasswordDto, @Request() req) {
+  async addPassword(@Body() channel: ChannelPasswordDto, @Req() req: Request) {
     return await this.channelService.addPassword(channel, req.user);
   }
 
@@ -155,14 +156,17 @@ export class ChannelController {
   @Post('modifyPassword')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async modifyPassword(@Body() channel: ChannelPasswordDto, @Request() req) {
+  async modifyPassword(
+    @Body() channel: ChannelPasswordDto,
+    @Req() req: Request,
+  ) {
     return await this.channelService.addPassword(channel, req.user);
   }
 
   @Post('deletePassword')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async deletePassword(@Body() channel: ChannelDto, @Request() req) {
+  async deletePassword(@Body() channel: ChannelDto, @Req() req: Request) {
     return await this.channelService.deletePassword(channel, req.user);
   }
 

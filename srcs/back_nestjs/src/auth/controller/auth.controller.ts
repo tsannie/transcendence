@@ -4,13 +4,13 @@ import {
   Get,
   Redirect,
   Req,
-  Request,
   SerializeOptions,
   UnauthorizedException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import { UserEntity } from 'src/user/models/user.entity';
 import FortyTwoGuard from '../guard/fortyTwo.guard';
 import GoogleGuard from '../guard/google.guard';
@@ -26,13 +26,13 @@ export class AuthController {
   @Get('profile')
   @SerializeOptions({ groups: ['me'] })
   @UseGuards(JwtTwoFactorGuard)
-  getProfile(@Request() req): UserEntity {
+  getProfile(@Req() req: Request): UserEntity {
     return req.user;
   }
 
   @Get('isTwoFactor')
   @UseGuards(JwtGuard)
-  isTwoFactor(@Request() req): { isTwoFactor: boolean } {
+  isTwoFactor(@Req() req: Request): { isTwoFactor: boolean } {
     const user = req.user;
     let isTwoFactor = false;
     if (user.enabled2FA) {
@@ -45,13 +45,12 @@ export class AuthController {
   @SerializeOptions({ groups: ['me'] })
   @UseGuards(FortyTwoGuard)
   @Redirect(process.env.FRONT_URL, 301)
-  async oauthFortyTwo(@Req() req): Promise<UserEntity> {
-    // TODO Interface
-    const user = req.user;
+  async oauthFortyTwo(@Req() req: Request): Promise<UserEntity> {
+    const user: UserEntity = req.user;
     if (!user) throw new UnauthorizedException('User not found');
-    const accessToken = await this.authService.getCookie(user);
+    const accessToken = await this.authService.getToken(user);
 
-    req.res.cookie(process.env.COOKIE_NAME, accessToken, {
+    req.res.cookie(process.env.COOKIE_NAME, accessToken.access_token, {
       httpOnly: false,
       path: '/',
     });
@@ -62,12 +61,12 @@ export class AuthController {
   @SerializeOptions({ groups: ['me'] })
   @UseGuards(GoogleGuard)
   @Redirect(process.env.FRONT_URL, 301)
-  async oauthGoogle(@Req() req): Promise<UserEntity> {
+  async oauthGoogle(@Req() req: Request): Promise<UserEntity> {
     const user = req.user;
     if (!user) throw new UnauthorizedException('User not found');
-    const accessToken = await this.authService.getCookie(user);
+    const accessToken = await this.authService.getToken(user);
 
-    req.res.cookie(process.env.COOKIE_NAME, accessToken, {
+    req.res.cookie(process.env.COOKIE_NAME, accessToken.access_token, {
       httpOnly: false,
       path: '/',
     });
@@ -76,7 +75,7 @@ export class AuthController {
 
   @Get('logout')
   @UseGuards(JwtGuard)
-  logout(@Request() req): { message: string } {
+  logout(@Req() req: Request): { message: string } {
     req.res.clearCookie(process.env.COOKIE_NAME);
     return { message: 'Logout' };
   }
