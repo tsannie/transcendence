@@ -18,7 +18,6 @@ function ProfileStatsBar(props: IProps) {
 
   async function getLeaderboardRank() {
     await api.get("user/leaderboard").then((res) => {
-      console.log(res.data);
       setRank(res.data);
     });
   }
