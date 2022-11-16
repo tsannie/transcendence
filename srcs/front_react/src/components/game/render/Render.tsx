@@ -16,17 +16,18 @@ import { initObj } from "./InitGameObj";
 
 let position_y: number = 0;
 export function GamePlayer_p1_p2() {
+  const [ leave, setLeave ] = useState(false);
+
+  let start = false;
   let lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
   let ratio_width = lowerSize / canvas_back_width;
   let ratio_height = lowerSize / screen_ratio / canvas_back_height;
-  let start = false;
   let height = lowerSize / screen_ratio;
   let border_size = height / 50;
-
   const game = useContext(GameContext);
   const socket = useContext(SocketGameContext);
   const canvasRef: any = createRef();
-  let gameObj: IGameObj = initObj(ratio_width, ratio_height);
+  const [ gameObj ] = useState<IGameObj>(initObj(ratio_width, ratio_height));
 
   const [HW, setdetectHW] = useState({
     winWidth: window.innerWidth,
@@ -52,6 +53,8 @@ export function GamePlayer_p1_p2() {
 
   function resizeGame() {
     lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+    height = lowerSize / screen_ratio;
+  
     ratio_width = lowerSize / canvas_back_width;
     ratio_height = lowerSize / screen_ratio / canvas_back_height;
 
@@ -116,16 +119,19 @@ export function GamePlayer_p1_p2() {
     }
   }
 
-  let countdown: number = 3;
+
+  
   useEffect(() => {
+    let countdown: number = 3;
     let countdownInterval = setInterval(() => {
       countdown--;
       if (countdown === 0) {
         clearInterval(countdownInterval);
+        setLeave(true);
         start = true;
       }
     }, 1000);
-
+  
     let canvas: any = canvasRef.current;
     const render = () => {
       requestAnimationFrame(render);
@@ -150,13 +156,12 @@ export function GamePlayer_p1_p2() {
   }, []);
 
   function leaveGame() {
-    if (countdown === 0) {
-      game.setStatus(RoomStatus.CLOSED);
+    if (leave) {
+      game.setStatus(RoomStatus.EMPTY);
       if (gameObj.player_p1.won === true || gameObj.player_p2.won === true)
         socket.emit("endGame", game.room);
       else
         socket.emit("giveUp", game.room);
-      game.setRoom("");
     }
   }
   ////////////////////////////////////////////////////
