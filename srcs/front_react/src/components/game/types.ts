@@ -1,5 +1,13 @@
 import { GameMode } from "./const/const";
 
+export interface IGameObj {
+  ball: IBall;
+  paddle_p1: IPaddle;
+  paddle_p2: IPaddle;
+  player_p1: IPlayer;
+  player_p2: IPlayer;
+}
+
 export interface IBall {
   x: number;
   y: number;

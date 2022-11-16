@@ -6,59 +6,24 @@ import {
 import { canvas_back_height, canvas_back_width, paddle_height, paddle_margin, paddle_width, rad, screen_ratio} from "../const/const";
 import { GameContext, RoomStatus } from "../GameContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
-import { IaskPaddle, IBall, IPaddle, IPlayer } from "../types";
+import { IaskPaddle, IPlayer } from "../types";
+import { iniObj } from "./InitGameObj";
 
-let position_y = 0;
-
+let position_y: number = 0;
 export function GamePlayer_p1_p2() {
   
-  let XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
-  let ratio_width = (XlowerSize /canvas_back_width);
-  let ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height);
+  let lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
+  let ratio_width = (lowerSize /canvas_back_width);
+  let ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height);
   let start = false;
-  let height = XlowerSize / screen_ratio;
+  let height = lowerSize / screen_ratio;
   let border_size = ((height) / 50);
 
   const game = useContext(GameContext);
   const socket = useContext(SocketGameContext);
   const canvasRef: any = createRef();
+  let gameObj = iniObj(ratio_width, ratio_height);
   
-  let IBall = initBall();
-  let IPaddle_p1 = initPaddle1();
-  let IPaddle_p2 = initPaddle2();
-
-  function initBall() {
-    let ball : IBall = {
-      x: (canvas_back_width / 2) * ratio_width,
-      y: (canvas_back_height / 2) * ratio_height,
-      rad: rad * ratio_width,
-    };
-    return ball;
-  }
-
-  function initPaddle1() {
-    let IPaddle_p1 : IPaddle = {
-      x: paddle_margin * ratio_width,
-      y: height / 2,
-      height: paddle_height * ratio_height,
-      width: paddle_width * ratio_width
-    };
-    return IPaddle_p1;
-  }
-
-  function initPaddle2() {
-    let IPaddle_p2 : IPaddle = {
-      x: (canvas_back_width - paddle_margin - paddle_width) * ratio_width,
-      y: height / 2,
-      height: paddle_height * ratio_height,
-      width: paddle_width * ratio_width
-    };
-    return IPaddle_p2;
-  }
-
-  let IPlayer_p1 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
-  let IPlayer_p2 : IPlayer = { name: "", score: 0, won: false, gave_up: false };
-
   const [HW, setdetectHW] = useState({winWidth: window.innerWidth, winHeight: window.innerHeight,})
   const detectSize = () => {
     setdetectHW({
@@ -70,67 +35,62 @@ export function GamePlayer_p1_p2() {
     window.addEventListener('resize', detectSize)
     return () => {
       window.removeEventListener('resize', detectSize)
-      //setLowerSize(window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
-      XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
-      ratio_width = (XlowerSize /canvas_back_width);
-      
-      let height = XlowerSize / screen_ratio
+      lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
+      ratio_width = (lowerSize /canvas_back_width);
+      let height = lowerSize / screen_ratio
       border_size = ((height) / 50);
       socket.emit("resizeIngame", game.room);
-
     }
   }, [HW])
   
-  
   function resizeGame(){
-    XlowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
-    ratio_width = (XlowerSize /canvas_back_width);
-    ratio_height = (XlowerSize / (screen_ratio)) / (canvas_back_height)
+    lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth
+    ratio_width = (lowerSize /canvas_back_width);
+    ratio_height = (lowerSize / (screen_ratio)) / (canvas_back_height)
   
-    IBall.x =(canvas_back_width / 2) * ratio_width;
-    IBall.y = (canvas_back_height / 2) * ratio_height;
-    IBall.rad = rad * ratio_width;
+    gameObj.ball.x =(canvas_back_width / 2) * ratio_width;
+    gameObj.ball.y = (canvas_back_height / 2) * ratio_height;
+    gameObj.ball.rad = rad * ratio_width;
   
-    IPaddle_p1.x = paddle_margin * ratio_width;
-    IPaddle_p1.height = paddle_height * ratio_height;
-    IPaddle_p1.width =  paddle_width * ratio_width;
+    gameObj.paddle_p1.x = paddle_margin * ratio_width;
+    gameObj.paddle_p1.height = paddle_height * ratio_height;
+    gameObj.paddle_p1.width =  paddle_width * ratio_width;
   
-    IPaddle_p2.x = (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
-    IPaddle_p2.height = paddle_height * ratio_height;
-    IPaddle_p2.width = paddle_width * ratio_width;
+    gameObj.paddle_p2.x = (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
+    gameObj.paddle_p2.height = paddle_height * ratio_height;
+    gameObj.paddle_p2.width = paddle_width * ratio_width;
   }
 
   useEffect(() => {
-    
     socket.on("resize_game", () => {
       resizeGame();
     });
 
-    socket.on("giveUp", (set: any, status: number) => {
-      IPlayer_p2.won = set.p2.won;
-      IPlayer_p1.won = set.p1.won;
-      if (IPlayer_p2.won)
-        IPlayer_p1.gave_up = true;
-      else if (IPlayer_p1.won)
-        IPlayer_p2.gave_up = true;
+    socket.on("giveUp", (p1: IPlayer, p2: IPlayer) => {
+      gameObj.player_p2.won = p2.won;
+      gameObj.player_p1.won = p1.won;
+      if (gameObj.player_p2.won)
+        gameObj.player_p1.gave_up = true;
+      else if (gameObj.player_p1.won)
+        gameObj.player_p2.gave_up = true;
     });
 
     socket.on("get_players", (p1: IPlayer, p2 : IPlayer) => {  
-      IPlayer_p1 = p1;
-      IPlayer_p2 = p2;
+      gameObj.player_p1 = p1;
+      gameObj.player_p2 = p2;
     });
 
     socket.on("getPaddleP1", (y: number) => {
-      IPaddle_p1.y = y * ratio_height;
+      gameObj.paddle_p1.y = y * ratio_height;
     });
 
     socket.on("getPaddleP2", (y: number) => {
-      IPaddle_p2.y = y * ratio_height;
+      gameObj.paddle_p2.y = y * ratio_height;
     });
 
     socket.on("get_ball", (x: number, y: number) => {
-      IBall.x = x * ratio_width;
-      IBall.y = y * ratio_height;
+      gameObj.ball.x = x * ratio_width;
+      gameObj.ball.y = y * ratio_height;
     });
   }, [socket]);
 
@@ -141,19 +101,17 @@ export function GamePlayer_p1_p2() {
         front_canvas_height: height,
       };
       if (game.isP2) {
-        IPaddle_p2.y = position_y;
+        gameObj.paddle_p2.y = position_y;
         socket.emit("askPaddleP2", data);
       }
       else {
-        IPaddle_p1.y = position_y;
+        gameObj.paddle_p1.y = position_y;
         socket.emit("askPaddleP1", data);
       }
     }
     
-    let countdown = 3;
+    let countdown: number = 3;
     useEffect(() => {
-      
-
     let countdownInterval = setInterval(() => {
       countdown--;
       if (countdown === 0) {
@@ -173,12 +131,12 @@ export function GamePlayer_p1_p2() {
           socket.emit("gameRender", game.room);
           start = false;
         }
-        if (IPlayer_p1.won === false && IPlayer_p2.won === false && game.room !== "") {
+        if (gameObj.player_p1.won === false && gameObj.player_p2.won === false && game.room !== "") {
           ask_paddle()
-          draw_game(ctx, canvas, IBall, IPaddle_p1, IPaddle_p2, IPlayer_p1, IPlayer_p2, countdown);
+          draw_game(ctx, canvas, gameObj, countdown);
         }
         else
-          draw_game_ended(game.isP2, ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+          draw_game_ended(game.isP2, ctx, gameObj.player_p1, gameObj.player_p2, canvas.height, canvas.width);
       }
     };
     render();
@@ -187,7 +145,7 @@ export function GamePlayer_p1_p2() {
   function leaveGame() {
     if (countdown === 0) {
       game.setStatus(RoomStatus.CLOSED);
-      if (IPlayer_p1.won === true || IPlayer_p2.won === true)
+      if (gameObj.player_p1.won === true || gameObj.player_p2.won === true)
         socket.emit("endGame", game.room);
       else
         socket.emit("giveUp", game.room);
@@ -200,13 +158,13 @@ export function GamePlayer_p1_p2() {
     const canvas = document.getElementById("canvas");
     var rect = canvas?.getBoundingClientRect() || {top: 0, left: 0};
 
-    let tmp_pos = e.clientY - rect?.top - (IPaddle_p1.height / 2)
+    let tmp_pos = e.clientY - rect?.top - (gameObj.paddle_p1.height / 2)
 
-    if (tmp_pos > 0 && tmp_pos < (IPaddle_p1.height / 8))
+    if (tmp_pos > 0 && tmp_pos < (gameObj.paddle_p1.height / 8))
       position_y = border_size;
-    else if (tmp_pos > (height) - (IPaddle_p2.height))
-      position_y = (height) - (border_size) - (IPaddle_p2.height);
-    else if (tmp_pos > (height) - (IPaddle_p2.height) ||
+    else if (tmp_pos > (height) - (gameObj.paddle_p2.height))
+      position_y = (height) - (border_size) - (gameObj.paddle_p2.height);
+    else if (tmp_pos > (height) - (gameObj.paddle_p2.height) ||
     tmp_pos < 0)
       position_y = position_y;
     else
@@ -219,7 +177,7 @@ export function GamePlayer_p1_p2() {
         id="canvas"
         ref={canvasRef}
         height={height}
-        width={XlowerSize}
+        width={lowerSize}
         onMouseMove={(e) => mouv_mouse(e)}
         style={{ backgroundColor: "black" }}
         ></canvas>
