@@ -14,6 +14,7 @@ import { ChannelService } from '../service/channel.service';
 import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
+import { BanEntity, MuteEntity } from '../models/ban.entity';
 
 @Controller('channel')
 export class ChannelController {
@@ -58,7 +59,7 @@ export class ChannelController {
   async banUser(
     @Body() ban_request: ChannelActionsDto,
     @Request() req,
-  ): Promise<ChannelEntity> {
+  ): Promise<BanEntity> {
     return await this.channelService.banUser(ban_request, req.user);
   }
 
@@ -67,7 +68,7 @@ export class ChannelController {
   async unBanUser(
     @Body() ban_request: ChannelActionsDto,
     @Request() req,
-  ): Promise<ChannelEntity> {
+  ): Promise<BanEntity> {
     return await this.channelService.unBanUser(ban_request, req.user);
   }
 
@@ -85,7 +86,7 @@ export class ChannelController {
   async muteUser(
     @Body() channel: ChannelActionsDto,
     @Request() req,
-  ): Promise<ChannelEntity> {
+  ): Promise<MuteEntity> {
     return await this.channelService.muteUser(channel, req.user);
   }
 
@@ -94,7 +95,7 @@ export class ChannelController {
   async unMuteUser(
     @Body() channel: ChannelActionsDto,
     @Request() req,
-  ): Promise<ChannelEntity> {
+  ): Promise<MuteEntity> {
     return await this.channelService.unMuteUser(channel, req.user);
   }
 
