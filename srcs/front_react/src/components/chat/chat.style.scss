@@ -24,7 +24,7 @@ $width_chat: calc(450 * var(--res));
   display: flex;
   flex-direction: column;
   flex: 0 0 22%;
-  padding: 1% 1% 1% 1%;
+  padding: 1% 1% 0% 1%;
   border-right-style: dashed;
   min-width: 0;
 }
@@ -69,10 +69,7 @@ $width_chat: calc(450 * var(--res));
   border-style: dashed;
   justify-content: space-around;
   align-items: center;
-  height: calc(50 * var(--res));
   margin: 2.4%;
-  padding-top: calc(10 * var(--res));
-  padding-bottom: calc(10 * var(--res));
   transition: 70ms;
   min-width: 0;
   cursor: pointer;
@@ -80,6 +77,7 @@ $width_chat: calc(450 * var(--res));
   li {
     display: flex;
     min-width: 0;
+    height: calc(45 * var(--res));
     width: 100%;
     justify-content: flex-start;
     align-items: center;
@@ -203,7 +201,7 @@ $width_chat: calc(450 * var(--res));
       align-self: center;
     }
 
-    .members{
+    .members {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
@@ -223,7 +221,6 @@ $width_chat: calc(450 * var(--res));
   }
 }
 
-
 .conversation__options__title {
   display: flex;
   flex-direction: column;
@@ -231,62 +228,61 @@ $width_chat: calc(450 * var(--res));
   padding-bottom: 4%;
   border-bottom-style: dashed;
   justify-content: center;
-  
+
   img {
-      width: calc(40 * var(--res));
-      height: calc(40 * var(--res));
-      border-radius: 100%;
-      align-self: center;
+    width: calc(40 * var(--res));
+    height: calc(40 * var(--res));
+    border-radius: 100%;
+    align-self: center;
   }
 
-
   .text {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-      span {
-          width: fit-content;
-          max-width: 100%;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-      }
+    span {
+      width: fit-content;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-      .owner {
-        padding-top: 5%;
-        padding-bottom: 3%;
-        font-size: calc(14 * var(--res));
-      }
+    .owner {
+      padding-top: 5%;
+      padding-bottom: 3%;
+      font-size: calc(14 * var(--res));
+    }
 
-      .date {
-          font-size: calc(11 * var(--res));
-      }
+    .date {
+      font-size: calc(11 * var(--res));
+    }
   }
 
   .clickable_profile {
-      border-style: none;
-      padding: 0%;
+    border-style: none;
+    padding: 0%;
   }
-  
+
   .actions {
-      display: flex;
-      justify-content: space-evenly;
-      padding-top: 4%;
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 4%;
 
-      button {
-          font-size: calc(10 * var(--res));
-          border-style: none;
-      }
+    button {
+      font-size: calc(10 * var(--res));
+      border-style: none;
+    }
 
-      svg {
-          padding: calc(7 * var(--res));
-          border-radius: 50%;
-          border-width: calc(3 * var(--res)) !important;
-          border-style: dashed;
-          width: calc(15 * var(--res));
-          cursor: pointer;
-      }
+    svg {
+      padding: calc(7 * var(--res));
+      border-radius: 50%;
+      border-width: calc(3 * var(--res)) !important;
+      border-style: dashed;
+      width: calc(15 * var(--res));
+      cursor: pointer;
+    }
   }
 }
 
