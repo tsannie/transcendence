@@ -84,10 +84,8 @@ export class GameService {
     if (room_game.status === RoomStatus.PLAYING)
       room_game.status = RoomStatus.CLOSED;
     if (room_game.set.p1.name === user.username) {
-      console.log("room_game.p2", room_game.set.p2.won);
       room_game.p1 = null;
       room_game.set.p2.won = true;
-      console.log("room_game.p2", room_game.set.p2.won);
     }
     else if (room_game.set.p2.name === user.username) {
       room_game.p2 = null;
@@ -95,6 +93,17 @@ export class GameService {
     }
     await this.all_game.save(room_game);
   }
+
+  async findBySocketId(socketId: string) {
+    return await this.all_game
+    .createQueryBuilder('room')
+    .where('room.p1SocketId = :p1SocketId', { p1SocketId: socketId })
+    .getOne() || await this.all_game
+    .createQueryBuilder('room')
+    .where('room.p2SocketId = :p2SocketId', { p2SocketId: socketId })
+    .getOne();
+  }
+
 
   ////////////////////
   // INGAME FUNCTIONS
