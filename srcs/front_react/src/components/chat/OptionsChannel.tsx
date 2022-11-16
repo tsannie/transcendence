@@ -1,120 +1,66 @@
-import { channel } from "diagnostics_channel";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { User } from "../../contexts/AuthContext";
 import { IDatas } from "./Conversation";
 import { IChannel } from "./types";
 
-/* 
-    TODO:
-    <Admins>
-    <Members>
-    <Banned>
-    <Muted>
-*/
+function UserList( props: {name: string, credentials: boolean, users: User[] | null} ) {
+    const { name, credentials, users } = props;
+    const [ isSelect, setSelected ] = useState<boolean>(false);
 
-function Muted (props: {credentials: boolean, users: User[] | null}) {
-    const { credentials, users } = props;
-    
-    if (!users || users.length === 0)
-        return <Fragment/>;
-    
-    const membersList = users.map( (elem) => {
-        return (
-            <button className="members" key={elem.id}>
-                <img src={elem.profile_picture}/>
-            </button>)
-    })
-    
-    return (
-        <div className="category">
-            <div className="title">Muted:</div>
-            {membersList}
-        </div>
-    )
-}
+    const showDropdownMenu = (event: any, elem: User) => {
+        setSelected(!isSelect);
+    }
 
-function Banned(props: {credentials: boolean, users: User[] | null}) {
-    const { credentials, users } = props;
-    
-    if (!users || users.length === 0)
-        return <Fragment/>;
-    
-    const membersList = users.map( (elem) => {
+    const userList = users?.map( (elem) => {
         return (
-            <button className="members" key={elem.id}>
-                <img src={elem.profile_picture}/>
-            </button>)
-    })
-    
-    return (
-        <div className="category">
-            <div className="title">Banned</div>
-            {membersList}
-        </div>
-    )
-}
-
-function Members(props: {credentials: boolean, users: User[] | null}) {
-    const { credentials, users } = props;
-    
-    if (!users || users.length === 0)
-        return <Fragment/>;
-    
-    const membersList = users.map( (elem) => {
-        return (
-            <button className="members" key={elem.id}>
-                <img src={elem.profile_picture}/>
-            </button>)
-    })
-    
-    return (
-        <div className="category">
-            <div className="title">Members</div>
-            {membersList}
-        </div>
-    )
-}
-
-function Admins(props: {credentials: boolean, users: User[] | null}) {
-    const { credentials, users } = props;
-    
-    if (!users || users.length === 0)
-        return <Fragment/>;
-    
-    const adminsList = users.map( (elem) => {
-        return (
-            <button className="members" key={elem.id}>
+            <button className="members" key={elem.id} onClick={(e: any) => showDropdownMenu(e, elem)}>
                 <img src={elem.profile_picture}/>
             </button>);
     })
     
+    useEffect(() => {
+        const closeDropdown = (e: any) => {
+            console.log(e.composedPath());
+            setSelected(false);
+        };
+
+        document.body.addEventListener('click', closeDropdown)
+        return (() => document.body.removeEventListener('click', closeDropdown));
+    }, [])
+
+    return <Fragment>{userList}</Fragment>;
+}
+
+function UserCategory(props: {name: string, credentials: boolean, users: User[] | null}) {
+    const { name, users } = props;
+
+    if (!users || users.length === 0)
+        return <Fragment/>;
+
     return (
         <div className="category">
-            <div className="title">Admins</div>
-            {adminsList}
+            <div className="title">{name}</div>
+            <UserList {...props}/>
         </div>
     )
 }
 
-function ClearedUserOptions(props: {isOwner: boolean, channel: IChannel}) {
-    const {isOwner, channel} = props;
+function RequesterOptions(props: {isOwner: boolean, isAdmin: boolean, channel: IChannel}) {
+    const {isOwner, isAdmin, channel} = props;
     
     return (
         <Fragment>
-            {isOwner? <Admins credentials={true} users={channel.admins}/> : <Admins credentials={false} users={channel.admins}/>}
-            <Members credentials={true} users={channel.users}/>
-            <Banned credentials={true} users={channel.banned}/>
-            <Muted credentials={true} users={channel.muted}/>
-        </Fragment>);
-}
-
-function RegularUserOptions( props: {channel: IChannel}) {
-    const {channel} = props;
-
-    return (
-        <Fragment>
-            <Admins credentials={false} users={channel.admins} />
-            <Members credentials={false} users={channel.users}/>
+            {isOwner ? <UserCategory name={"Admins"} credentials={true} users={channel.admins}/> : <UserCategory name="Admins" credentials={false} users={channel.admins}/>}
+            {isOwner || isAdmin ? 
+            <Fragment>
+                <UserCategory name={"Members"} credentials={true} users={channel.users}/>
+                <UserCategory name={"Muted"} credentials={true} users={channel.muted}/>
+                <UserCategory name={"Banned"} credentials={true} users={channel.muted}/>
+            </Fragment> : 
+            <Fragment>
+                <UserCategory name={"Members"} credentials={false} users={channel.users}/>
+            </Fragment>
+            }
         </Fragment>);
 }
 
@@ -124,14 +70,14 @@ function ChannelMembers(props: {channel: IDatas | null }) {
 
     if (!data)
         return <Fragment />;
-    
+
     switch (status){
         case "owner":
-            return <ClearedUserOptions isOwner={true} channel={data} />
+            return <RequesterOptions isOwner={true} isAdmin={false} channel={data} />
         case "admin":
-            return <ClearedUserOptions isOwner={false} channel={data} />
+            return <RequesterOptions isOwner={false} isAdmin={true} channel={data} />
         default:
-            return <RegularUserOptions channel={data} />
+            return <RequesterOptions isOwner={false} isAdmin={false} channel={data} />
     }
 }
 

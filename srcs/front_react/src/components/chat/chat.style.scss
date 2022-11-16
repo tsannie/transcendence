@@ -217,6 +217,7 @@ $width_chat: calc(450 * var(--res));
     }
 
     button {
+      width: fit-content;
       border-style: none;
       padding: 0%;
     }
