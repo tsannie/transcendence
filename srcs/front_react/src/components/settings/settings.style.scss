@@ -26,6 +26,10 @@
   input {
     margin-top: 0vh;
   }
+
+  button {
+    padding: 2%;
+  }
 }
 
 .settings__editable {
@@ -102,14 +106,14 @@
 }
 
 .settings__2fa__validation {
-  form {
-    display: flex;
-    align-items: normal;
-    justify-content: flex-start;
-  }
+  display: flex;
+  align-items: normal;
+  justify-content: center;
+
   button {
     border-left: none;
   }
+
   input {
     font-size: calc(30 * var(--res));
     text-align: center;
