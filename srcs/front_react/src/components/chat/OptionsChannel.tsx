@@ -10,12 +10,14 @@ function UserOptions(props: {type: string, credentials: boolean, user: User}) {
     const displayOptions = () => {
         return (
         <div className="dropdown">
+            <div className="options">Options</div>
+            <button>Access Profile</button>
         </div>);
     }
 
     return (
     <Fragment>
-        <button className="member" onClick={() => setOpen(true)}>
+        <button className="member" onClick={(e: any) => {console.log(e); setOpen(true);}}>
             <img src={user.profile_picture} />
         </button>
         {isOpen ? displayOptions() : null}
@@ -48,7 +50,7 @@ function UserCategory(props: {name: string, credentials: boolean, users: User[] 
 
 function RequesterOptions(props: {isOwner: boolean, isAdmin: boolean, channel: IChannel}) {
     const {isOwner, isAdmin, channel} = props;
-    
+
     return (
         <Fragment>
             {isOwner ? <UserCategory name={"Admins"} credentials={true} users={channel.admins}/> : <UserCategory name="Admins" credentials={false} users={channel.admins}/>}
