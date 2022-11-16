@@ -75,7 +75,7 @@ function ChannelList() {
   const updateList = () => {
     if (!newMessage) return;
     else
-      var received_id = newMessage.channel
+      var received_id = newMessage.channel // TODO change var to let
         ? newMessage.channel.id
         : newMessage.dm.id;
 
@@ -113,7 +113,7 @@ function ChannelList() {
       title = user2?.username;
     }
     return (
-      <div className="chat__list__items" key={conv.id}>
+      <button className="chat__list__items" key={conv.id}>
         <li title={title} onClick={() => clickItem(conv)}>
           <div className="avatar">
             {user2 ? (
@@ -127,7 +127,7 @@ function ChannelList() {
             {displayNotif(conv.id)}
           </div>
         </li>
-      </div>
+      </button>
     );
   });
 
