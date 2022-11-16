@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
@@ -17,7 +18,7 @@ import {
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id?: number; // TODO remove ? ith new object
+  id: number; // TODO remove :? ith new object
 
   @Column({ unique: true })
   username: string;
@@ -26,44 +27,52 @@ export class UserEntity {
   email: string;
 
   @CreateDateColumn()
-  createdAt?: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt?: Date;
+  updatedAt: Date;
 
   @Column({ default: false })
-  enabled2FA?: boolean;
+  enabled2FA: boolean;
 
   @Column({ nullable: true })
-  secret2FA?: string;
+  secret2FA: string;
+
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  friends: UserEntity[];
+
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  friend_requests: UserEntity[];
 
   @OneToMany(() => ChannelEntity, (channels) => channels.owner, {
     nullable: true,
   })
-  owner_of?: ChannelEntity[];
+  owner_of: ChannelEntity[];
 
   @ManyToMany(() => ChannelEntity, (channels) => channels.admins, {
     nullable: true,
   })
-  admin_of?: ChannelEntity[];
+  admin_of: ChannelEntity[];
 
   @ManyToMany(() => ChannelEntity, (channels) => channels.users, {
     nullable: true,
   })
   @JoinTable()
-  channels?: ChannelEntity[];
+  channels: ChannelEntity[];
 
   @ManyToMany(() => DmEntity, (dms) => dms.users, { nullable: true })
   @JoinTable()
-  dms?: DmEntity[];
+  dms: DmEntity[];
 
   @ManyToMany(() => UserEntity)
   @JoinTable()
-  blocked?: UserEntity[];
+  blocked: UserEntity[];
 
   @OneToMany(() => ConnectedUserEntity, (connection) => connection.user)
-  connections?: ConnectedUserEntity[];
+  connections: ConnectedUserEntity[];
 
   @Column({ nullable: true })
-  profile_picture?: string;
+  profile_picture: string;
 }

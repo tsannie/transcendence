@@ -1,45 +1,45 @@
-import { useContext, useEffect, useState } from "react";
+import { MouseEvent, useContext, useEffect, useState } from "react";
 import { ReactComponent as HomeIcon } from "../../assets/img/icon/home.svg";
 import { ReactComponent as ChatIcon } from "../../assets/img/icon/chat.svg";
 import { ReactComponent as GameIcon } from "../../assets/img/icon/play.svg";
 import { ReactComponent as SettingsIcon } from "../../assets/img/icon/settings.svg";
 import { ReactComponent as LogOutIcon } from "../../assets/img/icon/logout.svg";
 import { ReactComponent as ProfileIcon } from "../../assets/img/icon/user.svg";
-import { api, COOKIE_NAME } from "../../const/const";
+import { api } from "../../const/const";
 import "./sidebar.style.scss";
 import { Link } from "react-router-dom";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { useLocation } from "react-router-dom";
-import {
-  SnackbarContext,
-  SnackbarContextType,
-} from "../../contexts/SnackbarContext";
+import { toast } from "react-toastify";
 
 export default function Sidebar() {
-  const { logout } = useContext(AuthContext) as AuthContextType;
-  const { setMessage, setOpenSnackbar, setSeverity, setAfterReload } =
-    useContext(SnackbarContext) as SnackbarContextType;
+  const { logout, user } = useContext(AuthContext) as AuthContextType;
   const path = useLocation().pathname;
 
-  const handleLogout = () => {
-    api.get("/auth/logout").then((res) => {
-      setMessage("bye bye");
-      setSeverity("info");
-      setOpenSnackbar(true);
-      logout();
-    });
+  const handleLogout = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    api
+      .get("/auth/logout")
+      .then(() => {
+        toast.info("bye bye !");
+        logout();
+      })
+      .catch(() => {
+        logout();
+      });
   };
 
   return (
     <div className="sidebar">
       <div className="sidebar__content">
-
         <div className="sidebar__icon">
           <Link to="/">
             <HomeIcon className={path === "/" ? "selected" : ""} />
           </Link>
-          <Link to="/profile">
-            <ProfileIcon className={path === "/profile" ? "selected" : ""} />
+          <Link to={"/profile/" + user?.username}>
+            <ProfileIcon
+              className={path.slice(0, 8) === "/profile" ? "selected" : ""}
+            />
           </Link>
           <Link to="/chat">
             <ChatIcon className={path === "/chat" ? "selected" : ""} />
@@ -54,7 +54,6 @@ export default function Sidebar() {
         </div>
 
         <div className="sidebar__bg"></div>
-
       </div>
     </div>
   );
