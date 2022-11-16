@@ -25,6 +25,12 @@ export class RoomEntity {
   @JoinColumn()
   p2: UserEntity;
 
+  @Column({ default: null })
+  p1SocketId: string;
+
+  @Column({ default: null })
+  p2SocketId: string;
+
   @OneToOne(() => SetEntity, { eager: true, cascade: true })
   @JoinColumn()
   set: SetEntity;
