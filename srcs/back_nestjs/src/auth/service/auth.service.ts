@@ -5,10 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { IPayload } from '../models/payload.interface';
 import { IToken } from '../models/token.inferface';
+import { parse } from 'cookie';
 
 @Injectable()
 export class AuthService {
@@ -78,5 +80,32 @@ export class AuthService {
       }),
     };
     return token;
+  }
+
+  async getUserWithCookie(cookie: string): Promise<UserEntity> {
+    const payload: IPayload = await this.jwtTokenService.verify(cookie, {
+      secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+    });
+
+    const user = await this.userService.findById(payload.sub, {
+      owner_of: true,
+      admin_of: true,
+      channels: true,
+      blocked: true,
+      dms: true,
+    });
+
+    if (!user.enabled2FA || payload.isSecondFactor) return user;
+    else throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+  }
+
+  async validateSocket(socket: Socket): Promise<UserEntity> {
+    const authenticationToken = parse(socket.handshake.headers.cookie)[
+      process.env.COOKIE_NAME
+    ];
+    if (!authenticationToken)
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    const user = await this.getUserWithCookie(authenticationToken);
+    return user;
   }
 }
