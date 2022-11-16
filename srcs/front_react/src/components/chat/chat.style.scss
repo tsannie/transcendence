@@ -209,6 +209,15 @@ $width_chat: calc(450 * var(--res));
       flex-wrap: wrap;
     }
 
+    .dropdown{
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      background-color: $white-color;
+      height: 100px;
+      width: 100px;
+    }
+
     button {
       width: fit-content;
       border-style: none;
