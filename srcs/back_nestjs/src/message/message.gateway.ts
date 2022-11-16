@@ -28,6 +28,7 @@ import { Repository } from 'typeorm';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { ConnectedUserDto } from 'src/connected-user/dto/connected-user.dto';
 import { MessageDto } from './dto/message.dto';
+import { AuthService } from 'src/auth/service/auth.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -43,6 +44,7 @@ export class MessageGateway
     private messageService: MessageService,
     private userService: UserService,
     private connectedUserService: ConnectedUserService,
+    private authService: AuthService,
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
@@ -57,14 +59,14 @@ export class MessageGateway
   // all clients connect to the server
   async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
+
+    // get and parse cookie
+
     try {
-      let userId = client.handshake.query.userId;
-      let user: UserEntity;
-      console.log('userId = ', userId);
-      if (typeof userId === 'string') {
-        user = await this.userService.findById(userId);
-      }
+      const user = await this.authService.validateSocket(client);
+
       if (!user) {
+        // TODO moove im map and remove ConnectedUserEntity (dov)
         return this.disconnect(client);
       } else {
         let connectedUser = new ConnectedUserDto();
@@ -98,11 +100,17 @@ export class MessageGateway
     const userId = client.handshake.query.userId; //todo PROTEGER TRYCATCH
 
     if (data.isDm === true) {
-      const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
+      const lastMsg = await this.messageService.addMessagetoDm(
+        data,
+        userId.toString(),
+      );
 
       await this.messageService.emitMessageDm(this.server, lastMsg);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(data, userId.toString());
+      const lastMsg = await this.messageService.addMessagetoChannel(
+        data,
+        userId.toString(),
+      );
 
       await this.messageService.emitMessageChannel(this.server, lastMsg);
     }
