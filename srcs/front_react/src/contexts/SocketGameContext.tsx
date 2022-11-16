@@ -15,6 +15,7 @@ export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
     query: {
       userId: user?.id,
     },
+    // transports: ["websocket"],
   });
 
   useEffect(() => {

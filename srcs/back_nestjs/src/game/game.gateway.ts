@@ -63,6 +63,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
+    // console.log(client.handshake.headers.cookie); TODO: AUTH with jwt verify
     try {
       let userId = client.handshake.query.userId;
       let user: UserEntity;
