@@ -3,13 +3,13 @@ import React, { createContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { api } from "../const/const";
 
-type Game = {
+export type Game = {
   id: string;
-  winner_id: string; // TODO change to User to get pp of winner
+  winner_id: string;
   eloDiff: number;
   p1_score: number;
   p2_score: number;
-  players: User[];
+  players: User[]; // TODO: get player info from the server
 }
 
 export type User = {
