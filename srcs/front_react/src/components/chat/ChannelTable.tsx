@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useRef, useState } from "react";
 import { api } from "../../const/const";
 import "./chat.style.scss";
 import { IChannel } from "./types";
@@ -13,12 +13,22 @@ interface IProps {
 }
 
 function ChannelTable(props: IProps) {
+  const refChannel = useRef<HTMLDivElement>(null);
+
+  const handleClicked = (e: any, channel: IChannel) => {
+    e.preventDefault();
+    if (refChannel.current) {
+      refChannel.current.focus(); // Doesn't work
+    }
+    props.setSelectChannel(channel);
+  };
+
   let allFriends = props.data.map((channel) => {
     return (
       <div
         className="table__item channel"
         key={channel.id}
-        onClick={() => props.setSelectChannel(channel)}
+        onClick={(e) => handleClicked(e, channel)}
       >
         <div className="table__item__name">
           <span>{channel.name}</span>
@@ -50,7 +60,13 @@ function ChannelTable(props: IProps) {
           <span>Status</span>
         </div>
       </div>
-      <div className="table__body">{allFriends}</div>
+      {allFriends.length ? (
+        <div className="table__body">{allFriends}</div>
+      ) : (
+        <div className="table__body">
+          <span>No channel found</span>
+        </div>
+      )}
     </div>
   );
 }

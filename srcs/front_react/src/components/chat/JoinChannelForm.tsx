@@ -23,7 +23,8 @@ function JoinChannelForm() {
   const [selectChannel, setSelectChannel] = useState<IChannel>();
   const [refresh, setRefresh] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
-  const { setDisplay } = useContext(ChatDisplayContext);
+  const { setDisplay, setCurrentConv, setIsChannel, setNewConv } =
+    useContext(ChatDisplayContext);
 
   const sortChannel = (channels: IChannel[]): IChannel[] => {
     const sort = channels.sort((a, b) => {
@@ -39,10 +40,18 @@ function JoinChannelForm() {
     // TODO password
     if (selectChannel) {
       api
-        .post(`/channels/${selectChannel.id}/join`)
+        .post(
+          `/channel/join`,
+          selectChannel.status === "Public"
+            ? { id: selectChannel.id }
+            : { id: selectChannel.id, password: password }
+        )
         .then((res: AxiosResponse) => {
           toast.success("Channel joined");
           setDisplay(ChatType.CONV);
+          setCurrentConv(res.data.id);
+          setIsChannel(true);
+          setNewConv(res.data);
         })
         .catch((err: AxiosError) => {
           toast.error("Wrong password");

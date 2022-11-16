@@ -34,10 +34,10 @@ body {
     transition: 0.3s;
     cursor: pointer;
     &:hover {
-      filter: invert(40%);
+      opacity: 0.6;
     }
     &:active {
-      filter: invert(70%);
+      opacity: 0.3;
     }
   }
 
