@@ -9,7 +9,7 @@ export class PlayerEntity {
   name: string;
 
   @Column({ default: 0 })
-  score: number = 0;
+  score: number;
 
   @Column('boolean', { default: false })
   won: boolean = false;

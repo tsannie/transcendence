@@ -31,7 +31,4 @@ export class RoomEntity {
 
   @Column({ nullable: true })
   game_mode: string;
-  
-  @Column({ default: 0 })
-  spectator: number;
 }

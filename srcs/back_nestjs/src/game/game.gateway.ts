@@ -42,7 +42,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('GameGateway');
 
   paddle_pos = new Map<string, PaddlePos>();
-  is_playing = new Map<string, boolean>();
+  game_loop = new Map<string, boolean>();
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
@@ -71,10 +71,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let room: string;
     const room_game = await this.all_game.findOneBy({ id: room });
     if (room_game) {
-      if (
-        room_game.status === RoomStatus.WAITING ||
-        room_game.status === RoomStatus.CLOSED
-      )
+      if (room_game.status === RoomStatus.WAITING ||
+        room_game.status === RoomStatus.CLOSED)
         this.endGame(client, room_game.id);
       else if (room_game.status === RoomStatus.PLAYING)
         this.giveUp(client, room_game.id);
@@ -118,7 +116,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room_game.p2 = user;
         await this.all_game.save(room_game);
 
-        this.gameService.initSet(room_game.id, this.is_playing, data.mode);
+        this.gameService.initSet(room_game.id, this.game_loop, data.mode);
         this.server.in(room_game.id).emit('joinedRoom', room_game);
      }
     }
@@ -160,7 +158,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   ///////////////////////////////////////////////
-  //////////////// PLAYER GIVE UP
+  //////////////// LEAVE GAME
   /////////////////////////////////////////////////
 
   @SubscribeMessage('giveUp')
@@ -168,9 +166,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = (await this.connectedUserService.findBySocketId(client.id)).user;
     let room_game = await this.all_game.findOneBy({ id: room });
 
-    await this.gameService.giveUp(room, this.is_playing, room_game, user);
+    await this.gameService.giveUp(room, this.game_loop, room_game, user);
 
-    this.server.in(room).emit('giveUp', room_game.set, room_game.status);
+    this.server.in(room).emit('giveUp', room_game.set.p1, room_game.set.p2);
     client.emit('leftRoom');
     client.leave(room);
   }
@@ -183,11 +181,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.leave(room);
     const room_game = await this.all_game.findOneBy({ id: room });
 
-    if (this.is_playing[room])
-      this.is_playing[room] = false;
+    if (this.game_loop[room])
+      this.game_loop[room] = false;
     if (room_game) {
-      if (this.paddle_pos[room]) delete this.paddle_pos[room];
-      if (this.is_playing[room]) delete this.is_playing[room];
+      if (this.paddle_pos[room])
+        delete this.paddle_pos[room];
+      if (this.game_loop[room])
+        delete this.game_loop[room];
       await this.all_game.remove(room_game);
     }
     client.emit('leftRoom');
@@ -235,12 +235,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     let BallObj: IBall = this.gameService.createBall();
     if (room_game.set) {
-      while (room_game.set.p1.score !== victory_score &&
-      room_game.set.p2.score !== victory_score &&
-      this.is_playing[room] === true) {
+      while (room_game.set.p1.won === false &&
+      room_game.set.p2.won === false &&
+      this.game_loop[room] === true) {
         this.gameService.updateGame(BallObj, room_game.set, this.paddle_pos[room], this.server, room);
         this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
         await new Promise((f) => setTimeout(f, 8));
+      }
+      if (room_game.set.p2.won === false || room_game.set.p1.won === false) {
+        room_game.status = RoomStatus.CLOSED;
+        await this.all_game.save(room_game);
       }
     }
   }
