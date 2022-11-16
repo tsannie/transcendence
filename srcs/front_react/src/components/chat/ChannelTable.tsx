@@ -1,34 +1,74 @@
 import { AxiosResponse } from "axios";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useRef, useState } from "react";
 import { api } from "../../const/const";
+import "./chat.style.scss";
 import { IChannel } from "./types";
+import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
+import { ReactComponent as UnlockIcon } from "../../assets/img/icon/unlock.svg";
+import { Link } from "react-router-dom";
 
-const columns = [
-  { Header: "title", accessor: "title" },
-  { Header: "owner", accessor: "owner" },
-  { Header: "status", accessor: "status" },
-  { Header: "members", accessor: "members" },
-  { Header: "join", accessor: "join" },
-];
+interface IProps {
+  data: IChannel[];
+  setSelectChannel: (channel: IChannel) => void;
+}
 
-function ChannelTable() {
-  const [channelDictionnary, setChannelDictionnary] = useState<IChannel[]>([]);
+function ChannelTable(props: IProps) {
+  const refChannel = useRef<HTMLDivElement>(null);
 
-  /*const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });*/
+  const handleClicked = (e: any, channel: IChannel) => {
+    e.preventDefault();
+    if (refChannel.current) {
+      refChannel.current.focus(); // Doesn't work
+    }
+    props.setSelectChannel(channel);
+  };
 
-  useEffect(() => {
-    api
-      .get("/channel/list")
-      .then((res: AxiosResponse) => {
-        setChannelDictionnary(res.data);
-      })
-      .catch(() => console.log("Axios Error"));
-  }, []);
-
-  console.log(channelDictionnary);
-
-  return <div></div>;
+  let allFriends = props.data.map((channel) => {
+    return (
+      <div
+        className="table__item channel"
+        key={channel.id}
+        onClick={(e) => handleClicked(e, channel)}
+      >
+        <div className="table__item__name">
+          <span>{channel.name}</span>
+        </div>
+        <div className="table__item__owner">
+          <Link
+            style={{ textDecoration: "none" }}
+            to={`/profile/${channel.owner?.username}`}
+          >
+            <span>{channel.owner?.username}</span>
+          </Link>
+        </div>
+        <div className="table__item__status">
+          {channel.status === "Public" ? <UnlockIcon /> : <LockIcon />}
+        </div>
+      </div>
+    );
+  });
+  return (
+    <div className="table">
+      <div className="table__item ">
+        <div className="table__item__name header">
+          <span>Channel Name</span>
+        </div>
+        <div className="table__item__owner header">
+          <span>Owner</span>
+        </div>
+        <div className="table__item__status header">
+          <span>Status</span>
+        </div>
+      </div>
+      {allFriends.length ? (
+        <div className="table__body">{allFriends}</div>
+      ) : (
+        <div className="table__body">
+          <span>No channel found</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default ChannelTable;
