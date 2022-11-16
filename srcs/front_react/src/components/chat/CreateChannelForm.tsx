@@ -55,7 +55,10 @@ function CreateChannelForm() {
 
   return (
     <div className="create__channel">
-      <h2>CREATE CHANNEL</h2>
+      <div className="create__channel__header">
+        <h2>create channel</h2>
+        <button onClick={() => setDisplay(ChatType.JOINFORM)}>join</button>
+      </div>
       <form onSubmit={createChannel}>
         <input
           type="text"

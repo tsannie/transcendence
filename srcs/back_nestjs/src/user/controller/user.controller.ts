@@ -8,7 +8,7 @@ import {
   ParseFilePipe,
   Post,
   Query,
-  Request,
+  Req,
   Res,
   SerializeOptions,
   UploadedFile,
@@ -24,9 +24,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateResult } from 'typeorm';
 import { NewUsernameDto } from '../dto/newusername.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
-import { Express } from 'express';
+import { Express, Request, Response } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
-import { UserSearchDto } from '../dto/usersearch.dto';
 import { IUserSearch } from '../models/iusersearch.interface';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
@@ -41,7 +40,7 @@ export class UserController {
   @SerializeOptions({ groups: ['me'] })
   @UseGuards(JwtTwoFactorGuard)
   async editUsername(
-    @Request() req,
+    @Req() req: Request,
     @Body() newUsername: NewUsernameDto,
   ): Promise<UpdateResult> {
     return await this.userService.editUsername(
@@ -71,8 +70,8 @@ export class UserController {
   @Get('search')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async searchUser(@Query() body: UserSearchDto): Promise<IUserSearch[]> {
-    return await this.userService.searchUser(body.search);
+  async searchUser(@Query() body: TargetNameDto): Promise<IUserSearch[]> {
+    return await this.userService.searchUser(body.username);
   }
 
   @Post('blockUser') // TODO to lower cases everywhere
@@ -80,7 +79,7 @@ export class UserController {
   @UseGuards(JwtTwoFactorGuard)
   async blockUser(
     @Body() body: TargetNameDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<UserEntity> {
     return await this.userService.blockUser(body.username, req.user);
   }
@@ -90,7 +89,7 @@ export class UserController {
   @UseGuards(JwtTwoFactorGuard)
   async unBlockUser(
     @Body() body: TargetNameDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<UserEntity> {
     return await this.userService.unBlockUser(body.username, req.user);
   }
@@ -109,7 +108,7 @@ export class UserController {
       }),
     )
     file: Express.Multer.File,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<UserEntity> {
     return await this.userService.addAvatar(file.buffer, req.user);
   }
@@ -117,7 +116,10 @@ export class UserController {
   @Get('avatar')
   @UseGuards(JwtTwoFactorGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getAvatar(@Query() data: AvatarDto, @Res() res): Promise<void> {
+  async getAvatar(
+    @Query() data: AvatarDto,
+    @Res() res: Response,
+  ): Promise<void> {
     res.sendFile(
       await this.userService.getAvatar(data.id, { size: data.size }),
     );
@@ -126,64 +128,66 @@ export class UserController {
   @Get('conversations')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getConvos(@Request() req): Promise<(ChannelEntity | DmEntity)[]> {
+  async getConvos(@Req() req: Request): Promise<(ChannelEntity | DmEntity)[]> {
     return this.userService.getConversations(req.user);
   }
 
   @Get('friendlist')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async friendList(@Request() req): Promise<UserEntity[]> {
+  async friendList(@Req() req: Request): Promise<UserEntity[]> {
     return await this.userService.getFriendList(req.user);
   }
 
   @Post('accept-friend-request')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async acceptFriendRequest(
-    @Request() req,
-    @Body() target: TargetIdDto,
-  ): Promise<UserEntity> {
+  async acceptFriendRequest(@Req() req: Request, @Body() target: TargetIdDto) {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
       friends: true,
     });
     await this.userService.acceptFriendRequest(req.user, userTarget);
-    return userTarget;
   }
 
   @Post('refuse-friend-request')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async refuseFriendRequest(
-    @Request() req,
+    @Req() req: Request,
     @Body() target: TargetIdDto,
   ): Promise<UserEntity> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
     });
-    await this.userService.refuseFriendRequest(req.user, userTarget);
-    return userTarget;
+    return await this.userService.refuseFriendRequest(req.user, userTarget);
   }
 
   @Post('create-friend-request')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async createFriendRequest(
-    @Request() req,
+    @Req() req: Request,
     @Body() target: TargetIdDto,
-  ): Promise<UserEntity> {
+  ): Promise<UserEntity[]> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
     });
-    await this.userService.createFriendRequest(req.user, userTarget);
-    return userTarget;
+
+    if (
+      req.user.friend_requests &&
+      req.user.friend_requests.find((elem) => elem.id === target.id)
+    ) {
+      return await this.userService.acceptFriendRequest(req.user, userTarget);
+    } else {
+      return await this.userService.createFriendRequest(req.user, userTarget);
+    }
   }
 
   @Get('friend-request')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getFriendRequest(@Request() req): Promise<UserEntity[]> {
+  async getFriendRequest(@Req() req: Request): Promise<UserEntity[]> {
     return await this.userService.getFriendRequest(req.user);
   }
 
@@ -191,7 +195,7 @@ export class UserController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async removeFriend(
-    @Request() req,
+    @Req() req: Request,
     @Body() target: TargetIdDto,
   ): Promise<UserEntity[]> {
     const userTarget = await this.userService.findById(target.id, {

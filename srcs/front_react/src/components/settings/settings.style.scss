@@ -9,7 +9,7 @@
   }
 
   img {
-    width: calc(220 * var(--res)); // TODO depace to qr code div
+    width: calc(220 * var(--res));
   }
 
   h2 {
@@ -102,7 +102,11 @@
 }
 
 .settings__2fa__validation {
-  display: flex;
+  form {
+    display: flex;
+    align-items: normal;
+    justify-content: flex-start;
+  }
   button {
     border-left: none;
   }

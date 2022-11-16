@@ -11,13 +11,11 @@ import {
 import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
 import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/circle_plus.svg";
-import { ReactComponent as ListIcon } from "../../assets/img/icon/list.svg";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
   const { newMessage } = useContext(MessageContext);
-  const { addChannel, changeNotif, isNotif } =
-    useContext(NotifContext);
+  const { addChannel, changeNotif, isNotif } = useContext(NotifContext);
   const {
     currentConv,
     isChannel,
@@ -69,7 +67,8 @@ function ChannelList() {
 
     if (newMessage?.dm) new_elem = newMessage.dm;
     if (newMessage?.channel) new_elem = newMessage?.channel;
-    if (newMessage?.author?.id === user?.id) addChannel(new_elem.id, false); else addChannel(new_elem.id, true);
+    if (newMessage?.author?.id === user?.id) addChannel(new_elem.id, false);
+    else addChannel(new_elem.id, true);
     newList = [new_elem, ...newList];
     return newList;
   };
@@ -77,7 +76,7 @@ function ChannelList() {
   const updateList = () => {
     if (!newMessage) return;
     else
-      var received_id = newMessage.channel
+      var received_id = newMessage.channel // TODO change var to let
         ? newMessage.channel.id
         : newMessage.dm.id;
 
@@ -119,7 +118,7 @@ function ChannelList() {
       title = user2?.username;
     }
     return (
-      <div className="chat__list__items" key={conv.id}>
+      <button className="chat__list__items" key={conv.id}>
         <li title={title} onClick={() => clickItem(conv)}>
           <div className="avatar">
             {user2 ? (
@@ -133,7 +132,7 @@ function ChannelList() {
             {displayNotif(conv.id)}
           </div>
         </li>
-      </div>
+      </button>
     );
   });
 
@@ -152,39 +151,28 @@ function ChannelList() {
   }, []);
 
   useEffect(() => {
-    if (!newConv) return ;
+    if (!newConv) return;
     addNewElemToList();
   }, [newConv]);
 
   useEffect(() => {
-    if (!newMessage) return ;
+    if (!newMessage) return;
     updateList();
     scrollToTop();
   }, [newMessage]);
 
   return (
     <div className="chat__list">
-      <div className="chat__list__header">Channels</div>
+      <div className="chat__list__header">
+        Channels
+        <button onClick={() => setDisplay(ChatType.JOINFORM)}>
+          <CirclePlusIcon />
+        </button>
+      </div>
       <ul className="chat__list__body">
         <div ref={messagesTopRef} />
         {MessageListItems}
       </ul>
-      <CreateChannelButton />
-    </div>
-  );
-}
-
-function CreateChannelButton() {
-  const { setDisplay, setRedirection } = useContext(ChatDisplayContext);
-
-  return (
-    <div className="chat__list__footer">
-      <button onClick={() => {setDisplay(ChatType.CREATEFORM); setRedirection(false);}}>
-        <CirclePlusIcon />
-      </button>
-      <button onClick={() => {setDisplay(ChatType.JOINFORM); setRedirection(false);}}>
-        <ListIcon />
-      </button>
     </div>
   );
 }

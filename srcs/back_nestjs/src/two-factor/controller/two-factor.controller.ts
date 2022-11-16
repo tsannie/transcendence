@@ -6,14 +6,12 @@ import {
   Logger,
   Post,
   Req,
-  Request,
   Res,
   SerializeOptions,
   UnauthorizedException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { UserService } from 'src/user/service/user.service';
 import { AuthService } from 'src/auth/service/auth.service';
 import { logger2FA } from '../const/const';
@@ -23,6 +21,7 @@ import JwtGuard from 'src/auth/guard/jwt.guard';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UpdateResult } from 'typeorm';
+import { Request, Response } from 'express';
 
 @Controller('2fa')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -38,7 +37,7 @@ export class TwoFactorController {
   @UseGuards(JwtGuard)
   async auth2fa(
     @Body() tokenBody: TokenDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<UserEntity> {
     const validToken = await this.twoFactorService.codeIsValid(
       tokenBody.token,
@@ -49,8 +48,8 @@ export class TwoFactorController {
         'Authentication failed - invalid token !',
       );
     }
-    const accessToken = await this.authService.getCookie(req.user, true);
-    req.res.cookie('AuthToken', accessToken, {
+    const accessToken = await this.authService.getToken(req.user, true);
+    req.res.cookie(process.env.COOKIE_NAME, accessToken.access_token, {
       httpOnly: false,
       path: '/',
     });
@@ -60,7 +59,7 @@ export class TwoFactorController {
   // generate a new qrcode for the user
   @Get('generate')
   @UseGuards(JwtTwoFactorGuard)
-  async generate(@Res() response: Response, @Request() req): Promise<any> {
+  async generate(@Res() response: Response, @Req() req: Request): Promise<any> {
     const { otpauthUrl } = await this.twoFactorService.generateTwoFactorSecret(
       req.user,
     );
@@ -74,7 +73,7 @@ export class TwoFactorController {
   @UseGuards(JwtTwoFactorGuard)
   async verifyToken(
     @Body() tokenBody: TokenDto,
-    @Request() req,
+    @Req() req: Request,
   ): Promise<UpdateResult> {
     const valid = await this.twoFactorService.codeIsValid(
       tokenBody.token,
@@ -93,7 +92,7 @@ export class TwoFactorController {
   @Post('disable')
   @SerializeOptions({ groups: ['me'] })
   @UseGuards(JwtTwoFactorGuard)
-  async disable(@Request() req): Promise<UpdateResult> {
+  async disable(@Req() req: Request): Promise<UpdateResult> {
     logger2FA.log(`2FA disabled for user ${req.user.username}`);
     return await this.userService.disable2FA(req.user.id);
   }
