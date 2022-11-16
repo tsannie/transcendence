@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { User } from "../../contexts/AuthContext";
 import { IDatas } from "./Conversation";
 import { IChannel } from "./types";
@@ -6,14 +6,16 @@ import { IChannel } from "./types";
 function UserList( props: {name: string, credentials: boolean, users: User[] | null} ) {
     const { name, credentials, users } = props;
     const [ isSelect, setSelected ] = useState<boolean>(false);
+    const buttonRef = useRef<Array<HTMLButtonElement | null>>([]);
 
     const showDropdownMenu = (event: any, elem: User) => {
+        console.log(event);
         setSelected(!isSelect);
     }
 
-    const userList = users?.map( (elem) => {
+    const userList = users?.map( (elem, i) => {
         return (
-            <button className="members" key={elem.id} onClick={(e: any) => showDropdownMenu(e, elem)}>
+            <button ref={el => buttonRef.current[i] = el} className="members" key={elem.id} onClick={(e: any) => showDropdownMenu(e, elem)}>
                 <img src={elem.profile_picture}/>
             </button>);
     })
@@ -27,6 +29,10 @@ function UserList( props: {name: string, credentials: boolean, users: User[] | n
         document.body.addEventListener('click', closeDropdown)
         return (() => document.body.removeEventListener('click', closeDropdown));
     }, [])
+
+    useEffect( () => {
+        buttonRef.current = buttonRef.current.slice(0, users?.length);
+    }, [users]);
 
     return <Fragment>{userList}</Fragment>;
 }
