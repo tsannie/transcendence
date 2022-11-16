@@ -3,50 +3,45 @@ import { User } from "../../contexts/AuthContext";
 import { IDatas } from "./Conversation";
 import { IChannel } from "./types";
 
-function UserList( props: {name: string, credentials: boolean, users: User[] | null} ) {
-    const { name, credentials, users } = props;
-    const [ isSelect, setSelected ] = useState<boolean>(false);
-    const buttonRef = useRef<Array<HTMLButtonElement | null>>([]);
+function UserOptions(props: {type: string, credentials: boolean, user: User}) {
+    const {credentials, user} = props;
+    const [isOpen, setOpen] = useState<boolean>(false);
 
-    const showDropdownMenu = (event: any, elem: User) => {
-        console.log(event);
-        setSelected(!isSelect);
+    const displayOptions = () => {
+        return (
+        <div className="dropdown">
+        </div>);
     }
 
-    const userList = users?.map( (elem, i) => {
-        return (
-            <button ref={el => buttonRef.current[i] = el} className="members" key={elem.id} onClick={(e: any) => showDropdownMenu(e, elem)}>
-                <img src={elem.profile_picture}/>
-            </button>);
-    })
+    return (
+    <Fragment>
+        <button className="member" onClick={() => setOpen(true)}>
+            <img src={user.profile_picture} />
+        </button>
+        {isOpen ? displayOptions() : null}
+    </Fragment>);
+}
+
+function UserList( props: {type: string, credentials: boolean, users: User[] | null} ) {
+    const {users} = props;
+    const userList = users?.map( (member : User) => <UserOptions key={member.id} type={props.type} credentials={props.credentials} user={member}/>)
     
-    useEffect(() => {
-        const closeDropdown = (e: any) => {
-            console.log(e.composedPath());
-            setSelected(false);
-        };
-
-        document.body.addEventListener('click', closeDropdown)
-        return (() => document.body.removeEventListener('click', closeDropdown));
-    }, [])
-
-    useEffect( () => {
-        buttonRef.current = buttonRef.current.slice(0, users?.length);
-    }, [users]);
-
-    return <Fragment>{userList}</Fragment>;
+    return (
+    <Fragment>
+        {userList}
+    </Fragment>);
 }
 
 function UserCategory(props: {name: string, credentials: boolean, users: User[] | null}) {
-    const { name, users } = props;
+    const { users } = props;
 
     if (!users || users.length === 0)
         return <Fragment/>;
 
     return (
         <div className="category">
-            <div className="title">{name}</div>
-            <UserList {...props}/>
+            <div className="title">{props.name}</div>
+            <UserList type={props.name} credentials={props.credentials} users={users}/>
         </div>
     )
 }
