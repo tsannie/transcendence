@@ -130,6 +130,10 @@ export class UserService {
     });
   }
 
+  async getAllUsersWithElo(): Promise<UserEntity[]> {
+    return await this.allUser.find();
+  }
+
   async cleanAllUser(): Promise<void> {
     return await this.allUser.clear();
   }
@@ -402,8 +406,15 @@ export class UserService {
     return user.history;
   }
 
-  /* getLeaderBoard(user: UserEntity) {
+  getLeaderBoard(userId: string, usersElo: UserEntity[]): number {
+    const usersSort = usersElo.sort((a, b) => b.elo - a.elo);
+    let rank = 0;
 
-    return user.history.length;
-  } */
+    usersSort.forEach((user, index) => {
+      if (user.id === userId) {
+        rank = index + 1;
+      }
+    });
+    return rank
+  }
 }

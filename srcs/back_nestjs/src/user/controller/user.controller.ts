@@ -184,4 +184,12 @@ export class UserController {
   async getGameHistory(@Request() req): Promise<GameStatEntity[]> {
     return await this.userService.getGameHistory(req.user);
   }
+
+  @Get('leaderboard')
+  @UseGuards(JwtTwoFactorGuard)
+  async getLeaderboard(@Request() req): Promise<number> {
+    const allUsers = await this.userService.getAllUsersWithElo();
+
+    return this.userService.getLeaderBoard(req.user.id, allUsers);
+  }
 }
