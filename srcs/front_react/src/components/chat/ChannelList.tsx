@@ -158,24 +158,16 @@ function ChannelList() {
 
   return (
     <div className="chat__list">
-      <div className="chat__list__header">Channels</div>
+      <div className="chat__list__header">
+        Channels
+        <button onClick={() => setDisplay(ChatType.JOINFORM)}>
+          <CirclePlusIcon />
+        </button>
+      </div>
       <ul className="chat__list__body">
         <div ref={messagesTopRef} />
         {MessageListItems}
       </ul>
-      <CreateChannelButton />
-    </div>
-  );
-}
-
-function CreateChannelButton() {
-  const { setDisplay } = useContext(ChatDisplayContext);
-
-  return (
-    <div className="chat__list__footer">
-      <button onClick={() => setDisplay(ChatType.JOINFORM)}>
-        <CirclePlusIcon />
-      </button>
     </div>
   );
 }
