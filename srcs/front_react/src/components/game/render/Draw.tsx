@@ -1,19 +1,20 @@
 import { white } from "../const/const";
+import { IBall, IGameObj, IPaddle, IPlayer } from "../types";
 
-export function draw_game(ctx:any, canvas: any, IBall:any, IPaddle_p1: any, IPaddle_p2:any, IPlayer_p1:any, IPlayer_p2:any , countdown: any){
+export function draw_game(ctx:any, canvas: any, gameObj: IGameObj, countdown: number){
   if (countdown != 0) 
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
-    draw_ball(ctx, IBall);
-    draw_score(ctx, IPlayer_p1, IPlayer_p2, canvas.height, canvas.width);
+    draw_ball(ctx, gameObj.ball);
+    draw_score(ctx, gameObj.player_p1, gameObj.player_p2, canvas.height, canvas.width);
   }
   draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, IPaddle_p1);
-  draw_paddle(ctx, IPaddle_p2);
+  draw_paddle(ctx, gameObj.paddle_p1);
+  draw_paddle(ctx, gameObj.paddle_p2);
 }
 
-export function draw_game_ended(isP2: boolean, ctx: any, player_p1: any, player_p2: any, canvas_height: number, canvas_width: number)
+export function draw_game_ended(isP2: boolean, ctx: any, player_p1: IPlayer, player_p2: IPlayer, canvas_height: number, canvas_width: number)
 {
   ctx.beginPath();
   ctx.rect(0, 0, canvas_width, canvas_height);
@@ -83,8 +84,8 @@ function draw_countdown(
 
 function draw_score(
   ctx: any,
-  player_p1: any,
-  player_p2: any,
+  player_p1: IPlayer,
+  player_p2: IPlayer,
   canvas_height: number,
   canvas_width: number
 ) {
@@ -111,7 +112,7 @@ function draw_score(
 //////// DRAW ELEMENTS
 ////////////////////////
 
-function draw_paddle(ctx: any , IPaddle : any){
+function draw_paddle(ctx: any , IPaddle : IPaddle){
 
   ctx.beginPath();
   ctx.rect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
@@ -123,7 +124,7 @@ function draw_paddle(ctx: any , IPaddle : any){
   ctx.fill();
 }
 
-function draw_ball(ctx: any , IBall : any){
+function draw_ball(ctx: any , IBall : IBall){
 
   ctx.beginPath();
   ctx.fillStyle = white;

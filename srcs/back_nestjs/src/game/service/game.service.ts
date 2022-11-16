@@ -14,6 +14,7 @@ export class GameService {
   constructor(
     @InjectRepository(RoomEntity)
     private all_game: Repository<RoomEntity>,
+
     @InjectRepository(PlayerEntity)
     private all_player: Repository<PlayerEntity>,
   ) {}
@@ -65,10 +66,12 @@ export class GameService {
     if (!room_game.set.p1) {
       room_game.set.p1 = new PlayerEntity();
       room_game.set.p1.name = room_game.p1.username;
+      room_game.set.p1.score = 0;
     }
     if (!room_game.set.p2) {
       room_game.set.p2 = new PlayerEntity();
       room_game.set.p2.name = room_game.p2.username;
+      room_game.set.p2.score = 0;
     }
     room_game.game_mode = game_mode;
     is_playing[room] = true;
@@ -78,7 +81,6 @@ export class GameService {
   async giveUp(room: string, is_playing: Map<string, boolean>, room_game: RoomEntity, user: UserEntity) {
     if (is_playing[room])
       is_playing[room] = false;
-
     if (room_game.status === RoomStatus.PLAYING)
       room_game.status = RoomStatus.CLOSED;
     if (room_game.set.p1.name === user.username) {
@@ -97,7 +99,6 @@ export class GameService {
   ////////////////////
   // INGAME FUNCTIONS
   ////////////////////
-
   
   losePoint(
     player: PlayerEntity,
@@ -142,7 +143,7 @@ export class GameService {
     server: Server,
     room: string,
   ) {
-      if (ball.can_touch_paddle === true &&
+    if (ball.can_touch_paddle === true &&
     ball.x - rad <= paddle_p1_x + paddle_width &&
     ball.x + rad / 3 >= paddle_p1_x &&
     ball.y + rad >= paddle.y1 &&
@@ -150,7 +151,7 @@ export class GameService {
       this.hitPaddle(paddle.y1, ball);
     else if (ball.x - rad <= -(rad * 3))
       this.losePoint(set.p2, ball, set.p1, set.p2, server, room);
-    }
+  }
     
   ballHitPaddlep2(
     set: SetEntity,
@@ -159,7 +160,7 @@ export class GameService {
     server: Server,
     room: string,
     ) {
-      if (ball.can_touch_paddle === true &&
+    if (ball.can_touch_paddle === true &&
     ball.x + rad >= paddle_p2_x &&
     ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
     ball.y + rad >= paddle.y2 &&

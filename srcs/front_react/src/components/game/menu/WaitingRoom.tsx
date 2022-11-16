@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
 import { GameContext, RoomStatus } from "../GameContext";
