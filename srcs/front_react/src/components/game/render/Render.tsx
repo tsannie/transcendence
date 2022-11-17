@@ -186,6 +186,7 @@ export function GameRender() {
         onMouseMove={(e) => mouv_mouse(e)}
         style={{ backgroundColor: "black" }}
       ></canvas>
+      <br />
       <button onClick={leaveGame}>Leave The Game</button>
     </div>
   );
