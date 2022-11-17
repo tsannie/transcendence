@@ -14,6 +14,7 @@ export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
     query: {
       userId: user?.id,
     },
+    transports: ["websocket"],
   });
 
   useEffect(() => {
@@ -23,7 +24,14 @@ export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
     socket.on("connect_error", (err) => {
       console.log(`|||||||||||connect_error due to ${err.message}`);
     });
-  }, [socket]);
+    socket.on("disconnect", () => console.log("disconnected from socket"));
+
+    return () => {
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.off("disconnect");
+    }
+  }, []);
 
   return (
     <SocketGameContext.Provider value={socket}>{children}</SocketGameContext.Provider>
