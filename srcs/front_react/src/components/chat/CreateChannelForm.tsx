@@ -25,9 +25,9 @@ function CreateChannelForm() {
     }
     const channel: Partial<ICreateChannel> = {
       name: channelName,
-      status: channelStatus,
+      status: selectType,
     };
-    if (channelStatus === "Protected") channel.password = channelPassword;
+    if (selectType === "Protected") channel.password = channelPassword;
 
     await api
       .post("channel/create", channel)
