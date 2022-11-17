@@ -4,8 +4,9 @@ import { UserEntity } from '../../user/models/user.entity';
 
 @Entity()
 export abstract class BanMuteEntity {
+    //TODO switch to UUID
     @PrimaryGeneratedColumn()
-    id: number;
+    id: string;
 
     @Column()
     date: Date;
