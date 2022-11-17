@@ -33,8 +33,15 @@ export interface IChannel {
   owner: User | null;
   users: User[] | null;
   admins: User[] | null;
-  muted: User[] | null;
-  banned: User[] | null;
+  muted: IBanMute[] | null;
+  banned: IBanMute[] | null;
+}
+
+export interface IBanMute {
+  id: string;
+  date: Date;
+  end: Date;
+  user: User;
 }
 
 export interface IChannelActions {

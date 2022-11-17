@@ -1,22 +1,30 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { User } from "../../contexts/AuthContext";
 import { IDatas } from "./Conversation";
 import UserOptions from "./OptionsChannelActions";
 import { IChannel } from "./types";
 
+export interface IMemberProps {
+    type: string;
+    isOwner: boolean;
+    isAdmin: boolean;
+    isOpen:boolean; 
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>; 
+    channelId: string; 
+    user: User;
+}
 
-
-function MemberCategory(props: {name: string, isOwner: boolean, isAdmin: boolean, users: User[] | null}) {
+function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean, isOpen:boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, users: User[] | null}) {
     const { users } = props;
 
     if (!users || users.length === 0)
         return <Fragment/>;
 
-    const userList = users?.map( (member : User) => <UserOptions key={member.id} type={props.name} isOwner={props.isOwner} isAdmin={props.isAdmin} user={member}/>)
+    const userList = users?.map( (member : User) => <UserOptions key={member.id} user={member} {...props}/>)
 
     return (
         <div className="category">
-            <div className="title">{props.name}</div>
+            <div className="title">{props.type}</div>
             {userList}
         </div>
     )
@@ -25,20 +33,31 @@ function MemberCategory(props: {name: string, isOwner: boolean, isAdmin: boolean
 function ChannelMembers(props: {receivedChannel: IDatas | null }) {
     const status = props.receivedChannel?.status;
     const channel = props.receivedChannel?.data;
-    
-    if (!channel)
-        return <Fragment />;
+    const [isOpen, setOpen ] = useState<boolean>(false);
+
+    useEffect(() => {
+        const closeDropdown = (e: any) => {
+            if (e.composedPath()[1].tagName !== "BUTTON")
+                setOpen(false);
+        };
+
+        document.body.addEventListener("click", closeDropdown);
+        return () => document.body.removeEventListener("click", closeDropdown);
+    }, [])
 
     return (
+        <Fragment>
+        { channel ? 
         <div className="conversation__options__members">
-            <MemberCategory name={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.admins}/>
-            <MemberCategory name={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.users}/>
+            <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.admins}/>
+            <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.users}/>
             {(status === "owner" || status === "admin") ? 
             <Fragment>
-                <MemberCategory name={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.muted}/>
-                <MemberCategory name={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.muted}/>
+                <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.muted?.map((elem) => elem.user) as User[]}/>
+                <MemberCategory type={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.banned?.map((elem) => elem.user) as User[]}/>
             </Fragment> : null}
-        </div>);
+        </div> : null}
+        </Fragment>);
 }
 
 function ChannelProfile(props: {channel: IChannel|undefined}) {
