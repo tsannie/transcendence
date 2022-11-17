@@ -2,8 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class PlayerEntity {
-  @PrimaryGeneratedColumn()
-  id?: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column({ nullable: true })
   name: string;
@@ -12,5 +12,5 @@ export class PlayerEntity {
   score: number;
 
   @Column('boolean', { default: false })
-  won: boolean = false;
+  won: boolean;
 }

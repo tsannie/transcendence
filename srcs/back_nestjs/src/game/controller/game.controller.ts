@@ -11,13 +11,8 @@ export class GameController {
     return await this.gameService.findAll();
   }
 
-  @Get('/game_to_spec')
-  spec(): Promise<RoomEntity[]> {
-    return this.gameService.findAll();
-  }
-
   @Get('/del')
-  detail() {
-    this.gameService.deleteUser();
+  async detail() {
+    await this.gameService.deleteUser();
   }
 }

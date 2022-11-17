@@ -7,10 +7,8 @@ import { RoomStatus } from "./const/const";
 export type GameContextType = {
   status: number;
   setStatus: (status: number) => void;
-
   room: string;
   setRoom: (room: string) => void;
-
   isP2: boolean;
   setisP2: (isP2: boolean) => void;
 };
@@ -18,10 +16,8 @@ export type GameContextType = {
 export const GameContext = createContext<GameContextType>({
   status: RoomStatus.EMPTY,
   setStatus: () => {},
-
   room: "",
   setRoom: () => {},
-
   isP2: false,
   setisP2: () => {},
 });
@@ -36,13 +32,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
   const [isP2, setisP2] = useState(false);
   const { user } = useContext(AuthContext);
   const socket = useContext(SocketGameContext);
-
-  useEffect(() => {
-    socket.on("leftRoom", () => {
-      setStatus(RoomStatus.EMPTY);   
-    });
-
-  }, [socket]);
 
   useEffect(() => {
     socket.on("joinedRoom", (theroom: any) => {
@@ -61,10 +50,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
       value={{
         status,
         setStatus,
-
         room,
         setRoom,
-
         isP2,
         setisP2,
       }}
