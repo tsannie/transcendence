@@ -63,7 +63,7 @@ export class ChannelController {
     return await this.channelService.createChannel(channel, req.user);
   }
 
-  @Post('banUser')
+  @Post('ban')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async banUser(
@@ -73,7 +73,7 @@ export class ChannelController {
     return await this.channelService.banUser(ban_request, req.user);
   }
 
-  @Post('unBanUser')
+  @Post('unban')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async unBanUser(
@@ -93,7 +93,7 @@ export class ChannelController {
     return await this.channelService.makeAdmin(channel, req.user);
   }
 
-  @Post('muteUser')
+  @Post('mute')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async muteUser(
@@ -103,7 +103,7 @@ export class ChannelController {
     return await this.channelService.muteUser(channel, req.user);
   }
 
-  @Post('unMuteUser')
+  @Post('unmute')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async unMuteUser(

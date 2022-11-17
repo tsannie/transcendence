@@ -22,6 +22,7 @@ export class MessageService {
     private allMessages: Repository<MessageEntity>,
     private userService: UserService,
     private channelService: ChannelService,
+    private banMuteService: BanMuteService,
   ) {}
 
   /* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
@@ -109,7 +110,9 @@ export class MessageService {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
-      channels: true,
+      channels: {
+        muted: true,
+      },
       admin_of: true,
       owner_of: true,
     });
@@ -118,6 +121,9 @@ export class MessageService {
       data.convId,
       user,
     ) as ChannelEntity;
+    
+    if (this.banMuteService.isMuted(channel, user))
+      throw new UnauthorizedException("You've Been Muted ! Shhhh. silence.");
 
     const message = new MessageEntity();
     message.content = data.content;
