@@ -18,7 +18,6 @@ export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
   });
 
   useEffect(() => {
-    console.log("socket game provider");
     socket.on("connect", () => console.log("connected to socket"));
 
     socket.on("connect_error", (err) => {

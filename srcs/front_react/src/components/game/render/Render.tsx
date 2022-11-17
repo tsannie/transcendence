@@ -17,7 +17,6 @@ import { initGameObj } from "./InitGameObj";
 
 let position_y: number = 0;
 export function GameRender() {
-  const [ leave, setLeave ] = useState(false);
 
   let start = false;
   let lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
@@ -28,7 +27,8 @@ export function GameRender() {
   const game = useContext(GameContext);
   const socket = useContext(SocketGameContext);
   const canvasRef: any = createRef();
-  const [ gameObj ] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
+  const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
+  const [leave, setLeave] = useState(false);
 
   const [HW, setdetectHW] = useState({
     winWidth: window.innerWidth,

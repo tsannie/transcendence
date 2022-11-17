@@ -27,7 +27,7 @@ export class GameService {
     let room_game : RoomEntity;
     let already_in_game: boolean = false;
     const size = await this.all_game.count();
-    if (size != 0) {
+    if (size !== 0) {
       const all_rooms = await this.all_game.find();
       all_rooms.forEach((room_db) => {
         if ((room_db.p1 && user.id === room_db.p1.id) || (room_db.p2 && user.id === room_db.p2.id))
@@ -41,19 +41,8 @@ export class GameService {
     return room_game;
   }
 
-  async joinInvitation(room: string): Promise<RoomEntity> {
-    let room_game = await this.all_game.findOneBy({ id: room });
-    if (!room_game) {
-      room_game = new RoomEntity();
-      room_game.id = room;
-    }
-    return room_game;
-  }
-
   async deleteUser(): Promise<void> {
-
     const all_game = await this.all_game.find();
-
     all_game.forEach(async (game) => {
       await this.all_game.delete({ id: game.id });
     });
@@ -111,7 +100,7 @@ export class GameService {
   // INGAME FUNCTIONS
   ////////////////////
   
-  losePoint(
+  async losePoint(
     player: PlayerEntity,
     ball: IBall,
     p1: PlayerEntity,
@@ -128,7 +117,7 @@ export class GameService {
     player.score += 1;
     if (player.score === victory_score)
       player.won = true;
-    this.all_player.save(player);
+    await this.all_player.save(player);
     server.in(room).emit('get_players', p1, p2);
   }
   
