@@ -12,6 +12,9 @@ import { FortyTwoStrategy } from './strategy/fortyTwo.strategy';
 import { JwtTwoFactorStrategy } from './strategy/jwtTwoFactor.strategy';
 import { HttpModule } from '@nestjs/axios';
 import { GoogleStrategy } from './strategy/google.strategy';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { ChannelModule } from 'src/channel/channel.module';
+import { DmModule } from 'src/dm/dm.module';
 
 @Module({
   imports: [
@@ -19,17 +22,18 @@ import { GoogleStrategy } from './strategy/google.strategy';
     TypeOrmModule.forFeature([UserEntity]),
     UserModule,
     PassportModule,
+    ChannelModule,
+    DmModule,
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
     JwtService,
-    UserService,
     JwtStrategy,
     FortyTwoStrategy,
     GoogleStrategy,
     JwtTwoFactorStrategy
   ],
-  exports: [AuthService],
+  exports: [AuthService, JwtService],
 })
 export class AuthModule {}

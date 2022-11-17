@@ -1,5 +1,9 @@
 import { MessageEntity } from 'src/message/models/message.entity';
-import { BanEntity, BanMuteEntity, MuteEntity } from 'src/channel/models/ban.entity';
+import {
+  BanEntity,
+  BanMuteEntity,
+  MuteEntity,
+} from 'src/channel/models/ban.entity';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
   Column,
@@ -10,7 +14,9 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class ChannelEntity {
@@ -18,7 +24,10 @@ export class ChannelEntity {
   id: string;
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column({ nullable: false, unique: true })
   name: string;
@@ -26,6 +35,7 @@ export class ChannelEntity {
   @Column({ nullable: false })
   status: string;
 
+  @Exclude()
   @Column({ select: false, nullable: true }) // remettre le select null si solution trouve
   password: string;
 
@@ -43,9 +53,9 @@ export class ChannelEntity {
   @OneToMany(() => MessageEntity, (message) => message.channel)
   messages: MessageEntity[];
 
-  @OneToMany( () => MuteEntity, (mute) => mute.channel )
+  @OneToMany(() => MuteEntity, (mute) => mute.channel)
   muted: MuteEntity[];
 
-  @OneToMany( () => BanEntity, (ban) => ban.channel )
+  @OneToMany(() => BanEntity, (ban) => ban.channel)
   banned: BanEntity[];
 }

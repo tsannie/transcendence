@@ -14,7 +14,7 @@ interface IProps {
 }
 
 function ProfileFriends(props: IProps) {
-  let allFriendRequests;
+  let allFriendRequests: JSX.Element[] | undefined;
   let allFriends = props.player?.friends.map((friend, index) => {
     return (
       <Link to={"/profile/" + friend.username} key={index}>
@@ -25,7 +25,7 @@ function ProfileFriends(props: IProps) {
 
   const handleRefuseRequest = (
     e: MouseEvent<HTMLButtonElement>,
-    id: number
+    id: string
   ) => {
     e.preventDefault();
     api
@@ -41,7 +41,7 @@ function ProfileFriends(props: IProps) {
 
   const handleAcceptRequest = (
     e: MouseEvent<HTMLButtonElement>,
-    id: number
+    id: string
   ) => {
     e.preventDefault();
     api
@@ -50,45 +50,48 @@ function ProfileFriends(props: IProps) {
         toast.success("friend request accepted");
         props.setReloadPlayer(true);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         toast.error("Error while accepting friend request");
       });
   };
 
   if (props.isPerso) {
-    allFriendRequests = props.player?.friend_requests.map((request, index) => {
-      return (
-        <Fragment key={index}>
-          <div className="friend__request__item">
-            <div className="info__request">
-              <Link to={"/profile/" + request.username}>
-                <img
-                  src={request.profile_picture + "&size=small"}
-                  alt="avatar"
-                />
-              </Link>
-              <span>
-                {request.username.substring(0, 10)}
-                {request.username.length > 10 ? "..." : ""}
-              </span>
+    allFriendRequests = props.player?.friend_requests.map(
+      (request: User, index: number) => {
+        return (
+          <Fragment key={index}>
+            <div className="friend__request__item">
+              <div className="info__request">
+                <Link to={"/profile/" + request.username}>
+                  <img
+                    src={request.profile_picture + "&size=small"}
+                    alt="avatar"
+                  />
+                </Link>
+                <span>
+                  {request.username.substring(0, 10)}
+                  {request.username.length > 10 ? "..." : ""}
+                </span>
+              </div>
+              <AddIcon
+                alt="accept-friend-request"
+                onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                  handleAcceptRequest(e, request.id)
+                }
+              />
+              <RemoveIcon
+                alt="refuse-friend-request"
+                onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                  handleRefuseRequest(e, request.id)
+                }
+              />
             </div>
-            <AddIcon
-              alt="accept-friend-request"
-              onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                handleAcceptRequest(e, request.id)
-              }
-            />
-            <RemoveIcon
-              alt="refuse-friend-request"
-              onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                handleRefuseRequest(e, request.id)
-              }
-            />
-          </div>
-          <hr />
-        </Fragment>
-      );
-    });
+            <hr />
+          </Fragment>
+        );
+      }
+    );
   }
 
   return (

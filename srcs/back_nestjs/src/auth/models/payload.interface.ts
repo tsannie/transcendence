@@ -1,4 +1,4 @@
 export interface IPayload {
-  sub: number;
+  sub: string;
   isSecondFactor: boolean;
 }

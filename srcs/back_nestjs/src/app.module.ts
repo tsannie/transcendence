@@ -22,6 +22,8 @@ import { DmModule } from './dm/dm.module';
 import { DmEntity } from './dm/models/dm.entity';
 import { ConnectedUserModule } from './connected-user/connected-user.module';
 import { HttpModule } from '@nestjs/axios';
+import { ChannelService } from './channel/service/channel.service';
+import { TwoFactorModule } from './two-factor/two-factor.module';
 
 @Module({
   imports: [
@@ -34,7 +36,6 @@ import { HttpModule } from '@nestjs/axios';
       autoLoadEntities: true,
       synchronize: true, //TODO deploiement false
     }),
-    TypeOrmModule.forFeature([UserEntity, DmEntity, MessageEntity]),
     HttpModule,
     UserModule,
     AuthModule,
@@ -43,16 +44,11 @@ import { HttpModule } from '@nestjs/axios';
     MessageModule,
     DmModule,
     ConnectedUserModule,
+    TwoFactorModule
   ],
-  controllers: [AppController, TwoFactorController, DmController],
+  controllers: [AppController],
   providers: [
     AppService,
-    JwtService,
-    AuthService,
-    UserService,
-    TwoFactorService,
-    DmService,
-    MessageService,
-  ], // AuthResolver
+  ],
 })
 export class AppModule {}

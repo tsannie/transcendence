@@ -1,35 +1,53 @@
-import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  SerializeOptions,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { Request } from 'express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { LoadMessagesDto } from '../dto/loadmessages.dto';
+import { MessageEntity } from '../models/message.entity';
 import { MessageService } from '../service/message.service';
 
 @Controller('message')
+@UseInterceptors(ClassSerializerInterceptor)
 export class MessageController {
-  constructor(private messageService: MessageService,
-    ) {}
+  constructor(private messageService: MessageService) {}
 
+  @Get('dm')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async loadDmMessages(
+    @Query() data: LoadMessagesDto,
+    @Req() req: Request,
+  ): Promise<MessageEntity[]> {
+    return await this.messageService.loadMessages(
+      'dm',
+      data.id,
+      data.offset,
+      req.user,
+    );
+  }
 
-	//TODO DELETE THIS ROUTE LATER, USED FOR DEBUGGING
-	@Post("addToChannel")
-	async addMessageChannel(@Body() data) {
-		return await this.messageService.addMessagetoChannel(data);
-	}
-
-	//TODO DELETE THIS ROUTE LATER, USED FOR DEBUGGING
-	@Post("addToDm")
-	async addDm(@Body() data) {
-		return await this.messageService.addMessagetoDm(data);
-	}
-
-	@UseGuards( JwtTwoFactorGuard )
-	@Get("dm")
-	async loadDmMessages(@Query() data: LoadMessagesDto, @Request() req) {
-		return await this.messageService.loadMessages("dm", data.id, data.offset, req.user);
-	}
-
-	@UseGuards( JwtTwoFactorGuard )
-	@Get("channel")
-	async loadChannelMessages(@Query() data: LoadMessagesDto, @Request() req) {
-		return await this.messageService.loadMessages("channel", data.id, data.offset, req.user);
-	}
+  @Get('channel')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async loadChannelMessages(
+    @Query() data: LoadMessagesDto,
+    @Req() req: Request,
+  ) {
+    return await this.messageService.loadMessages(
+      'channel',
+      data.id,
+      data.offset,
+      req.user,
+    );
+  }
 }
