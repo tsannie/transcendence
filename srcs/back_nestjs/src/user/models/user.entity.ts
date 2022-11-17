@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
-import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import {
@@ -71,9 +70,6 @@ export class UserEntity {
   @ManyToMany(() => UserEntity)
   @JoinTable()
   blocked: UserEntity[];
-
-  @OneToMany(() => ConnectedUserEntity, (connection) => connection.user)
-  connections: ConnectedUserEntity[];
 
   @Column({ nullable: true })
   profile_picture: string;

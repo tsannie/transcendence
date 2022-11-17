@@ -9,8 +9,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 import {
   canvas_back_height,
@@ -26,10 +25,9 @@ import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
-import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
-import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { CreateRoomDto } from './dto/createRoom.dto';
 import { GameStatEntity } from './entity/gameStat.entity';
+import { AuthService } from 'src/auth/service/auth.service';
 
 export interface PaddlePos {
   y1: number;
@@ -51,8 +49,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private gameStatRepository: Repository<GameStatEntity>,
 
     private gameService: GameService,
-    private connectedUserService: ConnectedUserService,
     private userService: UserService,
+    private authService: AuthService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -60,33 +58,29 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   paddle_pos = new Map<string, PaddlePos>();
   is_playing = new Map<string, boolean>();
+  connectedUsers = new Map<string, Socket>();
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
-    // console.log(client.handshake.headers.cookie); TODO: AUTH with jwt verify
-    try {
-      let userId = client.handshake.query.userId;
-      let user: UserEntity;
-      console.log('userId = ', userId);
-      if (typeof userId === 'string') {
-        user = await this.userService.findById(userId);
-      }
-      if (!user) {
-        return this.disconnect(client);
-      } else {
-        let connectedUser = new ConnectedUserEntity();
+    let user: UserEntity;
 
-        connectedUser.socketId = client.id;
-        connectedUser.user = user;
-        this.connectedUserService.create(connectedUser);
+    try {
+      user = await this.authService.validateSocket(client);
+
+      if (!user) {
+        return this.disconnect(user.id, client);
+      } else {
+        this.connectedUsers.set(user.id, client);
       }
     } catch {
-      return this.disconnect(client);
+      return client.disconnect();
     }
   }
 
   async handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
+    const user = await this.authService.validateSocket(client);
+
     let room: string;
     const room_game = await this.all_game.findOneBy({ id: room });
     if (room_game) {
@@ -98,11 +92,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       else if (room_game.status === RoomStatus.PLAYING)
         this.giveUp(client, room_game.id);
     }
-    this.disconnect(client);
+    this.disconnect(user.id, client);
   }
 
-  private disconnect(client: Socket) {
-    this.connectedUserService.deleteBySocketId(client.id);
+  private disconnect(userId: string, client: Socket) {
+    this.connectedUsers.delete(userId);
     client.disconnect();
   }
 
@@ -115,8 +109,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: CreateRoomDto,
   ) {
-    const user = (await this.connectedUserService.findBySocketId(client.id))
-      .user;
+    const user = await this.authService.validateSocket(client);
     let room_game: RoomEntity;
 
     room_game = await this.gameService.joinFastRoom(user);
@@ -152,8 +145,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
-    const user = (await this.connectedUserService.findBySocketId(client.id))
-      .user;
+    const user = await this.authService.validateSocket(client);
     const room_game = await this.all_game.findOneBy({ id: room });
 
     if (!room_game) return;
@@ -185,8 +177,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('giveUp')
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
-    const user = (await this.connectedUserService.findBySocketId(client.id))
-      .user;
+    const user = await this.authService.validateSocket(client);
     const room_game = await this.all_game.findOneBy({ id: room });
 
     console.log('giveUp');

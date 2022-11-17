@@ -11,11 +11,11 @@ interface SocketGameProviderProps {
 
 export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
   const { user } = useContext(AuthContext);
-  const socket = io("http://localhost:4000/game", {
+  const socket: Socket = io("http://localhost:4000/game", {
     query: {
       userId: user?.id,
     },
-    // transports: ["websocket"],
+    transports: ["websocket"],
   });
 
   useEffect(() => {

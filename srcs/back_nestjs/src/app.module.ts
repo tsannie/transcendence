@@ -13,8 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from './user/models/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { MessageEntity } from './message/models/message.entity';
-import { ChannelController } from './channel/controller/channel.controller';
-import { ChannelService } from './channel/service/channel.service';
 import { ChannelModule } from './channel/channel.module';
 import { GameModule } from './game/game.module';
 import { TwoFactorService } from './two-factor/service/two-factor.service';
@@ -23,7 +21,6 @@ import { DmController } from './dm/controller/dm.controller';
 import { DmService } from './dm/service/dm.service';
 import { DmModule } from './dm/dm.module';
 import { DmEntity } from './dm/models/dm.entity';
-import { ConnectedUserModule } from './connected-user/connected-user.module';
 import { HttpModule } from '@nestjs/axios';
 import { GameStatEntity } from './game/entity/gameStat.entity';
 
@@ -47,7 +44,6 @@ import { GameStatEntity } from './game/entity/gameStat.entity';
     ChannelModule,
     MessageModule,
     DmModule,
-    ConnectedUserModule,
   ],
   controllers: [AppController, TwoFactorController, DmController],
   providers: [
