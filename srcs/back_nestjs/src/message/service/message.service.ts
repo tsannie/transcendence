@@ -10,8 +10,8 @@ import { BanMuteService } from 'src/channel/service/banmute.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { Server } from 'socket.io';
 import { ChannelService } from 'src/channel/service/channel.service';
-import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { MessageDto } from '../dto/message.dto';
+import { Socket } from 'socket.io';
 
 const LOADED_MESSAGES = 20;
 
@@ -142,20 +142,28 @@ export class MessageService {
   }
 
   // emit message to all users in dm
-  async emitMessageDm(socket: Server, lastMessage: MessageEntity) {
+  async emitMessageDm(socket: Server, lastMessage: MessageEntity, connectedUsers: Map<string, Socket>) {
     for (const dmUser of lastMessage.dm.users) {
       const user = await this.userService.findByName(dmUser.username, {
-        connections: true,
         dms: true,
         channels: true,
         admin_of: true,
         owner_of: true,
       });
-      for (const connection of user.connections) {
+
+      // search for user in connectedUsers
+      console.log("connectedUsers === ", connectedUsers);
+      const userSocket = connectedUsers.get(user.id);
+      /* for (const connection of Array.from(connectedUsers.values())) {
         if (lastMessage) {
-          socket.to(connection.socketId).emit('message', lastMessage);
+          socket.to(connection.id).emit('message', lastMessage);
         }
-      }
+      } */
+      //for (const connection of Array.from(connectedUsers.values())) {
+        if (lastMessage) {
+          socket.to(userSocket.id).emit('message', lastMessage);
+        }
+      //}
     }
   }
 
@@ -176,14 +184,13 @@ export class MessageService {
     if (users) {
       for (const channelUser of users) {
         const user = await this.userService.findByName(channelUser.username, {
-          connections: true,
           dms: true,
           channels: true,
           admin_of: true,
           owner_of: true,
         });
 
-        for (const connection of user.connections) {
+       /*  for (const connection of user.connections) {
           const lastMessage = await this.loadLastMessage(
             'channel',
             channel.id,
@@ -193,7 +200,7 @@ export class MessageService {
           if (lastMessage) {
             socket.to(connection.socketId).emit('message', lastMessage);
           }
-        }
+        } */
       }
     }
   }
