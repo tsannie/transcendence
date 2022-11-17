@@ -63,16 +63,16 @@ export class AuthService {
     return await this.userService.add(user);
   }
 
-  async getCookie(user: any, isSecondFactor = false): Promise<IToken> {
-    // TODO replace by the entity ??
+  async getToken(
+    user: UserEntity,
+    isSecondFactor: boolean = false,
+  ): Promise<IToken> {
     const payload: IPayload = {
       sub: user.id, // sub for jwt norm
       isSecondFactor: isSecondFactor,
     };
-    //console.log('payload', payload)
     const token: IToken = {
       access_token: await this.jwtTokenService.sign(payload, {
-        // generate our jwt
         secret: process.env.JWT_ACCESS_TOKEN_SECRET,
         expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME,
       }),

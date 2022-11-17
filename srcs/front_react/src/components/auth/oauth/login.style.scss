@@ -10,7 +10,7 @@
     margin-bottom: 20vh;
     font-size: calc(65 * var(--res));
     letter-spacing: 0.5em;
-    text-shadow: 0 0 8px #fff; // TODO const
+    text-shadow: 0 0 8px $white-color;
     animation: bounce 2s ease infinite;
   }
 
@@ -119,6 +119,7 @@
 
 .login-list__content__item {
   display: flex;
+  padding: 2%;
   justify-content: center;
   align-items: center;
 }

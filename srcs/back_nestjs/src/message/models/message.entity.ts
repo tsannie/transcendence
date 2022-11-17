@@ -23,10 +23,10 @@ export class MessageEntity {
   @ManyToOne(() => UserEntity)
   author: UserEntity;
 
-  @ManyToOne(() => DmEntity, (dm) => dm.messages, { onDelete: 'CASCADE' })
+  @ManyToOne(() => DmEntity, (dm) => dm.messages, { cascade: ["update"], onDelete: 'CASCADE' })
   dm?: DmEntity;
 
-  @ManyToOne(() => ChannelEntity, (channel) => channel.messages, {
+  @ManyToOne(() => ChannelEntity, (channel) => channel.messages, { cascade: ["update"], 
     onDelete: 'CASCADE',
   })
   channel?: ChannelEntity;
