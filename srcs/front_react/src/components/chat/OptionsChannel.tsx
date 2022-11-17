@@ -3,15 +3,61 @@ import { User } from "../../contexts/AuthContext";
 import { IDatas } from "./Conversation";
 import { IChannel } from "./types";
 
-function UserOptions(props: {type: string, credentials: boolean, user: User}) {
-    const {credentials, user} = props;
+function UserOptions(props: {type: string, isOwner: boolean, isAdmin: boolean, user: User}) {
+    const {type, isOwner, isAdmin, user} = props;
     const [isOpen, setOpen] = useState<boolean>(false);
+    
+    const adminOptions = () => {
+        let adminOptionsJSX: JSX.Element[] = [];
+
+        if (isOwner){    
+            adminOptionsJSX.push(<button>Ban User</button>);
+            adminOptionsJSX.push(<button>Mute User</button>);
+            adminOptionsJSX.push(<button>Revoke Admin</button>);
+        }
+        return <Fragment>{adminOptionsJSX}</Fragment>
+    }
+
+    const memberOptions = () => {
+        let adminOptionsJSX: JSX.Element[] = [];
+
+        if (isAdmin){    
+            adminOptionsJSX.push(<button>Ban User</button>);
+            adminOptionsJSX.push(<button>Mute User</button>);
+        }
+        if (isOwner)
+            adminOptionsJSX.push(<button>Make Admin</button>)
+        return <Fragment>{adminOptionsJSX}</Fragment>
+    }
+
+    const mutedOptions = () => {
+        let adminOptionsJSX: JSX.Element[] = [];
+
+        if (isAdmin || isOwner){    
+            adminOptionsJSX.push(<button>Unmute User</button>);
+            adminOptionsJSX.push(<button>Ban User</button>);
+        }
+        return <Fragment>{adminOptionsJSX}</Fragment>
+    }
+
+    const bannedOptions = () => {
+        let adminOptionsJSX: JSX.Element[] = [];
+
+        if (isAdmin || isOwner){    
+            adminOptionsJSX.push(<button>UnBan User</button>);
+        }
+        return <Fragment>{adminOptionsJSX}</Fragment>
+    }
 
     const displayOptions = () => {
         return (
         <div className="dropdown">
             <div className="options">Options</div>
             <button>Access Profile</button>
+            {type === "Admins" && adminOptions()}
+            {type === "Members" && memberOptions()}
+            {type === "Muted" && mutedOptions()}
+            {type === "Banned" && bannedOptions()}
         </div>);
     }
 
@@ -24,64 +70,39 @@ function UserOptions(props: {type: string, credentials: boolean, user: User}) {
     </Fragment>);
 }
 
-function UserList( props: {type: string, credentials: boolean, users: User[] | null} ) {
-    const {users} = props;
-    const userList = users?.map( (member : User) => <UserOptions key={member.id} type={props.type} credentials={props.credentials} user={member}/>)
-    
-    return (
-    <Fragment>
-        {userList}
-    </Fragment>);
-}
-
-function UserCategory(props: {name: string, credentials: boolean, users: User[] | null}) {
+function MemberCategory(props: {name: string, isOwner: boolean, isAdmin: boolean, users: User[] | null}) {
     const { users } = props;
 
     if (!users || users.length === 0)
         return <Fragment/>;
 
+    const userList = users?.map( (member : User) => <UserOptions key={member.id} type={props.name} isOwner={props.isOwner} isAdmin={props.isAdmin} user={member}/>)
+
     return (
         <div className="category">
             <div className="title">{props.name}</div>
-            <UserList type={props.name} credentials={props.credentials} users={users}/>
+            {userList}
         </div>
     )
 }
 
-function RequesterOptions(props: {isOwner: boolean, isAdmin: boolean, channel: IChannel}) {
-    const {isOwner, isAdmin, channel} = props;
-
-    return (
-        <Fragment>
-            {isOwner ? <UserCategory name={"Admins"} credentials={true} users={channel.admins}/> : <UserCategory name="Admins" credentials={false} users={channel.admins}/>}
-            {isOwner || isAdmin ? 
-            <Fragment>
-                <UserCategory name={"Members"} credentials={true} users={channel.users}/>
-                <UserCategory name={"Muted"} credentials={true} users={channel.muted}/>
-                <UserCategory name={"Banned"} credentials={true} users={channel.muted}/>
-            </Fragment> : 
-            <Fragment>
-                <UserCategory name={"Members"} credentials={false} users={channel.users}/>
-            </Fragment>
-            }
-        </Fragment>);
-}
-
-function ChannelMembers(props: {channel: IDatas | null }) {
-    const status = props.channel?.status;
-    const data = props.channel?.data;
-
-    if (!data)
+function ChannelMembers(props: {receivedChannel: IDatas | null }) {
+    const status = props.receivedChannel?.status;
+    const channel = props.receivedChannel?.data;
+    
+    if (!channel)
         return <Fragment />;
 
-    switch (status){
-        case "owner":
-            return <RequesterOptions isOwner={true} isAdmin={false} channel={data} />
-        case "admin":
-            return <RequesterOptions isOwner={false} isAdmin={true} channel={data} />
-        default:
-            return <RequesterOptions isOwner={false} isAdmin={false} channel={data} />
-    }
+    return (
+        <div className="conversation__options__members">
+            <MemberCategory name={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.admins}/>
+            <MemberCategory name={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.users}/>
+            {(status === "owner" || status === "admin") ? 
+            <Fragment>
+                <MemberCategory name={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.muted}/>
+                <MemberCategory name={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} users={channel.muted}/>
+            </Fragment> : null}
+        </div>);
 }
 
 function ChannelProfile(props: {channel: IChannel|undefined}) {
@@ -100,12 +121,10 @@ function ChannelProfile(props: {channel: IChannel|undefined}) {
   </div>);
 }
 
-function ChannelOptions(props: {currentConvId: string, channel: IDatas | null}) {
+function ChannelOptions(props: {currentConvId: string, receivedChannel: IDatas | null}) {
     return <Fragment>
-        <ChannelProfile channel={props.channel?.data}/>
-        <div className="conversation__options__members">
-            <ChannelMembers channel={props.channel} />
-        </div>
+        <ChannelProfile channel={props.receivedChannel?.data}/>
+        <ChannelMembers receivedChannel={props.receivedChannel} />
     </Fragment>
 }
 
