@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { api } from "../../const/const";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { ICreateChannel } from "./types";
@@ -13,6 +13,9 @@ function CreateChannelForm() {
   const [channelStatus, setChannelStatus] = useState<string>("");
   const [channelPassword, setChannelPassword] = useState<string>("");
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
+  const [selectType, setSelectType] = useState<
+    "Public" | "Protected" | "Private"
+  >("Public");
 
   const createChannel = async (event: any) => {
     event.preventDefault();
@@ -37,22 +40,6 @@ function CreateChannelForm() {
       .catch((err) => toast.error("HTTP error: " + err.response.data));
   };
 
-  const actualizeChannelName = (event: any) => {
-    setChannelName(event.target.value);
-  };
-
-  const actualizeChannelPassword = (event: any) => {
-    setChannelPassword(event.target.value);
-  };
-
-  const actualizePasswordVerifier = (event: any) => {
-    setPasswordVerifier(event.target.value);
-  };
-
-  const selectStatus = (event: any) => {
-    setChannelStatus(event.target.value);
-  };
-
   return (
     <div className="create__channel">
       <div className="create__channel__header">
@@ -64,32 +51,50 @@ function CreateChannelForm() {
           type="text"
           placeholder="Enter Name of New Channel..."
           value={channelName}
-          onChange={actualizeChannelName}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setChannelName(e.target.value)
+          }
         />
         <div className="create__chan__status">
-          <button type="button" value="Public" onClick={selectStatus}>
+          <button
+            type="button"
+            value="Public"
+            onClick={() => setSelectType("Public")}
+          >
             public
           </button>
-          <button type="button" value="Private" onClick={selectStatus}>
+          <button
+            type="button"
+            value="Private"
+            onClick={() => setSelectType("Private")}
+          >
             private
           </button>
-          <button type="button" value="Protected" onClick={selectStatus}>
+          <button
+            type="button"
+            value="Protected"
+            onClick={() => setSelectType("Protected")}
+          >
             protected
           </button>
         </div>
-        {channelStatus === "Protected" && (
+        {selectType === "Protected" && (
           <div className="create__chan__passwords">
             <input
               type="password"
               placeholder="Enter Password..."
               value={channelPassword}
-              onChange={actualizeChannelPassword}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setChannelPassword(e.target.value)
+              }
             />
             <input
               type="password"
               placeholder="Verify Password..."
               value={passwordVerifier}
-              onChange={actualizePasswordVerifier}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPasswordVerifier(e.target.value)
+              }
             />
           </div>
         )}
