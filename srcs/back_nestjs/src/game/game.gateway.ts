@@ -50,7 +50,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let userId = client.handshake.query.userId;
       let user: UserEntity;
       if (typeof userId === 'string') {
-        user = await this.userService.findById(parseInt(userId));
+        user = await this.userService.findById(userId);
       }
       if (!user) {
         return this.disconnect(client);
