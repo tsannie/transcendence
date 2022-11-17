@@ -2,13 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { SocketGameContext } from "../../contexts/SocketGameContext";
-
-export enum RoomStatus {
-  EMPTY,
-  WAITING,
-  PLAYING,
-  CLOSED,
-}
+import { RoomStatus } from "./const/const";
 
 export type GameContextType = {
   status: number;

@@ -13,12 +13,14 @@ export interface IBall {
   y: number;
   rad : number;
 }
+
 export interface IPaddle {
   x: number;
   y: number;
   height: number;
   width: number;
 }
+
 export interface IPlayer {
   name: string;
   score: number;

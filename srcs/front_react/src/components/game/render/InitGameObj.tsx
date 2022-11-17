@@ -1,7 +1,7 @@
 import { canvas_back_height, canvas_back_width, paddle_height, paddle_margin, paddle_width, rad } from "../const/const";
 import {IGameObj} from "../types";
 
-export function initObj(ratio_width: number, ratio_height: number) {
+export function initGameObj(ratio_width: number, ratio_height: number) {
 
   let objs : IGameObj = {
     ball:{
