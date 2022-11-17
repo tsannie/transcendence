@@ -9,8 +9,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 import { canvas_back_height, RoomStatus } from './const/const';
 import { RoomEntity } from './entity/room.entity';
@@ -155,17 +154,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       room_game.status = RoomStatus.EMPTY;
     room_game.id = room;
 
-    if (room_game.p1.id === user.id) room_game.p1 = null;
-    else if (room_game.p2.id === user.id) room_game.p2 = null;
-
+    if (room_game.p1.id === user.id)
+      room_game.p1 = null;
+    else if (room_game.p2.id === user.id)
+      room_game.p2 = null;
     if (room_game.status === RoomStatus.EMPTY) {
       await this.all_game.remove(room_game);
-      this.server.in(room).emit('leftRoom');
       client.leave(room);
       return;
     }
     await this.all_game.save(room_game);
-    this.server.in(room).emit('leftRoom', room_game);
     client.leave(room);
   }
 
@@ -176,14 +174,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('giveUp')
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
     console.log('giveUp');
-    const user = (await this.connectedUserService.findBySocketId(client.id))
-      .user;
-    let room_game = await this.all_game.findOneBy({ id: room });
+    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    const room_game = await this.all_game.findOneBy({ id: room });
 
     await this.gameService.giveUp(room, this.game_loop, room_game, user);
-
     this.server.in(room).emit('giveUp', room_game.set.p1, room_game.set.p2);
-
     client.leave(room);
   }
 
@@ -198,11 +193,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     if (this.game_loop[room]) this.game_loop[room] = false;
     if (room_game) {
-      if (this.paddle_pos[room]) delete this.paddle_pos[room];
-      if (this.game_loop[room]) delete this.game_loop[room];
+      if (this.paddle_pos[room])
+        delete this.paddle_pos[room];
+      if (this.game_loop[room])
+        delete this.game_loop[room];
       await this.all_game.remove(room_game);
     }
-    client.emit('leftRoom');
   }
 
   ///////////////////////////////////////////////
@@ -250,13 +246,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       while (room_game.set.p1.won === false &&
       room_game.set.p2.won === false &&
       this.game_loop[room] === true) {
-        this.gameService.updateGame(
-          BallObj,
-          room_game.set,
-          this.paddle_pos[room],
-          this.server,
-          room,
-        );
+        this.gameService.updateGame(BallObj, room_game.set, this.paddle_pos[room], this.server, room);
         this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
         await new Promise((f) => setTimeout(f, 8));
       }
