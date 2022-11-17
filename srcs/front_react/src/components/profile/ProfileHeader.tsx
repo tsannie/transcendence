@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactComponent as MedalIcon } from "../../assets/img/icon/medal.svg";
 import { User } from "../../contexts/AuthContext";
-import SearchBar from "./SearchBar";
+import SearchBarPlayer from "./SearchBarPlayer";
 
 interface IProps {
   player: User | null;
@@ -34,7 +34,7 @@ function ProfileHeader(props: IProps) {
       <div className="profile__header__right">
         <span>search player:</span>
         <div className="profile__header__search">
-          <SearchBar />
+          <SearchBarPlayer />
         </div>
       </div>
     </div>
