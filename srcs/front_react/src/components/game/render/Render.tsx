@@ -7,15 +7,16 @@ import {
   paddle_margin,
   paddle_width,
   rad,
+  RoomStatus,
   screen_ratio,
 } from "../const/const";
-import { GameContext, RoomStatus } from "../GameContext";
+import { GameContext } from "../GameContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
 import { IaskPaddle, IGameObj, IPlayer } from "../types";
-import { initObj } from "./InitGameObj";
+import { initGameObj } from "./InitGameObj";
 
 let position_y: number = 0;
-export function GamePlayer_p1_p2() {
+export function GameRender() {
   const [ leave, setLeave ] = useState(false);
 
   let start = false;
@@ -27,7 +28,7 @@ export function GamePlayer_p1_p2() {
   const game = useContext(GameContext);
   const socket = useContext(SocketGameContext);
   const canvasRef: any = createRef();
-  const [ gameObj ] = useState<IGameObj>(initObj(ratio_width, ratio_height));
+  const [ gameObj ] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
 
   const [HW, setdetectHW] = useState({
     winWidth: window.innerWidth,
@@ -43,10 +44,6 @@ export function GamePlayer_p1_p2() {
     window.addEventListener("resize", detectSize);
     return () => {
       window.removeEventListener("resize", detectSize);
-      lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
-      ratio_width = lowerSize / canvas_back_width;
-      let height = lowerSize / screen_ratio;
-      border_size = height / 50;
       socket.emit("resizeIngame", game.room);
     };
   }, [HW]);
@@ -54,7 +51,8 @@ export function GamePlayer_p1_p2() {
   function resizeGame() {
     lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
     height = lowerSize / screen_ratio;
-  
+    border_size = height / 50;
+
     ratio_width = lowerSize / canvas_back_width;
     ratio_height = lowerSize / screen_ratio / canvas_back_height;
 
@@ -119,8 +117,6 @@ export function GamePlayer_p1_p2() {
     }
   }
 
-
-  
   useEffect(() => {
     let countdown: number = 3;
     let countdownInterval = setInterval(() => {
@@ -164,7 +160,6 @@ export function GamePlayer_p1_p2() {
         socket.emit("giveUp", game.room);
     }
   }
-  ////////////////////////////////////////////////////
 
   function mouv_mouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     const canvas = document.getElementById("canvas");
