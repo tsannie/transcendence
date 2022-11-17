@@ -328,12 +328,12 @@ form {
 
   form {
     display: flex;
-    flex: 0 0 34%;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 
     input {
-      width: 100%;
+      width: 60%;
       border-style: dashed;
       margin: 4%;
     }
@@ -341,26 +341,15 @@ form {
     .create__chan__status {
       display: flex;
       justify-content: space-around;
+      width: 100%;
 
       button {
-        min-width: 45%;
-        margin: 4%;
-
-        &:hover {
-          transform: scale(1.1);
-          filter: none;
-          background-color: green;
-        }
-
-        &:focus {
-          @extend :hover;
-          background-color: red;
-        }
-
-        &:active {
-          @extend :hover;
-          background-color: blue;
-        }
+        width: 28%;
+        border-style: dashed;
+      }
+      .selected {
+        transform: scale(1.1);
+        opacity: 0.5;
       }
     }
 
