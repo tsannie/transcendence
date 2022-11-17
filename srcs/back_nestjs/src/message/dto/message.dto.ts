@@ -10,11 +10,6 @@ export class MessageDto {
 
   @IsDefined()
   @IsNotEmpty()
-  @Type(() => UserEntity)
-  author: UserEntity;
-
-  @IsDefined()
-  @IsNotEmpty()
   @Type(() => String)
   content: string;
 

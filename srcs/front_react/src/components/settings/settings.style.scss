@@ -9,7 +9,7 @@
   }
 
   img {
-    width: calc(220 * var(--res)); // TODO depace to qr code div
+    width: calc(220 * var(--res));
   }
 
   h2 {
@@ -25,6 +25,10 @@
   button,
   input {
     margin-top: 0vh;
+  }
+
+  button {
+    padding: 2%;
   }
 }
 
@@ -52,7 +56,8 @@
     display: flex;
   }
   input {
-    width: 50%;
+    display: flex;
+    width: calc(180 * var(--res));
   }
 }
 
@@ -102,9 +107,13 @@
 
 .settings__2fa__validation {
   display: flex;
+  align-items: normal;
+  justify-content: center;
+
   button {
     border-left: none;
   }
+
   input {
     font-size: calc(30 * var(--res));
     text-align: center;
