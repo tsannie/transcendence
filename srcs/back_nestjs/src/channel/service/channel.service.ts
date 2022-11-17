@@ -582,6 +582,7 @@ export class ChannelService {
     });
     await this.verifyMuted(channel, req_channel.targetId);
 
+    //TODO REMOVE IF NOT USED (duplicate use of findMuted)
     if (this.findMuted(channel, req_channel.targetId))
       throw new UnprocessableEntityException(
         'Cannot make admin a muted member',

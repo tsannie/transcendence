@@ -224,6 +224,12 @@ $width_chat: calc(450 * var(--res));
         justify-content: center;
         width: 100%;
         border-bottom-style: dashed;
+        font-size: calc(18 * var(--res));
+      }
+
+      button {
+        font-size: calc(16 * var(--res));
+        padding: 1%;
       }
     }
 
