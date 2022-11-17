@@ -8,7 +8,7 @@ function Options(props: {currentConvId: string, isChannel: boolean, data: IDatas
 
   return (
     <div className="conversation__options">
-      {isChannel? <ChannelOptions currentConvId={currentConvId} channel={data as IDatas | null} /> : <DmOptions currentConvId={currentConvId} dm={data as IDm | null} targetRedirection={targetRedirection} />}
+      {isChannel? <ChannelOptions currentConvId={currentConvId} receivedChannel={data as IDatas | null} /> : <DmOptions currentConvId={currentConvId} dm={data as IDm | null} targetRedirection={targetRedirection} />}
     </div>
   );
 }
