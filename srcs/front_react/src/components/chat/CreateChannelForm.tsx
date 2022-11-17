@@ -10,14 +10,11 @@ function CreateChannelForm() {
     useContext(ChatDisplayContext);
 
   const [channelName, setChannelName] = useState<string>("");
-  const [channelStatus, setChannelStatus] = useState<string>("");
   const [channelPassword, setChannelPassword] = useState<string>("");
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
-  const [selectType, setSelectType] = useState<
-    "Public" | "Protected" | "Private"
-  >("Public");
+  const [selectType, setSelectType] = useState<string | null>(null);
 
-  const createChannel = async (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     if (channelPassword.length > 0 && channelPassword !== passwordVerifier) {
       toast.error("Passwords don't match");
@@ -25,7 +22,7 @@ function CreateChannelForm() {
     }
     const channel: Partial<ICreateChannel> = {
       name: channelName,
-      status: selectType,
+      status: selectType as string,
     };
     if (selectType === "Protected") channel.password = channelPassword;
 
@@ -46,7 +43,7 @@ function CreateChannelForm() {
         <h2>create channel</h2>
         <button onClick={() => setDisplay(ChatType.JOINFORM)}>join</button>
       </div>
-      <form onSubmit={createChannel}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Enter Name of New Channel..."
@@ -57,23 +54,32 @@ function CreateChannelForm() {
         />
         <div className="create__chan__status">
           <button
+            className={selectType === "Public" ? "selected" : ""}
             type="button"
             value="Public"
-            onClick={() => setSelectType("Public")}
+            onClick={() =>
+              setSelectType(selectType !== "Public" ? "Public" : null)
+            }
           >
             public
           </button>
           <button
+            className={selectType === "Private" ? "selected" : ""}
             type="button"
             value="Private"
-            onClick={() => setSelectType("Private")}
+            onClick={() =>
+              setSelectType(selectType !== "Private" ? "Private" : null)
+            }
           >
             private
           </button>
           <button
+            className={selectType === "Protected" ? "selected" : ""}
             type="button"
             value="Protected"
-            onClick={() => setSelectType("Protected")}
+            onClick={() =>
+              setSelectType(selectType !== "Protected" ? "Protected" : null)
+            }
           >
             protected
           </button>
@@ -98,7 +104,10 @@ function CreateChannelForm() {
             />
           </div>
         )}
-        <button className="create__chan__validator" onClick={createChannel}>
+        <button
+          className="create__chan__validator"
+          disabled={selectType === null || channelName.length === 0}
+        >
           create channel
         </button>
       </form>

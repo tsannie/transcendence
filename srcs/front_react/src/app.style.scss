@@ -39,6 +39,11 @@ body {
     &:active {
       opacity: 0.3;
     }
+    &:disabled,
+    &[disabled] {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   }
 
   input {
