@@ -16,3 +16,9 @@ export enum GameMode {
   PONG_1972 = "1972",
   PONG_TRANS = "TRANS",
 }
+
+export enum RoomStatus {
+  EMPTY,
+  WAITING,
+  PLAYING,
+}

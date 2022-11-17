@@ -1,11 +1,9 @@
 import { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
-import { GameMode } from "../const/const";
-import { GameContext, RoomStatus } from "../GameContext";
-import { GamePlayer_p1_p2 } from "../render/Render";
+import { GameMode, RoomStatus } from "../const/const";
+import { GameContext } from "../GameContext";
 import { ICreateRoom } from "../types";
-import WaitingRoom from "./WaitingRoom";
 
 export default function GameMenu() {
 
@@ -43,8 +41,6 @@ export default function GameMenu() {
         <button onClick={createGameRoomTRANS}>PONG TRANSCENDENCE</button>
       </div>
     }
-    {game.status === RoomStatus.WAITING && <WaitingRoom />}
-    {game.status === RoomStatus.PLAYING && <GamePlayer_p1_p2 />}
     </div>
   );
 }

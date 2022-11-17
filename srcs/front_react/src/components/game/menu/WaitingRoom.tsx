@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { SocketGameContext } from "../../../contexts/SocketGameContext";
-import { GameContext, RoomStatus } from "../GameContext";
+import { RoomStatus } from "../const/const";
+import { GameContext } from "../GameContext";
 
 export default function WaitingRoom() {
 
@@ -22,10 +23,8 @@ export default function WaitingRoom() {
   return (
     <div className="queues">
       <h2> you are : {user?.username} </h2>
-
       <p> waiting opponent</p>
       <button onClick={leaveRoom}>leave waiting room</button>
     </div>
   );
 }
-
