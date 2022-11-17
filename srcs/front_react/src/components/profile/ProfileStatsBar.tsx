@@ -9,20 +9,20 @@ function ProfileStatsBar(props: IProps) {
   return (
     <div className="profile__stats">
       <div className="profile__stats__item">
-        <h3>1254</h3>
+        <h3 id="matches">1254</h3>
         <span>Matches</span>
       </div>
       <div className="profile__stats__item">
-        <h3>64%</h3>
+        <h3 id="win-rate">64%</h3>
         <span>Win Rate</span>
       </div>
       <div className="profile__stats__item">
-        <h3>789</h3>
+        <h3 id="elo">789</h3>
         <span>elo</span>
       </div>
       <div className="profile__stats__item">
-        <h3>54</h3>
-        <span>Classement</span>
+        <h3 id="classement">54</h3>
+        <span>Classement</span> {/* //TODO translate to rank ?? */}
       </div>
     </div>
   );
