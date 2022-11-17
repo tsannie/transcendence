@@ -58,6 +58,11 @@ body {
     border-style: dashed;
     border-color: $white-color;
     background: transparent;
+    &:disabled,
+    &[disabled] {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   }
 
   ::-webkit-scrollbar {

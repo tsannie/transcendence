@@ -60,6 +60,7 @@ function CreateChannelForm() {
             onClick={() =>
               setSelectType(selectType !== "Public" ? "Public" : null)
             }
+            disabled={!channelName}
           >
             public
           </button>
@@ -70,6 +71,7 @@ function CreateChannelForm() {
             onClick={() =>
               setSelectType(selectType !== "Private" ? "Private" : null)
             }
+            disabled={!channelName}
           >
             private
           </button>
@@ -80,6 +82,7 @@ function CreateChannelForm() {
             onClick={() =>
               setSelectType(selectType !== "Protected" ? "Protected" : null)
             }
+            disabled={!channelName}
           >
             protected
           </button>
@@ -93,6 +96,7 @@ function CreateChannelForm() {
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setChannelPassword(e.target.value)
               }
+              disabled={!channelName}
             />
             <input
               type="password"
@@ -101,12 +105,18 @@ function CreateChannelForm() {
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setPasswordVerifier(e.target.value)
               }
+              disabled={!channelName}
             />
           </div>
         )}
         <button
           className="create__chan__validator"
-          disabled={selectType === null || channelName.length === 0}
+          disabled={
+            selectType === null ||
+            (selectType === "Protected" &&
+              (!channelPassword || channelPassword !== passwordVerifier)) ||
+            !channelName
+          }
         >
           create channel
         </button>
