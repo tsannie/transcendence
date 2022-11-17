@@ -12,20 +12,24 @@ export class ConnectedUserService {
     private readonly connectedUserRepository: Repository<ConnectedUserEntity>,
   ) {}
 
-  async create(connectedUser: ConnectedUserDto): Promise<ConnectedUserDto> {
-    return this.connectedUserRepository.save(connectedUser);
+  async create(connectedUser: ConnectedUserEntity): Promise<ConnectedUserEntity> {
+    let newConnectedUser = new ConnectedUserEntity();
+
+    newConnectedUser.socketId = connectedUser.socketId;
+    newConnectedUser.user = connectedUser.user;
+    return await this.connectedUserRepository.save(newConnectedUser);
   }
 
   async findBySocketId(socketId: string): Promise<ConnectedUserEntity> {
-    return this.connectedUserRepository.findOne({
+    return await this.connectedUserRepository.findOne({
+      relations: ['user'],
       where: {
         socketId: socketId,
       },
-      relations: ['user'],
     });
   }
 
   async deleteBySocketId(socketId: string) {
-    return this.connectedUserRepository.delete({ socketId });
+    return await this.connectedUserRepository.delete({ socketId });
   }
 }
