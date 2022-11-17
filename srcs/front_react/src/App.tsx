@@ -17,6 +17,7 @@ import {
 import PageNotFound from "./components/menu/PageNotFound";
 import Profile from "./components/profile/Profile";
 import { ToastContainer } from "react-toastify";
+import Chat from "./components/chat/Chat";
 
 export default function App() {
   const { displayLocation } = useContext(
@@ -46,7 +47,7 @@ export default function App() {
             element={<PrivateRoute component={PageNotFound} />}
           />
 
-          <Route path="/chat" element={<PrivateRoute component={Home} />} />
+          <Route path="/chat" element={<PrivateRoute component={Chat} />} />
           <Route path="/game" element={<PrivateRoute component={GamePage} />} />
           <Route
             path="/settings"
@@ -54,7 +55,7 @@ export default function App() {
           />
         </Routes>
       </div>
-      <ToastContainer toastClassName={"toast"} />
+      <ToastContainer toastClassName={"toast"} pauseOnFocusLoss={false} />
     </div>
   );
 }

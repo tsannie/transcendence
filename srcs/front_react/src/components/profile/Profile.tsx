@@ -10,6 +10,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import ActionBar from "./ActionBar";
 import { toast } from "react-toastify";
 import { AxiosResponse } from "axios";
+import {
+  ChatDisplayContext,
+  ChatDisplayProvider,
+} from "../../contexts/ChatDisplayContext";
 
 function Profile() {
   const params = useParams().id;
@@ -49,6 +53,7 @@ function Profile() {
 
   useEffect(() => {
     if (reloadPlayer && player && isLoad) {
+      console.log("reload");
       if (isPerso) {
         setReloadUser(true);
       } else {
