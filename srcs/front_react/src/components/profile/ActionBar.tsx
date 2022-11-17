@@ -6,6 +6,13 @@ import { ReactComponent as BlockIcon } from "../../assets/img/icon/no_waiting_si
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import { api } from "../../const/const";
 import { toast } from "react-toastify";
+import {
+  ChatDisplayContext,
+  ChatDisplayContextInterface,
+  ChatType,
+} from "../../contexts/ChatDisplayContext";
+import { useNavigate } from "react-router-dom";
+import { AxiosError, AxiosResponse } from "axios";
 
 interface IProps {
   player: User | null;
@@ -14,6 +21,9 @@ interface IProps {
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
+  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection } =
+    useContext(ChatDisplayContext) as ChatDisplayContextInterface;
+  const nav = useNavigate();
 
   const handleRemoveFriend = () => {
     api.post("/user/remove-friend", { id: props.player?.id }).then(
@@ -44,6 +54,7 @@ function ActionBar(props: IProps) {
       api
         .post("/user/create-friend-request", { id: props.player?.id })
         .then(() => {
+          props.setReloadPlayer(true);
           toast.info("friend request sent !");
         })
         .catch(() => {
@@ -52,21 +63,27 @@ function ActionBar(props: IProps) {
     }
   };
 
+  const handleDm = () => {
+    setRedirection(true);
+    setDisplay(ChatType.CONV);
+    setIsChannel(false);
+    setTargetRedirection(props.player?.id as string);
+    nav("/chat");
+  };
+
   return (
     <div className="action-bar">
       <div className="action-bar__item">
-        <ChatIcon alt="chat" />
+        <ChatIcon alt="chat" onClick={handleDm} />
         <span>chat</span>
       </div>
       {props.player?.friends.find((friend) => friend.id === user?.id) ? (
         <div className="action-bar__item">
-          {/* TODO EDIT ICON */}
           <RemoveFriendIcon alt="remove-friend" onClick={handleRemoveFriend} />
           <span>remove friend</span>
         </div>
       ) : (
         <div className="action-bar__item">
-          {/* TODO EDIT ICON */}
           <AddFriendIcon alt="add-friend" onClick={handleAddFriend} />
           <span>add friend</span>
         </div>

@@ -19,8 +19,8 @@ export class TargetNameDto {
 export class TargetIdDto {
   @IsDefined()
   @IsNotEmpty()
-  @Type(() => Number)
-  id: number;
+  @IsString()
+  id: string;
 }
 
 export class AvatarDto extends TargetIdDto {

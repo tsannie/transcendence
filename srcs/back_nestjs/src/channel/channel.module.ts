@@ -13,7 +13,7 @@ import { ChannelService } from './service/channel.service';
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef( () => UserModule),
     TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity, BanEntity, MuteEntity]),
   ],
   controllers: [ChannelController],
