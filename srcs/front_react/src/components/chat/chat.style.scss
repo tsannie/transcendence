@@ -66,13 +66,21 @@ $width_chat: calc(450 * var(--res));
 
 .chat__list__items {
   display: flex;
-  border-style: dashed;
+  width: 1;
   justify-content: space-around;
   align-items: center;
   margin: 2.4%;
   transition: 70ms;
   min-width: 0;
   cursor: pointer;
+
+  button {
+    width: 100%;
+    padding: 0;
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
 
   li {
     display: flex;
@@ -81,6 +89,7 @@ $width_chat: calc(450 * var(--res));
     width: 100%;
     justify-content: flex-start;
     align-items: center;
+    padding: 0;
 
     .avatar {
       display: flex;
