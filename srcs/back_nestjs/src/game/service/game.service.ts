@@ -85,10 +85,12 @@ export class GameService {
       room_game.status = RoomStatus.CLOSED;
     if (room_game.set.p1.name === user.username) {
       room_game.p1 = null;
+      room_game.p1SocketId = null;
       room_game.set.p2.won = true;
     }
     else if (room_game.set.p2.name === user.username) {
       room_game.p2 = null;
+      room_game.p2SocketId = null;
       room_game.set.p1.won = true;
     }
     await this.all_game.save(room_game);

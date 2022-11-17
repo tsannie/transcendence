@@ -69,8 +69,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
     let user: UserEntity = new UserEntity();
-    if (client.id)
-      user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    if (client.id) {
+      let connectedUser = (await this.connectedUserService.findBySocketId(client.id));
+      if (!connectedUser)
+        return this.disconnect(client);
+      user = connectedUser.user;
+      if (!user)
+        return this.disconnect(client);
+    }
     const room_game = await this.gameService.findBySocketId(client.id);
 
     if (room_game) {
@@ -178,7 +184,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.server.in(room).emit('giveUp', room_game.set.p1, room_game.set.p2);
 
-    //client.emit('leftRoom');
     client.leave(room);
   }
 
