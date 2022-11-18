@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
-import { ConnectedUserEntity } from 'src/connected-user/service/models/connected-user.entity';
+import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import {

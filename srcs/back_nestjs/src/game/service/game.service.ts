@@ -9,8 +9,6 @@ import { IBall, PaddlePos } from '../const/interface';
 import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
-import { Server } from 'socket.io';
-import { PaddlePos } from '../game.gateway';
 import { GameStatEntity } from '../entity/gameStat.entity';
 
 @Injectable()
@@ -132,10 +130,6 @@ export class GameService {
   }
 
   async getStat(room_game: RoomEntity) {
-    if (room_game && (!room_game.set || !room_game.set)) { // partie annule, 1 mec a rejoint, l'autre handleDisconnect
-      await this.all_game.remove(room_game);
-      return ;
-    }
     const p1: UserEntity = await this.userService.findByName(room_game.set.p1.name);
     const p2: UserEntity = await this.userService.findByName(room_game.set.p2.name);
     let statGame: GameStatEntity = this.getGameStat(p1, p2, room_game.set);

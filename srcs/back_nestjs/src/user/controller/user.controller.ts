@@ -207,13 +207,13 @@ export class UserController {
 
   @Get('gameHistory')
   @UseGuards(JwtTwoFactorGuard)
-  async getGameHistory(@Request() req): Promise<GameStatEntity[]> {
+  async getGameHistory(@Req() req: Request): Promise<GameStatEntity[]> {
     return await this.userService.getGameHistory(req.user);
   }
 
   @Get('leaderboard')
   @UseGuards(JwtTwoFactorGuard)
-  async getLeaderboard(@Request() req): Promise<number> {
+  async getLeaderboard(@Req() req: Request): Promise<number> {
     const allUsers = await this.userService.getAllUsersWithElo();
 
     return this.userService.getLeaderBoard(req.user.id, allUsers);

@@ -22,7 +22,7 @@ import { IBall, PaddlePos } from './const/interface';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
-import { ConnectedUserEntity } from 'src/connected-user/service/models/connected-user.entity';
+import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -49,9 +49,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   paddle_pos = new Map<string, PaddlePos>();
   game_loop = new Map<string, boolean>();
-  connectedUsers = new Map<string, Socket>();
+  //connectedUsers = new Map<string, Socket>();
 
   async handleConnection(client: Socket) {
+    //const user = await this.authService.validateSocket(client);
     this.logger.log(`Client GAME connected: ${client.id}`);
     try {
       let userId = client.handshake.query.userId;
@@ -75,7 +76,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleDisconnect(client: Socket) {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
-    //const user = await this.authService.validateSocket(client);
     let user: UserEntity = new UserEntity();
     if (client.id) {
       let connectedUser = (await this.connectedUserService.findBySocketId(client.id));
@@ -155,16 +155,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room: string,
   ) {
-    const user = await this.connectedUserService.findBySocketId(client.id);
-
-    //const user = await this.authService.validateSocket(client);
+    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
     const room_game = await this.all_game.findOneBy({ id: room });
 
-    if (!room_game) return;
-    if (
-      room_game.status === RoomStatus.WAITING ||
-      room_game.status === RoomStatus.CLOSED
-    )
+    if (!room_game)
+      return;
+    if (room_game.status === RoomStatus.WAITING ||
+    room_game.status === RoomStatus.CLOSED)
       room_game.status = RoomStatus.EMPTY;
     room_game.id = room;
 
@@ -213,12 +210,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.game_loop[room])
       this.game_loop[room] = false;
     if (room_game) {
-      await this.gameService.getStat(room_game);
+      if (room_game.set) { // partie annule, 1 mec a rejoint, l'autre handleDisconnect
+        await this.gameService.getStat(room_game);
+      }
 
       if (this.paddle_pos[room])
         delete this.paddle_pos[room];
-      if (this.is_playing[room])
-        delete this.is_playing[room];
+      if (this.game_loop[room])
+        delete this.game_loop[room];
       await this.all_game.remove(room_game);
     }
   }
