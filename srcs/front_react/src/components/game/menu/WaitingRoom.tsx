@@ -15,7 +15,7 @@ export default function WaitingRoom() {
       game.setStatus(RoomStatus.EMPTY);
       game.setisP2(false);
       game.setRoom("");
-      socket.emit("leaveGameRoom", game.room);
+      socket?.emit("leaveGameRoom", game.room);
     }
   }
 

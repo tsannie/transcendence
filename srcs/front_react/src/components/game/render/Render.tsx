@@ -44,7 +44,7 @@ export function GameRender() {
     window.addEventListener("resize", detectSize);
     return () => {
       window.removeEventListener("resize", detectSize);
-      socket.emit("resizeIngame", game.room);
+      socket?.emit("resizeIngame", game.room);
     };
   }, [HW]);
 
@@ -70,11 +70,11 @@ export function GameRender() {
   }
 
   useEffect(() => {
-    socket.on("resize_game", () => {
+    socket?.on("resize_game", () => {
       resizeGame();
     });
 
-    socket.on("giveUp", (p1: IPlayer, p2: IPlayer) => {
+    socket?.on("giveUp", (p1: IPlayer, p2: IPlayer) => {
       gameObj.player_p2.won = p2.won;
       gameObj.player_p1.won = p1.won;
       if (gameObj.player_p2.won)
@@ -83,20 +83,20 @@ export function GameRender() {
         gameObj.player_p2.gave_up = true;
     });
 
-    socket.on("get_players", (p1: IPlayer, p2: IPlayer) => {
+    socket?.on("get_players", (p1: IPlayer, p2: IPlayer) => {
       gameObj.player_p1 = p1;
       gameObj.player_p2 = p2;
     });
 
-    socket.on("getPaddleP1", (y: number) => {
+    socket?.on("getPaddleP1", (y: number) => {
       gameObj.paddle_p1.y = y * ratio_height;
     });
 
-    socket.on("getPaddleP2", (y: number) => {
+    socket?.on("getPaddleP2", (y: number) => {
       gameObj.paddle_p2.y = y * ratio_height;
     });
 
-    socket.on("get_ball", (x: number, y: number) => {
+    socket?.on("get_ball", (x: number, y: number) => {
       gameObj.ball.x = x * ratio_width;
       gameObj.ball.y = y * ratio_height;
     });
@@ -110,10 +110,10 @@ export function GameRender() {
     };
     if (game.isP2) {
       gameObj.paddle_p2.y = position_y;
-      socket.emit("askPaddleP2", data);
+      socket?.emit("askPaddleP2", data);
     } else {
       gameObj.paddle_p1.y = position_y;
-      socket.emit("askPaddleP1", data);
+      socket?.emit("askPaddleP1", data);
     }
   }
 
@@ -127,7 +127,7 @@ export function GameRender() {
         start = true;
       }
     }, 1000);
-  
+
     let canvas: any = canvasRef.current;
     const render = () => {
       requestAnimationFrame(render);
@@ -136,7 +136,7 @@ export function GameRender() {
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (game.isP2 === true && start === true) {
-          socket.emit("gameRender", game.room);
+          socket?.emit("gameRender", game.room);
           start = false;
         }
         if (gameObj.player_p1.won === false &&
@@ -155,9 +155,9 @@ export function GameRender() {
     if (leave) {
       game.setStatus(RoomStatus.EMPTY);
       if (gameObj.player_p1.won === true || gameObj.player_p2.won === true)
-        socket.emit("endGame", game.room);
+        socket?.emit("endGame", game.room);
       else
-        socket.emit("giveUp", game.room);
+        socket?.emit("giveUp", game.room);
     }
   }
 
