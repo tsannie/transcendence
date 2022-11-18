@@ -174,7 +174,7 @@ export class MessageService {
     );
 
     if (channel) {
-      this.emitMessageToAllUsersInChannel(channel, socket);
+      await this.emitMessageToAllUsersInChannel(channel, socket);
     }
   }
 

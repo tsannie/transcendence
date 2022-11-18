@@ -12,7 +12,7 @@ export default function GameMenu() {
   const { user } = useContext(AuthContext);
 
   let game_mode = GameMode.PONG_1972;
-  
+
   function createGameRoom() {
     let data: ICreateRoom = {
       room : game.room,
@@ -21,7 +21,7 @@ export default function GameMenu() {
 
     game.setRoom("");
     if (game.status === RoomStatus.EMPTY)
-      socket.emit("createGameRoom", data);
+      socket?.emit("createGameRoom", data);
   }
 
   function createGameRoomTRANS() {

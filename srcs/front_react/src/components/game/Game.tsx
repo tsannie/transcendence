@@ -6,7 +6,7 @@ import { RoomStatus } from "./const/const";
 import { GameRender } from "./render/Render";
 import WaitingRoom from "./menu/WaitingRoom";
 
-function  GameBody() {
+function GameBody() {
   const game = useContext(GameContext);
 
   switch (game.status) {
@@ -22,14 +22,11 @@ function  GameBody() {
 }
 
 export default function Game() {
-
-  const game = useContext(GameContext);
-
   return (
     <div className="game">
       <SocketGameProvider>
         <GameProvider>
-            <GameBody />
+          <GameBody />
         </GameProvider>
       </SocketGameProvider>
     </div>

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { SocketGameContext } from "../../contexts/SocketGameContext";
@@ -34,15 +33,17 @@ export const GameProvider = ({ children }: GameContextProps) => {
   const socket = useContext(SocketGameContext);
 
   useEffect(() => {
-    socket.on("joinedRoom", (theroom: any) => {
-      setStatus(theroom.status);
-      setRoom(theroom.id);
-      if (theroom.p2 && theroom.p2.username === user?.username) {
-        setisP2(true);
-      } else if (theroom.p1.username === user?.username) {
-        setisP2(false);
-      }
-    });
+    if (user && socket) {
+      socket.on("joinedRoom", (theroom: any) => {
+        setStatus(theroom.status);
+        setRoom(theroom.id);
+        if (theroom.p2 && theroom.p2.username === user.username) {
+          setisP2(true);
+        } else if (theroom.p1.username === user.username) {
+          setisP2(false);
+        }
+      });
+    }
   }, [socket]);
 
   return (
@@ -59,5 +60,4 @@ export const GameProvider = ({ children }: GameContextProps) => {
       {children}
     </GameContext.Provider>
   );
-  
-}
+};
