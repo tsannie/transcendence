@@ -8,22 +8,12 @@ export class GameController {
   constructor(private gameService: GameService) {}
 
   @Get()
-  index(): Promise<RoomEntity[]> {
-    return this.gameService.findAll();
-  }
-
-  @Get('/game_to_spec')
-  spec(): Promise<RoomEntity[]> {
-    return this.gameService.findAll();
+  async index(): Promise<RoomEntity[]> {
+    return await this.gameService.findAll();
   }
 
   @Get('/del')
-  detail() {
-    this.gameService.deleteUser();
-  }
-
-  @Get('/dell/:room_name')
-  detail2(room_name: string) {
-    this.gameService.delete_room_name(room_name);
+  async detail() {
+    await this.gameService.deleteUser();
   }
 }

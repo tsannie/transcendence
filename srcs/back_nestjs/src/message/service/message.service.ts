@@ -21,7 +21,6 @@ export class MessageService {
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
     private userService: UserService,
-    private dmService: DmService,
     private channelService: ChannelService,
   ) {}
 
@@ -65,11 +64,13 @@ export class MessageService {
       .addSelect('message.createdAt')
       .addSelect('message.content')
       .leftJoin('message.author', 'author')
+      .addSelect('author.id')
       .addSelect('author.username')
+      .addSelect('author.profile_picture')
       .leftJoin(`message.${type}`, `${type}`)
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
-      .orderBy('message.createdAt', 'ASC')
+      .orderBy('message.createdAt', 'DESC')
       .skip(offset * LOADED_MESSAGES)
       .take(LOADED_MESSAGES)
       .getMany();
@@ -91,9 +92,12 @@ export class MessageService {
       .addSelect('message.createdAt')
       .addSelect('message.content')
       .leftJoin('message.author', 'author')
+      .addSelect('author.id')
       .addSelect('author.username')
+      .addSelect('author.profile_picture')
       .leftJoin(`message.${type}`, `${type}`)
       .addSelect(`${type}.id`)
+      .addSelect(`${type}.name`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
       .orderBy('message.createdAt', 'DESC')
       .getOne();
@@ -101,9 +105,9 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(data: MessageDto): Promise<MessageEntity> {
+  async addMessagetoChannel(data: MessageDto, userId: string): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
-    const user = await this.userService.findByName(data.author.username, {
+    const user = await this.userService.findById(userId, {
       dms: true,
       channels: true,
       admin_of: true,
@@ -119,32 +123,37 @@ export class MessageService {
     message.content = data.content;
     message.author = user;
     message.channel = channel;
+    channel.updatedAt = new Date();
     return await this.allMessages.save(message);
   }
 
   /* TODO modify input */
-  async addMessagetoDm(data: MessageDto): Promise<MessageEntity> {
+  async addMessagetoDm(data: MessageDto, userId: string): Promise<MessageEntity> {
     console.log('addMessagetoDm = ', data);
     //TODO change input type(DTO over interface) and load less from user
-    const user = await this.userService.findByName(data.author.username, {
+    const user = await this.userService.findById(userId, {
       dms: true,
       channels: true,
       admin_of: true,
       owner_of: true,
     });
+    if (!user)
+      throw new UnprocessableEntityException('User does not exist in database.');
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
     const message = new MessageEntity();
     message.content = data.content;
     message.author = user;
     message.dm = dm;
+    dm.updatedAt = new Date();
     return await this.allMessages.save(message);
   }
 
   // emit message to all users in dm
   async emitMessageDm(socket: Server, lastMessage: MessageEntity, connectedUsers: Map<string, Socket>) {
     for (const dmUser of lastMessage.dm.users) {
-      const user = await this.userService.findByName(dmUser.username, {
+      const user = await this.userService.findById(dmUser.id, {
+        connections: true,
         dms: true,
         channels: true,
         admin_of: true,
@@ -174,7 +183,7 @@ export class MessageService {
     );
 
     if (channel) {
-      this.emitMessageToAllUsersInChannel(channel, socket);
+      await this.emitMessageToAllUsersInChannel(channel, socket);
     }
   }
 
@@ -183,7 +192,8 @@ export class MessageService {
 
     if (users) {
       for (const channelUser of users) {
-        const user = await this.userService.findByName(channelUser.username, {
+        const user = await this.userService.findById(channelUser.id, {
+          connections: true,
           dms: true,
           channels: true,
           admin_of: true,
