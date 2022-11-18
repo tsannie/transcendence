@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/user/service/user.service';
 import { IPayload } from '../models/payload.interface';
+import { cookieExtractor } from './jwt.strategy';
 
 @Injectable()
 export class JwtTwoFactorStrategy extends PassportStrategy(
@@ -12,12 +13,7 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
 ) {
   constructor(private userService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          const cookie = request?.cookies['AuthToken'];
-          return cookie ? cookie.access_token : null;
-        },
-      ]),
+      jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_ACCESS_TOKEN_SECRET,
     });
@@ -25,7 +21,6 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
 
   async validate(payload: IPayload) {
     const user = await this.userService.findById(payload.sub, {
-      // TODO add check for user
       owner_of: true,
       admin_of: true,
       channels: true,

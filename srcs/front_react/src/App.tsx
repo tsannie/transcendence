@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext} from "react";
 import "./app.style.scss";
 import "./components/background/bg.style.scss";
 import "./components/menu/menu.style.scss";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import LoginPage from "./components/auth/oauth/LoginPage";
 import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
@@ -17,6 +17,7 @@ import Game from "./components/game/Game";
 import PageNotFound from "./components/menu/PageNotFound";
 import Profile from "./components/profile/Profile";
 import { ToastContainer } from "react-toastify";
+import Chat from "./components/chat/Chat";
 
 export default function App() {
   const { displayLocation } = useContext(
@@ -46,7 +47,7 @@ export default function App() {
             element={<PrivateRoute component={PageNotFound} />}
           />
 
-          <Route path="/chat" element={<PrivateRoute component={Home} />} />
+          <Route path="/chat" element={<PrivateRoute component={Chat} />} />
           <Route path="/game" element={<PrivateRoute component={Game} />} />
           <Route
             path="/settings"
@@ -54,7 +55,7 @@ export default function App() {
           />
         </Routes>
       </div>
-      <ToastContainer toastClassName={"toast"} />
+      <ToastContainer toastClassName={"toast"} pauseOnFocusLoss={false} />
     </div>
   );
 }
