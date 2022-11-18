@@ -8,13 +8,11 @@ export interface IMemberProps {
     type: string;
     isOwner: boolean;
     isAdmin: boolean;
-    isOpen:boolean; 
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>; 
     channelId: string; 
     user: User;
 }
 
-function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean, isOpen:boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, users: User[] | null}) {
+function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean, channelId: string, users: User[] | null}) {
     const { users } = props;
 
     if (!users || users.length === 0)
@@ -33,12 +31,12 @@ function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean
 function ChannelMembers(props: {receivedChannel: IDatas | null }) {
     const status = props.receivedChannel?.status;
     const channel = props.receivedChannel?.data;
-    const [isOpen, setOpen ] = useState<boolean>(false);
+    const [ closeAll, setCloseAll ] = useState<boolean>(false);
 
     useEffect(() => {
         const closeDropdown = (e: any) => {
             if (e.composedPath()[1].tagName !== "BUTTON")
-                setOpen(false);
+                setCloseAll(true);
         };
 
         document.body.addEventListener("click", closeDropdown);
@@ -49,12 +47,12 @@ function ChannelMembers(props: {receivedChannel: IDatas | null }) {
         <Fragment>
         { channel ? 
         <div className="conversation__options__members">
-            <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.admins}/>
-            <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.users}/>
+            <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.admins}/>
+            <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.users}/>
             {(status === "owner" || status === "admin") ? 
             <Fragment>
-                <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.muted?.map((elem) => elem.user) as User[]}/>
-                <MemberCategory type={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} isOpen={isOpen} setOpen={setOpen} channelId={channel.id} users={channel.banned?.map((elem) => elem.user) as User[]}/>
+                <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.muted?.map((elem) => elem.user) as User[]}/>
+                <MemberCategory type={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.banned?.map((elem) => elem.user) as User[]}/>
             </Fragment> : null}
         </div> : null}
         </Fragment>);

@@ -127,7 +127,8 @@ export class MessageService {
     
     if (await this.banMuteService.isMuted(channel, user))
     {
-      socket.to(clientId).emit("error", "You've Been Muted ! Shhhh. silence.");
+      //TODO send back error Message
+      // socket.to(clientId).emit("error", "You've Been Muted ! Shhhh. silence.");
       return null;
     }
 
@@ -151,6 +152,8 @@ export class MessageService {
     if (!user)
       throw new UnprocessableEntityException('User does not exist in database.');
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
+
+    //TODO, AVOID sending message if user not friend;
 
     const message = new MessageEntity();
     message.content = data.content;
