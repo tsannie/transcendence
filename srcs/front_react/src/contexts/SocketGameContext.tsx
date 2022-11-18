@@ -21,9 +21,6 @@ export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
   useEffect((): ReturnType<EffectCallback> => {
     if (user) {
       const newSocket: any = io("http://localhost:4000/game", {
-        query: {
-          userId: user.id,
-        },
         transports: ["websocket"],
       });
       setSocket(newSocket);
