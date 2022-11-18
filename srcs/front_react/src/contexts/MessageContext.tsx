@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
@@ -28,6 +29,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
     if (socket)
     {
       socket.on("connect", () => console.log("connected to socket"));
+      // socket.on("error", (error) => toast.error("Error:" + error));
       socket.on("disconnect", () => console.log("disconnected from socket"));
       socket.on("message", (data) => {
           setNewMessage(data);
