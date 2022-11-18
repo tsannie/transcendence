@@ -1,11 +1,12 @@
 import { AxiosResponse } from "axios";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { IMemberProps } from "./OptionsChannel";
 
 function UserOptions(props: IMemberProps) {
-    const {type, isOwner, isAdmin, isOpen, setOpen, channelId, user} = props;
+    const {type, isOwner, isAdmin, channelId, user} = props;
+    const [isOpen, setOpen ] = useState<boolean>(false);
 
     const banUser = () => {
         api
@@ -104,7 +105,10 @@ function UserOptions(props: IMemberProps) {
     }
 
     useEffect( () => {
-    }, [isOpen])
+        if (closeAll){
+            setOpen(false);
+        }
+    }, [])
 
     return (
     <Fragment>
