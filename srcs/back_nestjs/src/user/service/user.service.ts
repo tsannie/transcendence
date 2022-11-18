@@ -1,4 +1,11 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  forwardRef,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+  UseInterceptors,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FindOneOptions,
@@ -11,6 +18,10 @@ import * as sharp from 'sharp';
 import * as fs from 'fs';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { DmService } from 'src/dm/service/dm.service';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { DmEntity } from 'src/dm/models/dm.entity';
 import { IUserSearch } from '../models/iusersearch.interface';
 import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 //import { GameService } from 'src/game/service/game.service';
@@ -43,6 +54,10 @@ export class UserService {
 
     @InjectRepository(GameStatEntity)
     private allGame: Repository<GameStatEntity>,
+    @Inject(forwardRef(() => ChannelService))
+    private readonly channelService: ChannelService,
+    @Inject(forwardRef(() => DmService))
+    private readonly dmService: DmService,
   ) {}
 
   async add(user: UserEntity): Promise<UserEntity> {
@@ -55,7 +70,6 @@ export class UserService {
     return await this.allUser.findOne(findOptions);
   }
 
-  // TODO delete and replace by id
   async findByName(
     username: string,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
@@ -63,6 +77,18 @@ export class UserService {
     const user = await this.allUser.findOne({
       where: {
         username: username,
+      },
+      select: {
+        friends: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+        friend_requests: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
       },
       relations: relations_ToLoad,
     });
@@ -85,7 +111,7 @@ export class UserService {
 
   // edit username for user
   async editUsername(
-    userId: number,
+    userId: string,
     newUsername: string,
   ): Promise<UpdateResult> {
     try {
@@ -105,6 +131,18 @@ export class UserService {
     const user = await this.allUser.findOne({
       where: {
         id: input_id,
+      },
+      select: {
+        friends: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+        friend_requests: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
       },
       relations: relations_ToLoad,
     });
@@ -139,17 +177,16 @@ export class UserService {
   }
 
   // turn enabled2FA to true for user
-  async enable2FA(userId: string) {
-    // TODO update user ?
+  async enable2FA(userId: string): Promise<UpdateResult> {
     return await this.allUser.update(userId, { enabled2FA: true });
   }
 
   // turn enabled2FA to false for user TODO delete in front ??
-  async disable2FA(userId: string) {
+  async disable2FA(userId: string): Promise<UpdateResult> {
     return await this.allUser.update(userId, { enabled2FA: false });
   }
 
-  async setSecret2FA(userId: string, secret: string) {
+  async setSecret2FA(userId: string, secret: string): Promise<UpdateResult> {
     return await this.allUser.update(userId, { secret2FA: secret });
   }
 
@@ -281,6 +318,21 @@ export class UserService {
     }
   }
 
+  /* This returns a mix of DM and Channels of users, ordered by DESC Date. */
+  async getConversations(
+    user: UserEntity,
+  ): Promise<Array<ChannelEntity | DmEntity>> {
+    let convos: Array<ChannelEntity | DmEntity>;
+
+    convos = await this.channelService.getUserList(user);
+    convos = convos.concat(await this.dmService.getDmsList(user));
+    convos.sort((a, b) => {
+      if (a.updatedAt < b.updatedAt) return 1;
+      else return -1;
+    });
+    return convos;
+  }
+
   /* search user with filter for search bar */
   async searchUser(search: string): Promise<IUserSearch[]> {
     const allUser = await this.allUser.find();
@@ -306,7 +358,10 @@ export class UserService {
     return user.friends;
   }
 
-  async createFriendRequest(user: UserEntity, target: UserEntity) {
+  async createFriendRequest(
+    user: UserEntity,
+    target: UserEntity,
+  ): Promise<UserEntity[]> {
     if (user.id === target.id)
       throw new UnprocessableEntityException(`You cannot add yourself.`);
     if (user.friends && user.friends.find((elem) => elem.id === target.id))
@@ -321,28 +376,22 @@ export class UserService {
       throw new UnprocessableEntityException(
         `You already sent a friend request to ${target.username}`,
       );
-    else if (
-      target.friend_requests &&
-      target.friend_requests.find((elem) => elem.id === target.id)
-    )
-      throw new UnprocessableEntityException(
-        `You already received a friend request from ${target.username}`,
-      );
 
     if (!target.friend_requests) target.friend_requests = [user];
     else target.friend_requests.push(user);
 
-    /* return await this.allUser.update(target.id, {    // method to update is ok but not working bc typeorm bug
-      friend_requests: target.friend_requests,
-    }); */
     await this.allUser.save(target);
+    return await this.getFriendList(user);
   }
 
-  async getFriendRequest(user: UserEntity): Promise<UserEntity[]> {
+  async getFriendRequest(user: UserEntity) {
     return user.friend_requests;
   }
 
-  async acceptFriendRequest(user: UserEntity, target: UserEntity) {
+  async acceptFriendRequest(
+    user: UserEntity,
+    target: UserEntity,
+  ): Promise<UserEntity[]> {
     if (user.friends && user.friends.find((elem) => elem.id === target.id))
       throw new UnprocessableEntityException(
         `You are already friends with ${target.username}`,
@@ -367,6 +416,9 @@ export class UserService {
 
     await this.allUser.save(user);
     await this.allUser.save(target);
+
+    const userFriends = await this.findById(user.id, { friends: true });
+    return userFriends.friends;
   }
 
   async removeFriend(
@@ -386,7 +438,10 @@ export class UserService {
     return user.friends;
   }
 
-  async refuseFriendRequest(user: UserEntity, target: UserEntity) {
+  async refuseFriendRequest(
+    user: UserEntity,
+    target: UserEntity,
+  ): Promise<UserEntity> {
     if (
       !user.friend_requests ||
       !user.friend_requests.find((elem) => elem.id === target.id)
@@ -399,7 +454,7 @@ export class UserService {
       (elem) => elem.id !== target.id,
     );
 
-    await this.allUser.save(user);
+    return await this.allUser.save(user);
   }
 
   async getGameHistory(user: UserEntity): Promise<GameStatEntity[]> {

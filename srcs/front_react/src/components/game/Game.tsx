@@ -1,19 +1,34 @@
 import React, { useContext } from "react";
 import GameMenu from "./menu/Menu";
-import { GameContext, GameProvider, RoomStatus } from "./GameContext";
+import { GameContext, GameProvider } from "./GameContext";
 import { SocketGameProvider } from "../../contexts/SocketGameContext";
+import { RoomStatus } from "./const/const";
+import { GameRender } from "./render/Render";
+import WaitingRoom from "./menu/WaitingRoom";
 
-export default function Game() {
-
+function GameBody() {
   const game = useContext(GameContext);
 
-      return (
+  switch (game.status) {
+    case RoomStatus.EMPTY:
+      return <GameMenu />;
+    case RoomStatus.WAITING:
+      return <WaitingRoom />;
+    case RoomStatus.PLAYING:
+      return <GameRender />;
+    default:
+      return <></>;
+  }
+}
+
+export default function Game() {
+  return (
+    <div className="game">
       <SocketGameProvider>
         <GameProvider>
-            <div className="game">
-              { game.status === RoomStatus.EMPTY && <GameMenu /> }
-            </div>
+          <GameBody />
         </GameProvider>
       </SocketGameProvider>
-    );
+    </div>
+  );
 }

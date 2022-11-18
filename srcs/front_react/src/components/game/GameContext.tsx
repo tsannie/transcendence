@@ -1,22 +1,13 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { SocketGameContext } from "../../contexts/SocketGameContext";
-
-export enum RoomStatus {
-  EMPTY,
-  WAITING,
-  PLAYING,
-  CLOSED,
-}
+import { RoomStatus } from "./const/const";
 
 export type GameContextType = {
   status: number;
   setStatus: (status: number) => void;
-
   room: string;
   setRoom: (room: string) => void;
-
   isP2: boolean;
   setisP2: (isP2: boolean) => void;
 };
@@ -24,10 +15,8 @@ export type GameContextType = {
 export const GameContext = createContext<GameContextType>({
   status: RoomStatus.EMPTY,
   setStatus: () => {},
-
   room: "",
   setRoom: () => {},
-
   isP2: false,
   setisP2: () => {},
 });
@@ -44,22 +33,17 @@ export const GameProvider = ({ children }: GameContextProps) => {
   const socket = useContext(SocketGameContext);
 
   useEffect(() => {
-    socket.on("leftRoom", () => {
-      setStatus(RoomStatus.EMPTY);   
-    });
-
-  }, [socket]);
-
-  useEffect(() => {
-    socket.on("joinedRoom", (theroom: any) => {
-      setStatus(theroom.status);
-      setRoom(theroom.id);
-      if (theroom.p2 && theroom.p2.username === user?.username) {
-        setisP2(true);
-      } else if (theroom.p1.username === user?.username) {
-        setisP2(false);
-      }
-    });
+    if (user && socket) {
+      socket.on("joinedRoom", (theroom: any) => {
+        setStatus(theroom.status);
+        setRoom(theroom.id);
+        if (theroom.p2 && theroom.p2.username === user.username) {
+          setisP2(true);
+        } else if (theroom.p1.username === user.username) {
+          setisP2(false);
+        }
+      });
+    }
   }, [socket]);
 
   return (
@@ -67,10 +51,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
       value={{
         status,
         setStatus,
-
         room,
         setRoom,
-
         isP2,
         setisP2,
       }}
@@ -78,5 +60,4 @@ export const GameProvider = ({ children }: GameContextProps) => {
       {children}
     </GameContext.Provider>
   );
-  
-}
+};

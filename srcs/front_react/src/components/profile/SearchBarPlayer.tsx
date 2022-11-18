@@ -16,7 +16,7 @@ interface IUserSearch {
   picture: string;
 }
 
-function SearchBar() {
+function SearchBarPlayer() {
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
   const [lengthDictionary, setLengthDictionary] = useState<number>(0);
   const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
@@ -76,7 +76,7 @@ function SearchBar() {
 
   async function getDictionary(search: string): Promise<IUserSearch[]> {
     return await api
-      .get("/user/search", { params: { search: search } })
+      .get("/user/search", { params: { username: search } })
       .then((res: AxiosResponse) => {
         return res.data;
       })
@@ -141,6 +141,7 @@ function SearchBar() {
         <SearchIcon />
         <input
           type="text"
+          spellCheck="false"
           onChange={handleOnChange}
           onKeyDown={handleOnKeyDown}
           placeholder="pseudo"
@@ -153,4 +154,4 @@ function SearchBar() {
   );
 }
 
-export default SearchBar;
+export default SearchBarPlayer;

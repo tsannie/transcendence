@@ -26,6 +26,8 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
+import { ConnectedUserEntity } from 'src/connected-user/service/models/connected-user.entity';
+import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -41,6 +43,8 @@ export class MessageGateway
     private messageService: MessageService,
     private userService: UserService,
     private authService: AuthService,
+    private connectedUserService: ConnectedUserService,
+
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
@@ -57,14 +61,22 @@ export class MessageGateway
   async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
     let user: UserEntity;
-
     try {
-      user = await this.authService.validateSocket(client);
+      //user = await this.authService.validateSocket(client);
 
+      let userId = client.handshake.query.userId;
+      console.log('userId = ', userId);
+      if (typeof userId === 'string') {
+        user = await this.userService.findById(userId);
+      }
       if (!user) {
-        return this.disconnect(user.id, client);
+        return client.disconnect();
       } else {
-        this.connectedUsers.set(user.id, client);
+        let connectedUser = new ConnectedUserEntity();
+
+        connectedUser.socketId = client.id;
+        connectedUser.user = user;
+        await this.connectedUserService.create(connectedUser);
       }
     } catch {
       return this.disconnect(user.id, client);
@@ -73,14 +85,14 @@ export class MessageGateway
 
   async handleDisconnect(@ConnectedSocket () client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
-    const user = await this.authService.validateSocket(client);
+    //const user = await this.authService.validateSocket(client);
 
     client.disconnect();
-    this.disconnect(user.id, client);
+    //this.disconnect(user.id, client);
   }
 
   private disconnect(userId: string, client: Socket) {
-    this.connectedUsers.delete(userId);
+    //this.connectedUsers.delete(userId);
     client.disconnect();
   }
 
@@ -89,15 +101,14 @@ export class MessageGateway
     @MessageBody() data: MessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('data = ', data);
-    this.logger.log('client id = ', client.id);
+    const userId = client.handshake.query.userId; //todo PROTEGER TRYCATCH
 
     if (data.isDm === true) {
-      const lastMsg = await this.messageService.addMessagetoDm(data);
+      const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
 
-      await this.messageService.emitMessageDm(this.server, lastMsg, this.connectedUsers);
+      //await this.messageService.emitMessageDm(this.server, lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(data);
+      const lastMsg = await this.messageService.addMessagetoChannel(data, userId.toString());
 
       await this.messageService.emitMessageChannel(this.server, lastMsg);
     }
