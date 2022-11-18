@@ -26,7 +26,7 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
-import { ConnectedUserEntity } from 'src/connected-user/service/models/connected-user.entity';
+import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
 import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 
 // cree une websocket sur le port par defaut
