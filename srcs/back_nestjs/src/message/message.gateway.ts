@@ -96,14 +96,14 @@ export class MessageGateway
     @ConnectedSocket() client: Socket,
   ) {
     const userId = client.handshake.query.userId; //todo PROTEGER TRYCATCH
-
     if (data.isDm === true) {
-      const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
+      const lastMsg = await this.messageService.addMessagetoDm(this.server, client.id, data, userId.toString());
 
       await this.messageService.emitMessageDm(this.server, lastMsg);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(data, userId.toString());
-
+      const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, userId.toString());
+      if (!lastMsg)
+        return ;
       await this.messageService.emitMessageChannel(this.server, lastMsg);
     }
   }
