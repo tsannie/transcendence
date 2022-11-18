@@ -85,7 +85,7 @@ export class GameService {
     await this.all_game.save(room_game);
   }
 
-  async findBySocketId(socketId: string) {
+  async findRoomBySocketId(socketId: string) {
     return await this.all_game
     .createQueryBuilder('room')
     .where('room.p1SocketId = :p1SocketId', { p1SocketId: socketId })
@@ -99,7 +99,7 @@ export class GameService {
   ////////////////////
   // INGAME FUNCTIONS
   ////////////////////
-  
+
   async losePoint(
     player: PlayerEntity,
     ball: IBall,
@@ -110,24 +110,24 @@ export class GameService {
   ) {
     ball.x = canvas_back_width / 2;
     ball.y = canvas_back_height / 2;
-    
+
     ball.direction_y = 1;
     ball.first_col = false;
-  
+
     player.score += 1;
     if (player.score === victory_score)
       player.won = true;
     await this.all_player.save(player);
     server.in(room).emit('get_players', p1, p2);
   }
-  
+
   hitPaddle(y: number, ball: IBall) {
     let res = y + paddle_height - ball.y;
     ball.gravity = -(res / 10 - paddle_height / 20);
     Math.abs(ball.gravity);
-  
+
     ball.direction_x *= -1;
-  
+
     if (ball.y < y - paddle_height / 2)
     ball.direction_y = -1;
     else
@@ -135,8 +135,8 @@ export class GameService {
       ball.first_col = true;
     ball.can_touch_paddle = false;
   }
-  
-  ballHitPaddlep1(
+
+  async ballHitPaddlep1(
     set: SetEntity,
     ball: IBall,
     paddle: PaddlePos,
@@ -150,10 +150,10 @@ export class GameService {
     ball.y - rad <= paddle.y1 + paddle_height)
       this.hitPaddle(paddle.y1, ball);
     else if (ball.x - rad <= -(rad * 3))
-      this.losePoint(set.p2, ball, set.p1, set.p2, server, room);
+      await this.losePoint(set.p2, ball, set.p1, set.p2, server, room);
   }
-    
-  ballHitPaddlep2(
+
+  async ballHitPaddlep2(
     set: SetEntity,
     ball: IBall,
     paddle: PaddlePos,
@@ -167,7 +167,7 @@ export class GameService {
     ball.y - rad <= paddle.y2 + paddle_height)
       this.hitPaddle(paddle.y2, ball);
     else if (ball.x + rad >= canvas_back_width + rad * 3)
-      this.losePoint(set.p1, ball, set.p1, set.p2, server, room);
+      await this.losePoint(set.p1, ball, set.p1, set.p2, server, room);
   }
 
   updateBall(ball: IBall) {
@@ -188,7 +188,7 @@ export class GameService {
     else if (ball.y - rad <= canvas_back_height / 40)
       ball.direction_y *= -1;
   }
-  
+
   createBall(): IBall {
     return {
       x : canvas_back_width / 2,
@@ -201,8 +201,8 @@ export class GameService {
       direction_y : 1,
     };
   }
-  
-  updateGame(
+
+  async updateGame(
     BallObj: IBall,
     set: SetEntity,
     paddle_pos: PaddlePos,
@@ -210,7 +210,7 @@ export class GameService {
     room: string
   ) {
     this.updateBall(BallObj);
-    this.ballHitPaddlep1(set, BallObj, paddle_pos, server, room);
-    this.ballHitPaddlep2(set, BallObj, paddle_pos, server, room);
+    await this.ballHitPaddlep1(set, BallObj, paddle_pos, server, room);
+    await this.ballHitPaddlep2(set, BallObj, paddle_pos, server, room);
   }
 }

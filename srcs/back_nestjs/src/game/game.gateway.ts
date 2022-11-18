@@ -52,46 +52,46 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         user = await this.userService.findById(userId);
       }
       if (!user) {
-        return this.disconnect(client);
+        return await this.disconnect(client);
       } else {
         let connectedUser = new ConnectedUserEntity();
 
         connectedUser.socketId = client.id;
         connectedUser.user = user;
-        this.connectedUserService.create(connectedUser);
+        await this.connectedUserService.create(connectedUser);
       }
     } catch {
-      return this.disconnect(client);
+      return await this.disconnect(client);
     }
   }
 
-  async handleDisconnect(@ConnectedSocket() client: Socket) {
+  async handleDisconnect(client: Socket) {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
     let user: UserEntity = new UserEntity();
     if (client.id) {
       let connectedUser = (await this.connectedUserService.findBySocketId(client.id));
       if (!connectedUser)
-        return this.disconnect(client);
+        return await this.disconnect(client);
       user = connectedUser.user;
       if (!user)
-        return this.disconnect(client);
+        return await this.disconnect(client);
     }
-    const room_game = await this.gameService.findBySocketId(client.id);
+    const room_game = await this.gameService.findRoomBySocketId(client.id);
 
     if (room_game) {
       if (
         room_game.status === RoomStatus.WAITING ||
         room_game.status === RoomStatus.CLOSED
       )
-        this.endGame(client, room_game.id);
+        await this.endGame(client, room_game.id);
       else if (room_game.status === RoomStatus.PLAYING)
-        this.giveUp(client, room_game.id);
+        await this.giveUp(client, room_game.id);
     }
-    this.disconnect(client);
+    await this.disconnect(client);
   }
 
-  private disconnect(client: Socket) {
-    this.connectedUserService.deleteBySocketId(client.id);
+  private async disconnect(client: Socket) {
+    await this.connectedUserService.deleteBySocketId(client.id);
     client.disconnect();
   }
 
@@ -129,7 +129,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         await this.all_game.save(room_game);
 
-        this.gameService.initSet(room_game.id, this.game_loop, data.mode);
+        await this.gameService.initSet(room_game.id, this.game_loop, data.mode);
         this.server.in(room_game.id).emit('joinedRoom', room_game);
       }
     }
@@ -174,7 +174,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('giveUp')
   async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
     console.log('giveUp');
-    const user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    let user: UserEntity = new UserEntity();
+    if (client.id)
+      user = (await this.connectedUserService.findBySocketId(client.id)).user;
+    if (!user)
+      return;
     const room_game = await this.all_game.findOneBy({ id: room });
 
     await this.gameService.giveUp(room, this.game_loop, room_game, user);
@@ -191,7 +195,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.leave(room);
     const room_game = await this.all_game.findOneBy({ id: room });
 
-    if (this.game_loop[room]) this.game_loop[room] = false;
+    if (this.game_loop[room])
+      this.game_loop[room] = false;
     if (room_game) {
       if (this.paddle_pos[room])
         delete this.paddle_pos[room];
