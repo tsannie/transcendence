@@ -29,7 +29,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
     if (socket)
     {
       socket.on("connect", () => console.log("connected to socket"));
-      // socket.on("error", (error) => toast.error("Error:" + error));
+      socket.on("error", (error) => toast.error("Error:" + error));
       socket.on("disconnect", () => console.log("disconnected from socket"));
       socket.on("message", (data) => {
           setNewMessage(data);
@@ -38,6 +38,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
 
     return ( () => {
       socket.off("connect");
+      socket.off("error", (error) => toast.error("Error:" + error));
       socket.off("disconnect");
       socket.off("message");
     })
