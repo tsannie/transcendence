@@ -1,4 +1,5 @@
 import React, { createContext, EffectCallback, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
@@ -19,7 +20,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   const [ newMessage, setNewMessage ] = useState<IMessageReceived | null>(null);
   const [ socket, setSocket ] = useState<Socket | null>(null);
 
-  useEffect((): ReturnType<EffectCallback> => {
+  useEffect(() => {
     if (user) {
       const newSocket: any = io("http://localhost:4000/chat", {
         transports: ["websocket"],
@@ -27,21 +28,15 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       setSocket(newSocket);
       return () => newSocket.disconnect(); // disconnect old socket
     }
-  }, [user]); // create a new socket when user changes only
 
-  useEffect(() => {
     if (socket)
     {
       socket.on("connect", () => console.log("connected to socket"));
       socket.on("disconnect", () => console.log("disconnected from socket"));
-      /* socket.on("message", (data) => {
-          setNewMessage(data);
-      }) */
 
       return (() => {
         socket.off("connect");
         socket.off("disconnect");
-        //socket.off("message");
       })
     };
   }, []);
@@ -49,6 +44,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   useEffect(() => {
     if (socket)
     {
+      socket.on("error", (error) => {console.log("ERROR"); toast.error("Error:" + error)});
       socket.on("message", (data) => {
         setNewMessage(data);
       })
@@ -57,6 +53,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       })
       return (() => {
         socket.off("message");
+        socket.off("error");
       })
     };
   }, [socket]);

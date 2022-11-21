@@ -6,6 +6,7 @@ import { api } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import SendMessageForm from "./SendMessageForm";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
+import { toast } from "react-toastify";
 
 function MessageList(props: any) {
   const user: User = props.user;
@@ -72,7 +73,7 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
         );
         setOffset(0);
       })
-      .catch(() => console.log("Axios Error while loading messages"));
+      .catch((err: any) => toast.error("HTTP error: " + err.response.data.message));
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {

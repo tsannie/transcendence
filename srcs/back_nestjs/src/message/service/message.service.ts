@@ -27,28 +27,27 @@ export class MessageService {
     private allMessages: Repository<MessageEntity>,
     private userService: UserService,
     private channelService: ChannelService,
+    private banMuteService: BanMuteService,
   ) {}
 
   /* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
+
   checkUserValidity(
     type: string,
     inputed_id: string,
     user: UserEntity,
-  ): DmEntity | ChannelEntity {
+  ): DmEntity | ChannelEntity | null {
     if (type === 'dm') {
       let dm = user.dms.find((elem) => elem.id === inputed_id);
       if (!dm)
-        throw new UnprocessableEntityException('User is not part of the dm.');
+        return null;
       else return dm;
     } else if (type === 'channel') {
       let owner_of = user.owner_of.find((elem) => elem.id === inputed_id); // TODO check if == is ok
       let admin_of = user.admin_of.find((elem) => elem.id === inputed_id);
       let user_of = user.channels.find((elem) => elem.id === inputed_id);
-      //console.log(owner_of, admin_of, user_of);
       if (!owner_of && !admin_of && !user_of)
-        throw new UnprocessableEntityException(
-          'User is not part of the channel.',
-        );
+        return null;
       else return owner_of ? owner_of : admin_of ? admin_of : user_of;
     }
   }
@@ -61,7 +60,8 @@ export class MessageService {
     offset: number,
     user: UserEntity,
   ): Promise<MessageEntity[]> {
-    this.checkUserValidity(type, inputed_id, user);
+    if (!this.checkUserValidity(type, inputed_id, user))
+      throw new UnauthorizedException(`you are not allowed to load ${inputed_id}'s messages`)
 
     const messages = await this.allMessages
       .createQueryBuilder('message')
@@ -89,7 +89,8 @@ export class MessageService {
     inputed_id: string,
     user: UserEntity,
   ): Promise<MessageEntity> {
-    this.checkUserValidity(type, inputed_id, user);
+    if (!this.checkUserValidity(type, inputed_id, user))
+      throw new UnauthorizedException(`you are not allowed to load ${inputed_id}'s messages`)
 
     return await this.allMessages
       .createQueryBuilder('message')
@@ -110,14 +111,13 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(
-    data: MessageDto,
-    userId: string,
-  ): Promise<MessageEntity> {
+  async addMessagetoChannel(socket: Server, clientId: string, data: MessageDto, userId: string): Promise<MessageEntity | null> {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
-      channels: true,
+      channels: {
+        muted: true,
+      },
       admin_of: true,
       owner_of: true,
     });
@@ -126,6 +126,17 @@ export class MessageService {
       data.convId,
       user,
     ) as ChannelEntity;
+
+    if (!channel)
+      throw new UnauthorizedException("you are not part of this channel");
+
+    console.log("HEERREEE = ", clientId);
+    if (await this.banMuteService.isMuted(channel, user))
+    {
+      //TODO send back error Message
+      socket.to(clientId).emit("error", "You've Been Muted ! Shhhh. silence.");
+      return null;
+    }
 
     const message = new MessageEntity();
     message.content = data.content;
@@ -136,11 +147,7 @@ export class MessageService {
   }
 
   /* TODO modify input */
-  async addMessagetoDm(
-    data: MessageDto,
-    userId: string,
-  ): Promise<MessageEntity> {
-    console.log('addMessagetoDm = ', data);
+  async addMessagetoDm(data: MessageDto, userId: string): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -153,6 +160,8 @@ export class MessageService {
         'User does not exist in database.',
       );
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
+
+    //TODO, AVOID sending message if user not friend;
 
     const message = new MessageEntity();
     message.content = data.content;
