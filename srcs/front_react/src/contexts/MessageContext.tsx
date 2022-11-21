@@ -22,9 +22,6 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   useEffect((): ReturnType<EffectCallback> => {
     if (user) {
       const newSocket: any = io("http://localhost:4000/chat", {
-        query: {
-          userId: user?.id,
-        }, // TO DELETE
         transports: ["websocket"],
       });
       setSocket(newSocket);
