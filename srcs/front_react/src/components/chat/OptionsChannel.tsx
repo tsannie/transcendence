@@ -31,18 +31,7 @@ function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean
 function ChannelMembers(props: {receivedChannel: IDatas | null }) {
     const status = props.receivedChannel?.status;
     const channel = props.receivedChannel?.data;
-    const [ closeAll, setCloseAll ] = useState<boolean>(false);
-
-    useEffect(() => {
-        const closeDropdown = (e: any) => {
-            if (e.composedPath()[1].tagName !== "BUTTON")
-                setCloseAll(true);
-        };
-
-        document.body.addEventListener("click", closeDropdown);
-        return () => document.body.removeEventListener("click", closeDropdown);
-    }, [])
-
+    
     return (
         <Fragment>
         { channel ? 

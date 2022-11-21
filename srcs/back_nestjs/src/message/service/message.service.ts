@@ -125,10 +125,11 @@ export class MessageService {
     if (!channel)
       throw new UnauthorizedException("you are not part of this channel");
     
+    console.log("HEERREEE = ", clientId);
     if (await this.banMuteService.isMuted(channel, user))
     {
       //TODO send back error Message
-      // socket.to(clientId).emit("error", "You've Been Muted ! Shhhh. silence.");
+      socket.to(clientId).emit("error", "You've Been Muted ! Shhhh. silence.");
       return null;
     }
 

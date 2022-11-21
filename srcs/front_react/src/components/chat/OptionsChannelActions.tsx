@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { IMemberProps } from "./OptionsChannel";
@@ -7,6 +7,7 @@ import { IMemberProps } from "./OptionsChannel";
 function UserOptions(props: IMemberProps) {
     const {type, isOwner, isAdmin, channelId, user} = props;
     const [isOpen, setOpen ] = useState<boolean>(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     const banUser = () => {
         api
@@ -104,15 +105,19 @@ function UserOptions(props: IMemberProps) {
         </div>);
     }
 
-    useEffect( () => {
-        if (closeAll){
-            setOpen(false);
-        }
+    useEffect(() => {
+        const closeDropdown = (e: any) => {
+            if (!e.composedPath().includes(buttonRef.current))
+                setOpen(false);
+        };
+
+        document.body.addEventListener("click", closeDropdown);
+        return () => document.body.removeEventListener("click", closeDropdown);
     }, [])
 
     return (
     <Fragment>
-        <button className="member" onClick={(e) => {setOpen(true);}}>
+        <button ref={buttonRef} className="member" onClick={(e) => {setOpen(true);}}>
             <img src={user.profile_picture} />
         </button>
         {isOpen ? displayOptions() : null}
