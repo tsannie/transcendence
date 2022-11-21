@@ -1,5 +1,7 @@
 import {
+  forwardRef,
   Get,
+  Inject,
   Injectable,
   Logger,
   Request,
@@ -27,6 +29,7 @@ import { Repository } from 'typeorm';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
 import { ChannelService } from 'src/channel/service/channel.service';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -41,6 +44,7 @@ export class MessageGateway
   constructor(
     private messageService: MessageService,
     private authService: AuthService,
+    @Inject(forwardRef(() => ChannelService))
     private channelService: ChannelService,
   ) {}
 
@@ -112,5 +116,10 @@ export class MessageGateway
         this.messageService.emitMessageChannel(channel, lastMsg, this.connectedUsers);
       }
     }
+  }
+
+  createChannel(channel: ChannelEntity | void) {
+    console.log("channel created");
+    this.server.emit('newChannel', channel);
   }
 }
