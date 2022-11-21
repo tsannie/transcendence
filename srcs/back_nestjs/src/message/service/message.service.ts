@@ -150,7 +150,7 @@ export class MessageService {
   }
 
   // emit message to all users in dm
-  async emitMessageDm(socket: Server, lastMessage: MessageEntity, connectedUsers: Map<string, Socket>) {
+  async emitMessageDm(socket: Server, lastMessage: MessageEntity) {
     for (const dmUser of lastMessage.dm.users) {
       const user = await this.userService.findById(dmUser.id, {
         connections: true,
@@ -160,19 +160,11 @@ export class MessageService {
         owner_of: true,
       });
 
-      // search for user in connectedUsers
-      console.log("connectedUsers === ", connectedUsers);
-      const userSocket = connectedUsers.get(user.id);
-      /* for (const connection of Array.from(connectedUsers.values())) {
+      for (const connection of user.connections) {
         if (lastMessage) {
-          socket.to(connection.id).emit('message', lastMessage);
+          socket.to(connection.socketId).emit('message', lastMessage);
         }
-      } */
-      //for (const connection of Array.from(connectedUsers.values())) {
-        if (lastMessage) {
-          socket.to(userSocket.id).emit('message', lastMessage);
-        }
-      //}
+      }
     }
   }
 
@@ -200,7 +192,7 @@ export class MessageService {
           owner_of: true,
         });
 
-       /*  for (const connection of user.connections) {
+       for (const connection of user.connections) {
           const lastMessage = await this.loadLastMessage(
             'channel',
             channel.id,
@@ -210,7 +202,7 @@ export class MessageService {
           if (lastMessage) {
             socket.to(connection.socketId).emit('message', lastMessage);
           }
-        } */
+        }
       }
     }
   }

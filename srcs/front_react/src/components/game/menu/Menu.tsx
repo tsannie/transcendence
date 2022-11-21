@@ -21,8 +21,10 @@ export default function GameMenu() {
     }
 
     game.setRoom("");
-    if (game.status === RoomStatus.EMPTY)
+    if (game.status === RoomStatus.EMPTY) {
       socket?.emit("createGameRoom", data);
+      toast.success("Room created !");
+    }
   }
 
   function createGameRoomTRANS() {
