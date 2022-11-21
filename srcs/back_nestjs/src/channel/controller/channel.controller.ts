@@ -2,7 +2,9 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  forwardRef,
   Get,
+  Inject,
   Post,
   Query,
   Req,
@@ -19,11 +21,16 @@ import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { BanEntity, MuteEntity } from '../models/ban.entity';
 import { Request } from 'express';
+import { MessageGateway } from 'src/message/message.gateway';
 
 @Controller('channel')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ChannelController {
-  constructor(private channelService: ChannelService) {}
+  constructor(
+    private channelService: ChannelService,
+    @Inject(forwardRef(() => MessageGateway))
+    private messageGateway: MessageGateway,
+  ) {}
 
   @Get('datas')
   @SerializeOptions({ groups: ['user'] })
@@ -60,7 +67,9 @@ export class ChannelController {
     @Body() channel: CreateChannelDto,
     @Req() req: Request,
   ): Promise<void | ChannelEntity> {
-    return await this.channelService.createChannel(channel, req.user);
+    const channelCreated: ChannelEntity | void =
+      await this.channelService.createChannel(channel, req.user);
+    return this.messageGateway.createChannel(channelCreated);
   }
 
   @Post('banUser')
