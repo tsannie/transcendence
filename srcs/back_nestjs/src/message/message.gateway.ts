@@ -26,6 +26,7 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
+import { ChannelService } from 'src/channel/service/channel.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -39,8 +40,8 @@ export class MessageGateway
 {
   constructor(
     private messageService: MessageService,
-    private userService: UserService,
     private authService: AuthService,
+    private channelService: ChannelService,
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
@@ -53,18 +54,12 @@ export class MessageGateway
     this.logger.log('Init');
   }
 
-  // all clients connect to the server
   async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
     let user: UserEntity;
     try {
-      //user = await this.authService.validateSocket(client);
+      user = await this.authService.validateSocket(client);
 
-      let userId = client.handshake.query.userId;
-      console.log('userId = ', userId);
-      if (typeof userId === 'string') {
-        user = await this.userService.findById(userId);
-      }
       if (!user) {
         return client.disconnect();
       } else {
@@ -80,12 +75,15 @@ export class MessageGateway
     }
   }
 
-  async handleDisconnect(@ConnectedSocket () client: Socket) {
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
-    //const user = await this.authService.validateSocket(client);
+    const user = await this.authService.validateSocket(client);
 
-    client.disconnect();
-    //this.disconnect(user.id, client);
+    if (user) {
+      this.disconnect(user.id, client);
+    }
+    else
+      client.disconnect();
   }
 
   private disconnect(userId: string, client: Socket) {
@@ -98,16 +96,21 @@ export class MessageGateway
     @MessageBody() data: MessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = client.handshake.query.userId; //todo PROTEGER TRYCATCH
+    const user = await this.authService.validateSocket(client);
 
     if (data.isDm === true) {
-      const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
+      const lastMsg = await this.messageService.addMessagetoDm(data, user.id);
 
-      await this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
+      this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(data, userId.toString());
+      const lastMsg = await this.messageService.addMessagetoChannel(data, user.id);
+      const channel = await this.channelService.getChannelById(
+        lastMsg.channel.id,
+      );
 
-      await this.messageService.emitMessageChannel(lastMsg, this.connectedUsers);
+      if (channel) {
+        this.messageService.emitMessageChannel(channel, lastMsg, this.connectedUsers);
+      }
     }
   }
 }
