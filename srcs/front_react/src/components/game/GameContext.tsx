@@ -43,6 +43,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
           setisP2(false);
         }
       });
+      //socket.on() error
     }
   }, [socket]);
 
