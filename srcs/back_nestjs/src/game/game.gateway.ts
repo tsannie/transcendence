@@ -41,25 +41,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   paddle_pos = new Map<string, PaddlePos>();
   game_loop = new Map<string, boolean>();
-  //connectedUsers = new Map<string, Socket>();
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
-    let user: UserEntity;
     try {
-      user = await this.authService.validateSocket(client);
+      const user = await this.authService.validateSocket(client);
 
       if (!user) {
-        return await this.disconnect(client);
-      } else {
-        /* let connectedUser = new ConnectedUserEntity();
+        return client.disconnect();
 
-        connectedUser.socketId = client.id;
-        connectedUser.user = user;
-        await this.connectedUserService.create(connectedUser); */
       }
     } catch {
-      return await this.disconnect(client);
+      return client.disconnect();
     }
   }
 
@@ -68,7 +61,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await this.authService.validateSocket(client);
 
     if (!user)
-      return await this.disconnect(client);
+      return client.disconnect();
     const room_game = await this.gameService.findRoomBySocketId(client.id);
 
     if (room_game) {
@@ -80,10 +73,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       else if (room_game.status === RoomStatus.PLAYING)
         await this.giveUp(client, room_game.id);
     }
-    await this.disconnect(client);
-  }
-
-  private async disconnect(client: Socket) {
     client.disconnect();
   }
 
@@ -119,7 +108,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room_game.p2SocketId = client.id;
 
         await this.all_game.save(room_game);
-
         await this.gameService.initSet(room_game.id, this.game_loop, data.mode);
         this.server.in(room_game.id).emit('joinedRoom', room_game);
       }

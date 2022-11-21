@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -106,7 +110,10 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(data: MessageDto, userId: string): Promise<MessageEntity> {
+  async addMessagetoChannel(
+    data: MessageDto,
+    userId: string,
+  ): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -129,7 +136,10 @@ export class MessageService {
   }
 
   /* TODO modify input */
-  async addMessagetoDm(data: MessageDto, userId: string): Promise<MessageEntity> {
+  async addMessagetoDm(
+    data: MessageDto,
+    userId: string,
+  ): Promise<MessageEntity> {
     console.log('addMessagetoDm = ', data);
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
@@ -139,7 +149,9 @@ export class MessageService {
       owner_of: true,
     });
     if (!user)
-      throw new UnprocessableEntityException('User does not exist in database.');
+      throw new UnprocessableEntityException(
+        'User does not exist in database.',
+      );
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
     const message = new MessageEntity();
@@ -151,7 +163,10 @@ export class MessageService {
   }
 
   // emit message to all users in dm
-  emitMessageDm(lastMessage: MessageEntity, connectedUsers: Map<string, Socket[]>) {
+  emitMessageDm(
+    lastMessage: MessageEntity,
+    connectedUsers: Map<string, Socket[]>,
+  ) {
     for (const user of lastMessage.dm.users) {
       for (const [key, value] of connectedUsers) {
         if (user.id === key) {
@@ -164,17 +179,11 @@ export class MessageService {
   }
 
   // emit message to all users in channel
-  async emitMessageChannel(lastMessage: MessageEntity, connectedUsers: Map<string, Socket[]>) {
-    const channel = await this.channelService.getChannelById(
-      lastMessage.channel.id,
-    );
-
-    if (channel) {
-      this.emitMessageToAllUsersInChannel(channel, lastMessage, connectedUsers);
-    }
-  }
-
-  emitMessageToAllUsersInChannel(channel: ChannelEntity, lastMessage: MessageEntity, connectedUsers: Map<string, Socket[]>) {
+  emitMessageChannel(
+    channel: ChannelEntity,
+    lastMessage: MessageEntity,
+    connectedUsers: Map<string, Socket[]>,
+  ) {
     let users = [...channel.users, ...channel.admins, channel.owner];
 
     if (users) {
