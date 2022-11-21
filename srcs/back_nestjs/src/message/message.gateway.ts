@@ -107,7 +107,7 @@ export class MessageGateway
 
       this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(data, user.id);
+      const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, user.id);
       const channel = await this.channelService.getChannelById(
         lastMsg.channel.id,
       );
