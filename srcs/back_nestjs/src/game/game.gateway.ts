@@ -103,7 +103,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await this.authService.validateSocket(client);
 
     if (!user)
-      return;  // TODO: send error
+      return client.emit("error", "create Room error !");  // TODO: send error
     const room_game: RoomEntity = await this.gameService.joinFastRoom(user);
 
     if (room_game && user) {

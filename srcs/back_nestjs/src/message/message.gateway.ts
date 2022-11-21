@@ -48,7 +48,7 @@ export class MessageGateway
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
-  connectedUsers = new Map<string, Socket>();
+  //connectedUsers = new Map<string, Socket>();
 
   @WebSocketServer()
   server: Server;
@@ -105,7 +105,7 @@ export class MessageGateway
     if (data.isDm === true) {
       const lastMsg = await this.messageService.addMessagetoDm(this.server, client.id, data, userId.toString());
 
-      //await this.messageService.emitMessageDm(this.server, lastMsg, this.connectedUsers);
+      await this.messageService.emitMessageDm(this.server, lastMsg);
     } else {
       const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, userId.toString());
       if (!lastMsg)
