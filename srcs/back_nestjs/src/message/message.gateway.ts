@@ -23,11 +23,11 @@ import { MessageService } from './service/message.service';
 import { UserService } from 'src/user/service/user.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { UserEntity } from 'src/user/models/user.entity';
-import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { Repository } from 'typeorm';
-import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
-import { ConnectedUserDto } from 'src/connected-user/dto/connected-user.dto';
 import { MessageDto } from './dto/message.dto';
+import { AuthService } from 'src/auth/service/auth.service';
+import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
+import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -42,10 +42,13 @@ export class MessageGateway
   constructor(
     private messageService: MessageService,
     private userService: UserService,
+    private authService: AuthService,
     private connectedUserService: ConnectedUserService,
+
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
+  connectedUsers = new Map<string, Socket>();
 
   @WebSocketServer()
   server: Server;
@@ -57,36 +60,39 @@ export class MessageGateway
   // all clients connect to the server
   async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
+    let user: UserEntity;
     try {
+      //user = await this.authService.validateSocket(client);
+
       let userId = client.handshake.query.userId;
-      let user: UserEntity;
       console.log('userId = ', userId);
       if (typeof userId === 'string') {
         user = await this.userService.findById(userId);
       }
       if (!user) {
-        return this.disconnect(client);
+        return client.disconnect();
       } else {
-        let connectedUser = new ConnectedUserDto();
+        let connectedUser = new ConnectedUserEntity();
 
         connectedUser.socketId = client.id;
         connectedUser.user = user;
         await this.connectedUserService.create(connectedUser);
       }
     } catch {
-      return this.disconnect(client);
+      return this.disconnect(user.id, client);
     }
   }
 
-  async handleDisconnect(client: Socket) {
+  async handleDisconnect(@ConnectedSocket () client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
+    //const user = await this.authService.validateSocket(client);
 
-    this.connectedUserService.deleteBySocketId(client.id);
     client.disconnect();
+    //this.disconnect(user.id, client);
   }
 
-  private disconnect(client: Socket) {
-    this.connectedUserService.deleteBySocketId(client.id);
+  private disconnect(userId: string, client: Socket) {
+    //this.connectedUsers.delete(userId);
     client.disconnect();
   }
 
@@ -99,7 +105,7 @@ export class MessageGateway
     if (data.isDm === true) {
       const lastMsg = await this.messageService.addMessagetoDm(this.server, client.id, data, userId.toString());
 
-      await this.messageService.emitMessageDm(this.server, lastMsg);
+      //await this.messageService.emitMessageDm(this.server, lastMsg, this.connectedUsers);
     } else {
       const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, userId.toString());
       if (!lastMsg)
