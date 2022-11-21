@@ -52,6 +52,9 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       socket.on("message", (data) => {
         setNewMessage(data);
       })
+      socket.on("newChannel", (data) => {
+        console.log("newChannel === ", data);
+      })
       return (() => {
         socket.off("message");
       })
