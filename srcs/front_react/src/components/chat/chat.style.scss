@@ -192,10 +192,11 @@ $width_chat: calc(450 * var(--res));
 
   .category {
     display: flex;
+    position: relative;
     flex-direction: column;
     border-style: dashed;
     border-width: calc(3 * var(--res)) !important;
-
+    
     .title {
       font-size: calc(14 * var(--res));
       align-self: center;
@@ -216,6 +217,7 @@ $width_chat: calc(450 * var(--res));
       opacity: 0.954;
       border-style: dashed;
       height: fit-content;
+      z-index: 1;
 
       .options{
         display: flex;
