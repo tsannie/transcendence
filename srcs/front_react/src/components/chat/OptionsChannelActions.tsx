@@ -8,6 +8,7 @@ function UserOptions(props: IMemberProps) {
     const {type, isOwner, isAdmin, channelId, user} = props;
     const [isOpen, setOpen ] = useState<boolean>(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const dropdownStyle = useRef<React.CSSProperties>()
 
     const banUser = () => {
         api
@@ -94,8 +95,9 @@ function UserOptions(props: IMemberProps) {
     }
 
     const displayOptions = () => {
+        console.log(dropdownStyle);
         return (
-        <div className="dropdown">
+        <div className="dropdown" style={dropdownStyle.current}>
             <div className="options">Options</div>
             <button>Access Profile</button>
             {type === "Admins" && adminOptions()}
@@ -115,9 +117,20 @@ function UserOptions(props: IMemberProps) {
         return () => document.body.removeEventListener("click", closeDropdown);
     }, [])
 
+    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        let pos = (event.target as HTMLElement).getBoundingClientRect();
+        let x = event.clientX - pos.left;
+        let y = event.clientY - pos.top;
+        dropdownStyle.current = {
+            left: x,
+            top: 2 * y,
+        }
+        setOpen(true);
+    }
+
     return (
     <Fragment>
-        <button ref={buttonRef} className="member" onClick={(e) => {setOpen(true);}}>
+        <button ref={buttonRef} className="member" onClick={(e) => handleButtonClick(e)}>
             <img src={user.profile_picture} />
         </button>
         {isOpen ? displayOptions() : null}
