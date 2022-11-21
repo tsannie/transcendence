@@ -12,6 +12,7 @@ import { Server } from 'socket.io';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { MessageDto } from '../dto/message.dto';
 import { Socket } from 'socket.io';
+import { Console } from 'console';
 
 const LOADED_MESSAGES = 20;
 
@@ -150,57 +151,39 @@ export class MessageService {
   }
 
   // emit message to all users in dm
-  async emitMessageDm(socket: Server, lastMessage: MessageEntity) {
-    for (const dmUser of lastMessage.dm.users) {
-      const user = await this.userService.findById(dmUser.id, {
-        connections: true,
-        dms: true,
-        channels: true,
-        admin_of: true,
-        owner_of: true,
-      });
-
-      for (const connection of user.connections) {
-        if (lastMessage) {
-          socket.to(connection.socketId).emit('message', lastMessage);
+  emitMessageDm(lastMessage: MessageEntity, connectedUsers: Map<string, Socket[]>) {
+    for (const user of lastMessage.dm.users) {
+      for (const [key, value] of connectedUsers) {
+        if (user.id === key) {
+          for (const socket of value) {
+            socket.emit('message', lastMessage);
+          }
         }
       }
     }
   }
 
   // emit message to all users in channel
-  async emitMessageChannel(socket: Server, lastMessage: MessageEntity) {
+  async emitMessageChannel(lastMessage: MessageEntity, connectedUsers: Map<string, Socket[]>) {
     const channel = await this.channelService.getChannelById(
       lastMessage.channel.id,
     );
 
     if (channel) {
-      await this.emitMessageToAllUsersInChannel(channel, socket);
+      this.emitMessageToAllUsersInChannel(channel, lastMessage, connectedUsers);
     }
   }
 
-  async emitMessageToAllUsersInChannel(channel: ChannelEntity, socket: Server) {
+  emitMessageToAllUsersInChannel(channel: ChannelEntity, lastMessage: MessageEntity, connectedUsers: Map<string, Socket[]>) {
     let users = [...channel.users, ...channel.admins, channel.owner];
 
     if (users) {
-      for (const channelUser of users) {
-        const user = await this.userService.findById(channelUser.id, {
-          connections: true,
-          dms: true,
-          channels: true,
-          admin_of: true,
-          owner_of: true,
-        });
-
-       for (const connection of user.connections) {
-          const lastMessage = await this.loadLastMessage(
-            'channel',
-            channel.id,
-            user,
-          );
-
-          if (lastMessage) {
-            socket.to(connection.socketId).emit('message', lastMessage);
+      for (const user of users) {
+        for (const [key, value] of connectedUsers) {
+          if (user.id === key) {
+            for (const socket of value) {
+              socket.emit('message', lastMessage);
+            }
           }
         }
       }
