@@ -27,6 +27,7 @@ import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express, Request, Response } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
 import { IUserSearch } from '../models/iusersearch.interface';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 
@@ -202,5 +203,19 @@ export class UserController {
       friends: true,
     });
     return await this.userService.removeFriend(req.user, userTarget);
+  }
+
+  @Get('gameHistory')
+  @UseGuards(JwtTwoFactorGuard)
+  async getGameHistory(@Req() req: Request): Promise<GameStatEntity[]> {
+    return await this.userService.getGameHistory(req.user);
+  }
+
+  @Get('leaderboard')
+  @UseGuards(JwtTwoFactorGuard)
+  async getLeaderboard(@Req() req: Request): Promise<number> {
+    const allUsers = await this.userService.getAllUsersWithElo();
+
+    return this.userService.getLeaderBoard(req.user.id, allUsers);
   }
 }

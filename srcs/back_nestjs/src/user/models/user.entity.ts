@@ -1,7 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
-import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
+import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +10,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -91,4 +93,20 @@ export class UserEntity {
   @Expose({ groups: ['user', 'me'] })
   @Column({ nullable: true })
   profile_picture: string;
+
+  @Column({ default: 1000 })
+  elo: number;
+
+  @Column({ default: 0 })
+  matches: number;
+
+  @Column({ default: 0 })
+  wins: number;
+
+  @ManyToMany(() => GameStatEntity, (gameStat) => gameStat.players, {
+    nullable: true,
+    eager: true,
+  })
+  @JoinTable()
+  history: GameStatEntity[];
 }

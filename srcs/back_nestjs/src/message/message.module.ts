@@ -10,12 +10,11 @@ import { DmEntity } from 'src/dm/models/dm.entity';
 import { DmModule } from 'src/dm/dm.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { ChannelModule } from 'src/channel/channel.module';
-import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
-import { ConnectedUserModule } from 'src/connected-user/connected-user.module';
+import { ConnectedUserModule } from 'src/connected-user/connected-user.module.';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MessageEntity, DmEntity, UserEntity, ConnectedUserEntity]),
+    TypeOrmModule.forFeature([MessageEntity, DmEntity, UserEntity]),
     UserModule,
     DmModule,
     ChannelModule,

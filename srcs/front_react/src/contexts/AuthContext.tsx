@@ -3,6 +3,15 @@ import React, { createContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { api } from "../const/const";
 
+export type Game = {
+  id: string;
+  winner_id: string;
+  eloDiff: number;
+  p1_score: number;
+  p2_score: number;
+  players: User[]; // TODO: get player info from the server
+}
+
 export type User = {
   id: string;
   username: string;
@@ -11,6 +20,10 @@ export type User = {
   profile_picture: string;
   friends: User[];
   friend_requests: User[];
+  elo: number;
+  matches: number;
+  wins: number;
+  history : Game[];
 };
 
 export type AuthContextType = {
