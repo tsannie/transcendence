@@ -19,10 +19,8 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { CreateRoomDto } from './dto/createRoom.dto';
 import { IBall, PaddlePos } from './const/interface';
-import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
-import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -34,7 +32,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @InjectRepository(RoomEntity)
     private all_game: Repository<RoomEntity>,
-    private connectedUserService: ConnectedUserService,
     private gameService: GameService,
     private authService: AuthService,
   ) {}
@@ -55,11 +52,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (!user) {
         return await this.disconnect(client);
       } else {
-        let connectedUser = new ConnectedUserEntity();
+        /* let connectedUser = new ConnectedUserEntity();
 
         connectedUser.socketId = client.id;
         connectedUser.user = user;
-        await this.connectedUserService.create(connectedUser);
+        await this.connectedUserService.create(connectedUser); */
       }
     } catch {
       return await this.disconnect(client);
@@ -87,7 +84,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   private async disconnect(client: Socket) {
-    await this.connectedUserService.deleteBySocketId(client.id);
     client.disconnect();
   }
 

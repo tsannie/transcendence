@@ -26,8 +26,6 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
-import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
-import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -43,12 +41,10 @@ export class MessageGateway
     private messageService: MessageService,
     private userService: UserService,
     private authService: AuthService,
-    private connectedUserService: ConnectedUserService,
-
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
-  //connectedUsers = new Map<string, Socket>();
+  connectedUsers = new Map<string, Socket[]>();
 
   @WebSocketServer()
   server: Server;
@@ -72,11 +68,12 @@ export class MessageGateway
       if (!user) {
         return client.disconnect();
       } else {
-        let connectedUser = new ConnectedUserEntity();
-
-        connectedUser.socketId = client.id;
-        connectedUser.user = user;
-        await this.connectedUserService.create(connectedUser);
+        // if user id already have a socket, add the new one to the array
+        if (this.connectedUsers.has(user.id)) {
+          this.connectedUsers.get(user.id).push(client);
+        } else {
+          this.connectedUsers.set(user.id, [client]);
+        }
       }
     } catch {
       return this.disconnect(user.id, client);
@@ -92,7 +89,7 @@ export class MessageGateway
   }
 
   private disconnect(userId: string, client: Socket) {
-    //this.connectedUsers.delete(userId);
+    this.connectedUsers.delete(userId);
     client.disconnect();
   }
 
@@ -106,11 +103,11 @@ export class MessageGateway
     if (data.isDm === true) {
       const lastMsg = await this.messageService.addMessagetoDm(data, userId.toString());
 
-      await this.messageService.emitMessageDm(this.server, lastMsg);
+      await this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
       const lastMsg = await this.messageService.addMessagetoChannel(data, userId.toString());
 
-      await this.messageService.emitMessageChannel(this.server, lastMsg);
+      await this.messageService.emitMessageChannel(lastMsg, this.connectedUsers);
     }
   }
 }
