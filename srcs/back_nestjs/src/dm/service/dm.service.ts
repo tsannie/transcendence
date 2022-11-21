@@ -85,6 +85,7 @@ export class DmService {
   async createDm(data: DmTargetDto, user: UserEntity): Promise<DmEntity> {
     let user2 = await this.checkifBlocked(user, data.targetId);
     if (user.dms) {
+        //TODO SIMPLIFY
         const convo = user.dms.find(
           (dm) =>
             (dm.users[0].id === user.id &&

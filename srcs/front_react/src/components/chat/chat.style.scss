@@ -192,10 +192,11 @@ $width_chat: calc(450 * var(--res));
 
   .category {
     display: flex;
+    position: relative;
     flex-direction: column;
     border-style: dashed;
     border-width: calc(3 * var(--res)) !important;
-
+    
     .title {
       font-size: calc(14 * var(--res));
       align-self: center;
@@ -205,6 +206,31 @@ $width_chat: calc(450 * var(--res));
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
+    }
+
+    .dropdown{
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      align-items: center;
+      background-color: $bg-color;
+      opacity: 0.954;
+      border-style: dashed;
+      height: fit-content;
+      z-index: 1;
+
+      .options{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        border-bottom-style: dashed;
+        font-size: calc(18 * var(--res));
+      }
+
+      button {
+        font-size: calc(16 * var(--res));
+        padding: 1%;
+      }
     }
 
     button {

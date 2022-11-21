@@ -1,90 +1,50 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { User } from "../../contexts/AuthContext";
 import { IDatas } from "./Conversation";
+import UserOptions from "./OptionsChannelActions";
 import { IChannel } from "./types";
 
-function UserList( props: {name: string, credentials: boolean, users: User[] | null} ) {
-    const { name, credentials, users } = props;
-    const [ isSelect, setSelected ] = useState<boolean>(false);
-    const buttonRef = useRef<Array<HTMLButtonElement | null>>([]);
-
-    const showDropdownMenu = (event: any, elem: User) => {
-        console.log(event);
-        setSelected(!isSelect);
-    }
-
-    const userList = users?.map( (elem, i) => {
-        return (
-            <button ref={el => buttonRef.current[i] = el} className="members" key={elem.id} onClick={(e: any) => showDropdownMenu(e, elem)}>
-                <img src={elem.profile_picture}/>
-            </button>);
-    })
-    
-    useEffect(() => {
-        const closeDropdown = (e: any) => {
-            console.log(e.composedPath());
-            setSelected(false);
-        };
-
-        document.body.addEventListener('click', closeDropdown)
-        return (() => document.body.removeEventListener('click', closeDropdown));
-    }, [])
-
-    useEffect( () => {
-        buttonRef.current = buttonRef.current.slice(0, users?.length);
-    }, [users]);
-
-    return <Fragment>{userList}</Fragment>;
+export interface IMemberProps {
+    type: string;
+    isOwner: boolean;
+    isAdmin: boolean;
+    channelId: string; 
+    user: User;
 }
 
-function UserCategory(props: {name: string, credentials: boolean, users: User[] | null}) {
-    const { name, users } = props;
+function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean, channelId: string, users: User[] | null}) {
+    const { users } = props;
 
     if (!users || users.length === 0)
         return <Fragment/>;
 
+    const userList = users?.map( (member : User) => <UserOptions key={member.id} user={member} {...props}/>)
+
     return (
         <div className="category">
-            <div className="title">{name}</div>
-            <UserList {...props}/>
+            <div className="title">{props.type}</div>
+            {userList}
         </div>
     )
 }
 
-function RequesterOptions(props: {isOwner: boolean, isAdmin: boolean, channel: IChannel}) {
-    const {isOwner, isAdmin, channel} = props;
+function ChannelMembers(props: {receivedChannel: IDatas | null }) {
+    const status = props.receivedChannel?.status;
+    const channel = props.receivedChannel?.data;
     
     return (
         <Fragment>
-            {isOwner ? <UserCategory name={"Admins"} credentials={true} users={channel.admins}/> : <UserCategory name="Admins" credentials={false} users={channel.admins}/>}
-            {isOwner || isAdmin ? 
+        { channel ? 
+        <div className="conversation__options__members">
+            <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.admins}/>
+            <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.users}/>
+            {(status === "owner" || status === "admin") ? 
             <Fragment>
-                <UserCategory name={"Members"} credentials={true} users={channel.users}/>
-                <UserCategory name={"Muted"} credentials={true} users={channel.muted}/>
-                <UserCategory name={"Banned"} credentials={true} users={channel.muted}/>
-            </Fragment> : 
-            <Fragment>
-                <UserCategory name={"Members"} credentials={false} users={channel.users}/>
-            </Fragment>
-            }
+                <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.muted?.map((elem) => elem.user) as User[]}/>
+                <MemberCategory type={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={channel.banned?.map((elem) => elem.user) as User[]}/>
+            </Fragment> : null}
+        </div> : null}
         </Fragment>);
-}
-
-function ChannelMembers(props: {channel: IDatas | null }) {
-    const status = props.channel?.status;
-    const data = props.channel?.data;
-
-    if (!data)
-        return <Fragment />;
-
-    switch (status){
-        case "owner":
-            return <RequesterOptions isOwner={true} isAdmin={false} channel={data} />
-        case "admin":
-            return <RequesterOptions isOwner={false} isAdmin={true} channel={data} />
-        default:
-            return <RequesterOptions isOwner={false} isAdmin={false} channel={data} />
-    }
 }
 
 function ChannelProfile(props: {channel: IChannel|undefined}) {
@@ -103,12 +63,10 @@ function ChannelProfile(props: {channel: IChannel|undefined}) {
   </div>);
 }
 
-function ChannelOptions(props: {currentConvId: string, channel: IDatas | null}) {
+function ChannelOptions(props: {currentConvId: string, receivedChannel: IDatas | null}) {
     return <Fragment>
-        <ChannelProfile channel={props.channel?.data}/>
-        <div className="conversation__options__members">
-            <ChannelMembers channel={props.channel} />
-        </div>
+        <ChannelProfile channel={props.receivedChannel?.data}/>
+        <ChannelMembers receivedChannel={props.receivedChannel} />
     </Fragment>
 }
 
