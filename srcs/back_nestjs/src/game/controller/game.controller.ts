@@ -7,7 +7,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
-import { RoomEntity } from '../entity/room.entity';
 import { GameService } from '../service/game.service';
 
 @Controller('game')
