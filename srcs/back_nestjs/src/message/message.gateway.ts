@@ -30,7 +30,7 @@ import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
-import { MuteEntity } from 'src/channel/models/ban.entity';
+import { BanEntity, MuteEntity } from 'src/channel/models/ban.entity';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -126,7 +126,26 @@ export class MessageGateway
   }
 
   muteUser(mutedUser: MuteEntity) {
-    console.log("user mute !");
-    this.server.emit('mutedUser', mutedUser);
+    this.server.emit('muteUser', mutedUser.user);
+  }
+
+  unMuteUser(unMutedUser: MuteEntity) {
+    this.server.emit('unMuteUser', unMutedUser.user);
+  }
+
+  banUser(bannedUser: BanEntity) {
+    this.server.emit('banUser', bannedUser.user);
+  }
+
+  unBanUser(unBannedUser: BanEntity) {
+    this.server.emit('unBanUser', unBannedUser.user);
+  }
+
+  makeAdmin(newAdmin: UserEntity) {
+    this.server.emit('makeAdmin', newAdmin);
+  } 
+  
+  revokeAdmin(revokeAdmin: UserEntity) {
+    this.server.emit('revokeAdmin', revokeAdmin);
   }
 }
