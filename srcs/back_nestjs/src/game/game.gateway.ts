@@ -23,7 +23,6 @@ import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
 import Room from './class/room.class';
 
-
 @WebSocketGateway({
   namespace: '/game',
   cors: {
@@ -32,8 +31,8 @@ import Room from './class/room.class';
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-   // @InjectRepository(RoomEntity)
-   // private all_game: Repository<RoomEntity>,
+    // @InjectRepository(RoomEntity)
+    // private all_game: Repository<RoomEntity>,
     private gameService: GameService,
     private authService: AuthService,
   ) {}
@@ -53,7 +52,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (!user) {
         return client.disconnect();
-
       }
     } catch {
       return client.disconnect();
@@ -64,8 +62,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
     const user = await this.authService.validateSocket(client);
 
-    if (!user)
-      return client.disconnect();
+    if (!user) return client.disconnect();
     const room_game = this.game[user.id];
 
     if (room_game) {
@@ -91,27 +88,39 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const user = await this.authService.validateSocket(client);
 
-    if (!user)
-      return client.emit("error", "create Room error !");  // TODO: send error 
-    const room_game: Room = await this.gameService.joinFastRoom(user, this.game);
+    if (!user) return client.emit('error', 'create Room error !'); // TODO: send error
+    const room_game: Room = await this.gameService.joinFastRoom(
+      user,
+      this.game,
+    );
+    console.log('room_game_select:', room_game);
+    console.log('dico (', this.game.size, '):');
+    this.game.forEach((value, key) => {
+      console.log('room:', key, value);
+    });
 
     if (room_game && user) {
+      console.log('Hello');
       if (room_game.status === RoomStatus.EMPTY) {
+        console.log('Hello2');
         room_game.status = RoomStatus.WAITING;
         room_game.game_mode = data.mode;
-        room_game.p1 = user;
+        room_game.p1_id = user.id;
         room_game.p1_SocketId = client.id;
 
-        this.game[room_game.id] = room_game;
+        this.game.set(room_game.id, room_game);
+        //this.game[room_game.id] = room_game;
+        console.log('this.game:', this.game);
+
         //await this.all_game.save(room_game);
         client.join(room_game.id);
         client.emit('joinedRoom', room_game);
       } else if (room_game.status === RoomStatus.WAITING) {
+        console.log('Hello3');
         client.join(room_game.id);
         room_game.status = RoomStatus.PLAYING;
-        room_game.p2 = user;
+        room_game.p2_id = user.id;
         room_game.p2_SocketId = client.id;
-
         //room_game.is_playing[roomid] = true;
         this.game[room_game.id] = room_game;
         //await this.all_game.save(room_game);
@@ -130,21 +139,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() room: string,
   ) {
     const user = await this.authService.validateSocket(client);
-    if (!user)
-      return;
-    const room_game = this.game[room]
+    if (!user) return;
+    const room_game = this.game[room];
 
-    if (!room_game)
-      return;
-    if (room_game.status === RoomStatus.WAITING ||
-    room_game.status === RoomStatus.CLOSED)
+    if (!room_game) return;
+    if (
+      room_game.status === RoomStatus.WAITING ||
+      room_game.status === RoomStatus.CLOSED
+    )
       room_game.status = RoomStatus.EMPTY;
     room_game.id = room;
 
-    if (room_game.p1.id === user.id)
-      room_game.p1 = null;
-    else if (room_game.p2.id === user.id)
-      room_game.p2 = null;
+    if (room_game.p1.id === user.id) room_game.p1 = null;
+    else if (room_game.p2.id === user.id) room_game.p2 = null;
     if (room_game.status === RoomStatus.EMPTY) {
       //await this.all_game.remove(room_game);
 
@@ -166,8 +173,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('giveUp');
     const user = await this.authService.validateSocket(client);
 
-    if (!user)
-      return;
+    if (!user) return;
     const room_game = this.game[room];
 
     await this.gameService.giveUp(room, room_game, user);
@@ -187,11 +193,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //if (this.game_loop[room])
     //  this.game_loop[room] = false;
     if (room_game) {
-      if (room_game.set) { // partie annule, 1 mec a rejoint, l'autre handleDisconnect
+      if (room_game.set) {
+        // partie annule, 1 mec a rejoint, l'autre handleDisconnect
         await this.gameService.getStat(room_game);
       }
 
-/*       if (this.game.paddle_pos[room])
+      /*       if (this.game.paddle_pos[room])
         delete this.paddle_pos[room];
       if (this.game_loop[room])
         delete this.game_loop[room]; */
@@ -212,9 +219,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const game = this.game[data.room];
 
-    game.p1_y_padddle = (data.positionY * canvas_back_height) / data.front_canvas_height;
+    game.p1_y_paddle =
+      (data.positionY * canvas_back_height) / data.front_canvas_height;
 
-    client.to(data.room).emit('getPaddleP1', game.p1_y_padddle.y1);
+    client.to(data.room).emit('getPaddleP1', game.p1_y_paddle.y1);
   }
 
   @SubscribeMessage('askPaddleP2')
@@ -224,11 +232,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const game = this.game[data.room];
 
-    game.p2_y_padddle = (data.positionY * canvas_back_height) / data.front_canvas_height;
-  
-    client.to(data.room).emit('getPaddleP2', game.p1_y_padddle.y2);
-  }
+    game.p2_y_paddle =
+      (data.positionY * canvas_back_height) / data.front_canvas_height;
 
+    client.to(data.room).emit('getPaddleP2', game.p1_y_paddle.y2);
+  }
   ///////////////////////////////////////////////
 
   @SubscribeMessage('gameRender')
@@ -240,9 +248,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let BallObj: IBall = this.gameService.createBall();
 
     if (room_game.set) {
-      while (room_game.set.p1.won === false &&
-      room_game.set.p2.won === false) {
-        this.gameService.updateGame(BallObj, room_game.set, this.game[room], this.server, room);
+      while (room_game.set.p1.won === false && room_game.set.p2.won === false) {
+        this.gameService.updateGame(
+          BallObj,
+          room_game.set,
+          this.game[room],
+          this.server,
+          room,
+        );
         this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
         await new Promise((f) => setTimeout(f, 8));
       }
@@ -250,12 +263,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('resizeIngame')
-  async resizeIngame(
-    @MessageBody() room: string,
-  ) {
+  async resizeIngame(@MessageBody() room: string) {
     const room_game = this.game[room];
-    if (!room_game)
-      return;
+    if (!room_game) return;
     this.server.in(room).emit('resize_game');
   }
 }
