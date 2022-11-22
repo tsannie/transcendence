@@ -12,7 +12,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
 import { canvas_back_height, RoomStatus } from './const/const';
-import { RoomEntity } from './entity/room.entity';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
 import { UserEntity } from 'src/user/models/user.entity';
