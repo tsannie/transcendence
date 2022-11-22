@@ -1,5 +1,7 @@
 import {
+  forwardRef,
   Get,
+  Inject,
   Injectable,
   Logger,
   Request,
@@ -26,8 +28,8 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { Repository } from 'typeorm';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
-import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
-import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -41,13 +43,13 @@ export class MessageGateway
 {
   constructor(
     private messageService: MessageService,
-    private userService: UserService,
-    private connectedUserService: ConnectedUserService,
     private authService: AuthService,
+    @Inject(forwardRef(() => ChannelService))
+    private channelService: ChannelService,
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
-  //connectedUsers = new Map<string, Socket>();
+  connectedUsers = new Map<string, Socket[]>();
 
   @WebSocketServer()
   server: Server;
@@ -56,40 +58,41 @@ export class MessageGateway
     this.logger.log('Init');
   }
 
-  // all clients connect to the server
   async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
-
-    // get and parse cookie
-
+    let user: UserEntity;
     try {
-      const user = await this.authService.validateSocket(client);
+      user = await this.authService.validateSocket(client);
 
       if (!user) {
         // TODO moove im map and remove ConnectedUserEntity (dov)
-        return this.disconnect(client);
+        return client.disconnect();
       } else {
-        let connectedUser = new ConnectedUserEntity();
-
-        connectedUser.socketId = client.id;
-        connectedUser.user = user;
-        await this.connectedUserService.create(connectedUser);
+        // if user id already have a socket, add the new one to the array
+        if (this.connectedUsers.has(user.id)) {
+          this.connectedUsers.get(user.id).push(client);
+        } else {
+          this.connectedUsers.set(user.id, [client]);
+        }
       }
     } catch {
-      return this.disconnect(client);
+      return client.disconnect();
     }
   }
 
-  async handleDisconnect(@ConnectedSocket () client: Socket) {
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
-    //const user = await this.authService.validateSocket(client);
+    const user = await this.authService.validateSocket(client);
 
-    client.disconnect();
-    //this.disconnect(user.id, client);
+    if (user) {
+      this.disconnect(user.id, client);
+    }
+    else
+      client.disconnect();
   }
 
-  private disconnect(client: Socket) {
-    //this.connectedUsers.delete(userId);
+  private disconnect(userId: string, client: Socket) {
+    this.connectedUsers.delete(userId);
     client.disconnect();
   }
 
@@ -98,16 +101,26 @@ export class MessageGateway
     @MessageBody() data: MessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = client.handshake.query.userId; //todo PROTEGER TRYCATCH
-    if (data.isDm === true) {
-      const lastMsg = await this.messageService.addMessagetoDm(this.server, client.id, data, userId.toString());
+    const user = await this.authService.validateSocket(client);
 
-      await this.messageService.emitMessageDm(this.server, lastMsg);
+    if (data.isDm === true) {
+      const lastMsg = await this.messageService.addMessagetoDm(data, user.id);
+
+      this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, userId.toString());
-      if (!lastMsg)
-        return ;
-      await this.messageService.emitMessageChannel(this.server, lastMsg);
+      const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, user.id);
+      const channel = await this.channelService.getChannelById(
+        lastMsg.channel.id,
+      );
+
+      if (channel) {
+        this.messageService.emitMessageChannel(channel, lastMsg, this.connectedUsers);
+      }
     }
+  }
+
+  createChannel(channel: ChannelEntity | void) {
+    console.log("channel created");
+    this.server.emit('newChannel', channel);
   }
 }

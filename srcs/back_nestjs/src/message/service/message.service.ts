@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -12,6 +16,7 @@ import { Server } from 'socket.io';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { MessageDto } from '../dto/message.dto';
 import { Socket } from 'socket.io';
+import { Console } from 'console';
 
 const LOADED_MESSAGES = 20;
 
@@ -26,7 +31,7 @@ export class MessageService {
   ) {}
 
   /* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
-  
+
   checkUserValidity(
     type: string,
     inputed_id: string,
@@ -124,8 +129,8 @@ export class MessageService {
 
     if (!channel)
       throw new UnauthorizedException("you are not part of this channel");
-    
-    console.log("HEERREEE = ", clientId);
+
+    //TODO SWITCH TO WS THROWABLE ERROR
     if (await this.banMuteService.isMuted(channel, user))
     {
       //TODO send back error Message
@@ -142,7 +147,7 @@ export class MessageService {
   }
 
   /* TODO modify input */
-  async addMessagetoDm(socket: Server, clientId: string, data: MessageDto, userId: string): Promise<MessageEntity> {
+  async addMessagetoDm(data: MessageDto, userId: string): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -151,7 +156,9 @@ export class MessageService {
       owner_of: true,
     });
     if (!user)
-      throw new UnprocessableEntityException('User does not exist in database.');
+      throw new UnprocessableEntityException(
+        'User does not exist in database.',
+      );
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
     //TODO, AVOID sending message if user not friend;
@@ -165,57 +172,36 @@ export class MessageService {
   }
 
   // emit message to all users in dm
-  async emitMessageDm(socket: Server, lastMessage: MessageEntity) {
-    for (const dmUser of lastMessage.dm.users) {
-      const user = await this.userService.findById(dmUser.id, {
-        connections: true,
-        dms: true,
-        channels: true,
-        admin_of: true,
-        owner_of: true,
-      });
-
-      for (const connection of user.connections) {
-        if (lastMessage) {
-          socket.to(connection.socketId).emit('message', lastMessage);
+  emitMessageDm(
+    lastMessage: MessageEntity,
+    connectedUsers: Map<string, Socket[]>,
+  ) {
+    for (const user of lastMessage.dm.users) {
+      for (const [key, value] of connectedUsers) {
+        if (user.id === key) {
+          for (const socket of value) {
+            socket.emit('message', lastMessage);
+          }
         }
       }
     }
   }
 
   // emit message to all users in channel
-  async emitMessageChannel(socket: Server, lastMessage: MessageEntity) {
-    const channel = await this.channelService.getChannelById(
-      lastMessage.channel.id,
-    );
-
-    if (channel) {
-      await this.emitMessageToAllUsersInChannel(channel, socket);
-    }
-  }
-
-  async emitMessageToAllUsersInChannel(channel: ChannelEntity, socket: Server) {
+  emitMessageChannel(
+    channel: ChannelEntity,
+    lastMessage: MessageEntity,
+    connectedUsers: Map<string, Socket[]>,
+  ) {
     let users = [...channel.users, ...channel.admins, channel.owner];
 
     if (users) {
-      for (const channelUser of users) {
-        const user = await this.userService.findById(channelUser.id, {
-          connections: true,
-          dms: true,
-          channels: true,
-          admin_of: true,
-          owner_of: true,
-        });
-
-       for (const connection of user.connections) {
-          const lastMessage = await this.loadLastMessage(
-            'channel',
-            channel.id,
-            user,
-          );
-
-          if (lastMessage) {
-            socket.to(connection.socketId).emit('message', lastMessage);
+      for (const user of users) {
+        for (const [key, value] of connectedUsers) {
+          if (user.id === key) {
+            for (const socket of value) {
+              socket.emit('message', lastMessage);
+            }
           }
         }
       }

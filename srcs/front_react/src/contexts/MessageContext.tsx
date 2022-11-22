@@ -25,9 +25,6 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   useEffect(() => {
     if (user) {
       const newSocket: any = io("http://localhost:4000/chat", {
-        query: {
-          userId: user?.id,
-        }, // TO DELETE
         transports: ["websocket"],
       });
       setSocket(newSocket);
@@ -52,6 +49,9 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       socket.on("error", (error) => {console.log("ERROR"); toast.error("Error:" + error)});
       socket.on("message", (data) => {
         setNewMessage(data);
+      })
+      socket.on("newChannel", (data) => {
+        console.log("newChannel === ", data);
       })
       return (() => {
         socket.off("message");
