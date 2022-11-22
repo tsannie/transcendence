@@ -20,7 +20,7 @@ function Conversation() {
     
     if (!currentConv)
       return ;
-    api
+    await api
       .get(route, {params: {id: currentConv}})
       .then((res) => {
         setDm(res.data);

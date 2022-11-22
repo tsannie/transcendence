@@ -84,7 +84,7 @@ export class ChannelService {
     } else {
       if (isUser) {
         response.status = 'user';
-        response.data = await this.getUserData(query_channel);
+        response.data = await this.getPrivateData(query_channel);
       } else {
         if (isOwner) response.status = 'owner';
         if (isAdmin) response.status = 'admin';
