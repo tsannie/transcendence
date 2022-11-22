@@ -211,6 +211,12 @@ $width_chat: calc(450 * var(--res));
       align-self: center;
     }
 
+    .users {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
     .members {
       display: flex;
       flex-direction: row;
