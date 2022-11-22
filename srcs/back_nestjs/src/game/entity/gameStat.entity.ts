@@ -20,12 +20,13 @@ export class GameStatEntity {
   date: Date;
 
   @ManyToMany(() => UserEntity, (players) => players.history)
+  @JoinTable()
   players: UserEntity[];
 
-  @Column( {nullable: true} )
-  winner_id?: string;
+  @Column({ nullable: true })
+  winner_id?: string; // TODO ask to dov why '?:'
 
-  @Column( {nullable: true} )
+  @Column({ nullable: true })
   eloDiff?: number;
 
   @Column({ nullable: true })

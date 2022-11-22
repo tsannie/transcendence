@@ -53,13 +53,19 @@ export class UserController {
   @Get('username')
   @SerializeOptions({ groups: ['user'] })
   async getUserByUsername(@Query() body: TargetNameDto): Promise<UserEntity> {
-    return await this.userService.findByName(body.username, { friends: true });
+    return await this.userService.findByName(body.username, {
+      friends: true,
+      history: true,
+    });
   }
 
   @Get('id')
   @SerializeOptions({ groups: ['user'] })
   async getUserById(@Query() body: TargetIdDto): Promise<UserEntity> {
-    return await this.userService.findById(body.id, { friends: true });
+    return await this.userService.findById(body.id, {
+      friends: true,
+      history: true,
+    });
   }
 
   @Get()
