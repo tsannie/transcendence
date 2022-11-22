@@ -26,7 +26,6 @@ import { HttpModule } from '@nestjs/axios';
 import { GameStatEntity } from './game/entity/gameStat.entity';
 import { ChannelService } from './channel/service/channel.service';
 import { TwoFactorModule } from './two-factor/two-factor.module';
-import { ConnectedUserModule } from './connected-user/connected-user.module.';
 
 @Module({
   imports: [
@@ -48,7 +47,6 @@ import { ConnectedUserModule } from './connected-user/connected-user.module.';
     MessageModule,
     DmModule,
     TwoFactorModule,
-    ConnectedUserModule
   ],
   controllers: [AppController],
   providers: [

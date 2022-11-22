@@ -1,6 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
-import { ConnectedUserEntity } from 'src/connected-user/models/connected-user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import {
@@ -85,10 +84,6 @@ export class UserEntity {
   @ManyToMany(() => UserEntity)
   @JoinTable()
   blocked: UserEntity[];
-
-  @Expose({ groups: ['me'] })
-  @OneToMany(() => ConnectedUserEntity, (connection) => connection.user)
-  connections: ConnectedUserEntity[];
 
   @Expose({ groups: ['user', 'me'] })
   @Column({ nullable: true })
