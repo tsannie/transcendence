@@ -18,7 +18,6 @@ import {
   speed,
   victory_score,
 } from '../const/const';
-import { RoomEntity } from '../entity/room.entity';
 import { GameStatEntity } from '../entity/gameStat.entity';
 import Room from '../class/room.class';
 import { v4 as uuidv4 } from 'uuid';
