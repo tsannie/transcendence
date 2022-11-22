@@ -30,6 +30,7 @@ import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { MuteEntity } from 'src/channel/models/ban.entity';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -121,5 +122,10 @@ export class MessageGateway
   createChannel(channel: ChannelEntity | void) {
     console.log("channel created");
     this.server.emit('newChannel', channel);
+  }
+
+  muteUser(mutedUser: MuteEntity) {
+    console.log("user mute !");
+    this.server.emit('mutedUser', mutedUser);
   }
 }

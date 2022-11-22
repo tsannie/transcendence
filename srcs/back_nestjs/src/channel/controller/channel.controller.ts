@@ -67,9 +67,11 @@ export class ChannelController {
     @Body() channel: CreateChannelDto,
     @Req() req: Request,
   ): Promise<void | ChannelEntity> {
-    const channelCreated: ChannelEntity | void =
-      await this.channelService.createChannel(channel, req.user);
-    return this.messageGateway.createChannel(channelCreated);
+    return await this.channelService.createChannel(channel, req.user);
+    //const channelCreated: ChannelEntity | void =
+
+    //await this.channelService.createChannel(channel, req.user);
+    //return this.messageGateway.createChannel(channelCreated);
   }
 
   @Post('ban')
@@ -108,8 +110,11 @@ export class ChannelController {
   async muteUser(
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
-  ): Promise<MuteEntity> {
-    return await this.channelService.muteUser(channel, req.user);
+  ) {
+    //return await this.channelService.muteUser(channel, req.user);
+    const userMuted: MuteEntity = await this.channelService.muteUser(channel, req.user);
+
+    this.messageGateway.muteUser(userMuted);
   }
 
   @Post('unmute')
