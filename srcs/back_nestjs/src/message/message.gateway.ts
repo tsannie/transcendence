@@ -86,9 +86,7 @@ export class MessageGateway
 
     if (user) {
       this.disconnect(user.id, client);
-    }
-    else
-      client.disconnect();
+    } else client.disconnect();
   }
 
   private disconnect(userId: string, client: Socket) {
@@ -108,24 +106,33 @@ export class MessageGateway
 
       this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, user.id);
+      const lastMsg = await this.messageService.addMessagetoChannel(
+        this.server,
+        client.id,
+        data,
+        user.id,
+      );
       const channel = await this.channelService.getChannelById(
         lastMsg.channel.id,
       );
 
       if (channel) {
-        this.messageService.emitMessageChannel(channel, lastMsg, this.connectedUsers);
+        this.messageService.emitMessageChannel(
+          channel,
+          lastMsg,
+          this.connectedUsers,
+        );
       }
     }
   }
 
   createChannel(channel: ChannelEntity | void) {
-    console.log("channel created");
+    console.log('channel created');
     this.server.emit('newChannel', channel);
   }
 
   muteUser(mutedUser: MuteEntity) {
-    console.log("user mute !");
+    console.log('user mute !');
     this.server.emit('mutedUser', mutedUser);
   }
 }
