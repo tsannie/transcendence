@@ -1,6 +1,6 @@
 import { UserEntity } from 'src/user/models/user.entity';
 import { RoomStatus } from '../const/const';
-import { IBall, PaddlePos } from '../const/interface';
+import Ball from './ball.class';
 
 export default class Room {
   id: string;
@@ -18,8 +18,12 @@ export default class Room {
   won: number = 0;
   game_mode: string;
 
-  p1_y_paddle: number;
-  p2_y_paddle: number;
+  p1_y_paddle: number = 0;
+  p2_y_paddle: number = 0;
 
-  ball: IBall;
+  ball: Ball;
+
+  constructor() {
+    this.ball = new Ball();
+  }
 }
