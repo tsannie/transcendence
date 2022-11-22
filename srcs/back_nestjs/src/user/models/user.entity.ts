@@ -89,18 +89,21 @@ export class UserEntity {
   @Column({ nullable: true })
   profile_picture: string;
 
+  @Expose({ groups: ['user'] })
   @Column({ default: 1000 })
   elo: number;
 
+  @Expose({ groups: ['user'] })
   @Column({ default: 0 })
   matches: number;
 
+  @Expose({ groups: ['user'] })
   @Column({ default: 0 })
   wins: number;
 
+  @Expose({ groups: ['user', 'me'] })
   @ManyToMany(() => GameStatEntity, (gameStat) => gameStat.players, {
     nullable: true,
-    eager: true,
   })
   @JoinTable()
   history: GameStatEntity[];
