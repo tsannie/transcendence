@@ -5,12 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { parse } from 'cookie';
 import { Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { IPayload } from '../models/payload.interface';
 import { IToken } from '../models/token.inferface';
+import { parse } from 'cookie';
 
 @Injectable()
 export class AuthService {
