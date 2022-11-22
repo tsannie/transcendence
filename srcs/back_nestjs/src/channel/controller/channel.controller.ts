@@ -78,7 +78,10 @@ export class ChannelController {
     @Body() ban_request: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<BanEntity> {
-    return await this.channelService.banUser(ban_request, req.user);
+    const bannedUser = await this.channelService.banUser(ban_request, req.user);
+
+    this.messageGateway.banUser(bannedUser);
+    return bannedUser;
   }
 
   @Post('unban')
@@ -88,7 +91,10 @@ export class ChannelController {
     @Body() ban_request: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<BanEntity> {
-    return await this.channelService.unBanUser(ban_request, req.user);
+    const unBannedUser = await this.channelService.unBanUser(ban_request, req.user);
+
+    this.messageGateway.unBanUser(unBannedUser);
+    return unBannedUser;
   }
 
   @Post('makeAdmin')
@@ -98,7 +104,10 @@ export class ChannelController {
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<ChannelEntity> {
-    return await this.channelService.makeAdmin(channel, req.user);
+    const newAdmin = await this.channelService.makeAdmin(channel, req.user);
+    
+    this.messageGateway.makeAdmin(newAdmin.target);
+    return newAdmin.channel;
   }
 
   @Post('mute')
@@ -121,7 +130,10 @@ export class ChannelController {
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<MuteEntity> {
-    return await this.channelService.unMuteUser(channel, req.user);
+    const unmutedUser : MuteEntity = await this.channelService.unMuteUser(channel, req.user);
+    
+    this.messageGateway.unMuteUser(unmutedUser);
+    return unmutedUser;
   }
 
   @Post('revokeAdmin')
@@ -131,7 +143,10 @@ export class ChannelController {
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<ChannelEntity> {
-    return await this.channelService.revokeAdmin(channel, req.user);
+    const oldAdmin = await this.channelService.revokeAdmin(channel, req.user);
+    
+    this.messageGateway.revokeAdmin(oldAdmin.target);
+    return oldAdmin.channel;
   }
 
   //ENTER IN A PUBLIC ROOM,
