@@ -41,7 +41,7 @@ export class AuthService {
     new_user = await this.register(new_user);
 
     return await this.userService.add42DefaultAvatar(
-      profile42._json.image_url,
+      profile42._json.image.link,
       new_user,
     );
   }
