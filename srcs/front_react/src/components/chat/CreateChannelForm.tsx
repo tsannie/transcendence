@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { api } from "../../const/const";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { ICreateChannel } from "./types";
@@ -10,11 +10,11 @@ function CreateChannelForm() {
     useContext(ChatDisplayContext);
 
   const [channelName, setChannelName] = useState<string>("");
-  const [channelStatus, setChannelStatus] = useState<string>("");
   const [channelPassword, setChannelPassword] = useState<string>("");
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
+  const [selectType, setSelectType] = useState<string | null>(null);
 
-  const createChannel = async (event: any) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     if (channelPassword.length > 0 && channelPassword !== passwordVerifier) {
       toast.error("Passwords don't match");
@@ -22,9 +22,9 @@ function CreateChannelForm() {
     }
     const channel: Partial<ICreateChannel> = {
       name: channelName,
-      status: channelStatus,
+      status: selectType as string,
     };
-    if (channelStatus === "Protected") channel.password = channelPassword;
+    if (selectType === "Protected") channel.password = channelPassword;
 
     await api
       .post("channel/create", channel)
@@ -37,63 +37,87 @@ function CreateChannelForm() {
       .catch((err) => toast.error("HTTP error: " + err.response.data));
   };
 
-  const actualizeChannelName = (event: any) => {
-    setChannelName(event.target.value);
-  };
-
-  const actualizeChannelPassword = (event: any) => {
-    setChannelPassword(event.target.value);
-  };
-
-  const actualizePasswordVerifier = (event: any) => {
-    setPasswordVerifier(event.target.value);
-  };
-
-  const selectStatus = (event: any) => {
-    setChannelStatus(event.target.value);
-  };
-
   return (
     <div className="create__channel">
       <div className="create__channel__header">
         <h2>create channel</h2>
         <button onClick={() => setDisplay(ChatType.JOINFORM)}>join</button>
       </div>
-      <form onSubmit={createChannel}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Enter Name of New Channel..."
           value={channelName}
-          onChange={actualizeChannelName}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setChannelName(e.target.value)
+          }
         />
         <div className="create__chan__status">
-          <button type="button" value="Public" onClick={selectStatus}>
+          <button
+            className={selectType === "Public" ? "selected" : ""}
+            type="button"
+            value="Public"
+            onClick={() =>
+              setSelectType(selectType !== "Public" ? "Public" : null)
+            }
+            disabled={!channelName}
+          >
             public
           </button>
-          <button type="button" value="Private" onClick={selectStatus}>
+          <button
+            className={selectType === "Private" ? "selected" : ""}
+            type="button"
+            value="Private"
+            onClick={() =>
+              setSelectType(selectType !== "Private" ? "Private" : null)
+            }
+            disabled={!channelName}
+          >
             private
           </button>
-          <button type="button" value="Protected" onClick={selectStatus}>
+          <button
+            className={selectType === "Protected" ? "selected" : ""}
+            type="button"
+            value="Protected"
+            onClick={() =>
+              setSelectType(selectType !== "Protected" ? "Protected" : null)
+            }
+            disabled={!channelName}
+          >
             protected
           </button>
         </div>
-        {channelStatus === "Protected" && (
+        {selectType === "Protected" && (
           <div className="create__chan__passwords">
             <input
               type="password"
               placeholder="Enter Password..."
               value={channelPassword}
-              onChange={actualizeChannelPassword}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setChannelPassword(e.target.value)
+              }
+              disabled={!channelName}
             />
             <input
               type="password"
               placeholder="Verify Password..."
               value={passwordVerifier}
-              onChange={actualizePasswordVerifier}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPasswordVerifier(e.target.value)
+              }
+              disabled={!channelName}
             />
           </div>
         )}
-        <button className="create__chan__validator" onClick={createChannel}>
+        <button
+          className="create__chan__validator"
+          disabled={
+            selectType === null ||
+            (selectType === "Protected" &&
+              (!channelPassword || channelPassword !== passwordVerifier)) ||
+            !channelName
+          }
+        >
           create channel
         </button>
       </form>

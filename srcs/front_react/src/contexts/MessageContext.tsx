@@ -4,7 +4,9 @@ import { io, Socket } from "socket.io-client";
 import { IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
 
-export const MessageContext = createContext<MessageContextInterface>({} as MessageContextInterface);
+export const MessageContext = createContext<MessageContextInterface>(
+  {} as MessageContextInterface
+);
 
 export interface MessageContextInterface {
   socket: Socket | null;
@@ -59,6 +61,8 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   }, [socket]);
 
   return (
-    <MessageContext.Provider value={{socket, newMessage}}>{children}</MessageContext.Provider>
+    <MessageContext.Provider value={{ socket, newMessage }}>
+      {children}
+    </MessageContext.Provider>
   );
 };

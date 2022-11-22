@@ -42,9 +42,8 @@ export class MessageGateway
   constructor(
     private messageService: MessageService,
     private userService: UserService,
-    private authService: AuthService,
     private connectedUserService: ConnectedUserService,
-
+    private authService: AuthService,
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
@@ -60,17 +59,15 @@ export class MessageGateway
   // all clients connect to the server
   async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
-    let user: UserEntity;
-    try {
-      //user = await this.authService.validateSocket(client);
 
-      let userId = client.handshake.query.userId;
-      console.log('userId = ', userId);
-      if (typeof userId === 'string') {
-        user = await this.userService.findById(userId);
-      }
+    // get and parse cookie
+
+    try {
+      const user = await this.authService.validateSocket(client);
+
       if (!user) {
-        return client.disconnect();
+        // TODO moove im map and remove ConnectedUserEntity (dov)
+        return this.disconnect(client);
       } else {
         let connectedUser = new ConnectedUserEntity();
 
@@ -79,7 +76,7 @@ export class MessageGateway
         await this.connectedUserService.create(connectedUser);
       }
     } catch {
-      return this.disconnect(user.id, client);
+      return this.disconnect(client);
     }
   }
 
@@ -91,7 +88,7 @@ export class MessageGateway
     //this.disconnect(user.id, client);
   }
 
-  private disconnect(userId: string, client: Socket) {
+  private disconnect(client: Socket) {
     //this.connectedUsers.delete(userId);
     client.disconnect();
   }
