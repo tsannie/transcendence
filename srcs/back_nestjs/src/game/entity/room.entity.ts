@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RoomStatus } from '../const/const';
-import { SetEntity } from './set.entity';
 
 @Entity()
 export class RoomEntity {
@@ -30,10 +29,6 @@ export class RoomEntity {
 
   @Column({ default: null })
   p2SocketId: string;
-
-  @OneToOne(() => SetEntity, { eager: true, cascade: true })
-  @JoinColumn()
-  set: SetEntity;
 
   @Column({ nullable: true })
   game_mode: string;

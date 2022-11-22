@@ -1,7 +1,7 @@
 import { GameMode } from "./const/const";
 
 export interface IGameObj {
-  ball: IBall;
+  ball: IBall; // edit delete ???
   paddle_p1: IPaddle;
   paddle_p2: IPaddle;
   player_p1: IPlayer;
@@ -11,7 +11,7 @@ export interface IGameObj {
 export interface IBall {
   x: number;
   y: number;
-  rad : number;
+  rad: number;
 }
 
 export interface IPaddle {
@@ -35,6 +35,6 @@ export interface IaskPaddle {
 }
 
 export interface ICreateRoom {
-  room: string,
-  mode: GameMode,
+  room: string;
+  mode: GameMode;
 }
