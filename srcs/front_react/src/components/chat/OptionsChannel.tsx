@@ -39,34 +39,73 @@ function ChannelMembers(props: {receivedChannel: IDatas}) {
     const [ muted, setMuted ] = useState<User[] | null>(null);
     const [ banned, setBanned ] = useState<User[] | null>(null);
 
+    const filterList = (list: User[]| null, target: User) => {
+        if (!list)
+            return null;
+        return list.filter(user => user.id != target.id);
+    }
+
+    const addToList = (list: User[] | null, target: User) => {
+        if (!list)
+            return [target];
+        else
+            return [...list, target];
+    }
+
     useEffect( () => {
         if (socket)
         {
-            socket.on("mutedUser", (data) => {
-                console.log("dans le useEffect", data);
-                if (admins)
-                    setAdmins( admins.filter((elem => elem.id !== data.user.id)));
-                if (users)
-                    setUsers( users.filter((elem => elem.id !== data.user.id)));
-                if (muted)
-                    setMuted([data.user, ...muted] )
-                else
-                    setMuted([data.user])
+            socket.on("muteUser", (user) => {
+                setAdmins(filterList(admins, user));
+                setUsers(filterList(users, user));
+                setMuted(addToList(muted, user));
+            });
+            socket.on("unMuteUser", (user) => {
+                setUsers(addToList(users, user));
+                setMuted(filterList(muted, user));
+            });
+            socket.on("banUser", (user) => {
+                setAdmins(filterList(admins, user));
+                setUsers(filterList(users, user));
+                setMuted(filterList(muted, user));
+                setBanned(addToList(banned, user));
+            });
+            socket.on("unBanUser", (user) => {
+                setBanned(filterList(banned, user));
+            });
+            socket.on("makeAdmin", (user) => {
+                setAdmins(addToList(admins, user));
+                setUsers(filterList(users, user));
+            });
+            socket.on("revokeAdmin", (user) => {
+                setAdmins(filterList(admins, user));
+                setUsers(addToList(users, user));
             });
 
-            return (() => {
-                socket.off("mutedUser");
-            })
-        };
-    }, [muted])
+        return (() => {
+            socket.off("mutedUser");
+            socket.off("unMutedUser");
+            socket.off("admin");
+            socket.off("revokeAdmin");
+            socket.off("banUser");
+            socket.off("unBanUser");
+        })}
+    }, [muted, users, banned, admins])
 
     useEffect( () => {
+        let muted: User[];
+
         setAdmins(channel.admins);
-        setUsers(channel.users);
-        if (channel.muted)
-            setMuted(channel.muted.map((elem) => elem.user));
         if (channel.banned)
             setBanned(channel.banned.map((elem) => elem.user));
+
+        if (channel.muted){
+            muted = channel.muted.map((elem) => elem.user);
+            setMuted(muted);
+        }
+        if (channel.users)
+            setUsers(channel.users.filter( elem => !muted.includes(elem)));
+       
     }, [channel])
 
     return (
