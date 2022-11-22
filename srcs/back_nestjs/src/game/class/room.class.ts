@@ -1,13 +1,13 @@
-import { UserEntity } from "src/user/models/user.entity";
-import { RoomStatus } from "../const/const";
-import { IBall, PaddlePos } from "../const/interface";
+import { UserEntity } from 'src/user/models/user.entity';
+import { RoomStatus } from '../const/const';
+import { IBall, PaddlePos } from '../const/interface';
 
 export default class Room {
   id: string;
 
   status: RoomStatus = RoomStatus.EMPTY;
-  p1: UserEntity;
-  p2: UserEntity;
+  p1_id: string;
+  p2_id: string;
 
   p1_SocketId: string;
   p2_SocketId: string;
@@ -18,10 +18,8 @@ export default class Room {
   won: number = 0;
   game_mode: string;
 
-  p1_y_padddle: number;
-  p2_y_padddle: number;
+  p1_y_paddle: number;
+  p2_y_paddle: number;
 
   ball: IBall;
-
 }
-
