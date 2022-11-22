@@ -109,8 +109,11 @@ export class ChannelController {
   async muteUser(
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
-  ): Promise<MuteEntity> {
-    return await this.channelService.muteUser(channel, req.user);
+  ) {
+    //return await this.channelService.muteUser(channel, req.user);
+    const userMuted: MuteEntity = await this.channelService.muteUser(channel, req.user);
+
+    this.messageGateway.muteUser(userMuted);
   }
 
   @Post('unmute')
