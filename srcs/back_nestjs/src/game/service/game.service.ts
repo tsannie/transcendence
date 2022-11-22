@@ -23,12 +23,14 @@ import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
 import { GameStatEntity } from '../entity/gameStat.entity';
+import Room from '../class/room.class';
+import {v4 as uuidv4} from 'uuid';
 
 @Injectable()
 export class GameService {
   constructor(
-    @InjectRepository(RoomEntity)
-    private all_game: Repository<RoomEntity>,
+   // @InjectRepository(RoomEntity)
+    //private all_game: Repository<RoomEntity>,
 
     @InjectRepository(GameStatEntity)
     private gameStatRepository: Repository<GameStatEntity>,
@@ -39,82 +41,67 @@ export class GameService {
     private readonly userService: UserService,
   ) {}
 
-  async findAll(): Promise<RoomEntity[]> {
+/*   async findAll(): Promise<RoomEntity[]> {
     return await this.all_game.find();
-  }
+  } */
 
-  async joinFastRoom(user: UserEntity): Promise<RoomEntity> {
-    let room_game: RoomEntity;
+  async joinFastRoom(user: UserEntity, game: Map<string, Room>): Promise<Room> {
+
+
+    let room_game: Room;
     let already_in_game: boolean = false;
-    const size = await this.all_game.count();
+
+    const size = game.size;
     if (size !== 0) {
-      const all_rooms = await this.all_game.find();
-      all_rooms.forEach((room_db) => {
+      const all_rooms = game.values();
+      for (const room_db of all_rooms) {
         if (
           (room_db.p1 && user.id === room_db.p1.id) ||
           (room_db.p2 && user.id === room_db.p2.id)
         )
           already_in_game = true;
-        else if (room_db.status === RoomStatus.WAITING && !room_db.set)
+        else if (room_db.status === RoomStatus.WAITING && !room_db.p2)
           room_game = room_db;
-      });
+      }    
     }
-    if (!room_game && already_in_game === false) room_game = new RoomEntity();
+    if (!room_game && already_in_game === false) {
+      room_game.id = uuidv4();
+    }
     return room_game;
   }
 
-  async deleteUser(): Promise<void> {
+/*   async deleteUser(): Promise<void> {
     const all_game = await this.all_game.find();
     all_game.forEach(async (game) => {
       await this.all_game.delete({ id: game.id });
     });
-  }
+  } */
 
-  async initSet(
-    room: string,
-    is_playing: Map<string, boolean>,
-    game_mode: string,
-  ) {
-    const room_game = await this.all_game.findOneBy({ id: room });
-    if (!room_game.set) room_game.set = new SetEntity();
-    if (!room_game.set.p1) {
-      room_game.set.p1 = new PlayerEntity();
-      room_game.set.p1.name = room_game.p1.username;
-      room_game.set.p1.score = 0;
-    }
-    if (!room_game.set.p2) {
-      room_game.set.p2 = new PlayerEntity();
-      room_game.set.p2.name = room_game.p2.username;
-      room_game.set.p2.score = 0;
-    }
-    room_game.game_mode = game_mode;
-    is_playing[room] = true;
-    await this.all_game.save(room_game);
-  }
 
   async giveUp(
     room: string,
-    is_playing: Map<string, boolean>,
-    room_game: RoomEntity,
+    //is_playing: Map<string, boolean>,
+    room_game: Room,
     user: UserEntity,
   ) {
-    if (is_playing[room]) is_playing[room] = false;
+   // if (is_playing[room])
+    //  is_playing[room] = false;
     if (room_game.status === RoomStatus.PLAYING)
       room_game.status = RoomStatus.CLOSED;
-    if (room_game.set.p1.name === user.username) {
+    if (room_game.p1.username === user.username) {
       room_game.p1 = null;
-      room_game.p1SocketId = null;
-      room_game.set.p2.won = true;
-    } else if (room_game.set.p2.name === user.username) {
+      room_game.p1_SocketId = null;
+      room_game.won = 1;
+    } else if (room_game.p2.username === user.username) {
       room_game.p2 = null;
-      room_game.p2SocketId = null;
-      room_game.set.p1.won = true;
+      room_game.p2_SocketId = null;
+      room_game.won = 2;
     }
     console.log('avant le save giveup');
-    await this.all_game.save(room_game);
+    //await this.all_game.save(room_game);
   }
 
-  async findRoomBySocketId(socketId: string) {
+/*   async findRoomBySocketId(socketId: string) {
     return (
       (await this.all_game
         .createQueryBuilder('room')
@@ -125,7 +112,7 @@ export class GameService {
         .where('room.p2SocketId = :p2SocketId', { p2SocketId: socketId })
         .getOne())
     );
-  }
+  } */
 
   ////////////////////
   // INGAME FUNCTIONS
@@ -251,7 +238,7 @@ export class GameService {
   async ballHitPaddlep1(
     set: SetEntity,
     ball: IBall,
-    paddle: PaddlePos,
+    y1: number,
     server: Server,
     room: string,
   ) {
@@ -259,10 +246,10 @@ export class GameService {
       ball.can_touch_paddle === true &&
       ball.x - rad <= paddle_p1_x + paddle_width &&
       ball.x + rad / 3 >= paddle_p1_x &&
-      ball.y + rad >= paddle.y1 &&
-      ball.y - rad <= paddle.y1 + paddle_height
+      ball.y + rad >= y1 &&
+      ball.y - rad <= y1 + paddle_height
     )
-      this.hitPaddle(paddle.y1, ball);
+      this.hitPaddle(y1, ball);
     else if (ball.x - rad <= -(rad * 3))
       await this.losePoint(set.p2, ball, set.p1, set.p2, server, room);
   }
@@ -270,7 +257,7 @@ export class GameService {
   async ballHitPaddlep2(
     set: SetEntity,
     ball: IBall,
-    paddle: PaddlePos,
+    y2: number,
     server: Server,
     room: string,
   ) {
@@ -278,10 +265,10 @@ export class GameService {
       ball.can_touch_paddle === true &&
       ball.x + rad >= paddle_p2_x &&
       ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
-      ball.y + rad >= paddle.y2 &&
-      ball.y - rad <= paddle.y2 + paddle_height
+      ball.y + rad >= y2 &&
+      ball.y - rad <= y2 + paddle_height
     )
-      this.hitPaddle(paddle.y2, ball);
+      this.hitPaddle(y2, ball);
     else if (ball.x + rad >= canvas_back_width + rad * 3)
       await this.losePoint(set.p1, ball, set.p1, set.p2, server, room);
   }
@@ -322,12 +309,12 @@ export class GameService {
   async updateGame(
     BallObj: IBall,
     set: SetEntity,
-    paddle_pos: PaddlePos,
+    Room: Room,
     server: Server,
     room: string,
   ) {
     this.updateBall(BallObj);
-    await this.ballHitPaddlep1(set, BallObj, paddle_pos, server, room);
-    await this.ballHitPaddlep2(set, BallObj, paddle_pos, server, room);
+    await this.ballHitPaddlep1(set, BallObj, Room.p1_y_padddle, server, room);
+    await this.ballHitPaddlep2(set, BallObj, Room.p2_y_padddle, server, room);
   }
 }
