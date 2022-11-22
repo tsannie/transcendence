@@ -26,9 +26,7 @@ export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
       setSocket(newSocket);
       return () => newSocket.disconnect(); // disconnect old socket
     }
-  }, [user]); // create a new socket when user changes only
 
-  useEffect(() => {
     if (socket) {
       socket.on("connect", () => console.log("connected to socket"));
 
@@ -43,7 +41,7 @@ export const SocketGameProvider = ({ children }: SocketGameProviderProps) => {
         socket.off("disconnect");
       };
     }
-  }, []);
+  }, []); // create a new socket only once
 
   return (
     <SocketGameContext.Provider value={socket}>
