@@ -16,7 +16,7 @@ body {
   user-select: none;
 
   * {
-    font-family: "Arcade" !important;
+    font-family: "Arcade", "Syntax" !important;
     color: $white-color !important;
     -webkit-user-drag: none;
     letter-spacing: 0.1em;
@@ -28,7 +28,7 @@ body {
   }
 
   button {
-    padding: 0;
+    padding: 2%;
     border: dashed;
     background: transparent;
     transition: 0.3s;
@@ -38,6 +38,11 @@ body {
     }
     &:active {
       opacity: 0.3;
+    }
+    &:disabled,
+    &[disabled] {
+      opacity: 0.3;
+      cursor: not-allowed;
     }
   }
 
@@ -53,6 +58,11 @@ body {
     border-style: dashed;
     border-color: $white-color;
     background: transparent;
+    &:disabled,
+    &[disabled] {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   }
 
   ::-webkit-scrollbar {
@@ -62,5 +72,33 @@ body {
   ::-webkit-scrollbar-thumb {
     background: $white-color;
     border-radius: 10px;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20%);
+  }
+  60% {
+    transform: translateY(-7%);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
   }
 }
