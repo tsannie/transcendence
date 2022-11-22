@@ -69,7 +69,8 @@ export class ChannelController {
   ): Promise<void | ChannelEntity> {
     const channelCreated: ChannelEntity | void =
       await this.channelService.createChannel(channel, req.user);
-    return this.messageGateway.createChannel(channelCreated);
+    return channelCreated;
+    // return this.messageGateway.createChannel(channelCreated);
   }
 
   @Post('ban')
