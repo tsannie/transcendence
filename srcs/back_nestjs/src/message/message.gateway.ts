@@ -75,7 +75,7 @@ export class MessageGateway
         }
       }
     } catch {
-      return this.disconnect(user.id, client);
+      return client.disconnect();
     }
   }
 
