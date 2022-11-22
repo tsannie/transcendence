@@ -23,7 +23,7 @@ function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean
     return (
         <div className="category">
             <div className="title">{props.type}</div>
-            {userList}
+            <div className="users">{userList}</div>
         </div>
     )
 }
