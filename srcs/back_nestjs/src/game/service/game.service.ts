@@ -24,12 +24,12 @@ import { RoomEntity } from '../entity/room.entity';
 import { SetEntity } from '../entity/set.entity';
 import { GameStatEntity } from '../entity/gameStat.entity';
 import Room from '../class/room.class';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class GameService {
   constructor(
-   // @InjectRepository(RoomEntity)
+    // @InjectRepository(RoomEntity)
     //private all_game: Repository<RoomEntity>,
 
     @InjectRepository(GameStatEntity)
@@ -41,42 +41,44 @@ export class GameService {
     private readonly userService: UserService,
   ) {}
 
-/*   async findAll(): Promise<RoomEntity[]> {
+  /*   async findAll(): Promise<RoomEntity[]> {
     return await this.all_game.find();
   } */
 
   async joinFastRoom(user: UserEntity, game: Map<string, Room>): Promise<Room> {
-
-
+    console.log('joinFastRoom');
     let room_game: Room;
     let already_in_game: boolean = false;
 
+    console.log('game.size : ', game.size);
     const size = game.size;
     if (size !== 0) {
+      console.log('Join room');
       const all_rooms = game.values();
       for (const room_db of all_rooms) {
         if (
-          (room_db.p1 && user.id === room_db.p1.id) ||
-          (room_db.p2 && user.id === room_db.p2.id)
+          (room_db.p1_id && user.id === room_db.p1_id) ||
+          (room_db.p2_id && user.id === room_db.p2_id)
         )
           already_in_game = true;
-        else if (room_db.status === RoomStatus.WAITING && !room_db.p2)
+        else if (room_db.status === RoomStatus.WAITING && !room_db.p2_id)
           room_game = room_db;
-      }    
+      }
     }
     if (!room_game && already_in_game === false) {
+      console.log('Create room');
+      room_game = new Room();
       room_game.id = uuidv4();
     }
     return room_game;
   }
 
-/*   async deleteUser(): Promise<void> {
+  /*   async deleteUser(): Promise<void> {
     const all_game = await this.all_game.find();
     all_game.forEach(async (game) => {
       await this.all_game.delete({ id: game.id });
     });
   } */
-
 
   async giveUp(
     room: string,
@@ -84,16 +86,17 @@ export class GameService {
     room_game: Room,
     user: UserEntity,
   ) {
-   // if (is_playing[room])
+    // if (is_playing[room])
     //  is_playing[room] = false;
     if (room_game.status === RoomStatus.PLAYING)
       room_game.status = RoomStatus.CLOSED;
-    if (room_game.p1.username === user.username) {
-      room_game.p1 = null;
+    if (room_game.p1_id === user.id) {
+      // why remove ?
+      room_game.p1_id = null;
       room_game.p1_SocketId = null;
       room_game.won = 1;
-    } else if (room_game.p2.username === user.username) {
-      room_game.p2 = null;
+    } else if (room_game.p2_id === user.id) {
+      room_game.p2_id = null;
       room_game.p2_SocketId = null;
       room_game.won = 2;
     }
@@ -101,7 +104,7 @@ export class GameService {
     //await this.all_game.save(room_game);
   }
 
-/*   async findRoomBySocketId(socketId: string) {
+  /*   async findRoomBySocketId(socketId: string) {
     return (
       (await this.all_game
         .createQueryBuilder('room')
@@ -314,7 +317,7 @@ export class GameService {
     room: string,
   ) {
     this.updateBall(BallObj);
-    await this.ballHitPaddlep1(set, BallObj, Room.p1_y_padddle, server, room);
-    await this.ballHitPaddlep2(set, BallObj, Room.p2_y_padddle, server, room);
+    await this.ballHitPaddlep1(set, BallObj, Room.p1_y_paddle, server, room);
+    await this.ballHitPaddlep2(set, BallObj, Room.p2_y_paddle, server, room);
   }
 }
