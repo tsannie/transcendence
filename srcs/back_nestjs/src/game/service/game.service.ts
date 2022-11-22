@@ -18,13 +18,12 @@ import {
   speed,
   victory_score,
 } from '../const/const';
-import { IBall, PaddlePos } from '../const/interface';
 import { PlayerEntity } from '../entity/players.entity';
 import { RoomEntity } from '../entity/room.entity';
-import { SetEntity } from '../entity/set.entity';
 import { GameStatEntity } from '../entity/gameStat.entity';
 import Room from '../class/room.class';
 import { v4 as uuidv4 } from 'uuid';
+import Ball from '../class/ball.class';
 
 @Injectable()
 export class GameService {
@@ -123,7 +122,7 @@ export class GameService {
 
   async losePoint(
     player: PlayerEntity,
-    ball: IBall,
+    ball: Ball,
     p1: PlayerEntity,
     p2: PlayerEntity,
     server: Server,
@@ -161,6 +160,7 @@ export class GameService {
   }
 
   getGameStat(p1: UserEntity, p2: UserEntity, set: SetEntity): GameStatEntity {
+    // TODO edit setentity
     let statGame = new GameStatEntity();
 
     statGame.players = [p1, p2];
@@ -187,6 +187,7 @@ export class GameService {
   }
 
   getElo(set: SetEntity, p1: UserEntity, p2: UserEntity): number {
+    // TODO edit setentity
     let eloDiff: number = 0;
     if (set.p1.won) {
       eloDiff = this.calculateElo(p1.elo, p2.elo, true);
@@ -225,7 +226,7 @@ export class GameService {
     console.log('elo diff = ', eloDiff, ' == ', Math.round(eloDiff));
     return Math.round(eloDiff);
   }
-  hitPaddle(y: number, ball: IBall) {
+  hitPaddle(y: number, ball: Ball) {
     let res = y + paddle_height - ball.y;
     ball.gravity = -(res / 10 - paddle_height / 20);
     Math.abs(ball.gravity);
@@ -239,8 +240,8 @@ export class GameService {
   }
 
   async ballHitPaddlep1(
-    set: SetEntity,
-    ball: IBall,
+    //set: SetEntity,
+    ball: Ball,
     y1: number,
     server: Server,
     room: string,
@@ -258,8 +259,8 @@ export class GameService {
   }
 
   async ballHitPaddlep2(
-    set: SetEntity,
-    ball: IBall,
+    //set: SetEntity,
+    ball: Ball,
     y2: number,
     server: Server,
     room: string,
@@ -276,7 +277,7 @@ export class GameService {
       await this.losePoint(set.p1, ball, set.p1, set.p2, server, room);
   }
 
-  updateBall(ball: IBall) {
+  updateBall(ball: Ball) {
     if (
       ball.x > canvas_back_width / 2 - 10 &&
       ball.x < canvas_back_width / 2 + 10 &&
@@ -296,7 +297,8 @@ export class GameService {
     else if (ball.y - rad <= canvas_back_height / 40) ball.direction_y *= -1;
   }
 
-  createBall(): IBall {
+  createBall(): Ball {
+    // TODO delete ?
     return {
       x: canvas_back_width / 2,
       y: canvas_back_height / 2,
@@ -310,13 +312,11 @@ export class GameService {
   }
 
   async updateGame(
-    BallObj: IBall,
-    set: SetEntity,
-    Room: Room,
+    room: Room,
     server: Server,
-    room: string,
+    //room: string,
   ) {
-    this.updateBall(BallObj);
+    this.updateBall(room.ball);
     await this.ballHitPaddlep1(set, BallObj, Room.p1_y_paddle, server, room);
     await this.ballHitPaddlep2(set, BallObj, Room.p2_y_paddle, server, room);
   }

@@ -18,7 +18,6 @@ import { PaddleDto } from './dto/paddle.dto';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { CreateRoomDto } from './dto/createRoom.dto';
-import { IBall, PaddlePos } from './const/interface';
 import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
 import Room from './class/room.class';
@@ -108,7 +107,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room_game.p1_id = user.id;
         room_game.p1_SocketId = client.id;
 
-        this.game.set(room_game.id, room_game);
+        this.game.set(room_game.id, room_game); // setp1
         //this.game[room_game.id] = room_game;
         console.log('this.game:', this.game);
 
@@ -219,6 +218,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const game = this.game[data.room];
 
+    // TODO fix
     game.p1_y_paddle =
       (data.positionY * canvas_back_height) / data.front_canvas_height;
 
@@ -232,6 +232,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const game = this.game[data.room];
 
+    // TODO fix
     game.p2_y_paddle =
       (data.positionY * canvas_back_height) / data.front_canvas_height;
 
@@ -245,20 +246,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!room_game)
       return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
 
-    let BallObj: IBall = this.gameService.createBall();
-
-    if (room_game.set) {
-      while (room_game.set.p1.won === false && room_game.set.p2.won === false) {
-        this.gameService.updateGame(
-          BallObj,
-          room_game.set,
-          this.game[room],
-          this.server,
-          room,
-        );
-        this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
-        await new Promise((f) => setTimeout(f, 8));
-      }
+    while (room_game.status === RoomStatus.PLAYING) {
+      this.gameService.updateGame(room_game, this.server);
+      this.server.in(room).emit('get_ball', room_game.ball.x, room_game.ball.y);
+      await new Promise((f) => setTimeout(f, 8));
     }
   }
 
