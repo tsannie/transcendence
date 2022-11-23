@@ -19,10 +19,3 @@ export const paddle_height: number = 600;
 export const paddle_p1_x: number = paddle_margin;
 export const paddle_p2_x: number =
   canvas_back_width - paddle_margin - paddle_width;
-
-export enum RoomStatus {
-  EMPTY = 0,
-  WAITING = 1,
-  PLAYING = 2,
-  CLOSED = 3,
-}

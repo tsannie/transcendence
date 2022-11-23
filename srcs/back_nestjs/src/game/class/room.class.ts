@@ -1,6 +1,18 @@
 import { UserEntity } from 'src/user/models/user.entity';
-import { RoomStatus } from '../const/const';
 import Ball from './ball.class';
+
+export enum RoomStatus {
+  EMPTY = 0,
+  WAITING = 1,
+  PLAYING = 2,
+  CLOSED = 3,
+}
+
+export enum Winner {
+  INMATCH = 0,
+  P1 = 1,
+  P2 = 2,
+}
 
 export default class Room {
   id: string;
@@ -15,7 +27,8 @@ export default class Room {
   p1_score: number = 0;
   p2_score: number = 0;
 
-  won: number = 0;
+  /* 0=INGAME /  */
+  won: Winner = Winner.INMATCH;
   game_mode: string;
 
   p1_y_paddle: number = 0;
