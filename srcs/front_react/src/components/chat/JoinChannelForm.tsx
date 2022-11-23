@@ -16,6 +16,7 @@ import {
   ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { toast } from "react-toastify";
+import { MessageContext } from "../../contexts/MessageContext";
 
 function JoinChannelForm() {
   const [channelDictionnary, setChannelDictionnary] = useState<IChannel[]>([]);
@@ -23,8 +24,9 @@ function JoinChannelForm() {
   const [selectChannel, setSelectChannel] = useState<IChannel>();
   const [refresh, setRefresh] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
-  const { setDisplay, setCurrentConv, setIsChannel, setNewConv } =
+  const { display, currentConv, isChannel, newConv, setDisplay, setCurrentConv, setIsChannel, setNewConv } =
     useContext(ChatDisplayContext);
+  const { socket } = useContext(MessageContext);
 
   const sortChannel = (channels: IChannel[]): IChannel[] => {
     const sort = channels.sort((a, b) => {
@@ -48,10 +50,10 @@ function JoinChannelForm() {
         )
         .then((res: AxiosResponse) => {
           toast.success("Channel joined");
-          setDisplay(ChatType.CONV);
+          /* setDisplay(ChatType.CONV);
           setCurrentConv(res.data.id);
           setIsChannel(true);
-          setNewConv(res.data);
+          setNewConv(res.data); */
         })
         .catch((err: AxiosError) => {
           toast.error("Wrong password");
@@ -75,6 +77,21 @@ function JoinChannelForm() {
   const handleRefresh = () => {
     setRefresh(true);
   };
+
+  useEffect( () => {
+    if (socket)
+    {
+      socket.on("joinChannel", (channel) => {
+        console.log("joinChannel === ", channel);
+        setDisplay(ChatType.CONV);
+        setCurrentConv(channel.id);
+        setIsChannel(true);
+        setNewConv(channel);
+      });
+    return (() => {
+        socket.off("joinChannel");
+    })}
+}, [display, currentConv, isChannel, newConv]);
 
   return (
     <div className="join-channel">

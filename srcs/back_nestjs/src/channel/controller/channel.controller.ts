@@ -68,7 +68,12 @@ export class ChannelController {
     @Req() req: Request,
   ): Promise<void | ChannelEntity> {
     // const channelCreated: ChannelEntity | void =
-      return await this.channelService.createChannel(channel, req.user);
+
+      const newChannel = await this.channelService.createChannel(channel, req.user);
+
+      if (newChannel)
+        this.messageGateway.createChannel(newChannel, req.user.id);
+      return newChannel;
   }
 
   @Post('ban')
@@ -105,7 +110,7 @@ export class ChannelController {
     @Req() req: Request,
   ): Promise<ChannelEntity> {
     const newAdmin = await this.channelService.makeAdmin(channel, req.user);
-    
+
     this.messageGateway.makeAdmin(newAdmin.target);
     return newAdmin.channel;
   }
@@ -131,7 +136,7 @@ export class ChannelController {
     @Req() req: Request,
   ): Promise<MuteEntity> {
     const unmutedUser : MuteEntity = await this.channelService.unMuteUser(channel, req.user);
-    
+
     this.messageGateway.unMuteUser(unmutedUser);
     return unmutedUser;
   }
@@ -144,7 +149,7 @@ export class ChannelController {
     @Req() req: Request,
   ): Promise<ChannelEntity> {
     const oldAdmin = await this.channelService.revokeAdmin(channel, req.user);
-    
+
     this.messageGateway.revokeAdmin(oldAdmin.target);
     return oldAdmin.channel;
   }
@@ -154,7 +159,11 @@ export class ChannelController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async joinChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    return await this.channelService.joinChannel(query_channel, req.user);
+    //return await this.channelService.joinChannel(query_channel, req.user);
+    const channel: ChannelEntity = await this.channelService.joinChannel(query_channel, req.user)
+
+    this.messageGateway.joinChannel(channel, req.user.id);
+    return channel;
   }
 
   @Post('leave')
