@@ -39,7 +39,7 @@ export interface ICreateRoom {
 }
 
 export interface Room {
-  // TODO
+  // TODO clean useless
   id: string;
 
   status: RoomStatus;
