@@ -50,4 +50,11 @@ export default class Ball {
     this.first_col = true;
     this.can_touch_paddle = false;
   }
+
+  reset() {
+    this.x = canvas_back_width / 2;
+    this.y = canvas_back_height / 2;
+    this.direction_y = 1;
+    this.first_col = false;
+  }
 }
