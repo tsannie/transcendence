@@ -7,7 +7,6 @@ import { GameContext } from "../GameContext";
 import { ICreateRoom } from "../types";
 
 export default function GameMenu() {
-
   const game = useContext(GameContext);
   const socket = useContext(SocketGameContext);
   const { user } = useContext(AuthContext);
@@ -16,9 +15,9 @@ export default function GameMenu() {
 
   function createGameRoom() {
     let data: ICreateRoom = {
-      room : game.room,
-      mode : game_mode,
-    }
+      room_id: game.room,
+      mode: game_mode,
+    };
 
     game.setRoom("");
     if (game.status === RoomStatus.EMPTY) {
@@ -34,16 +33,16 @@ export default function GameMenu() {
 
   return (
     <div className="Game">
-      {game.status === RoomStatus.EMPTY &&
-      <div className="GameMenu">
-        <h2> you are : {user?.username} </h2>
-        <br />
-        <button onClick={createGameRoom}>PONG 1972</button>
-        <br/>
-        <br/>
-        <button onClick={createGameRoomTRANS}>PONG TRANSCENDENCE</button>
-      </div>
-    }
+      {game.status === RoomStatus.EMPTY && (
+        <div className="GameMenu">
+          <h2> you are : {user?.username} </h2>
+          <br />
+          <button onClick={createGameRoom}>PONG 1972</button>
+          <br />
+          <br />
+          <button onClick={createGameRoomTRANS}>PONG TRANSCENDENCE</button>
+        </div>
+      )}
     </div>
   );
 }

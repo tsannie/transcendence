@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import GameMenu from "./menu/Menu";
 import { GameContext, GameProvider } from "./GameContext";
 import { SocketGameProvider } from "../../contexts/SocketGameContext";
-import { RoomStatus } from "./const/const";
 import { GameRender } from "./render/Render";
 import WaitingRoom from "./menu/WaitingRoom";
+import { RoomStatus } from "./const/const";
 
 function GameBody() {
   const game = useContext(GameContext);
