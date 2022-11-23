@@ -5,11 +5,10 @@ export class CreateRoomDto {
   @IsDefined()
   @IsNotEmpty()
   @Type(() => String)
-  room: string;
+  room_id: string;
 
   @IsDefined()
   @IsNotEmpty()
   @Type(() => String)
   mode: string;
-
 }

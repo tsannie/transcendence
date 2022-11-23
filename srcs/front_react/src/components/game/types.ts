@@ -29,12 +29,12 @@ export interface IPlayer {
 }
 
 export interface IaskPaddle {
-  room: string;
+  room_id: string;
   positionY: number;
   front_canvas_height: number;
 }
 
 export interface ICreateRoom {
-  room: string;
+  room_id: string;
   mode: GameMode;
 }

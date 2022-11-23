@@ -17,9 +17,11 @@ import { initGameObj } from "./InitGameObj";
 
 let position_y: number = 0;
 export function GameRender() {
-
   let start = false;
-  let lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+  let lowerSize =
+    window.innerWidth > window.innerHeight
+      ? window.innerHeight
+      : window.innerWidth;
   let ratio_width = lowerSize / canvas_back_width;
   let ratio_height = lowerSize / screen_ratio / canvas_back_height;
   let height = lowerSize / screen_ratio;
@@ -49,7 +51,10 @@ export function GameRender() {
   }, [HW]);
 
   function resizeGame() {
-    lowerSize = window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+    lowerSize =
+      window.innerWidth > window.innerHeight
+        ? window.innerHeight
+        : window.innerWidth;
     height = lowerSize / screen_ratio;
     border_size = height / 50;
 
@@ -64,7 +69,8 @@ export function GameRender() {
     gameObj.paddle_p1.height = paddle_height * ratio_height;
     gameObj.paddle_p1.width = paddle_width * ratio_width;
 
-    gameObj.paddle_p2.x = (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
+    gameObj.paddle_p2.x =
+      (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
     gameObj.paddle_p2.height = paddle_height * ratio_height;
     gameObj.paddle_p2.width = paddle_width * ratio_width;
   }
@@ -77,10 +83,8 @@ export function GameRender() {
     socket?.on("giveUp", (p1: IPlayer, p2: IPlayer) => {
       gameObj.player_p2.won = p2.won;
       gameObj.player_p1.won = p1.won;
-      if (gameObj.player_p2.won)
-        gameObj.player_p1.gave_up = true;
-      else if (gameObj.player_p1.won)
-        gameObj.player_p2.gave_up = true;
+      if (gameObj.player_p2.won) gameObj.player_p1.gave_up = true;
+      else if (gameObj.player_p1.won) gameObj.player_p2.gave_up = true;
     });
 
     socket?.on("get_players", (p1: IPlayer, p2: IPlayer) => {
@@ -104,7 +108,7 @@ export function GameRender() {
 
   function ask_paddle() {
     let data: IaskPaddle = {
-      room: game.room,
+      room_id: game.room,
       positionY: position_y,
       front_canvas_height: height,
     };
@@ -139,13 +143,22 @@ export function GameRender() {
           socket?.emit("gameRender", game.room);
           start = false;
         }
-        if (gameObj.player_p1.won === false &&
-        gameObj.player_p2.won === false &&
-        game.room !== "") {
+        if (
+          gameObj.player_p1.won === false &&
+          gameObj.player_p2.won === false &&
+          game.room !== ""
+        ) {
           ask_paddle();
           draw_game(ctx, canvas, gameObj, countdown);
         } else
-          draw_game_ended(game.isP2, ctx, gameObj.player_p1, gameObj.player_p2, canvas.height, canvas.width);
+          draw_game_ended(
+            game.isP2,
+            ctx,
+            gameObj.player_p1,
+            gameObj.player_p2,
+            canvas.height,
+            canvas.width
+          );
       }
     };
     render();
@@ -155,9 +168,9 @@ export function GameRender() {
     if (leave) {
       game.setStatus(RoomStatus.EMPTY);
       if (gameObj.player_p1.won === true || gameObj.player_p2.won === true)
+        // TODO delete that and just give up
         socket?.emit("endGame", game.room);
-      else
-        socket?.emit("giveUp", game.room);
+      else socket?.emit("giveUp", game.room);
     }
   }
 
