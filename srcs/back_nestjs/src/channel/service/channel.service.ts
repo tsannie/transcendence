@@ -24,7 +24,7 @@ import { BanEntity, BanMuteEntity, MuteEntity } from '../models/ban.entity';
 import { BanMuteService } from './banmute.service';
 
 export interface IAdmin {
-  target: UserEntity, 
+  target: UserEntity,
   channel: ChannelEntity,
 }
 
@@ -621,7 +621,7 @@ export class ChannelService {
     );
     this.addToUsers(channel, target);
     return {
-      target: target, 
+      target: target,
       channel: await this.channelRepository.save(channel)
     };
   }
@@ -734,6 +734,20 @@ export class ChannelService {
   addToAdmins(channel: ChannelEntity, user: UserEntity) {
     if (channel.admins) channel.admins.push(user);
     else channel.admins = [user];
+  }
+
+  async getChannelsByUser(userId: string): Promise<ChannelEntity[]> {
+
+    // get all channels where user is member or admin or owner
+    return await this.channelRepository
+      .createQueryBuilder('channel')
+      .leftJoinAndSelect('channel.users', 'users')
+      .leftJoinAndSelect('channel.admins', 'admins')
+      .leftJoinAndSelect('channel.owner', 'owner')
+      .where('users.id = :userId', { userId: userId })
+      .orWhere('admins.id = :userId', { userId: userId })
+      .orWhere('owner.id = :userId', { userId: userId })
+      .getMany();
   }
 
   //DELETEMEAFTERTESTING :

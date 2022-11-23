@@ -102,19 +102,6 @@ export class ChannelController {
     return unBannedUser;
   }
 
-  @Post('makeAdmin')
-  @SerializeOptions({ groups: ['user'] })
-  @UseGuards(JwtTwoFactorGuard)
-  async makeAdmin(
-    @Body() channel: ChannelActionsDto,
-    @Req() req: Request,
-  ): Promise<ChannelEntity> {
-    const newAdmin = await this.channelService.makeAdmin(channel, req.user);
-
-    this.messageGateway.makeAdmin(newAdmin.target);
-    return newAdmin.channel;
-  }
-
   @Post('mute')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
@@ -137,8 +124,21 @@ export class ChannelController {
   ): Promise<MuteEntity> {
     const unmutedUser : MuteEntity = await this.channelService.unMuteUser(channel, req.user);
 
-    this.messageGateway.unMuteUser(unmutedUser);
+    this.messageGateway.unMuteUser(unmutedUser, channel.id);
     return unmutedUser;
+  }
+
+  @Post('makeAdmin')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async makeAdmin(
+    @Body() channel: ChannelActionsDto,
+    @Req() req: Request,
+  ): Promise<ChannelEntity> {
+    const newAdmin = await this.channelService.makeAdmin(channel, req.user);
+
+    this.messageGateway.makeAdmin(newAdmin.target, newAdmin.channel.id);
+    return newAdmin.channel;
   }
 
   @Post('revokeAdmin')
@@ -150,7 +150,7 @@ export class ChannelController {
   ): Promise<ChannelEntity> {
     const oldAdmin = await this.channelService.revokeAdmin(channel, req.user);
 
-    this.messageGateway.revokeAdmin(oldAdmin.target);
+    this.messageGateway.revokeAdmin(oldAdmin.target, oldAdmin.channel.id);
     return oldAdmin.channel;
   }
 
