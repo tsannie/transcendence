@@ -27,7 +27,6 @@ export default class Room {
   p1_score: number = 0;
   p2_score: number = 0;
 
-  /* 0=INGAME /  */
   won: Winner = Winner.INMATCH;
   game_mode: string;
 

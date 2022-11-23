@@ -39,7 +39,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('GameGateway');
 
   game = new Map<string, Room>();
-  connectedUsers = new Map<string, Socket>();
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
@@ -49,7 +48,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (!user) {
         return client.disconnect();
       }
-      this.connectedUsers.set(user.id, client);
     } catch {
       return client.disconnect();
     }
@@ -65,13 +63,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const room = this.gameService.findRoomBySocketId(client.id, this.game);
     if (room) {
       console.log('handleDisconnect room FIND: ');
-      if (
-        room.status === RoomStatus.WAITING ||
-        room.status === RoomStatus.CLOSED
-      )
-        //client.leave(room.id);
-        await this.endGame(client, room.id);
-      else if (room.status === RoomStatus.PLAYING)
+      if (room.status === RoomStatus.PLAYING)
         await this.giveUp(client, room.id);
     }
     client.disconnect();
@@ -86,8 +78,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: CreateRoomDto,
   ) {
+    console.log('createRoom');
     const user = await this.authService.validateSocket(client);
-
     //this.game.clear();
 
     if (!user) return client.emit('error', 'create Room error !'); // TODO: send error
@@ -158,10 +150,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (room_game.status === RoomStatus.EMPTY) {
       //await this.all_game.remove(room_game);
 
+      console.log('ROOM DELETE');
       this.game.delete(room_id);
       client.leave(room_id);
       return;
     }
+    console.log('ROOM DELETE');
     this.game.delete(room_id);
     client.leave(room_id);
   }
@@ -181,10 +175,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!user) return;
 
     const room = this.game.get(room_id);
+    if (!room) console.log('giveUp room not found');
 
     room.status = RoomStatus.CLOSED;
     room.won = user.id === room.p1_id ? Winner.P2 : Winner.P1;
     // TODO: save gameStat
+    console.log('room_before_delete:', room);
     this.game.delete(room_id);
 
     this.server.in(room_id).emit('giveUp', room.p1_id, room.p2_id); // TODO GIVE UP
@@ -195,39 +191,37 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// PADDLE DATA
   ///////////////////////////////////////////////
 
-  /*@SubscribeMessage('askPaddleP1')
-  async askPaddleP1(
+  @SubscribeMessage('setPaddleP1')
+  async setPaddleP1(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    const game = this.game.get(data.room_id);
-    console.log('data', data);
-    console.log(this.game);
+    const root = this.game.get(data.room_id);
 
-    //if (!game) return;
-    console.log('askPaddleP1_game', game);
-    //this.game.clear();
-    console.log('p1_y_paddle', game.p1_y_paddle);
+    if (!root) return;
 
-    game.p1_y_paddle =
+    root.p1_y_paddle =
       (data.positionY * canvas_back_height) / data.front_canvas_height;
 
-    client.to(data.room_id).emit('getPaddleP1', game.p1_y_paddle);
+    client.to(data.room_id).emit('getPaddleP1', root.p1_y_paddle);
   }
 
-  @SubscribeMessage('askPaddleP2')
-  async askPaddleP2(
+  @SubscribeMessage('setPaddleP2')
+  async setPaddleP2(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    const game = this.game.get(data.room_id);
+    const root = this.game.get(data.room_id);
 
-    // TODO fix
-    game.p2_y_paddle =
+    if (!root) {
+      console.log('p2notfound');
+      return;
+    }
+    root.p2_y_paddle =
       (data.positionY * canvas_back_height) / data.front_canvas_height;
 
-    client.to(data.room_id).emit('getPaddleP2', game.p2_y_paddle);
-  }*/
+    client.to(data.room_id).emit('getPaddleP2', root.p2_y_paddle);
+  }
   ///////////////////////////////////////////////
 
   @SubscribeMessage('gameRender')
@@ -246,8 +240,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     if (room.status === RoomStatus.CLOSED) {
-      client.leave(room_id);
       // TODO: save gameStat
+      this.server.in(room_id).emit('endGame');
+      client.leave(room_id);
+      console.log('ROOM DELETE:');
       this.game.delete(room_id);
     }
     // leave room

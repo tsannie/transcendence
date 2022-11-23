@@ -10,9 +10,8 @@ import {
   RoomStatus,
   screen_ratio,
 } from "../const/const";
-import { GameContext } from "../GameContext";
-import { SocketGameContext } from "../../../contexts/SocketGameContext";
-import { IaskPaddle, IGameObj, IPlayer } from "../types";
+import { GameContext, GameContextType } from "../../../contexts/GameContext";
+import { IaskPaddle, IGameObj, IPlayer, Room } from "../types";
 import { initGameObj } from "./InitGameObj";
 
 let position_y: number = 0;
@@ -26,11 +25,12 @@ export function GameRender() {
   let ratio_height = lowerSize / screen_ratio / canvas_back_height;
   let height = lowerSize / screen_ratio;
   let border_size = height / 50;
-  const game = useContext(GameContext);
-  const socket = useContext(SocketGameContext);
   const canvasRef: any = createRef();
   const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
-  const [leave, setLeave] = useState(false);
+  const [endCooldown, setEndCooldown] = useState(false);
+  const { room, setRoom, socket, isP2 } = useContext(
+    GameContext
+  ) as GameContextType;
 
   const [HW, setdetectHW] = useState({
     winWidth: window.innerWidth,
@@ -46,7 +46,7 @@ export function GameRender() {
     window.addEventListener("resize", detectSize);
     return () => {
       window.removeEventListener("resize", detectSize);
-      socket?.emit("resizeIngame", game.room);
+      socket?.emit("resizeIngame", room?.id);
     };
   }, [HW]);
 
@@ -87,9 +87,9 @@ export function GameRender() {
       else if (gameObj.player_p1.won) gameObj.player_p2.gave_up = true;
     });
 
-    socket?.on("get_players", (p1: IPlayer, p2: IPlayer) => {
-      gameObj.player_p1 = p1;
-      gameObj.player_p2 = p2;
+    socket?.on("getScore", (p1_score: number, p2_score: number) => {
+      gameObj.player_p1.score = p1_score;
+      gameObj.player_p2.score = p2_score;
     });
 
     socket?.on("getPaddleP1", (y: number) => {
@@ -106,18 +106,18 @@ export function GameRender() {
     });
   }, [socket]);
 
-  function ask_paddle() {
+  function setPaddle() {
     let data: IaskPaddle = {
-      room_id: game.room,
+      room_id: room?.id,
       positionY: position_y,
       front_canvas_height: height,
     };
-    if (game.isP2) {
+    if (isP2) {
       gameObj.paddle_p2.y = position_y;
-      socket?.emit("askPaddleP2", data);
+      socket?.emit("setPaddleP2", data);
     } else {
       gameObj.paddle_p1.y = position_y;
-      socket?.emit("askPaddleP1", data);
+      socket?.emit("setPaddleP1", data);
     }
   }
 
@@ -127,7 +127,7 @@ export function GameRender() {
       countdown--;
       if (countdown === 0) {
         clearInterval(countdownInterval);
-        setLeave(true);
+        setEndCooldown(true);
         start = true;
       }
     }, 1000);
@@ -139,20 +139,20 @@ export function GameRender() {
 
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (game.isP2 === true && start === true) {
-          socket?.emit("gameRender", game.room);
+        if (isP2 && start === true) {
+          socket?.emit("gameRender", room?.id);
           start = false;
         }
         if (
           gameObj.player_p1.won === false &&
           gameObj.player_p2.won === false &&
-          game.room !== ""
+          room?.status === RoomStatus.PLAYING
         ) {
-          ask_paddle();
+          setPaddle();
           draw_game(ctx, canvas, gameObj, countdown);
         } else
           draw_game_ended(
-            game.isP2,
+            isP2,
             ctx,
             gameObj.player_p1,
             gameObj.player_p2,
@@ -165,13 +165,8 @@ export function GameRender() {
   }, []);
 
   function leaveGame() {
-    if (leave) {
-      game.setStatus(RoomStatus.EMPTY);
-      if (gameObj.player_p1.won === true || gameObj.player_p2.won === true)
-        // TODO delete that and just give up
-        socket?.emit("endGame", game.room);
-      else socket?.emit("giveUp", game.room);
-    }
+    socket?.emit("giveUp", room?.id);
+    setRoom(null);
   }
 
   function mouv_mouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
@@ -200,7 +195,9 @@ export function GameRender() {
         style={{ backgroundColor: "black" }}
       ></canvas>
       <br />
-      <button onClick={leaveGame}>Leave The Game</button>
+      <button onClick={leaveGame} disabled={!endCooldown}>
+        Leave The Game
+      </button>
     </div>
   );
 }
