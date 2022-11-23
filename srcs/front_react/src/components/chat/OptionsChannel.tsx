@@ -1,5 +1,6 @@
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { User } from "../../contexts/AuthContext";
+import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { IDatas } from "./Conversation";
 import UserOptions from "./OptionsChannelActions";
@@ -38,6 +39,8 @@ function ChannelMembers(props: {receivedChannel: IDatas}) {
     const [ users, setUsers ] = useState<User[] | null>(null);
     const [ muted, setMuted ] = useState<User[] | null>(null);
     const [ banned, setBanned ] = useState<User[] | null>(null);
+    const { newConv, setDisplay, setCurrentConv, setIsChannel, setNewConv } =
+        useContext(ChatDisplayContext);
 
     const filterList = (list: User[]| null, target: User) => {
         if (!list)
@@ -81,6 +84,13 @@ function ChannelMembers(props: {receivedChannel: IDatas}) {
                 setAdmins(filterList(admins, user));
                 setUsers(addToList(users, user));
             });
+            socket.on("joinChannel", (channel) => {
+                console.log("joinChannel === ", channel);
+                setDisplay(ChatType.CONV);
+                setCurrentConv(channel.id);
+                setIsChannel(true);
+                setNewConv(channel);
+            });
 
         return (() => {
             socket.off("muteUser");
@@ -89,8 +99,9 @@ function ChannelMembers(props: {receivedChannel: IDatas}) {
             socket.off("revokeAdmin");
             socket.off("banUser");
             socket.off("unBanUser");
+            socket.off("joinChannel");
         })}
-    }, [muted, users, banned, admins])
+    }, [muted, users, banned, admins, newConv])
 
     useEffect( () => {
         let muted: User[];
