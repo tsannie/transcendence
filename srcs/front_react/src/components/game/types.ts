@@ -1,4 +1,4 @@
-import { GameMode } from "./const/const";
+import { GameMode, RoomStatus, Winner } from "./const/const";
 
 export interface IGameObj {
   ball: IBall; // edit delete ???
@@ -11,7 +11,7 @@ export interface IGameObj {
 export interface IBall {
   x: number;
   y: number;
-  rad: number;
+  rad: number; //  TODO where are you in back ??
 }
 
 export interface IPaddle {
@@ -22,19 +22,41 @@ export interface IPaddle {
 }
 
 export interface IPlayer {
-  name: string;
+  user_id: string;
   score: number;
   won: boolean;
   gave_up: boolean;
 }
 
 export interface IaskPaddle {
-  room_id: string;
+  room_id?: string;
   positionY: number;
   front_canvas_height: number;
 }
 
 export interface ICreateRoom {
-  room_id: string;
   mode: GameMode;
+}
+
+export interface Room {
+  // TODO
+  id: string;
+
+  status: RoomStatus;
+  p1_id: string;
+  p2_id: string;
+
+  p1_SocketId: string;
+  p2_SocketId: string;
+
+  p1_score: number;
+  p2_score: number;
+
+  won: Winner;
+  game_mode: string;
+
+  p1_y_paddle: number;
+  p2_y_paddle: number;
+
+  ball: IBall;
 }

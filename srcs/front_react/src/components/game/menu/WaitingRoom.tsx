@@ -1,22 +1,17 @@
 import { useContext } from "react";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../contexts/AuthContext";
-import { SocketGameContext } from "../../../contexts/SocketGameContext";
 import { RoomStatus } from "../const/const";
-import { GameContext } from "../GameContext";
+import { GameContext, GameContextType } from "../../../contexts/GameContext";
 
 export default function WaitingRoom() {
-
-  const game = useContext(GameContext);
-  const socket = useContext(SocketGameContext);
   const { user } = useContext(AuthContext);
+  const { room, setRoom, socket } = useContext(GameContext) as GameContextType;
 
   function leaveRoom() {
-    if (game.status === RoomStatus.WAITING) {
-      game.setStatus(RoomStatus.EMPTY);
-      game.setisP2(false);
-      game.setRoom("");
-      socket?.emit("leaveGameRoom", game.room);
+    if (room?.status === RoomStatus.WAITING) {
+      setRoom(null);
+      socket?.emit("leaveGameRoom", room.id);
       toast.success("Room left !");
     }
   }
