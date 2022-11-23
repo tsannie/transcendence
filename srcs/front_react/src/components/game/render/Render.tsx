@@ -138,8 +138,8 @@ export function GameRender() {
       }
     }, 1000);
 
-    let canvas: any = canvasRef.current;
-    let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+    const canvas: any = canvasRef.current;
+    const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
 
     const render = () => {
       requestAnimationFrame(render);
