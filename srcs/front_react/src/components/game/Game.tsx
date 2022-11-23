@@ -8,13 +8,14 @@ import { GameContext, GameProvider } from "../../contexts/GameContext";
 function GameBody() {
   const { room } = useContext(GameContext);
 
-  switch (room ? room.status : RoomStatus.EMPTY) {
-    case RoomStatus.WAITING:
+  if (room) {
+    if (room.status === RoomStatus.WAITING) {
       return <WaitingRoom />;
-    case RoomStatus.PLAYING:
+    } else {
       return <GameRender />;
-    default:
-      return <GameMenu />;
+    }
+  } else {
+    return <GameMenu />;
   }
 }
 
