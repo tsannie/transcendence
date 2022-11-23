@@ -68,7 +68,7 @@ function UserOptions(props: IMemberProps) {
 
         if (isOwner)
             adminOptionsJSX.push(<button key={3} onClick={makeAdmin}>Make Admin</button>)
-        if (isOwner || isAdmin){    
+        if (isOwner || isAdmin){
             adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban User</button>);
             adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute User</button>);
         }
@@ -78,7 +78,7 @@ function UserOptions(props: IMemberProps) {
     const mutedOptions = () => {
         let adminOptionsJSX: JSX.Element[] = [];
 
-        if (isAdmin || isOwner){    
+        if (isAdmin || isOwner){
             adminOptionsJSX.push(<button key={1} onClick={unMuteUser}>Unmute User</button>);
             adminOptionsJSX.push(<button key={2} onClick={banUser}>Ban User</button>);
         }
@@ -88,12 +88,13 @@ function UserOptions(props: IMemberProps) {
     const bannedOptions = () => {
         let adminOptionsJSX: JSX.Element[] = [];
 
-        if (isAdmin || isOwner){    
+        if (isAdmin || isOwner){
             adminOptionsJSX.push(<button key={1} onClick={unBanUser}>UnBan User</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
 
+    // TODO: button redirect to profile page of user
     const displayOptions = () => {
         console.log(dropdownStyle);
         return (

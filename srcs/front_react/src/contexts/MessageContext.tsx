@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
-import { IMessageReceived } from "../components/chat/types";
+import { IChannel, IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
 
 export const MessageContext = createContext<MessageContextInterface>(
@@ -17,6 +17,7 @@ export const MessageContext = createContext<MessageContextInterface>(
 export interface MessageContextInterface {
   socket: Socket | null;
   newMessage: IMessageReceived | null;
+  channelJoined: IChannel | undefined;
 }
 
 interface MessageProviderProps {
@@ -26,9 +27,9 @@ interface MessageProviderProps {
 export const MessageProvider = ({ children }: MessageProviderProps) => {
   const [newMessage, setNewMessage] = useState<IMessageReceived | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [channelJoined, setChannelJoined] = useState<IChannel>();
 
   useEffect(() => {
-    console.log("socket created");
     const newSocket: any = io("http://localhost:4000/chat", {
       transports: ["websocket"],
     });
@@ -39,15 +40,14 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   useEffect(() => {
     if (socket) {
       socket.on("error", (error) => {
-        console.log("ERROR");
         toast.error("Error:" + error);
       });
       socket.on("message", (data) => {
         setNewMessage(data);
       });
-      socket.on("newChannel", (data) => {
+      /* socket.on("newChannel", (data) => {
         console.log("newChannel === ", data);
-      });
+      }); */
       return () => {
         socket.off("message");
         socket.off("error");
@@ -56,7 +56,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   }, [socket]);
 
   return (
-    <MessageContext.Provider value={{ socket, newMessage }}>
+    <MessageContext.Provider value={{ socket, newMessage, channelJoined }}>
       {children}
     </MessageContext.Provider>
   );
