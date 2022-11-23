@@ -100,9 +100,15 @@ export function GameRender() {
       gameObj.paddle_p2.y = y * ratio_height;
     });
 
-    socket?.on("get_ball", (x: number, y: number) => {
+    socket?.on("getBall", (x: number, y: number) => {
       gameObj.ball.x = x * ratio_width;
       gameObj.ball.y = y * ratio_height;
+    });
+
+    socket?.on("endGame", (room: Room) => {
+      console.log("back say end game");
+      console.log(room);
+      setRoom(room);
     });
   }, [socket]);
 
@@ -133,21 +139,19 @@ export function GameRender() {
     }, 1000);
 
     let canvas: any = canvasRef.current;
+    let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+
     const render = () => {
       requestAnimationFrame(render);
-      let ctx: CanvasRenderingContext2D = canvas.getContext("2d");
 
-      if (ctx) {
+      if (ctx && room) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (isP2 && start === true) {
           socket?.emit("gameRender", room?.id);
           start = false;
         }
-        if (
-          gameObj.player_p1.won === false &&
-          gameObj.player_p2.won === false &&
-          room?.status === RoomStatus.PLAYING
-        ) {
+        if (room.status === RoomStatus.PLAYING) {
+          console.log("status playing =", room.status);
           setPaddle();
           draw_game(ctx, canvas, gameObj, countdown);
         } else

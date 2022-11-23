@@ -235,15 +235,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     while (room.status === RoomStatus.PLAYING) {
       this.gameService.updateGame(room, this.server);
-      this.server.in(room_id).emit('get_ball', room.ball.x, room.ball.y);
+      this.server.in(room_id).emit('getBall', room.ball.x, room.ball.y);
       await new Promise((f) => setTimeout(f, 8));
     }
 
     if (room.status === RoomStatus.CLOSED) {
       // TODO: save gameStat
-      this.server.in(room_id).emit('endGame');
+      this.server.in(room_id).emit('endGame', room);
       client.leave(room_id);
-      console.log('ROOM DELETE:');
+      console.log('==============ROOM DELETE================');
       this.game.delete(room_id);
     }
     // leave room
