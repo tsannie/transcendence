@@ -6,7 +6,7 @@
 /*   By: dodjian <dodjian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/23 14:20:39 by dodjian           #+#    #+#             */
-/*   Updated: 2022/11/23 16:49:56 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/11/23 19:34:44 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,21 +89,6 @@ function JoinChannelForm() {
   const handleRefresh = () => {
     setRefresh(true);
   };
-
-  useEffect( () => {
-    if (socket)
-    {
-      socket.on("joinChannel", (channel) => {
-        console.log("joinChannel === ", channel);
-        setDisplay(ChatType.CONV);
-        setCurrentConv(channel.id);
-        setIsChannel(true);
-        setNewConv(channel);
-      });
-    return (() => {
-        socket.off("joinChannel");
-    })}
-}, [refresh]);
 
   return (
     <div className="join-channel">

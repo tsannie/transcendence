@@ -149,7 +149,7 @@ function ChannelList() {
     const async_fct = async () => await loadList();
 
     async_fct();
-  }, []);
+  }, [chatList]); // TODO: loadList with socket to update list when chatList change
 
   useEffect(() => {
     if (!newConv) return;
