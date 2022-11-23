@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   JoinChannelForm.tsx                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dodjian <dodjian@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/23 14:20:39 by dodjian           #+#    #+#             */
+/*   Updated: 2022/11/23 16:49:56 by dodjian          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 import { AxiosError, AxiosResponse } from "axios";
 import React, {
   ChangeEvent,
@@ -91,7 +103,7 @@ function JoinChannelForm() {
     return (() => {
         socket.off("joinChannel");
     })}
-}, [display, currentConv, isChannel, newConv]);
+}, [refresh]);
 
   return (
     <div className="join-channel">
