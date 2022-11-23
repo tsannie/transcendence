@@ -120,13 +120,35 @@ export class MessageGateway
     }
   }
 
-  createChannel(channel: ChannelEntity | void) {
-    console.log("channel created");
-    this.server.emit('newChannel', channel);
+  createChannel(channel: ChannelEntity, userId: string) {
+    console.log("channel created : " + channel.id);
+    const socket = this.connectedUsers.get(userId);
+
+    if (socket) {
+      // join the channel
+      socket.forEach((client) => {
+        client.join(channel.id);
+      });
+    }
+    //this.server.emit('newChannel', channel);
+  }
+
+  joinChannel(channel: ChannelEntity, userId: string) {
+    console.log("channel joined");
+    // find the socket of the user
+    const sockets = this.connectedUsers.get(userId);
+
+    if (sockets) {
+      // join the channel
+      sockets.forEach((client) => {
+        client.join(channel.id);
+      });
+    }
+    this.server.to(channel.id).emit('joinChannel', channel);
   }
 
   muteUser(mutedUser: MuteEntity) {
-    this.server.emit('muteUser', mutedUser.user);
+    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user);
   }
 
   unMuteUser(unMutedUser: MuteEntity) {
@@ -143,8 +165,8 @@ export class MessageGateway
 
   makeAdmin(newAdmin: UserEntity) {
     this.server.emit('makeAdmin', newAdmin);
-  } 
-  
+  }
+
   revokeAdmin(revokeAdmin: UserEntity) {
     this.server.emit('revokeAdmin', revokeAdmin);
   }
