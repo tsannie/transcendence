@@ -75,6 +75,12 @@ export class MessageGateway
         } else {
           this.connectedUsers.set(user.id, [client]);
         }
+        // join all channel of the user
+        const channels = await this.channelService.getChannelsByUser(user.id);
+
+        channels.forEach((channel) => {
+          client.join(channel.id);
+        });
       }
     } catch {
       return client.disconnect();
@@ -86,13 +92,19 @@ export class MessageGateway
     const user = await this.authService.validateSocket(client);
 
     if (user) {
-      this.disconnect(user.id, client);
+      await this.disconnect(user.id, client);
     }
     else
       client.disconnect();
   }
 
-  private disconnect(userId: string, client: Socket) {
+  private async disconnect(userId: string, client: Socket) {
+    const channels = await this.channelService.getChannelsByUser(userId);
+
+    channels.forEach((channel) => {
+      client.leave(channel.id);
+    });
+
     this.connectedUsers.delete(userId);
     client.disconnect();
   }
@@ -122,52 +134,63 @@ export class MessageGateway
 
   createChannel(channel: ChannelEntity, userId: string) {
     console.log("channel created : " + channel.id);
-    const socket = this.connectedUsers.get(userId);
 
-    if (socket) {
-      // join the channel
-      socket.forEach((client) => {
-        client.join(channel.id);
-      });
-    }
+    this.joinAllSocketToChannel(channel.id, userId);
     //this.server.emit('newChannel', channel);
   }
 
   joinChannel(channel: ChannelEntity, userId: string) {
-    console.log("channel joined");
+    console.log("channel joined = " + channel.id);
     // find the socket of the user
+    this.joinAllSocketToChannel(channel.id, userId);
+    this.server.to(channel.id).emit('joinChannel', channel);
+  }
+
+  muteUser(mutedUser: MuteEntity) {
+    //console.log("mute user in channel = " + mutedUser.channel.id);
+    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user);
+  }
+
+  unMuteUser(unMutedUser: MuteEntity, channelId: string) {
+    //console.log("unmute user in channel = " + unMutedUser.channel);
+    this.server.to(channelId).emit('unMuteUser', unMutedUser.user);
+  }
+
+  banUser(bannedUser: BanEntity) {
+    this.server.to(bannedUser.channel.id).emit('banUser', bannedUser.user);
+  }
+
+  unBanUser(unBannedUser: BanEntity) { // TODO: refresh channelList after unban front
+    this.server.emit('unBanUser', unBannedUser.user);
+  }
+
+  makeAdmin(newAdmin: UserEntity, channelId: string) {
+    this.server.to(channelId).emit('makeAdmin', newAdmin);
+  }
+
+  revokeAdmin(revokeAdmin: UserEntity, channelId: string) {
+    this.server.to(channelId).emit('revokeAdmin', revokeAdmin);
+  }
+
+  joinAllSocketToChannel(channelId: string, userId: string) {
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
       // join the channel
       sockets.forEach((client) => {
-        client.join(channel.id);
+        client.join(channelId);
       });
     }
-    this.server.to(channel.id).emit('joinChannel', channel);
   }
 
-  muteUser(mutedUser: MuteEntity) {
-    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user);
-  }
+  leaveAllSocketToChannel(channel: ChannelEntity, userId: string) {
+    const sockets = this.connectedUsers.get(userId);
 
-  unMuteUser(unMutedUser: MuteEntity) {
-    this.server.emit('unMuteUser', unMutedUser.user);
-  }
-
-  banUser(bannedUser: BanEntity) {
-    this.server.emit('banUser', bannedUser.user);
-  }
-
-  unBanUser(unBannedUser: BanEntity) {
-    this.server.emit('unBanUser', unBannedUser.user);
-  }
-
-  makeAdmin(newAdmin: UserEntity) {
-    this.server.emit('makeAdmin', newAdmin);
-  }
-
-  revokeAdmin(revokeAdmin: UserEntity) {
-    this.server.emit('revokeAdmin', revokeAdmin);
+    if (sockets) {
+      // leave the channel
+      sockets.forEach((client) => {
+        client.leave(channel.id);
+      });
+    }
   }
 }

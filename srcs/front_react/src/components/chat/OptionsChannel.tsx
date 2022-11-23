@@ -9,7 +9,7 @@ export interface IMemberProps {
     type: string;
     isOwner: boolean;
     isAdmin: boolean;
-    channelId: string; 
+    channelId: string;
     user: User;
 }
 
@@ -83,9 +83,9 @@ function ChannelMembers(props: {receivedChannel: IDatas}) {
             });
 
         return (() => {
-            socket.off("mutedUser");
-            socket.off("unMutedUser");
-            socket.off("admin");
+            socket.off("muteUser");
+            socket.off("unMuteUser");
+            socket.off("makeAdmin");
             socket.off("revokeAdmin");
             socket.off("banUser");
             socket.off("unBanUser");
@@ -105,12 +105,12 @@ function ChannelMembers(props: {receivedChannel: IDatas}) {
         }
         if (channel.users)
             setUsers(channel.users.filter( elem => !muted.includes(elem)));
-       
+
     }, [channel])
 
     return (
         <Fragment>
-        { channel ? 
+        { channel ?
         <div className="conversation__options__members">
             <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={admins}/>
             <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={users as User[] | null}/>
@@ -125,7 +125,7 @@ function ChannelProfile(props: {channel: IChannel}) {
 
     return (
     <div className="conversation__options__title">
-        <div className="text"> 
+        <div className="text">
             <span>{channel.name}</span>
             <div className="date">conv started at: {channel.createdAt.toLocaleString()}</div>
             <span className="owner">owned by: {channel.owner?.username}</span>
