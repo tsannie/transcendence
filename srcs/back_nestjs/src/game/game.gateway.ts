@@ -141,7 +141,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// LEAVE GAME
   /////////////////////////////////////////////////
 
-  @SubscribeMessage('giveUp')
+  @SubscribeMessage('giveUp') // TODO: remove and just leave room
   async giveUp(
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
@@ -168,40 +168,24 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// PADDLE DATA
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('setPaddleP1')
-  async setPaddleP1(
+  @SubscribeMessage('setPaddle')
+  async setPaddle(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    const root = this.game.get(data.room_id);
-
-    // todo check if the user is really the player 1
-
-    if (!root) return;
-
-    root.p1_y_paddle =
-      (data.positionY * canvas_back_height) / data.front_canvas_height;
-
-    //client.to(data.room_id).emit('getPaddleP1', root.p1_y_paddle);
-  }
-
-  @SubscribeMessage('setPaddleP2') // one setpadle for both player
-  async setPaddleP2(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: PaddleDto,
-  ) {
-    const root = this.game.get(data.room_id);
-
-    // todo check if the user is really the player 2
-
-    if (!root) {
-      console.log('p2notfound');
+    const room = this.game.get(data.room_id);
+    if (!room) {
+      console.log('roomnotfound');
       return;
     }
-    root.p2_y_paddle =
-      (data.positionY * canvas_back_height) / data.front_canvas_height;
 
-    //client.to(data.room_id).emit('getPaddleP2', root.p2_y_paddle);
+    if (room.p1_SocketId === client.id) {
+      room.p1_y_paddle =
+        (data.positionY * canvas_back_height) / data.front_canvas_height;
+    } else if (room.p2_SocketId === client.id) {
+      room.p2_y_paddle =
+        (data.positionY * canvas_back_height) / data.front_canvas_height;
+    }
   }
   ///////////////////////////////////////////////
 
