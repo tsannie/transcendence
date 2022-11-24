@@ -105,6 +105,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.p2_id = user.id;
         room.p2_SocketId = client.id;
         this.server.in(room.id).emit('joinedRoom', room);
+        this.gameService.launchGame(room, this.game, this.game);
         // TODO launch game
       }
     }
@@ -215,7 +216,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // TODO: remove and render when the game is started
   // reason: if the cliend dont request data the game is not update in back
   // the game is update 2 times with 2 client. its not good
-  @SubscribeMessage('gameRender')
+  /*@SubscribeMessage('gameRender')
   async gameRender(
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
@@ -238,7 +239,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.game.delete(room_id);
     }
     // leave room
-  }
+  }*/
 
   @SubscribeMessage('resizeIngame')
   async resizeIngame(@MessageBody() room_id: string) {
