@@ -74,7 +74,7 @@ export class GameService {
   } */
 
   findRoomBySocketId(
-    socket_id: Socket,
+    socket_id: string,
     game: Map<string, Room>,
   ): Room | undefined {
     const all_rooms = game.values();
@@ -262,8 +262,8 @@ export class GameService {
     if (room.status === RoomStatus.CLOSED) {
       // TODO: save gameStat
       server.in(room.id).emit('endGame', room);
-      room.p1_SocketId.leave(room.id);
-      room.p2_SocketId.leave(room.id);
+      //room.p1_SocketId.leave(room.id);
+      //room.p2_SocketId.leave(room.id);
       game.delete(room.id);
     }
     // leave room
