@@ -139,15 +139,15 @@ export class MessageGateway
     //this.server.emit('newChannel', channel);
   }
 
-  joinChannel(channel: ChannelEntity, userId: string) {
+  joinChannel(channel: ChannelEntity, user: UserEntity) {
     console.log("channel joined = " + channel.id);
     // find the socket of the user
-    this.joinAllSocketToChannel(channel.id, userId);
-    this.server.to(channel.id).emit('joinChannel', channel);
+    this.joinAllSocketToChannel(channel.id, user.id);
+    this.server.to(channel.id).emit('joinChannel', channel, user);
   }
 
   muteUser(mutedUser: MuteEntity) {
-    //console.log("mute user in channel = " + mutedUser.channel.id);
+    console.log("mute user in channel = " + mutedUser.channel.id);
     this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user);
   }
 
