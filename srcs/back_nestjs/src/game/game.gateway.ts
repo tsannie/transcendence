@@ -224,6 +224,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
   ///////////////////////////////////////////////
 
+  // TODO: remove and render when the game is started
+  // reason: if the cliend dont request data the game is not update in back
+  // the game is update 2 times with 2 client. its not good
   @SubscribeMessage('gameRender')
   async gameRender(
     @ConnectedSocket() client: Socket,
