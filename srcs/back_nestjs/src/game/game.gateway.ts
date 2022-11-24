@@ -182,10 +182,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     root.p1_y_paddle =
       (data.positionY * canvas_back_height) / data.front_canvas_height;
 
-    client.to(data.room_id).emit('getPaddleP1', root.p1_y_paddle);
+    //client.to(data.room_id).emit('getPaddleP1', root.p1_y_paddle);
   }
 
-  @SubscribeMessage('setPaddleP2')
+  @SubscribeMessage('setPaddleP2') // one setpadle for both player
   async setPaddleP2(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
@@ -201,14 +201,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     root.p2_y_paddle =
       (data.positionY * canvas_back_height) / data.front_canvas_height;
 
-    client.to(data.room_id).emit('getPaddleP2', root.p2_y_paddle);
+    //client.to(data.room_id).emit('getPaddleP2', root.p2_y_paddle);
   }
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('resizeIngame')
+  /*@SubscribeMessage('resizeIngame')
   async resizeIngame(@MessageBody() room_id: string) {
     const room_game = this.game.get(room_id);
     if (!room_game) return;
     this.server.in(room_id).emit('resize_game');
-  }
+  }*/
 }

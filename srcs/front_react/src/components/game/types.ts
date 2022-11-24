@@ -1,4 +1,11 @@
-import { GameMode, RoomStatus, Winner } from "./const/const";
+import {
+  canvas_back_height,
+  canvas_back_width,
+  GameMode,
+  RoomStatus,
+  screen_ratio,
+  Winner,
+} from "./const/const";
 
 export interface IGameObj {
   ball: IBall; // edit delete ???
@@ -36,6 +43,26 @@ export interface IaskPaddle {
 
 export interface ICreateRoom {
   mode: GameMode;
+}
+
+export class IResize {
+  update() {
+    this.lowerSize =
+      window.innerWidth > window.innerHeight
+        ? window.innerHeight
+        : window.innerWidth;
+
+    this.ratio_width = this.lowerSize / canvas_back_width;
+    this.ratio_height = this.lowerSize / screen_ratio / canvas_back_height;
+    this.height = this.lowerSize / screen_ratio;
+    this.border_size = this.height / 50;
+  }
+
+  lowerSize: number = 0;
+  ratio_width: number = 0;
+  ratio_height: number = 0;
+  height: number = 0;
+  border_size: number = 0;
 }
 
 export interface Room {
