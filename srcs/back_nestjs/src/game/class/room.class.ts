@@ -1,3 +1,4 @@
+import { Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import Ball from './ball.class';
 
@@ -21,8 +22,8 @@ export default class Room {
   p1_id: string;
   p2_id: string;
 
-  p1_SocketId: string;
-  p2_SocketId: string;
+  p1_SocketId: Socket;
+  p2_SocketId: Socket;
 
   p1_score: number = 0;
   p2_score: number = 0;

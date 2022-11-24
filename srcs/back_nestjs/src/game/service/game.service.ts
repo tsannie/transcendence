@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
@@ -74,7 +74,7 @@ export class GameService {
   } */
 
   findRoomBySocketId(
-    socket_id: string,
+    socket_id: Socket,
     game: Map<string, Room>,
   ): Room | undefined {
     const all_rooms = game.values();
@@ -196,6 +196,7 @@ export class GameService {
   }*/
 
   async ballHitPaddlep1(room: Room, server: Server) {
+    // TODO moove to class ball
     // TODO async ???
     if (
       room.ball.can_touch_paddle === true &&
@@ -217,6 +218,7 @@ export class GameService {
   }
 
   async ballHitPaddlep2(room: Room, server: Server) {
+    // TODO moove to class ball
     if (
       room.ball.can_touch_paddle === true &&
       room.ball.x + rad >= paddle_p2_x &&
@@ -240,10 +242,30 @@ export class GameService {
   async updateGame(
     room: Room,
     server: Server,
+    //
     //room: string,
   ) {
     room.ball.update();
     await this.ballHitPaddlep1(room, server);
     await this.ballHitPaddlep2(room, server);
+  }
+
+  async launchGame(room: Room, server: Server, game: Map<string, Room>) {
+    // TODO cooldown
+
+    while (room.status === RoomStatus.PLAYING) {
+      this.updateGame(room, server);
+      server.in(room.id).emit('updateFrame', room.ball.x, room.ball.y);
+      await new Promise((f) => setTimeout(f, 8));
+    }
+
+    if (room.status === RoomStatus.CLOSED) {
+      // TODO: save gameStat
+      server.in(room.id).emit('endGame', room);
+      room.p1_SocketId.leave(room.id);
+      room.p2_SocketId.leave(room.id);
+      game.delete(room.id);
+    }
+    // leave room
   }
 }
