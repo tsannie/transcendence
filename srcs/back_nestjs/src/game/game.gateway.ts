@@ -89,39 +89,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     console.log('dico (', this.game.size, '):');
-    /*this.game.forEach((value, key) => {
-      console.log('room:', key, value);
-    });*/
 
     if (room && user) {
       console.log('Hello');
       if (room.status === RoomStatus.EMPTY) {
-        console.log('Hello2');
         room.status = RoomStatus.WAITING;
         room.game_mode = data.mode;
         room.p1_id = user.id;
         room.p1_SocketId = client.id;
-
-        //this.game.clear(); // TODO: remove
-        this.game.set(room.id, room); // setp1
-        console.log('ROOM STOCK AFTER');
-        console.log('dico (', this.game.size, '):');
-
-        //this.game[room.id] = room;
-        //console.log('this.game:', this.game);
-
+        this.game.set(room.id, room);
         client.join(room.id);
-        client.emit('joinedRoom', room);
       } else if (room.status === RoomStatus.WAITING) {
-        console.log('Hello3');
         client.join(room.id);
         room.status = RoomStatus.PLAYING;
         room.p2_id = user.id;
         room.p2_SocketId = client.id;
-        //console.log('room_AFTER_ALL_JOIN:', room);
-        //room.is_playing[roomid] = true;
-        //this.game[room.id] = room; // useless ?
         this.server.in(room.id).emit('joinedRoom', room);
+        // TODO launch game
       }
     }
   }
@@ -198,6 +182,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const root = this.game.get(data.room_id);
 
+    // todo check if the user is really the player 1
+
     if (!root) return;
 
     root.p1_y_paddle =
@@ -212,6 +198,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: PaddleDto,
   ) {
     const root = this.game.get(data.room_id);
+
+    // todo check if the user is really the player 2
 
     if (!root) {
       console.log('p2notfound');

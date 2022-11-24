@@ -127,9 +127,9 @@ export function GameRender() {
     }
   }
 
-  function cooldown() {
+  useEffect(() => {
     let countdown: number = 3;
-    const countdownInterval = setInterval(() => {
+    let countdownInterval = setInterval(() => {
       countdown--;
       if (countdown === 0) {
         clearInterval(countdownInterval);
@@ -137,25 +137,21 @@ export function GameRender() {
         start = true;
       }
     }, 1000);
-  }
 
-  const canvas: any = canvasRef.current;
-  const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+    const canvas: any = canvasRef.current;
+    const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
 
-  const draw = () => {
-
-
-  useEffect(() => {
     const render = () => {
       requestAnimationFrame(render);
 
-      if (room) {
+      if (ctx && room) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (isP2 && start === true) {
           socket?.emit("gameRender", room?.id);
           start = false;
         }
         if (room.status === RoomStatus.PLAYING) {
+          console.log("status playing =", room.status);
           setPaddle();
           draw_game(ctx, canvas, gameObj, countdown);
         } else
@@ -171,8 +167,6 @@ export function GameRender() {
     };
     render();
   }, []);
-
-  console.log("status playing =", room?.status);
 
   function leaveGame() {
     socket?.emit("giveUp", room?.id);
