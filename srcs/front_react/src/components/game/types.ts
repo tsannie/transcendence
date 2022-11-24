@@ -45,26 +45,6 @@ export interface ICreateRoom {
   mode: GameMode;
 }
 
-export class IResize {
-  update() {
-    this.lowerSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
-
-    this.ratio_width = this.lowerSize / canvas_back_width;
-    this.ratio_height = this.lowerSize / screen_ratio / canvas_back_height;
-    this.height = this.lowerSize / screen_ratio;
-    this.border_size = this.height / 50;
-  }
-
-  lowerSize: number = 0;
-  ratio_width: number = 0;
-  ratio_height: number = 0;
-  height: number = 0;
-  border_size: number = 0;
-}
-
 export interface Room {
   // TODO clean useless
   id: string;
@@ -85,5 +65,11 @@ export interface Room {
   p1_y_paddle: number;
   p2_y_paddle: number;
 
+  ball: IBall;
+}
+
+export interface IFrame {
+  p1_paddle: IPaddle;
+  p2_paddle: IPaddle;
   ball: IBall;
 }
