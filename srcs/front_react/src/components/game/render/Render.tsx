@@ -19,55 +19,38 @@ import {
   screen_ratio,
 } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { IaskPaddle, IGameObj, IPlayer, Room } from "../types";
+import { IaskPaddle, IGameObj, IPlayer, IResize, Room } from "../types";
 import { initGameObj } from "./InitGameObj";
 
 let position_y: number = 0;
 export function GameRender() {
-  let lowerSize =
-    window.innerWidth > window.innerHeight
-      ? window.innerHeight
-      : window.innerWidth;
-  let ratio_width = lowerSize / canvas_back_width;
-  let ratio_height = lowerSize / screen_ratio / canvas_back_height;
-  let height = lowerSize / screen_ratio;
-  let border_size = height / 50; // ???????????
+  // ???????????
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
+  //const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
   const { room, setRoom, socket, isP2 } = useContext(
     GameContext
   ) as GameContextType;
+  let resize = new IResize();
+
+  console.log("resize", resize);
 
   const [HW, setdetectHW] = useState({
     winWidth: window.innerWidth,
     winHeight: window.innerHeight,
   });
+
   const detectSize = () => {
     setdetectHW({
       winWidth: window.innerWidth,
       winHeight: window.innerHeight,
     });
   };
+
   useEffect(() => {
+    resize.update();
     window.addEventListener("resize", detectSize);
-    return () => {
-      window.removeEventListener("resize", detectSize);
-      socket?.emit("resizeIngame", room?.id);
-    };
-  }, [HW]);
 
-  function resizeGame() {
-    lowerSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
-    height = lowerSize / screen_ratio;
-    border_size = height / 50;
-
-    ratio_width = lowerSize / canvas_back_width;
-    ratio_height = lowerSize / screen_ratio / canvas_back_height;
-
-    gameObj.ball.x = (canvas_back_width / 2) * ratio_width;
+    /*gameObj.ball.x = (canvas_back_width / 2) * ratio_width;
     gameObj.ball.y = (canvas_back_height / 2) * ratio_height;
     gameObj.ball.rad = rad * ratio_width;
 
@@ -78,10 +61,10 @@ export function GameRender() {
     gameObj.paddle_p2.x =
       (canvas_back_width - paddle_margin - paddle_width) * ratio_width;
     gameObj.paddle_p2.height = paddle_height * ratio_height;
-    gameObj.paddle_p2.width = paddle_width * ratio_width;
-  }
+    gameObj.paddle_p2.width = paddle_width * ratio_width;*/
+  }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     socket?.on("resize_game", () => {
       resizeGame();
     });
@@ -93,22 +76,14 @@ export function GameRender() {
       else if (gameObj.player_p1.won) gameObj.player_p2.gave_up = true;
     });
 
-    socket?.on("getScore", (p1_score: number, p2_score: number) => {
-      gameObj.player_p1.score = p1_score;
-      gameObj.player_p2.score = p2_score;
-    });
-
-    socket?.on("getPaddleP1", (y: number) => {
-      gameObj.paddle_p1.y = y * ratio_height;
-    });
-
-    socket?.on("getPaddleP2", (y: number) => {
-      gameObj.paddle_p2.y = y * ratio_height;
-    });
-
-    socket?.on("getBall", (x: number, y: number) => {
-      gameObj.ball.x = x * ratio_width;
-      gameObj.ball.y = y * ratio_height;
+    socket?.on("updateGame", (room: Room) => {
+      //setRoom(room);
+      gameObj.ball.x = room.ball.x * ratio_width;
+      gameObj.ball.y = room.ball.y * ratio_height;
+      gameObj.paddle_p2.y = room.p2_y_paddle * ratio_height;
+      gameObj.paddle_p1.y = room.p1_y_paddle * ratio_height;
+      gameObj.player_p1.score = room.p1_score;
+      gameObj.player_p2.score = room.p2_score;
     });
 
     socket?.on("endGame", (room: Room) => {
@@ -124,6 +99,7 @@ export function GameRender() {
       positionY: position_y,
       front_canvas_height: height,
     };
+    // TODO dont send if not changed
     if (isP2) {
       gameObj.paddle_p2.y = position_y;
       socket?.emit("setPaddleP2", data);
@@ -161,6 +137,10 @@ export function GameRender() {
     render();
   }, []);
 
+  useEffect(() => {
+    // TODO refresh canvas if room is modified
+  }, [room]);
+
   function leaveGame() {
     socket?.emit("giveUp", room?.id);
     setRoom(null);
@@ -179,11 +159,11 @@ export function GameRender() {
     else if (tmp_pos > height - gameObj.paddle_p2.height || tmp_pos < 0)
       position_y = position_y;
     else position_y = tmp_pos;
-  }
+  }*/
 
   return (
     <div>
-      <canvas
+      {/* <canvas
         id="canvas"
         ref={canvasRef}
         height={height}
@@ -192,7 +172,7 @@ export function GameRender() {
         style={{ backgroundColor: "black" }}
       ></canvas>
       <br />
-      <button onClick={leaveGame}>Leave The Game</button>
+      <button onClick={leaveGame}>Leave The Game</button> */}
     </div>
   );
 }
