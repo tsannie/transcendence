@@ -11,7 +11,7 @@ export interface IGameObj {
 export interface IBall {
   x: number;
   y: number;
-  rad: number; //  TODO where are you in back ??
+  rad: number;
 }
 
 export interface IPaddle {
