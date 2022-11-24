@@ -93,19 +93,22 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (room && user) {
       console.log('Hello');
       if (room.status === RoomStatus.EMPTY) {
-        room.status = RoomStatus.WAITING;
         room.game_mode = data.mode;
         room.p1_id = user.id;
         room.p1_SocketId = client.id;
+        room.status = RoomStatus.WAITING;
+
         this.game.set(room.id, room);
         client.join(room.id);
+        this.server.in(room.id).emit('joinedRoom', room);
       } else if (room.status === RoomStatus.WAITING) {
-        client.join(room.id);
-        room.status = RoomStatus.PLAYING;
         room.p2_id = user.id;
         room.p2_SocketId = client.id;
+        room.status = RoomStatus.PLAYING;
+
+        client.join(room.id);
         this.server.in(room.id).emit('joinedRoom', room);
-        this.gameService.launchGame(room, this.game, this.game);
+        this.gameService.launchGame(room, this.server, this.game);
         // TODO launch game
       }
     }
@@ -120,28 +123,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
   ) {
+    console.log('-----------------leaveRoom-----------------');
+
     const user = await this.authService.validateSocket(client);
     if (!user) return;
-    const room_game = this.game.get(room_id);
+    const room = this.game.get(room_id);
 
-    if (!room_game) return;
-    if (
-      room_game.status === RoomStatus.WAITING ||
-      room_game.status === RoomStatus.CLOSED
-    )
-      room_game.status = RoomStatus.EMPTY;
-    room_game.id = room_id;
+    if (!room) return;
 
-    if (room_game.status === RoomStatus.EMPTY) {
-      //await this.all_game.remove(room_game);
-
-      console.log('ROOM DELETE');
-      this.game.delete(room_id);
-      client.leave(room_id);
-      return;
-    }
+    console.log('leaveGameRoom: ');
     console.log('ROOM DELETE');
-    this.game.delete(room_id);
+    this.game.delete(room_id); // no ???
     client.leave(room_id);
   }
 
@@ -212,34 +204,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client.to(data.room_id).emit('getPaddleP2', root.p2_y_paddle);
   }
   ///////////////////////////////////////////////
-
-  // TODO: remove and render when the game is started
-  // reason: if the cliend dont request data the game is not update in back
-  // the game is update 2 times with 2 client. its not good
-  /*@SubscribeMessage('gameRender')
-  async gameRender(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() room_id: string,
-  ) {
-    const room = this.game.get(room_id);
-    if (!room)
-      return console.log(' gameRender !!!!! NO ROOM !!!! [' + room_id + ']');
-
-    while (room.status === RoomStatus.PLAYING) {
-      this.gameService.updateGame(room, this.server);
-      this.server.in(room_id).emit('getBall', room.ball.x, room.ball.y);
-      await new Promise((f) => setTimeout(f, 8));
-    }
-
-    if (room.status === RoomStatus.CLOSED) {
-      // TODO: save gameStat
-      this.server.in(room_id).emit('endGame', room);
-      client.leave(room_id);
-      console.log('==============ROOM DELETE================');
-      this.game.delete(room_id);
-    }
-    // leave room
-  }*/
 
   @SubscribeMessage('resizeIngame')
   async resizeIngame(@MessageBody() room_id: string) {
