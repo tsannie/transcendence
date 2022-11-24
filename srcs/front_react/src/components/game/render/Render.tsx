@@ -1,4 +1,12 @@
-import React, { createRef, useContext, useEffect, useState } from "react";
+import React, {
+  CanvasHTMLAttributes,
+  createRef,
+  RefObject,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { draw_game_ended, draw_game } from "./Draw";
 import {
   canvas_back_height,
@@ -16,7 +24,6 @@ import { initGameObj } from "./InitGameObj";
 
 let position_y: number = 0;
 export function GameRender() {
-  let start = false;
   let lowerSize =
     window.innerWidth > window.innerHeight
       ? window.innerHeight
@@ -24,10 +31,9 @@ export function GameRender() {
   let ratio_width = lowerSize / canvas_back_width;
   let ratio_height = lowerSize / screen_ratio / canvas_back_height;
   let height = lowerSize / screen_ratio;
-  let border_size = height / 50;
-  const canvasRef: any = createRef();
+  let border_size = height / 50; // ???????????
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
-  const [endCooldown, setEndCooldown] = useState(false);
   const { room, setRoom, socket, isP2 } = useContext(
     GameContext
   ) as GameContextType;
@@ -128,32 +134,17 @@ export function GameRender() {
   }
 
   useEffect(() => {
-    let countdown: number = 3;
-    let countdownInterval = setInterval(() => {
-      countdown--;
-      if (countdown === 0) {
-        clearInterval(countdownInterval);
-        setEndCooldown(true);
-        start = true;
-      }
-    }, 1000);
-
-    const canvas: any = canvasRef.current;
-    const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
     const render = () => {
       requestAnimationFrame(render);
-
       if (ctx && room) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (isP2 && start === true) {
-          socket?.emit("gameRender", room?.id);
-          start = false;
-        }
         if (room.status === RoomStatus.PLAYING) {
           console.log("status playing =", room.status);
           setPaddle();
-          draw_game(ctx, canvas, gameObj, countdown);
+          draw_game(ctx, canvas, gameObj, 0);
         } else
           draw_game_ended(
             isP2,
@@ -165,6 +156,8 @@ export function GameRender() {
           );
       }
     };
+
+    console.log("render");
     render();
   }, []);
 
@@ -199,9 +192,7 @@ export function GameRender() {
         style={{ backgroundColor: "black" }}
       ></canvas>
       <br />
-      <button onClick={leaveGame} disabled={!endCooldown}>
-        Leave The Game
-      </button>
+      <button onClick={leaveGame}>Leave The Game</button>
     </div>
   );
 }

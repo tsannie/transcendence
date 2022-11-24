@@ -255,7 +255,7 @@ export class GameService {
 
     while (room.status === RoomStatus.PLAYING) {
       this.updateGame(room, server);
-      server.in(room.id).emit('updateFrame', room.ball.x, room.ball.y);
+      server.in(room.id).emit('getBall', room.ball.x, room.ball.y);
       await new Promise((f) => setTimeout(f, 8));
     }
 
