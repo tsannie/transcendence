@@ -7,14 +7,6 @@ import {
   Winner,
 } from "./const/const";
 
-export interface IGameObj {
-  ball: IBall; // edit delete ???
-  paddle_p1: IPaddle;
-  paddle_p2: IPaddle;
-  player_p1: IPlayer;
-  player_p2: IPlayer;
-}
-
 export interface IBall {
   x: number;
   y: number;
@@ -35,8 +27,8 @@ export interface IPlayer {
   gave_up: boolean;
 }
 
-export interface IaskPaddle {
-  room_id?: string;
+export interface ISetPaddle {
+  room_id: string;
   positionY: number;
   front_canvas_height: number;
 }
@@ -68,7 +60,7 @@ export interface Room {
   ball: IBall;
 }
 
-export interface IFrame {
+export interface Frame {
   p1_paddle: IPaddle;
   p2_paddle: IPaddle;
   ball: IBall;
