@@ -62,10 +62,10 @@ function JoinChannelForm() {
         )
         .then((res: AxiosResponse) => {
           toast.success("Channel joined");
-          /* setDisplay(ChatType.CONV);
+          setDisplay(ChatType.CONV);
           setCurrentConv(res.data.id);
           setIsChannel(true);
-          setNewConv(res.data); */
+          setNewConv(res.data);
         })
         .catch((err: AxiosError) => {
           toast.error("Wrong password");
