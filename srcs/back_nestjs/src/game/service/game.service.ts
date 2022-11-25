@@ -25,16 +25,16 @@ import Ball from '../class/ball.class';
 @Injectable()
 export class GameService {
   constructor(
-    // @InjectRepository(RoomEntity)
-    //private all_game: Repository<RoomEntity>,
-
     @InjectRepository(GameStatEntity)
     private gameStatRepository: Repository<GameStatEntity>,
 
     private readonly userService: UserService,
   ) {}
 
+  /* RoomID, room */
   private gamesRoom: Map<string, Room> = new Map();
+
+  /* Socket, RoomID */
   private usersRoom: Map<Socket, string> = new Map();
 
   /*   async findAll(): Promise<RoomEntity[]> {
@@ -42,13 +42,11 @@ export class GameService {
   } */
 
   findRoom(user: UserEntity): Room {
-    console.log('joinFastRoom');
     let room: Room;
     let already_in_game: boolean = false;
 
     const size = this.gamesRoom.size;
     if (size !== 0) {
-      console.log('Join room');
       const all_rooms = this.gamesRoom.values();
       for (const room_db of all_rooms) {
         if (
@@ -61,7 +59,6 @@ export class GameService {
       }
     }
     if (!room && already_in_game === false) {
-      console.log('Create room');
       room = new Room();
       room.id = uuidv4();
       this.gamesRoom.set(room.id, room);
@@ -76,12 +73,13 @@ export class GameService {
     });
   } */
 
-  findRoomBySocketId(socket_id: string): Room | undefined {
-    const all_rooms = this.gamesRoom.values();
-    for (const room of all_rooms) {
-      if (room.p1_SocketId === socket_id || room.p2_SocketId === socket_id)
-        return room;
-    }
+  deleteRoomById(room_id: string) {
+    this.gamesRoom.delete(room_id);
+  }
+
+  findRoomBySocket(socket: Socket): Room | undefined {
+    const room_id = this.usersRoom.get(socket);
+    if (room_id) return this.gamesRoom.get(room_id);
     return undefined;
   }
 
