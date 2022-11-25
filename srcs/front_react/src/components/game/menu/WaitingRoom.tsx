@@ -17,7 +17,7 @@ export default function WaitingRoom() {
   }
 
   return (
-    <div className="queues">
+    <div className="game">
       <h2> you are : {user?.username} </h2>
       <p> waiting opponent</p>
       <button onClick={leaveRoom}>leave waiting room</button>

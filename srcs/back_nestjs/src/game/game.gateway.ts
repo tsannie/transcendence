@@ -50,15 +50,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await this.authService.validateSocket(client);
     this.logger.log(`Client GAME disconnected: ${user.username}`);
 
+    const room = this.gameService.findRoomBySocket(client);
+    if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {
+      this.gameService.deleteRoomById(room.id);
+    }
+
     this.gameService.leaveRoom(null, client);
     this.allUsers.delete(user.id);
 
-    const room = this.gameService.findRoomBySocketId(client.id);
-    if (room) {
-      console.log('handleDisconnect room FIND: ');
-      //if (room.status === RoomStatus.PLAYING)
-      //await this.giveUp(client, room.id);
-    }
     client.disconnect();
   }
 
@@ -71,7 +70,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: CreateRoomDto,
   ) {
-    console.log('createRoom');
     const user = await this.authService.validateSocket(client);
     //this.game.clear();
 
@@ -79,7 +77,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const room: Room = this.gameService.findRoom(user);
 
     if (room && user) {
-      console.log('Hello');
       if (room.status === RoomStatus.EMPTY) {
         room.game_mode = data.mode;
         room.p1_id = user.id;

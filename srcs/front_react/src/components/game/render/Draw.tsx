@@ -1,4 +1,5 @@
 import {
+  black,
   border_size_default,
   paddle_height,
   paddle_margin,
@@ -49,7 +50,7 @@ export function draw_game_ended(
 ) {
   ctx.beginPath();
   ctx.rect(0, 0, canvas_width, canvas_height);
-  ctx.fillStyle = "black";
+  ctx.fillStyle = black;
   ctx.fill();
   ctx.font = canvas_width / 10 + "px Arcade";
   ctx.fillStyle = white;

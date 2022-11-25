@@ -1,5 +1,6 @@
 import { Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
+import { GameMode } from '../const/const';
 import Ball from './ball.class';
 
 export enum RoomStatus {
@@ -29,7 +30,7 @@ export default class Room {
   p2_score: number = 0;
 
   won: Winner = Winner.INMATCH;
-  game_mode: string;
+  game_mode: GameMode;
 
   p1_y_paddle: number = 0;
   p2_y_paddle: number = 0;
