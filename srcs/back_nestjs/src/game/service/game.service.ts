@@ -221,6 +221,26 @@ export class GameService {
       room.ball.x - rad <= paddle_p1_x + paddle_width &&
       room.ball.x + rad / 3 >= paddle_p1_x &&
       room.ball.y + rad >= room.p1_y_paddle &&
+      room.ball.y + rad <= room.p1_y_paddle + 10
+    ) {
+      console.log('top');
+      room.ball.direction_y = -1;
+      room.ball.can_touch_paddle = false;
+    } else if (
+      room.ball.can_touch_paddle === true &&
+      room.ball.x - rad <= paddle_p1_x + paddle_width &&
+      room.ball.x + rad / 3 >= paddle_p1_x &&
+      room.ball.y - rad <= room.p1_y_paddle + paddle_height &&
+      room.ball.y - rad >= room.p1_y_paddle + paddle_height - 10
+    ) {
+      console.log('bot');
+      room.ball.direction_y = 1;
+      room.ball.can_touch_paddle = false;
+    } else if (
+      room.ball.can_touch_paddle === true &&
+      room.ball.x - rad <= paddle_p1_x + paddle_width &&
+      room.ball.x + rad / 3 >= paddle_p1_x &&
+      room.ball.y + rad >= room.p1_y_paddle &&
       room.ball.y - rad <= room.p1_y_paddle + paddle_height
     )
       room.ball.hitPaddle(room.p1_y_paddle);
@@ -237,15 +257,36 @@ export class GameService {
 
   async ballHitPaddlep2(room: Room, server: Server) {
     // TODO moove to class ball
+
     if (
       room.ball.can_touch_paddle === true &&
       room.ball.x + rad >= paddle_p2_x &&
       room.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
       room.ball.y + rad >= room.p2_y_paddle &&
+      room.ball.y + rad <= room.p2_y_paddle + 10
+    ) {
+      console.log('top');
+      room.ball.direction_y = -1;
+      room.ball.can_touch_paddle = false;
+    } else if (
+      room.ball.can_touch_paddle === true &&
+      room.ball.x + rad >= paddle_p2_x &&
+      room.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
+      room.ball.y - rad <= room.p2_y_paddle + paddle_height &&
+      room.ball.y - rad >= room.p2_y_paddle + paddle_height - 10
+    ) {
+      console.log('bot');
+      room.ball.direction_y = 1;
+      room.ball.can_touch_paddle = false;
+    } else if (
+      room.ball.can_touch_paddle === true &&
+      room.ball.x + rad >= paddle_p2_x &&
+      room.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
+      room.ball.y + rad >= room.p2_y_paddle &&
       room.ball.y - rad <= room.p2_y_paddle + paddle_height
-    )
+    ) {
       room.ball.hitPaddle(room.p2_y_paddle);
-    else if (room.ball.x + rad >= canvas_back_width + rad * 3) {
+    } else if (room.ball.x + rad >= canvas_back_width + rad * 3) {
       room.ball.reset();
       room.p1_score += 1;
       if (room.p1_score === victory_score) {
