@@ -35,11 +35,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private authService: AuthService,
   ) {}
 
+  private allUsers: Map<string, Socket> = new Map();
+
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('GameGateway');
 
   async handleConnection(client: Socket) {
     const user = await this.authService.validateSocket(client);
+    this.allUsers.set(user.id, client);
     this.logger.log(`Client GAME connected: ${user.username}`);
   }
 
@@ -48,6 +51,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client GAME disconnected: ${user.username}`);
 
     this.gameService.leaveRoom(null, client);
+    this.allUsers.delete(user.id);
 
     const room = this.gameService.findRoomBySocketId(client.id);
     if (room) {
@@ -91,7 +95,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         this.gameService.joinRoom(room.id, client, this.server);
         this.server.to(room.id).emit('joinedRoom', room);
-        this.gameService.launchGame(room, this.server);
+        this.gameService.launchGame(room, this.server, this.allUsers);
       }
     }
   }
