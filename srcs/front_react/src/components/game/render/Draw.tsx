@@ -5,6 +5,7 @@ import {
   paddle_width,
   rad,
   white,
+  Winner,
 } from "../const/const";
 import { IBall, IDrawResponsive, IPaddle, IPlayer, Room } from "../types";
 
@@ -40,10 +41,9 @@ export function draw_game(
 }
 
 export function draw_game_ended(
-  isP2: boolean,
   ctx: CanvasRenderingContext2D,
-  player_p1: IPlayer,
-  player_p2: IPlayer,
+  room: Room,
+  user_id: string,
   canvas_height: number,
   canvas_width: number
 ) {
@@ -56,26 +56,20 @@ export function draw_game_ended(
   ctx.textAlign = "center";
   ctx.fillText("Game Ended\n\n\n\n\n\n", canvas_width / 2, canvas_height / 2);
   if (
-    (player_p1.gave_up === true && isP2 === true) || // TODO WARN no p2
-    (player_p2.gave_up === true && isP2 === false)
+    (room.won === Winner.P1 && room.p1_id === user_id) ||
+    (room.won === Winner.P2 && room.p2_id === user_id)
   )
     ctx.fillText(
-      "You Won, he GAVE UP",
+      "you won !",
       canvas_width / 2,
       canvas_height / 2 + canvas_height / 4
     );
   else if (
-    (player_p1.won === true && isP2 === false) || // TODO WARN NO P2
-    (player_p2.won === true && isP2 === true)
+    (room.won === Winner.P2 && room.p1_id === user_id) ||
+    (room.won === Winner.P1 && room.p2_id === user_id)
   )
     ctx.fillText(
-      "YOU Won !",
-      canvas_width / 2,
-      canvas_height / 2 + canvas_height / 4
-    );
-  else
-    ctx.fillText(
-      "YOU Lost",
+      "you lost !",
       canvas_width / 2,
       canvas_height / 2 + canvas_height / 4
     );
