@@ -1,11 +1,11 @@
 import { white } from "../const/const";
-import { IBall, IFrame, IGameObj, IPaddle, IPlayer, Room } from "../types";
+import { IBall, Frame, IPaddle, IPlayer, Room } from "../types";
 
 export function draw_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
   room: Room,
-  frameToDraw: IFrame,
+  frameToDraw: Frame,
   countdown: number
 ) {
   if (countdown != 0)
