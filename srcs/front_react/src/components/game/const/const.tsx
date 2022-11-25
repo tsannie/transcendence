@@ -19,9 +19,10 @@ export enum GameMode {
 }
 
 export enum RoomStatus {
-  EMPTY,
-  WAITING,
-  PLAYING,
+  EMPTY = 0,
+  WAITING = 1,
+  PLAYING = 2,
+  CLOSED = 3,
 }
 
 export enum Winner {
