@@ -28,6 +28,7 @@ import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 let position_y: number = 0;
 export function GameRender() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [leave, setLeave] = useState(false);
 
   const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
   //const [frameToDraw, setFrameToDraw] = useState<Frame>();
@@ -71,9 +72,21 @@ export function GameRender() {
     });
   }, [socket]);
 
+  useEffect(() => {
+    socket?.on("updateGame", (room: Room) => {
+      if (!leave) setRoom(room);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (leave) {
+      setRoom(null);
+    }
+  }, [leave]);
+
   function leaveGame() {
     socket?.emit("leaveRoom", room?.id);
-    setRoom(null);
+    setLeave(true);
   }
 
   function setPaddle() {
@@ -93,7 +106,6 @@ export function GameRender() {
         if (ctx) {
           if (room.status === RoomStatus.PLAYING) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            //console.log("status playing =", room.status);
             setPaddle();
             draw_game(ctx, canvas, room, drawResponsive, 0);
           } else {
@@ -147,7 +159,8 @@ export function GameRender() {
             height={drawResponsive.canvas_height}
             width={drawResponsive.canvas_width}
             onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: "black" }}></canvas>
+            style={{ backgroundColor: "black" }}
+          ></canvas>
           <br />
           <button onClick={leaveGame}>Leave The Game</button>
         </Fragment>

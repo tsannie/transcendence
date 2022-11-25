@@ -309,22 +309,34 @@ export class GameService {
     await this.ballHitPaddlep2(room, server);
   }
 
-  async launchGame(room: Room, server: Server) {
+  checkGiveUP(socketP1: Socket, socketP2: Socket, room: Room): boolean {
+    if (this.usersRoom.get(socketP1) !== room.id) {
+      room.won = Winner.P2;
+      room.status = RoomStatus.CLOSED;
+      return true;
+    } else if (this.usersRoom.get(socketP2) !== room.id) {
+      room.won = Winner.P1;
+      room.status = RoomStatus.CLOSED;
+      return true;
+    }
+    return false;
+  }
+
+  async launchGame(room: Room, server: Server, allUsers: Map<string, Socket>) {
     // TODO cooldown
+    const socketP1 = allUsers.get(room.p1_id);
+    const socketP2 = allUsers.get(room.p2_id);
 
     while (room.status === RoomStatus.PLAYING) {
+      this.checkGiveUP(socketP1, socketP2, room);
       this.updateGame(room, server);
       server.in(room.id).emit('updateGame', room);
       await new Promise((f) => setTimeout(f, 8));
     }
 
     if (room.status === RoomStatus.CLOSED) {
-      // TODO: save gameStat
-      server.in(room.id).emit('endGame', room);
-      //room.p1_SocketId.leave(room.id);
-      //room.p2_SocketId.leave(room.id);
+      server.in(room.id).emit('updateGame', room);
       this.gamesRoom.delete(room.id);
     }
-    // leave room
   }
 }
