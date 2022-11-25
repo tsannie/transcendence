@@ -127,7 +127,11 @@ export class MessageGateway
       );
 
       if (channel) {
-        this.messageService.emitMessageChannel(channel, lastMsg, this.connectedUsers);
+        this.messageService.emitMessageChannel(
+          channel,
+          lastMsg,
+          this.connectedUsers,
+        );
       }
     }
   }

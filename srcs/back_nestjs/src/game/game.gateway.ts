@@ -11,16 +11,15 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
-import { canvas_back_height, RoomStatus } from './const/const';
-import { RoomEntity } from './entity/room.entity';
+import { canvas_back_height } from './const/const';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { CreateRoomDto } from './dto/createRoom.dto';
-import { IBall, PaddlePos } from './const/interface';
 import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
+import Room, { RoomStatus, Winner } from './class/room.class';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -30,8 +29,8 @@ import { AuthService } from 'src/auth/service/auth.service';
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    @InjectRepository(RoomEntity)
-    private all_game: Repository<RoomEntity>,
+    // @InjectRepository(RoomEntity)
+    // private all_game: Repository<RoomEntity>,
     private gameService: GameService,
     private authService: AuthService,
   ) {}
@@ -39,8 +38,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('GameGateway');
 
-  paddle_pos = new Map<string, PaddlePos>();
-  game_loop = new Map<string, boolean>();
+  game = new Map<string, Room>();
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
@@ -49,7 +47,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (!user) {
         return client.disconnect();
-
       }
     } catch {
       return client.disconnect();
@@ -60,18 +57,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client GAME disconnected: ${client.id}`);
     const user = await this.authService.validateSocket(client);
 
-    if (!user)
-      return client.disconnect();
-    const room_game = await this.gameService.findRoomBySocketId(client.id);
+    console.log('handleDisconnect user: ', user.username);
 
-    if (room_game) {
-      if (
-        room_game.status === RoomStatus.WAITING ||
-        room_game.status === RoomStatus.CLOSED
-      )
-        await this.endGame(client, room_game.id);
-      else if (room_game.status === RoomStatus.PLAYING)
-        await this.giveUp(client, room_game.id);
+    if (!user) return client.disconnect();
+    const room = this.gameService.findRoomBySocketId(client.id, this.game);
+    if (room) {
+      console.log('handleDisconnect room FIND: ');
+      if (room.status === RoomStatus.PLAYING)
+        await this.giveUp(client, room.id);
     }
     client.disconnect();
   }
@@ -85,31 +78,38 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: CreateRoomDto,
   ) {
+    console.log('createRoom');
     const user = await this.authService.validateSocket(client);
+    //this.game.clear();
 
-    if (!user)
-      return client.emit("error", "create Room error !");  // TODO: send error
-    const room_game: RoomEntity = await this.gameService.joinFastRoom(user);
+    if (!user) return client.emit('error', 'create Room error !'); // TODO: send error
+    const room: Room = this.gameService.joinFastRoom(user, this.game);
+    console.log(
+      '##############################START###########################\n',
+    );
 
-    if (room_game && user) {
-      if (room_game.status === RoomStatus.EMPTY) {
-        room_game.status = RoomStatus.WAITING;
-        room_game.game_mode = data.mode;
-        room_game.p1 = user;
-        room_game.p1SocketId = client.id;
+    console.log('dico (', this.game.size, '):');
 
-        await this.all_game.save(room_game);
-        client.join(room_game.id);
-        client.emit('joinedRoom', room_game);
-      } else if (room_game.status === RoomStatus.WAITING) {
-        client.join(room_game.id);
-        room_game.status = RoomStatus.PLAYING;
-        room_game.p2 = user;
-        room_game.p2SocketId = client.id;
+    if (room && user) {
+      console.log('Hello');
+      if (room.status === RoomStatus.EMPTY) {
+        room.game_mode = data.mode;
+        room.p1_id = user.id;
+        room.p1_SocketId = client.id;
+        room.status = RoomStatus.WAITING;
 
-        await this.all_game.save(room_game);
-        await this.gameService.initSet(room_game.id, this.game_loop, data.mode);
-        this.server.in(room_game.id).emit('joinedRoom', room_game);
+        this.game.set(room.id, room);
+        client.join(room.id);
+        this.server.in(room.id).emit('joinedRoom', room);
+      } else if (room.status === RoomStatus.WAITING) {
+        room.p2_id = user.id;
+        room.p2_SocketId = client.id;
+        room.status = RoomStatus.PLAYING;
+
+        client.join(room.id);
+        this.server.in(room.id).emit('joinedRoom', room);
+        this.gameService.launchGame(room, this.server, this.game);
+        // TODO launch game
       }
     }
   }
@@ -121,134 +121,78 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('leaveGameRoom')
   async leaveRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() room: string,
+    @MessageBody() room_id: string,
   ) {
+    console.log('-----------------leaveRoom-----------------');
+
     const user = await this.authService.validateSocket(client);
-    if (!user)
-      return;
-    const room_game = await this.all_game.findOneBy({ id: room });
+    if (!user) return;
+    const room = this.game.get(room_id);
 
-    if (!room_game)
-      return;
-    if (room_game.status === RoomStatus.WAITING ||
-    room_game.status === RoomStatus.CLOSED)
-      room_game.status = RoomStatus.EMPTY;
-    room_game.id = room;
+    if (!room) return;
 
-    if (room_game.p1.id === user.id)
-      room_game.p1 = null;
-    else if (room_game.p2.id === user.id)
-      room_game.p2 = null;
-    if (room_game.status === RoomStatus.EMPTY) {
-      await this.all_game.remove(room_game);
-      client.leave(room);
-      return;
-    }
-    await this.all_game.save(room_game);
-    client.leave(room);
+    console.log('leaveGameRoom: ');
+    console.log('ROOM DELETE');
+    this.game.delete(room_id); // no ???
+    client.leave(room_id);
   }
 
   ///////////////////////////////////////////////
   //////////////// LEAVE GAME
   /////////////////////////////////////////////////
 
-  @SubscribeMessage('giveUp')
-  async giveUp(@ConnectedSocket() client: Socket, @MessageBody() room: string) {
-    console.log('giveUp');
-    const user = await this.authService.validateSocket(client);
-
-    if (!user)
-      return;
-    const room_game = await this.all_game.findOneBy({ id: room });
-
-    await this.gameService.giveUp(room, this.game_loop, room_game, user);
-    this.server.in(room).emit('giveUp', room_game.set.p1, room_game.set.p2);
-    client.leave(room);
-  }
-
-  @SubscribeMessage('endGame')
-  async endGame(
+  @SubscribeMessage('giveUp') // TODO: remove and just leave room
+  async giveUp(
     @ConnectedSocket() client: Socket,
-    @MessageBody() room: string,
+    @MessageBody() room_id: string,
   ) {
-    console.log('endGame');
-    client.leave(room);
-    const room_game = await this.all_game.findOneBy({ id: room });
+    console.log('GIVEUP');
+    //this.game.clear(); // TODO: remove
+    const user = await this.authService.validateSocket(client);
+    if (!user) return;
 
-    if (this.game_loop[room])
-      this.game_loop[room] = false;
-    if (room_game) {
-      if (room_game.set) { // partie annule, 1 mec a rejoint, l'autre handleDisconnect
-        await this.gameService.getStat(room_game);
-      }
+    const room = this.game.get(room_id);
+    if (!room) console.log('giveUp room not found');
 
-      if (this.paddle_pos[room])
-        delete this.paddle_pos[room];
-      if (this.game_loop[room])
-        delete this.game_loop[room];
-      await this.all_game.remove(room_game);
-    }
+    room.status = RoomStatus.CLOSED;
+    room.won = user.id === room.p1_id ? Winner.P2 : Winner.P1;
+    // TODO: save gameStat
+    console.log('room_before_delete:', room);
+    this.game.delete(room_id);
+
+    this.server.in(room_id).emit('giveUp', room.p1_id, room.p2_id); // TODO GIVE UP
+    client.leave(room_id);
   }
 
   ///////////////////////////////////////////////
   //////////////// PADDLE DATA
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('askPaddleP1')
-  async askPaddleP1(
+  @SubscribeMessage('setPaddle')
+  async setPaddle(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    if (!this.paddle_pos[data.room])
-      this.paddle_pos[data.room] = { y1: 0, y2: 0 };
-    this.paddle_pos[data.room] = {
-      y1: (data.positionY * canvas_back_height) / data.front_canvas_height,
-      y2: this.paddle_pos[data.room].y2,
-    };
-    client.to(data.room).emit('getPaddleP1', this.paddle_pos[data.room].y1);
-  }
+    const room = this.game.get(data.room_id);
+    if (!room) {
+      console.log('roomnotfound');
+      return;
+    }
 
-  @SubscribeMessage('askPaddleP2')
-  async askPaddleP2(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: PaddleDto,
-  ) {
-    if (!this.paddle_pos[data.room])
-      this.paddle_pos[data.room] = { y1: 0, y2: 0 };
-    this.paddle_pos[data.room] = {
-      y1: this.paddle_pos[data.room].y1,
-      y2: (data.positionY * canvas_back_height) / data.front_canvas_height,
-    };
-    client.to(data.room).emit('getPaddleP2', this.paddle_pos[data.room].y2);
-  }
-
-  ///////////////////////////////////////////////
-
-  @SubscribeMessage('gameRender')
-  async gameRender(@MessageBody() room: string) {
-    let room_game = await this.all_game.findOneBy({ id: room });
-    if (!room_game)
-      return console.log(' gameRender !!!!! NO ROOM !!!! [' + room + ']');
-
-    let BallObj: IBall = this.gameService.createBall();
-    if (room_game.set) {
-      while (room_game.set.p1.won === false &&
-      room_game.set.p2.won === false &&
-      this.game_loop[room] === true) {
-        this.gameService.updateGame(BallObj, room_game.set, this.paddle_pos[room], this.server, room);
-        this.server.in(room).emit('get_ball', BallObj.x, BallObj.y);
-        await new Promise((f) => setTimeout(f, 8));
-      }
+    if (room.p1_SocketId === client.id) {
+      room.p1_y_paddle =
+        (data.positionY * canvas_back_height) / data.front_canvas_height;
+    } else if (room.p2_SocketId === client.id) {
+      room.p2_y_paddle =
+        (data.positionY * canvas_back_height) / data.front_canvas_height;
     }
   }
+  ///////////////////////////////////////////////
 
-  @SubscribeMessage('resizeIngame')
-  async resizeIngame(
-    @MessageBody() room: string,
-  ) {
-    const room_game = await this.all_game.findOneBy({ id: room });
-    if (!room_game)
-      return;
-    this.server.in(room).emit('resize_game');
-  }
+  /*@SubscribeMessage('resizeIngame')
+  async resizeIngame(@MessageBody() room_id: string) {
+    const room_game = this.game.get(room_id);
+    if (!room_game) return;
+    this.server.in(room_id).emit('resize_game');
+  }*/
 }
