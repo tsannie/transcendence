@@ -23,6 +23,8 @@ import { DmService } from 'src/dm/service/dm.service';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { IUserSearch } from '../models/iusersearch.interface';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
+//import { GameService } from 'src/game/service/game.service';
 
 const AVATAR_DEST: string = '/nestjs/datas/users/avatars';
 
@@ -49,6 +51,9 @@ export class UserService {
     @InjectRepository(UserEntity)
     private allUser: Repository<UserEntity>,
     private readonly httpService: HttpService,
+
+    @InjectRepository(GameStatEntity)
+    private allGame: Repository<GameStatEntity>,
     @Inject(forwardRef(() => ChannelService))
     private readonly channelService: ChannelService,
     @Inject(forwardRef(() => DmService))
@@ -159,8 +164,17 @@ export class UserService {
         admin_of: true,
         friend_requests: true,
         friends: true,
+        history: true,
       },
     });
+  }
+
+  async getAllUsersWithElo(): Promise<UserEntity[]> {
+    return await this.allUser.find();
+  }
+
+  async cleanAllUser(): Promise<void> {
+    return await this.allUser.clear();
   }
 
   // turn enabled2FA to true for user
@@ -442,5 +456,21 @@ export class UserService {
     );
 
     return await this.allUser.save(user);
+  }
+
+  async getGameHistory(user: UserEntity): Promise<GameStatEntity[]> {
+    return user.history;
+  }
+
+  getLeaderBoard(userId: string, usersElo: UserEntity[]): number {
+    const usersSort = usersElo.sort((a, b) => b.elo - a.elo);
+    let rank = 0;
+
+    usersSort.forEach((user, index) => {
+      if (user.id === userId) {
+        rank = index + 1;
+      }
+    });
+    return rank;
   }
 }

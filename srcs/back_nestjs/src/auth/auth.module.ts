@@ -15,11 +15,12 @@ import { GoogleStrategy } from './strategy/google.strategy';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ChannelModule } from 'src/channel/channel.module';
 import { DmModule } from 'src/dm/dm.module';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 
 @Module({
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, GameStatEntity]),
     UserModule,
     PassportModule,
     ChannelModule,

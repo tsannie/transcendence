@@ -23,6 +23,11 @@ import { IChannelReturn } from '../models/channel_return.interface';
 import { BanEntity, BanMuteEntity, MuteEntity } from '../models/ban.entity';
 import { BanMuteService } from './banmute.service';
 
+export interface IAdmin {
+  target: UserEntity,
+  channel: ChannelEntity,
+}
+
 @Injectable()
 @Catch()
 export class ChannelService {
@@ -39,16 +44,6 @@ export class ChannelService {
     const channel = await this.getChannel(query_channel.id, {
       owner: true,
       users: true,
-    });
-    return channel;
-  }
-
-  /* This function gets all the data for a normal user. No sensitive information here */
-  async getUserData(query_channel: ChannelDto): Promise<ChannelEntity> {
-    const channel = await this.getChannel(query_channel.id, {
-      owner: true,
-      users: true,
-      admins: true,
     });
     return channel;
   }
@@ -84,12 +79,11 @@ export class ChannelService {
     } else {
       if (isUser) {
         response.status = 'user';
-        response.data = await this.getUserData(query_channel);
       } else {
         if (isOwner) response.status = 'owner';
         if (isAdmin) response.status = 'admin';
-        response.data = await this.getPrivateData(query_channel);
       }
+      response.data = await this.getPrivateData(query_channel);
     }
     return response;
   }
@@ -521,9 +515,11 @@ export class ChannelService {
         `${userToMute.username} is already muted`,
       );
 
-    channel.admins = channel.admins.filter(
-      (elem) => elem.id !== request.targetId,
-    );
+    if (channel.admins.find((elem) => elem.id === request.targetId)) {
+      channel.admins = channel.admins.filter(
+      (elem) => elem.id !== request.targetId);
+      channel.users = [...channel.users, userToMute];
+    }
     await this.channelRepository.save(channel);
 
     return await this.banmuteService.generate(
@@ -554,7 +550,7 @@ export class ChannelService {
   async makeAdmin(
     req_channel: ChannelActionsDto,
     user: UserEntity,
-  ): Promise<ChannelEntity> {
+  ): Promise<IAdmin> {
     const future_admin = await this.getUser(req_channel.targetId, {
       owner_of: true,
       admin_of: true,
@@ -582,6 +578,7 @@ export class ChannelService {
     });
     await this.verifyMuted(channel, req_channel.targetId);
 
+    //TODO REMOVE IF NOT USED (duplicate use of findMuted)
     if (this.findMuted(channel, req_channel.targetId))
       throw new UnprocessableEntityException(
         'Cannot make admin a muted member',
@@ -591,13 +588,16 @@ export class ChannelService {
     channel.users = channel.users.filter(
       (user) => user.id !== future_admin.id,
     );
-    return await this.channelRepository.save(channel);
+    return {
+      target: future_admin,
+      channel: await this.channelRepository.save(channel)
+    };
   }
 
   async revokeAdmin(
     req_channel: ChannelActionsDto,
     user: UserEntity,
-  ): Promise<ChannelEntity> {
+  ): Promise<IAdmin> {
     if (!this.isOwner(req_channel.id, user))
       throw new UnauthorizedException(
         `Only owner of channel can revoke administration rights of ${req_channel.targetId}`,
@@ -620,7 +620,10 @@ export class ChannelService {
       (elem) => elem.id !== target.id,
     );
     this.addToUsers(channel, target);
-    return await this.channelRepository.save(channel);
+    return {
+      target: target,
+      channel: await this.channelRepository.save(channel)
+    };
   }
 
   isOwner(searched_channel: string, user: UserEntity): boolean {
@@ -731,6 +734,20 @@ export class ChannelService {
   addToAdmins(channel: ChannelEntity, user: UserEntity) {
     if (channel.admins) channel.admins.push(user);
     else channel.admins = [user];
+  }
+
+  async getChannelsByUser(userId: string): Promise<ChannelEntity[]> {
+
+    // get all channels where user is member or admin or owner
+    return await this.channelRepository
+      .createQueryBuilder('channel')
+      .leftJoinAndSelect('channel.users', 'users')
+      .leftJoinAndSelect('channel.admins', 'admins')
+      .leftJoinAndSelect('channel.owner', 'owner')
+      .where('users.id = :userId', { userId: userId })
+      .orWhere('admins.id = :userId', { userId: userId })
+      .orWhere('owner.id = :userId', { userId: userId })
+      .getMany();
   }
 
   //DELETEMEAFTERTESTING :

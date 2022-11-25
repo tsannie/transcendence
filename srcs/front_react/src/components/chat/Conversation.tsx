@@ -20,7 +20,7 @@ function Conversation() {
     
     if (!currentConv)
       return ;
-    api
+    await api
       .get(route, {params: {id: currentConv}})
       .then((res) => {
         setDm(res.data);
@@ -31,7 +31,6 @@ function Conversation() {
   }
 
   const searchExistingConv = async () => {
-    console.log("MONSIEUR MOUTARDE DANS LA CUISINE");
     await api
       .get("/dm/target", {params: {targetId: targetRedirection}})
       .then((res) => {
