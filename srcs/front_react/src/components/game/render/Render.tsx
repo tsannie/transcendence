@@ -119,8 +119,8 @@ export function GameRender() {
       const canvas = canvasRef.current as HTMLCanvasElement;
       const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
       if (ctx && room && drawResponsive) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (room.status === RoomStatus.PLAYING) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
           //console.log("status playing =", room.status);
           setPaddle();
           draw_game(ctx, canvas, room, drawResponsive, 0);
@@ -135,7 +135,8 @@ export function GameRender() {
         }
       }
     };
-    if (drawResponsive) render();
+
+    if (drawResponsive) requestAnimationFrame(render);
   }, [room, drawResponsive]);
 
   /*function leaveGame() {    // TODO DELETE
