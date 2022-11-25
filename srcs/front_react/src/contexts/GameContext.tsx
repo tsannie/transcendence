@@ -13,8 +13,6 @@ import { io, Socket } from "socket.io-client";
 export type GameContextType = {
   room: Room | null;
   setRoom: (room: Room | null) => void;
-  isP2: boolean;
-  setIsP2: (isP2: boolean) => void;
   socket: Socket | null;
 };
 
@@ -44,7 +42,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
       socket.on("joinedRoom", (room: Room) => {
         console.log("JOINED ROOM", room);
         setRoom(room);
-        setIsP2(room.p2_id === user.id ? true : false);
       });
     }
   }, [socket]);
@@ -54,8 +51,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
       value={{
         room,
         setRoom,
-        isP2,
-        setIsP2,
         socket,
       }}
     >
