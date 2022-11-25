@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DmEntity } from 'src/dm/models/dm.entity';
+import { MessageGateway } from 'src/message/message.gateway';
 import { MessageModule } from 'src/message/message.module';
 import { MessageEntity } from 'src/message/models/message.entity';
 import { UserEntity } from 'src/user/models/user.entity';
@@ -15,6 +16,7 @@ import { ChannelService } from './service/channel.service';
   imports: [
     forwardRef( () => UserModule),
     TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity, BanEntity, MuteEntity]),
+    forwardRef( () => MessageModule),
   ],
   controllers: [ChannelController],
   providers: [ChannelService, BanMuteService],
