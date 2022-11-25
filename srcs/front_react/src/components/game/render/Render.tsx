@@ -134,7 +134,7 @@ export function GameRender() {
       }
     };
     if (drawResponsive) render();
-  }, [room]);
+  }, [room, drawResponsive]);
 
   /*function leaveGame() {    // TODO DELETE
     socket?.emit("giveUp", room?.id);
