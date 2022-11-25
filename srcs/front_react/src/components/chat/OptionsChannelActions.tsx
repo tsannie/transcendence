@@ -99,7 +99,7 @@ function UserOptions(props: IMemberProps) {
     const displayOptions = () => {
         return (
         <div className="dropdown" style={dropdownStyle.current}>
-            <div className="options">Options</div>
+            <div className="options">{user.username}</div>
             <button>
                 <Link to={"/profile/" + user.username}>
                     Profile
@@ -123,7 +123,9 @@ function UserOptions(props: IMemberProps) {
     }, [])
 
     const handleButtonClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        console.log((event.target as HTMLElement).getBoundingClientRect());
         let pos = (event.target as HTMLElement).getBoundingClientRect();
+        console.log(pos.top, pos.left);
         let x = pos.right - event.clientX;
         let y = event.clientY - pos.top;
         dropdownStyle.current = {
