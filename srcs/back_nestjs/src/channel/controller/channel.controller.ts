@@ -98,7 +98,7 @@ export class ChannelController {
   ): Promise<BanEntity> {
     const unBannedUser = await this.channelService.unBanUser(ban_request, req.user);
 
-    this.messageGateway.unBanUser(unBannedUser);
+    this.messageGateway.unBanUser(unBannedUser, ban_request.id);
     return unBannedUser;
   }
 

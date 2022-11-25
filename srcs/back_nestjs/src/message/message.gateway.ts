@@ -144,36 +144,33 @@ export class MessageGateway
   }
 
   joinChannel(channel: ChannelEntity, user: UserEntity) {
-    console.log("channel joined = " + channel.id);
     // find the socket of the user
     this.joinAllSocketToChannel(channel.id, user.id);
     this.server.to(channel.id).emit('joinChannel', channel, user);
   }
 
   muteUser(mutedUser: MuteEntity) {
-    console.log("mute user in channel = " + mutedUser.channel.id);
-    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user);
+    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user, mutedUser.channel.id);
   }
 
   unMuteUser(unMutedUser: MuteEntity, channelId: string) {
-    //console.log("unmute user in channel = " + unMutedUser.channel);
-    this.server.to(channelId).emit('unMuteUser', unMutedUser.user);
+    this.server.to(channelId).emit('unMuteUser', unMutedUser.user, channelId);
   }
 
   banUser(bannedUser: BanEntity) {
-    this.server.to(bannedUser.channel.id).emit('banUser', bannedUser.user);
+    this.server.to(bannedUser.channel.id).emit('banUser', bannedUser.user, bannedUser.channel.id);
   }
 
-  unBanUser(unBannedUser: BanEntity) { // TODO: refresh channelList after unban front
-    this.server.emit('unBanUser', unBannedUser.user);
+  unBanUser(unBannedUser: BanEntity, channelId: string) {
+    this.server.to(channelId).emit('unBanUser', unBannedUser.user, channelId);
   }
 
   makeAdmin(newAdmin: UserEntity, channelId: string) {
-    this.server.to(channelId).emit('makeAdmin', newAdmin);
+    this.server.to(channelId).emit('makeAdmin', newAdmin, channelId);
   }
 
   revokeAdmin(revokeAdmin: UserEntity, channelId: string) {
-    this.server.to(channelId).emit('revokeAdmin', revokeAdmin);
+    this.server.to(channelId).emit('revokeAdmin', revokeAdmin, channelId);
   }
 
   joinAllSocketToChannel(channelId: string, userId: string) {

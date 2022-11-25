@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
-import { User } from "../../contexts/AuthContext";
+import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { IDatas } from "./Conversation";
@@ -32,15 +32,16 @@ function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean
 }
 
 function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string}) {
-    const status = props.receivedChannel.status;
+    const loadedStatus = props.receivedChannel.status;
     const channel = props.receivedChannel.data;
     const { socket } = useContext(MessageContext);
+    const { user } = useContext(AuthContext);
+
+    const [ status, setStatus ] = useState<string | null>(null);
     const [ admins, setAdmins ] = useState<User[] | null>(null);
     const [ users, setUsers ] = useState<User[] | null>(null);
     const [ muted, setMuted ] = useState<User[] | null>(null);
     const [ banned, setBanned ] = useState<User[] | null>(null);
-    const { setDisplay, setCurrentConv, setIsChannel, setNewConv } =
-        useContext(ChatDisplayContext);
 
     const filterList = (list: User[]| null, target: User) => {
         if (!list)
@@ -56,38 +57,60 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
     }
 
     useEffect( () => {
-        console.log("channel id : " + channel.id);
-        console.log("currentConvId : " + props.currentConvId);
         if (socket)
         {
-            socket.on("muteUser", (user) => {
-                setAdmins(filterList(admins, user));
-                setUsers(filterList(users, user));
-                setMuted(addToList(muted, user));
+            socket.on("muteUser", (target, channelId) => {
+                if (channelId === props.currentConvId){
+                    setAdmins(filterList(admins, target));
+                    setUsers(filterList(users, target));
+                    setMuted(addToList(muted, target));
+                }
+                if (user?.id === target.id)
+                    setStatus("user");
             });
-            socket.on("unMuteUser", (user) => {
-                setUsers(addToList(users, user));
-                setMuted(filterList(muted, user));
+            socket.on("unMuteUser", (target, channelId) => {
+                if (channelId === props.currentConvId){
+                    setUsers(addToList(users, target));
+                    setMuted(filterList(muted, target));
+                }
+                if (user?.id === target.id)
+                    setStatus("user");
             });
-            socket.on("banUser", (user) => {
-                setAdmins(filterList(admins, user));
-                setUsers(filterList(users, user));
-                setMuted(filterList(muted, user));
-                setBanned(addToList(banned, user));
+            socket.on("banUser", (target, channelId) => {
+                if (channelId === props.currentConvId) {
+                    setAdmins(filterList(admins, target));
+                    setUsers(filterList(users, target));
+                    setMuted(filterList(muted, target));
+                    setBanned(addToList(banned, target));
+                }
+                if (user?.id === target.id)
+                    setStatus("user");
             });
-            socket.on("unBanUser", (user) => {
-                setBanned(filterList(banned, user));
+            socket.on("unBanUser", (target, channelId) => {
+                if (channelId === props.currentConvId) {
+                    setBanned(filterList(banned, target));
+                }
+                if (user?.id === target.id)
+                    setStatus("user");
             });
-            socket.on("makeAdmin", (user) => {
-                setAdmins(addToList(admins, user));
-                setUsers(filterList(users, user));
+            socket.on("makeAdmin", (target, channelId) => {
+                if (channelId === props.currentConvId) {
+                    setAdmins(addToList(admins, target));
+                    setUsers(filterList(users, target));
+                }
+                if (user?.id === target.id)
+                    setStatus("admin");
             });
-            socket.on("revokeAdmin", (user) => {
-                setAdmins(filterList(admins, user));
-                setUsers(addToList(users, user));
+            socket.on("revokeAdmin", (target, channelId) => {
+                if (channelId === props.currentConvId) {
+                    setAdmins(filterList(admins, target));
+                    setUsers(addToList(users, target));
+                }
+                if (user?.id === target.id)
+                    setStatus("user");
             });
-            socket.on("joinChannel", (channel, user) => {
-                setUsers(addToList(users, user));
+            socket.on("joinChannel", (channel, target) => {
+                setUsers(addToList(users, target));
             });
 
         return (() => {
@@ -106,6 +129,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
             return;
         let muted: User[] = [];
 
+        setStatus(loadedStatus);
         setAdmins(channel.admins);
         if (channel.banned)
             setBanned(channel.banned.map((elem) => elem.user));
