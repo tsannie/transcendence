@@ -1,4 +1,5 @@
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
@@ -174,7 +175,9 @@ function ChannelProfile(props: {channel: IChannel}) {
             <div className="date">conv started at: {channel.createdAt.toLocaleString()}</div>
             <span className="owner">owned by: {channel.owner?.username}</span>
             <button className="clickable_profile">
-                <img src={channel.owner?.profile_picture}/>
+                <Link to={"/profile/" + channel.owner?.username}>
+                    <img src={channel.owner?.profile_picture}/>
+                </Link>
             </button>
         </div>
   </div>);
