@@ -19,7 +19,7 @@ export default function GameMenu() {
     if (!room) {
       console.log("socket id == ", socket?.id);
       socket?.emit("matchmaking", data);
-      toast.success("Room created !");
+      toast.info("join matchmaking ...");
     }
   }
 

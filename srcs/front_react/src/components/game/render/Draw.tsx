@@ -21,7 +21,6 @@ export function draw_game(
 }
 
 /*export function draw_game_ended(
-  isP2: boolean,
   ctx: CanvasRenderingContext2D,
   player_p1: IPlayer,
   player_p2: IPlayer,
@@ -37,7 +36,7 @@ export function draw_game(
   ctx.textAlign = "center";
   ctx.fillText("Game Ended\n\n\n\n\n\n", canvas_width / 2, canvas_height / 2);
   if (
-    (player_p1.gave_up === true && isP2 === true) ||
+    (player_p1.gave_up === true && isP2 === true) ||      // TODO WARN no p2
     (player_p2.gave_up === true && isP2 === false)
   )
     ctx.fillText(
@@ -46,7 +45,7 @@ export function draw_game(
       canvas_height / 2 + canvas_height / 4
     );
   else if (
-    (player_p1.won === true && isP2 === false) ||
+    (player_p1.won === true && isP2 === false) ||   // TODO WARN NO P2
     (player_p2.won === true && isP2 === true)
   )
     ctx.fillText(
