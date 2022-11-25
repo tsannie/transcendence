@@ -1,13 +1,15 @@
 import React, {
   CanvasHTMLAttributes,
   createRef,
+  Fragment,
+  MouseEvent,
   RefObject,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { draw_game_ended, draw_game } from "./Draw";
+import { draw_game } from "./Draw";
 import {
   border_size_default,
   canvas_back_height,
@@ -20,65 +22,45 @@ import {
   screen_ratio,
 } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { ISetPaddle, IPlayer, Room, Frame } from "../types";
+import { ISetPaddle, IPlayer, Room, IDrawResponsive } from "../types";
 
 let position_y: number = 0;
 export function GameRender() {
-  // ???????????
-  let lowerSize =
-    window.innerWidth > window.innerHeight
-      ? window.innerHeight
-      : window.innerWidth;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [widthCanvas, setWidthCanvas] = useState<number>(lowerSize);
-  const [heightCanvas, setHeightCanvas] = useState<number>(
-    lowerSize / screen_ratio
-  );
-  const [border_size, setBorderSize] = useState<number>(
-    lowerSize / screen_ratio / canvas_back_height / border_size_default
-  );
-  const [ratio_width, setRatioWidth] = useState<number>(
-    lowerSize / canvas_back_width
-  );
-  const [ratio_height, setRatioHeight] = useState<number>(
-    lowerSize / screen_ratio / canvas_back_height
-  );
 
-  const [frameToDraw, setFrameToDraw] = useState<Frame>();
+  const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
+
+  //const [frameToDraw, setFrameToDraw] = useState<Frame>();
 
   //const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
-  const { room, setRoom, socket, isP2 } = useContext(
-    GameContext
-  ) as GameContextType;
+  const { room, setRoom, socket } = useContext(GameContext) as GameContextType;
   //let resize = new IResize();
 
   function resize() {
-    lowerSize =
+    const lowerSize =
       window.innerWidth > window.innerHeight
         ? window.innerHeight
         : window.innerWidth;
-    setWidthCanvas(lowerSize);
-    setHeightCanvas(lowerSize / screen_ratio);
 
-    const ratio_width_tmp = lowerSize / canvas_back_width;
-    const ratio_height_tmp = lowerSize / screen_ratio / canvas_back_height;
-    setRatioWidth(ratio_width_tmp);
-    setRatioHeight(ratio_height_tmp);
+    setDrawResponsive({
+      canvas_width: lowerSize,
+      canvas_height: lowerSize / screen_ratio,
+      ratio_width: lowerSize / canvas_back_width,
+      ratio_height: lowerSize / screen_ratio / canvas_back_height,
+      border_size:
+        lowerSize / screen_ratio / canvas_back_height / border_size_default,
+    });
 
-    setBorderSize(
-      lowerSize / screen_ratio / canvas_back_height / border_size_default
-    );
-
-    setFrameToDraw({
+    /*setFrameToDraw({
       p1_paddle: {
         x: paddle_margin * ratio_width,
-        y: (canvas_back_height / 2 - paddle_height / 2) * ratio_height,
+        y: 0,
         width: paddle_width * ratio_width,
         height: paddle_height * ratio_height,
       },
       p2_paddle: {
         x: (canvas_back_width - paddle_margin - paddle_width) * ratio_width,
-        y: (canvas_back_height / 2 - paddle_height / 2) * ratio_height,
+        y: 0,
         width: paddle_width * ratio_width,
         height: paddle_height * ratio_height,
       },
@@ -87,7 +69,7 @@ export function GameRender() {
         y: (canvas_back_height / 2) * ratio_height,
         rad: rad * ratio_width,
       },
-    });
+    });*/
   }
 
   useEffect(() => {
@@ -114,24 +96,6 @@ export function GameRender() {
 
     socket?.on("updateGame", (room: Room) => {
       setRoom(room);
-      const frame = frameToDraw as Frame;
-      console.log("frame:", frame);
-      setFrameToDraw({
-        ...frame,
-        p1_paddle: {
-          ...frame.p1_paddle,
-          y: room.p1_y_paddle * ratio_height,
-        },
-        p2_paddle: {
-          ...frame.p2_paddle,
-          y: room.p2_y_paddle * ratio_height,
-        },
-        ball: {
-          ...frame.ball,
-          x: room.ball.x * ratio_width,
-          y: room.ball.y * ratio_height,
-        },
-      });
     });
   }, [socket]);
 
@@ -139,25 +103,25 @@ export function GameRender() {
     const data: ISetPaddle = {
       room_id: room?.id as string,
       positionY: position_y,
-      front_canvas_height: heightCanvas,
+      front_canvas_height: drawResponsive?.canvas_height as number,
     };
     socket?.emit("setPaddle", data);
   }
 
   useEffect(() => {
     // TODO refresh canvas if room is modified
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
     //console.log("NEW FRAME", room);
 
     const render = () => {
-      if (ctx && room) {
+      const canvas = canvasRef.current as HTMLCanvasElement;
+      const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+      if (ctx && room && drawResponsive) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (room.status === RoomStatus.PLAYING && frameToDraw) {
+        if (room.status === RoomStatus.PLAYING) {
           //console.log("status playing =", room.status);
           setPaddle();
-          draw_game(ctx, canvas, room, frameToDraw, 0);
+          draw_game(ctx, canvas, room, drawResponsive, 0);
         } else console.log("status ended =", room.status);
         /*draw_game_ended(
             isP2,
@@ -169,15 +133,15 @@ export function GameRender() {
           );*/
       }
     };
-    render();
-  }, [frameToDraw, room]);
+    if (drawResponsive) render();
+  }, [room]);
 
   /*function leaveGame() {    // TODO DELETE
     socket?.emit("giveUp", room?.id);
     setRoom(null);
   }*/
 
-  function mouv_mouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+  /*function mouv_mouse(e: MouseEvent<HTMLCanvasElement, MouseEvent>) {
     if (!frameToDraw) return;
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
@@ -193,20 +157,26 @@ export function GameRender() {
     )
       position_y = position_y;
     else position_y = tmp_pos;
-  }
+  }*/
 
   return (
     <div>
-      <canvas
-        id="canvas"
-        ref={canvasRef}
-        height={heightCanvas}
-        width={widthCanvas}
-        onMouseMove={(e) => mouv_mouse(e)}
-        style={{ backgroundColor: "black" }}
-      ></canvas>
-      <br />
-      {/*<button onClick={leaveGame}>Leave The Game</button> */}
+      {drawResponsive ? (
+        <Fragment>
+          <canvas
+            id="canvas"
+            ref={canvasRef}
+            height={drawResponsive.canvas_height}
+            width={drawResponsive.canvas_width}
+            //onMouseMove={(e) => mouv_mouse(e)}
+            style={{ backgroundColor: "black" }}
+          ></canvas>
+          <br />
+          {/*<button onClick={leaveGame}>Leave The Game</button> */}
+        </Fragment>
+      ) : (
+        <div>loading...</div>
+      )}
     </div>
   );
 }

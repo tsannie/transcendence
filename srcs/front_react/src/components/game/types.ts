@@ -10,7 +10,7 @@ import {
 export interface IBall {
   x: number;
   y: number;
-  rad: number;
+  //rad: number;
 }
 
 export interface IPaddle {
@@ -60,8 +60,16 @@ export interface Room {
   ball: IBall;
 }
 
-export interface Frame {
+export interface IDrawResponsive {
+  canvas_width: number;
+  canvas_height: number;
+  ratio_width: number;
+  ratio_height: number;
+  border_size: number;
+}
+
+/*export interface IFrameResponsive {
   p1_paddle: IPaddle;
   p2_paddle: IPaddle;
   ball: IBall;
-}
+}*/
