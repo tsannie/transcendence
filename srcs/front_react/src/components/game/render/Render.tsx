@@ -48,7 +48,7 @@ export function GameRender() {
       ratio_width: lowerSize / canvas_back_width,
       ratio_height: lowerSize / screen_ratio / canvas_back_height,
       border_size:
-        lowerSize / screen_ratio / canvas_back_height / border_size_default,
+        border_size_default * (lowerSize / screen_ratio / canvas_back_height),
     });
 
     /*setFrameToDraw({
@@ -141,10 +141,7 @@ export function GameRender() {
   }*/
 
   function mouv_mouse(e: any) {
-    //if (!frameToDraw) return;
-    //const responsive: IDrawResponsive = {};
     if (!drawResponsive) return;
-    // position_y = e.clientY / drawResponsive.ratio_height;
 
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
@@ -152,13 +149,20 @@ export function GameRender() {
     const tmp_pos =
       e.clientY - rect?.top - (paddle_height * drawResponsive.ratio_height) / 2;
 
-    /*  if (tmp_pos > 0 && tmp_pos < paddle_height / 8)
-      position_y = border_size_default;
-    else if (tmp_pos > canvas_back_height - paddle_height)
-      position_y = canvas_back_height - border_size_default - paddle_height;
-    else if (tmp_pos > canvas_back_height - paddle_height || tmp_pos < 0)
-      position_y = position_y;
-    else  */ position_y = tmp_pos;
+    if (tmp_pos <= drawResponsive.border_size) {
+      position_y = drawResponsive.border_size + 1;
+    } else if (
+      tmp_pos + paddle_height * drawResponsive.ratio_height >=
+      drawResponsive.canvas_height - drawResponsive.border_size
+    ) {
+      position_y =
+        drawResponsive.canvas_height -
+        1 -
+        drawResponsive.border_size -
+        paddle_height * drawResponsive.ratio_height;
+    } else {
+      position_y = tmp_pos;
+    }
   }
 
   return (
