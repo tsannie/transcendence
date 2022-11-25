@@ -66,6 +66,7 @@ $search_bar_size: calc(250 * var(--res));
     border-style: dashed;
     border-radius: 50%;
     width: calc(140 * var(--res));
+    animation: pulse 5s ease infinite;
   }
 }
 
@@ -113,6 +114,21 @@ $search_bar_size: calc(250 * var(--res));
   font-size: calc(20 * var(--res));
   span {
     font-size: calc(18 * var(--res));
+  }
+  h3 {
+    animation: bounce 2s ease infinite;
+  }
+  #matches {
+    animation-delay: 1s;
+  }
+  #win-rate {
+    animation-delay: 0s;
+  }
+  #elo {
+    animation-delay: 1.5s;
+  }
+  #classement {
+    animation-delay: 0.5s;
   }
 }
 
