@@ -1,4 +1,10 @@
-import { white } from "../const/const";
+import {
+  paddle_height,
+  paddle_margin,
+  paddle_width,
+  rad,
+  white,
+} from "../const/const";
 import { IBall, IDrawResponsive, IPaddle, IPlayer, Room } from "../types";
 
 export function draw_game(
@@ -8,19 +14,20 @@ export function draw_game(
   drawResponsive: IDrawResponsive,
   countdown: number
 ) {
-  /*if (countdown != 0)
+  if (countdown != 0)
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
-    draw_ball(ctx, drawResponsive.ball);
+    draw_ball(ctx, room.ball, drawResponsive);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
   draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, drawResponsive.p1_paddle);
-  draw_paddle(ctx, drawResponsive.p2_paddle);*/
+  draw_paddle(ctx, room.p1_y_paddle, drawResponsive);
+  draw_paddle(ctx, room.p2_y_paddle, drawResponsive);
 }
 
-/*export function draw_game_ended(
+export function draw_game_ended(
+  isP2: boolean,
   ctx: CanvasRenderingContext2D,
   player_p1: IPlayer,
   player_p2: IPlayer,
@@ -36,7 +43,7 @@ export function draw_game(
   ctx.textAlign = "center";
   ctx.fillText("Game Ended\n\n\n\n\n\n", canvas_width / 2, canvas_height / 2);
   if (
-    (player_p1.gave_up === true && isP2 === true) ||      // TODO WARN no p2
+    (player_p1.gave_up === true && isP2 === true) || // TODO WARN no p2
     (player_p2.gave_up === true && isP2 === false)
   )
     ctx.fillText(
@@ -45,7 +52,7 @@ export function draw_game(
       canvas_height / 2 + canvas_height / 4
     );
   else if (
-    (player_p1.won === true && isP2 === false) ||   // TODO WARN NO P2
+    (player_p1.won === true && isP2 === false) || // TODO WARN NO P2
     (player_p2.won === true && isP2 === true)
   )
     ctx.fillText(
@@ -145,7 +152,18 @@ function draw_score(
 //////// DRAW ELEMENTS
 ////////////////////////
 
-function draw_paddle(ctx: CanvasRenderingContext2D, IPaddle: IPaddle) {
+function draw_paddle(
+  ctx: CanvasRenderingContext2D,
+  y_paddle: number,
+  drawResponsive: IDrawResponsive
+) {
+  const IPaddle: IPaddle = {
+    x: paddle_margin * drawResponsive.ratio_width,
+    y: y_paddle * drawResponsive.ratio_height,
+    width: paddle_width * drawResponsive.ratio_width,
+    height: paddle_height * drawResponsive.ratio_height,
+  };
+
   ctx.beginPath();
   ctx.rect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
   ctx.fillStyle = white;
@@ -153,15 +171,22 @@ function draw_paddle(ctx: CanvasRenderingContext2D, IPaddle: IPaddle) {
   ctx.fill();
 }
 
-function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
+function draw_ball(
+  ctx: CanvasRenderingContext2D,
+  IBall: IBall,
+  drawResponsive: IDrawResponsive
+) {
+  IBall.x = IBall.x * drawResponsive.ratio_width;
+  IBall.y = IBall.y * drawResponsive.ratio_height;
+
   ctx.beginPath();
   ctx.fillStyle = white;
   ctx.rect(
-    IBall.x - 2 * (IBall.rad / 2),
-    IBall.y - 2 * (IBall.rad / 2),
-    IBall.rad * 2,
-    IBall.rad * 2
+    IBall.x - 2 * ((rad * drawResponsive.ratio_width) / 2),
+    IBall.y - 2 * ((rad * drawResponsive.ratio_width) / 2),
+    rad * drawResponsive.ratio_width * 2,
+    rad * drawResponsive.ratio_width * 2
   );
   ctx.fill();
   ctx.stroke();
-}*/
+}
