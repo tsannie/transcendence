@@ -56,8 +56,8 @@ function UserOptions(props: IMemberProps) {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban User</button>);
-            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute User</button>);
+            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
             adminOptionsJSX.push(<button key={3} onClick={revokeAdmin}>Revoke Admin</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
@@ -69,8 +69,8 @@ function UserOptions(props: IMemberProps) {
         if (isOwner)
             adminOptionsJSX.push(<button key={3} onClick={makeAdmin}>Make Admin</button>)
         if (isOwner || isAdmin){
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban User</button>);
-            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute User</button>);
+            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -79,8 +79,8 @@ function UserOptions(props: IMemberProps) {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isAdmin || isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={unMuteUser}>Unmute User</button>);
-            adminOptionsJSX.push(<button key={2} onClick={banUser}>Ban User</button>);
+            adminOptionsJSX.push(<button key={1} onClick={unMuteUser}>Unmute</button>);
+            adminOptionsJSX.push(<button key={2} onClick={banUser}>Ban</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -89,7 +89,7 @@ function UserOptions(props: IMemberProps) {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isAdmin || isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={unBanUser}>UnBan User</button>);
+            adminOptionsJSX.push(<button key={1} onClick={unBanUser}>UnBan</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
