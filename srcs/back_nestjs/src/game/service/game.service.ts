@@ -34,20 +34,22 @@ export class GameService {
     private readonly userService: UserService,
   ) {}
 
+  private gamesRoom: Map<string, Room> = new Map();
+  private usersRoom: Map<Socket, string> = new Map();
+
   /*   async findAll(): Promise<RoomEntity[]> {
     return await this.all_game.find();
   } */
 
-  joinFastRoom(user: UserEntity, game: Map<string, Room>): Room {
+  findRoom(user: UserEntity): Room {
     console.log('joinFastRoom');
-    let room_game: Room;
+    let room: Room;
     let already_in_game: boolean = false;
 
-    console.log('game.size : ', game.size);
-    const size = game.size;
+    const size = this.gamesRoom.size;
     if (size !== 0) {
       console.log('Join room');
-      const all_rooms = game.values();
+      const all_rooms = this.gamesRoom.values();
       for (const room_db of all_rooms) {
         if (
           (room_db.p1_id && user.id === room_db.p1_id) ||
@@ -55,15 +57,16 @@ export class GameService {
         )
           already_in_game = true;
         else if (room_db.status === RoomStatus.WAITING && !room_db.p2_id)
-          room_game = room_db;
+          room = room_db;
       }
     }
-    if (!room_game && already_in_game === false) {
+    if (!room && already_in_game === false) {
       console.log('Create room');
-      room_game = new Room();
-      room_game.id = uuidv4();
+      room = new Room();
+      room.id = uuidv4();
+      this.gamesRoom.set(room.id, room);
     }
-    return room_game;
+    return room;
   }
 
   /*   async deleteUser(): Promise<void> {
@@ -73,16 +76,31 @@ export class GameService {
     });
   } */
 
-  findRoomBySocketId(
-    socket_id: string,
-    game: Map<string, Room>,
-  ): Room | undefined {
-    const all_rooms = game.values();
+  findRoomBySocketId(socket_id: string): Room | undefined {
+    const all_rooms = this.gamesRoom.values();
     for (const room of all_rooms) {
       if (room.p1_SocketId === socket_id || room.p2_SocketId === socket_id)
         return room;
     }
     return undefined;
+  }
+
+  getRoomById(room_id: string): Room | undefined {
+    return this.gamesRoom.get(room_id);
+  }
+
+  joinRoom(room_id: string, client: Socket, server: Server) {
+    const room_to_leave = this.usersRoom.get(client);
+    if (room_to_leave) {
+      client.leave(room_to_leave);
+    }
+    server.in(client.id).socketsJoin(room_id);
+    this.usersRoom.set(client, room_id);
+  }
+
+  async leaveRoom(room_id: string, client: Socket) {
+    if (room_id) client.leave(room_id);
+    this.usersRoom.delete(client);
   }
 
   ////////////////////
@@ -136,7 +154,7 @@ export class GameService {
 
     await this.updateHistory(p1, p2, statGame);
     console.log('CRASH 5');
-    await this.gameStatRepository.save(statGame);
+    await this.gamesRoomStatRepository.save(statGame);
     console.log('CRASH 6');
   }
 
@@ -250,7 +268,7 @@ export class GameService {
     await this.ballHitPaddlep2(room, server);
   }
 
-  async launchGame(room: Room, server: Server, game: Map<string, Room>) {
+  async launchGame(room: Room, server: Server) {
     // TODO cooldown
 
     while (room.status === RoomStatus.PLAYING) {
@@ -264,7 +282,7 @@ export class GameService {
       server.in(room.id).emit('endGame', room);
       //room.p1_SocketId.leave(room.id);
       //room.p2_SocketId.leave(room.id);
-      game.delete(room.id);
+      this.gamesRoom.delete(room.id);
     }
     // leave room
   }
