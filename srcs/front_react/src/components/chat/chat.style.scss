@@ -205,7 +205,8 @@ $width_chat: calc(450 * var(--res));
     flex-direction: column;
     border-style: dashed;
     border-width: calc(3 * var(--res)) !important;
-    
+    margin-bottom: 2%;
+
     .title {
       font-size: calc(14 * var(--res));
       align-self: center;
@@ -251,7 +252,7 @@ $width_chat: calc(450 * var(--res));
     button {
       width: fit-content;
       border-style: none;
-      padding: 0%;
+      padding: 0.6%;
     }
 
     img {
