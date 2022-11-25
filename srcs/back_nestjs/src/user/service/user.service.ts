@@ -164,6 +164,7 @@ export class UserService {
         admin_of: true,
         friend_requests: true,
         friends: true,
+        history: true,
       },
     });
   }
@@ -470,6 +471,6 @@ export class UserService {
         rank = index + 1;
       }
     });
-    return rank
+    return rank;
   }
 }

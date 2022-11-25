@@ -1,28 +1,23 @@
 import { white } from "../const/const";
-import { IBall, IGameObj, IPaddle, IPlayer } from "../types";
+import { IBall, IFrame, IGameObj, IPaddle, IPlayer, Room } from "../types";
 
 export function draw_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
-  gameObj: IGameObj,
+  room: Room,
+  frameToDraw: IFrame,
   countdown: number
 ) {
   if (countdown != 0)
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
-    draw_ball(ctx, gameObj.ball);
-    draw_score(
-      ctx,
-      gameObj.player_p1,
-      gameObj.player_p2,
-      canvas.height,
-      canvas.width
-    );
+    draw_ball(ctx, frameToDraw.ball);
+    draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
   draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, gameObj.paddle_p1);
-  draw_paddle(ctx, gameObj.paddle_p2);
+  draw_paddle(ctx, frameToDraw.p1_paddle);
+  draw_paddle(ctx, frameToDraw.p2_paddle);
 }
 
 export function draw_game_ended(
@@ -129,8 +124,8 @@ function draw_countdown(
 
 function draw_score(
   ctx: CanvasRenderingContext2D,
-  player_p1: IPlayer,
-  player_p2: IPlayer,
+  p1_score: number,
+  p2_score: number,
   canvas_height: number,
   canvas_width: number
 ) {
@@ -138,9 +133,9 @@ function draw_score(
   ctx.font = canvas_width / 10 + "px Arcade";
   ctx.fillStyle = white;
   ctx.textAlign = "center";
-  ctx.fillText(player_p1.score.toString(), canvas_width / 4, canvas_height / 4);
+  ctx.fillText(p1_score.toString(), canvas_width / 4, canvas_height / 4);
   ctx.fillText(
-    player_p2.score.toString(),
+    p2_score.toString(),
     canvas_width - canvas_width / 4,
     canvas_height / 4
   );

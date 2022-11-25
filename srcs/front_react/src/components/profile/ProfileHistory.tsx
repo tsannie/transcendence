@@ -13,22 +13,23 @@ function ProfileHistory(props: IProps) {
   if (props.player?.history.length !== 0) {
     allHistory = props.player?.history.map((game, index) => {
       return (
-        <li className="profile__body__history__list" key={index}>
-          <div className="profile__body__history__item">
-            <div className="trophy-indicator">
-              {game.winner_id === props.player?.id ? <TrophyIcon /> : null}
-            </div>
-            <div className="info">
-              <span>
-                {props.player?.id === game.winner_id ? "victory" : "defeat"}
-              </span>
-              <div className="info__elo">
-                {props.player?.id === game.winner_id
-                  ? game.eloDiff
-                  : -game.eloDiff}
+        <>
+          <li className="profile__body__history__list" key={index}>
+            <div className="profile__body__history__item">
+              <div className="trophy-indicator">
+                {game.winner_id === props.player?.id ? <TrophyIcon /> : null}
               </div>
-            </div>
-            {/* <img
+              <div className="info">
+                <span>
+                  {props.player?.id === game.winner_id ? "victory" : "defeat"}
+                </span>
+                <div className="info__elo">
+                  {props.player?.id === game.winner_id
+                    ? game.eloDiff
+                    : -game.eloDiff}
+                </div>
+              </div>
+              {/* <img
             // display picture of the opponent
               src={
                 game.players[0].id === props.player?.id
@@ -37,11 +38,19 @@ function ProfileHistory(props: IProps) {
               } // DON'T WORK BECAUSE BACK IS RELATIONS AND I DON'T HAVE THEM
               //alt="avatar"
            > */}
-            <span>
-              {props.player?.id === game.winner_id ? game.p1_score : game.p2_score } - {props.player?.id === game.winner_id ? game.p2_score : game.p1_score}
-            </span>
-          </div>
-        </li>
+              <span>
+                {props.player?.id === game.winner_id
+                  ? game.p1_score
+                  : game.p2_score}{" "}
+                -{" "}
+                {props.player?.id === game.winner_id
+                  ? game.p2_score
+                  : game.p1_score}
+              </span>
+            </div>
+          </li>
+          <hr />
+        </>
       );
     });
   }
@@ -50,6 +59,7 @@ function ProfileHistory(props: IProps) {
       <div className="profile__body__history__title">
         <h3>recent games</h3>
       </div>
+      <hr id="full" />
       <div>{allHistory?.reverse()}</div>
     </div>
   );
