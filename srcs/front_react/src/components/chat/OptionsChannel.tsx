@@ -87,11 +87,6 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
                 setUsers(addToList(users, user));
             });
             socket.on("joinChannel", (channel, user) => {
-                console.log("joinChannel === ", channel);
-                setDisplay(ChatType.CONV);
-                setCurrentConv(channel.id);
-                setIsChannel(true);
-                setNewConv(channel);
                 setUsers(addToList(users, user));
             });
 
