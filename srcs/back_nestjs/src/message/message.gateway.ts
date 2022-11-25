@@ -143,19 +143,19 @@ export class MessageGateway
 
   joinChannel(user: UserEntity, channelId: string) {
     // find the socket of the user
-    this.joinAllSocketToChannel(channelId, user.id);
+    this.joinAllSocketToChannel(user.id, channelId);
     this.server.to(channelId).emit('joinChannel', user, channelId);
   }
 
-  leaveChannel(user: UserEntity, channelId: string) {
+  leaveChannel(user: UserEntity, channel: ChannelEntity) {
     // find the socket of the user
-    this.leaveAllSocketToChannel(channelId, user.id);
-    this.server.to(channelId).emit('leaveChannel', user, channelId);
+    this.server.to(channel.id).emit('leaveChannel', user, channel.id, channel.owner);
+    this.leaveAllSocketToChannel(user.id, channel.id);
   }
 
-  deleteChannel(user: UserEntity, channelId: string) {
+  deleteChannel(channelId: string) {
     // find the socket of the user
-    this.server.to(channelId).emit('deleteChannel', user, channelId);
+    this.server.to(channelId).emit('deleteChannel', channelId);
   }
 
   muteUser(mutedUser: MuteEntity) {
@@ -182,7 +182,7 @@ export class MessageGateway
     this.server.to(channelId).emit('revokeAdmin', revokeAdmin, channelId);
   }
 
-  joinAllSocketToChannel(userId: string, channelId) {
+  joinAllSocketToChannel(userId: string, channelId: string) {
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
