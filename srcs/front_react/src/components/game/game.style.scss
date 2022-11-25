@@ -1,0 +1,122 @@
+.game {
+  display: flex;
+  border-style: dashed;
+  padding: calc(10 * var(--res));
+  width: calc(820 * var(--res));
+  height: calc(500 * var(--res));
+}
+.game__menu {
+  display: flex;
+  flex: 0 0 30%;
+
+  flex-direction: column;
+  justify-content: space-between;
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: calc(26 * var(--res));
+  }
+
+  .game__menu__item__header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    border-bottom: dashed;
+  }
+}
+
+.duel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 35%;
+  border: dashed;
+}
+
+.current {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  border: dashed;
+  margin-top: calc(10 * var(--res));
+}
+
+.game__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-left: calc(10 * var(--res));
+}
+
+.game__content__header {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.game__content__header__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  h1 {
+    margin: calc(10 * var(--res));
+  }
+}
+
+.game__content__header__stat {
+  display: flex;
+  flex: 0 0 45%;
+  justify-content: space-between;
+
+  .stat__item {
+    $size_item: calc(50 * var(--res));
+    padding: calc(9 * var(--res));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: $size_item;
+    width: $size_item;
+    border: dashed;
+    min-width: 10%;
+    h3 {
+      margin: 0;
+    }
+    span {
+      font-size: calc(15 * var(--res));
+    }
+  }
+}
+
+.matchmaking {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  h3 {
+    margin-top: 0;
+    margin-bottom: calc(20 * var(--res));
+  }
+}
+
+.matchmaking__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  button {
+    width: calc(250 * var(--res));
+    height: calc(170 * var(--res));
+  }
+}
