@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
@@ -109,8 +110,10 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
                 if (user?.id === target.id)
                     setStatus("user");
             });
-            socket.on("joinChannel", (channel, target) => {
-                setUsers(addToList(users, target));
+            socket.on("joinChannel", (target, channelId) => {
+                if (channelId === props.currentConvId) {
+                    setUsers(addToList(users, target));
+                }
             });
 
         return (() => {
@@ -166,6 +169,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
 
 function ChannelProfile(props: {channel: IChannel}) {
     const { channel } = props;
+    const { user } = useContext(AuthContext);
 
     return (
     <div className="conversation__options__title">
@@ -176,6 +180,14 @@ function ChannelProfile(props: {channel: IChannel}) {
             <button className="clickable_profile">
                 <img src={channel.owner?.profile_picture}/>
             </button>
+            <button className="leave-channel" >
+                Leave
+            </button>
+            { props.channel.owner?.id === user?.id &&
+                <button className="delete-channel">
+                    Delete
+                </button>
+            }
         </div>
   </div>);
 }
