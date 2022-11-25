@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { IMemberProps } from "./OptionsChannel";
@@ -96,11 +97,14 @@ function UserOptions(props: IMemberProps) {
 
     // TODO: button redirect to profile page of user
     const displayOptions = () => {
-        console.log(dropdownStyle);
         return (
         <div className="dropdown" style={dropdownStyle.current}>
             <div className="options">Options</div>
-            <button>Profile</button>
+            <button>
+                <Link to={"/profile/" + user.username}>
+                    Profile
+                </Link>
+            </button>
             {type === "Admins" && adminOptions()}
             {type === "Members" && memberOptions()}
             {type === "Muted" && mutedOptions()}
