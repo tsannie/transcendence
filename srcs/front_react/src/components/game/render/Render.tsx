@@ -141,23 +141,26 @@ export function GameRender() {
     setRoom(null);
   }*/
 
-  /*function mouv_mouse(e: MouseEvent<HTMLCanvasElement, MouseEvent>) {
-    if (!frameToDraw) return;
+  function mouv_mouse(e: any) {
+    //if (!frameToDraw) return;
+    //const responsive: IDrawResponsive = {};
+    if (!drawResponsive) return;
+    // position_y = e.clientY / drawResponsive.ratio_height;
+
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
-    const tmp_pos = e.clientY - rect?.top - frameToDraw.p1_paddle.height / 2;
 
-    if (tmp_pos > 0 && tmp_pos < frameToDraw.p1_paddle.height / 8)
-      position_y = border_size;
-    else if (tmp_pos > heightCanvas - frameToDraw.p2_paddle.height)
-      position_y = heightCanvas - border_size - frameToDraw.p2_paddle.height;
-    else if (
-      tmp_pos > heightCanvas - frameToDraw.p2_paddle.height ||
-      tmp_pos < 0
-    )
+    const tmp_pos =
+      e.clientY - rect?.top - (paddle_height * drawResponsive.ratio_height) / 2;
+
+    /*  if (tmp_pos > 0 && tmp_pos < paddle_height / 8)
+      position_y = border_size_default;
+    else if (tmp_pos > canvas_back_height - paddle_height)
+      position_y = canvas_back_height - border_size_default - paddle_height;
+    else if (tmp_pos > canvas_back_height - paddle_height || tmp_pos < 0)
       position_y = position_y;
-    else position_y = tmp_pos;
-  }*/
+    else  */ position_y = tmp_pos;
+  }
 
   return (
     <div>
@@ -168,7 +171,7 @@ export function GameRender() {
             ref={canvasRef}
             height={drawResponsive.canvas_height}
             width={drawResponsive.canvas_width}
-            //onMouseMove={(e) => mouv_mouse(e)}
+            onMouseMove={(e) => mouv_mouse(e)}
             style={{ backgroundColor: "black" }}></canvas>
           <br />
           {/*<button onClick={leaveGame}>Leave The Game</button> */}
