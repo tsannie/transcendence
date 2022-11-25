@@ -197,13 +197,11 @@ $width_chat: calc(450 * var(--res));
   flex-direction: column;
   height: 100%;
   padding-top: 5%;
-  overflow-x: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow-y: auto;
 
   .category {
     display: flex;
+    flex: 0 0 15%;
     flex-direction: column;
     border-style: dashed;
     border-width: calc(3 * var(--res)) !important;
@@ -240,7 +238,7 @@ $width_chat: calc(450 * var(--res));
         border-style: dashed;
         height: fit-content;
         z-index: 1;
-        
+
         .options{
           display: flex;
           justify-content: center;

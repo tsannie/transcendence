@@ -156,7 +156,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
     return (
         <Fragment>
         { channel ?
-        <div className="conversation__options__members" key={props.currentConvId} >
+        <div className="conversation__options__members" key={props.currentConvId} onClick={ (e) =>{ console.log("bubble2 =", (e.target as HTMLElement).getBoundingClientRect()); console.log((e.target as HTMLElement).getBoundingClientRect().top, (e.target as HTMLElement).getBoundingClientRect().left)}}>
             <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={admins}/>
             <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={users as User[] | null}/>
             <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={muted as User[] | null}/>
