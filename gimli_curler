@@ -1,0 +1,14 @@
+#!/bin/bash
+
+for i in {1..100}
+do
+	curl --location --request POST 'http://localhost:4000/channel/falseUsergenerator' \
+	--header 'Content-Type: application/json' \
+	--data-raw '{
+		    "username": "player'$i'",
+			    "channel": {
+					        "name":"e964bd1f-651f-4112-a146-dc3deba3c7c2"
+							    }
+	}'
+done
+
