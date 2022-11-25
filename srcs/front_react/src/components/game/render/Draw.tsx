@@ -22,8 +22,20 @@ export function draw_game(
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
   draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, room.p1_y_paddle, drawResponsive);
-  draw_paddle(ctx, room.p2_y_paddle, drawResponsive);
+  draw_paddle(
+    ctx,
+    room.p1_y_paddle,
+    paddle_margin * drawResponsive.ratio_width,
+    drawResponsive
+  );
+  draw_paddle(
+    ctx,
+    room.p2_y_paddle,
+    drawResponsive.canvas_width -
+      paddle_margin * drawResponsive.ratio_width -
+      paddle_width * drawResponsive.ratio_width,
+    drawResponsive
+  );
 }
 
 export function draw_game_ended(
@@ -155,10 +167,11 @@ function draw_score(
 function draw_paddle(
   ctx: CanvasRenderingContext2D,
   y_paddle: number,
+  x_paddle: number,
   drawResponsive: IDrawResponsive
 ) {
   const IPaddle: IPaddle = {
-    x: paddle_margin * drawResponsive.ratio_width,
+    x: x_paddle,
     y: y_paddle * drawResponsive.ratio_height,
     width: paddle_width * drawResponsive.ratio_width,
     height: paddle_height * drawResponsive.ratio_height,
