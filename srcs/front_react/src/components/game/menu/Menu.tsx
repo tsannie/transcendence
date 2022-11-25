@@ -9,7 +9,7 @@ export default function GameMenu() {
   const { socket, room } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext);
 
-  let game_mode = GameMode.PONG_1972;
+  let game_mode = GameMode.PONG_CLASSIC;
 
   function matchmakingClassic() {
     let data: ICreateRoom = {
@@ -29,12 +29,12 @@ export default function GameMenu() {
   }
 
   return (
-    <div className="Game">
+    <div className="game">
       {!room && (
         <div className="GameMenu">
           <h2> you are : {user?.username} </h2>
           <br />
-          <button onClick={matchmakingClassic}>pong classic</button>
+          <button onClick={matchmakingClassic}>classic</button>
           <br />
           <br />
           <button onClick={matchmakingTrans}>pong transcendence</button>
