@@ -49,7 +49,7 @@ export function GameRender() {
       ratio_width: lowerSize / canvas_back_width,
       ratio_height: lowerSize / screen_ratio / canvas_back_height,
       border_size:
-        lowerSize / screen_ratio / canvas_back_height / border_size_default,
+        border_size_default * (lowerSize / screen_ratio / canvas_back_height),
     });
   }
 
@@ -112,23 +112,30 @@ export function GameRender() {
     if (drawResponsive && room) requestAnimationFrame(render);
   }, [room, drawResponsive]);
 
-  /*function mouv_mouse(e: MouseEvent<HTMLCanvasElement, MouseEvent>) {
-    if (!frameToDraw) return;
+  function mouv_mouse(e: any) {
+    if (!drawResponsive) return;
+
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
-    const tmp_pos = e.clientY - rect?.top - frameToDraw.p1_paddle.height / 2;
 
-    if (tmp_pos > 0 && tmp_pos < frameToDraw.p1_paddle.height / 8)
-      position_y = border_size;
-    else if (tmp_pos > heightCanvas - frameToDraw.p2_paddle.height)
-      position_y = heightCanvas - border_size - frameToDraw.p2_paddle.height;
-    else if (
-      tmp_pos > heightCanvas - frameToDraw.p2_paddle.height ||
-      tmp_pos < 0
-    )
-      position_y = position_y;
-    else position_y = tmp_pos;
-  }*/
+    const tmp_pos =
+      e.clientY - rect?.top - (paddle_height * drawResponsive.ratio_height) / 2;
+
+    if (tmp_pos <= drawResponsive.border_size) {
+      position_y = drawResponsive.border_size + 1;
+    } else if (
+      tmp_pos + paddle_height * drawResponsive.ratio_height >=
+      drawResponsive.canvas_height - drawResponsive.border_size
+    ) {
+      position_y =
+        drawResponsive.canvas_height -
+        1 -
+        drawResponsive.border_size -
+        paddle_height * drawResponsive.ratio_height;
+    } else {
+      position_y = tmp_pos;
+    }
+  }
 
   return (
     <div>
@@ -139,9 +146,8 @@ export function GameRender() {
             ref={canvasRef}
             height={drawResponsive.canvas_height}
             width={drawResponsive.canvas_width}
-            //onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: "black" }}
-          ></canvas>
+            onMouseMove={(e) => mouv_mouse(e)}
+            style={{ backgroundColor: "black" }}></canvas>
           <br />
           <button onClick={leaveGame}>Leave The Game</button>
         </Fragment>
