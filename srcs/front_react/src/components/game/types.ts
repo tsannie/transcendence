@@ -10,7 +10,6 @@ import {
 export interface IBall {
   x: number;
   y: number;
-  //rad: number;
 }
 
 export interface IPaddle {
