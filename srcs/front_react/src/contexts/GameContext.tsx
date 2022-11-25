@@ -39,7 +39,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
   useEffect(() => {
     if (user && socket) {
       socket.on("joinedRoom", (room: Room) => {
-        console.log("JOINED ROOM", room);
         setRoom(room);
       });
     }
