@@ -5,7 +5,7 @@ export class PaddleDto {
   @IsDefined()
   @IsNotEmpty()
   @Type(() => String)
-  room: string;
+  room_id: string;
 
   @IsDefined()
   @IsNotEmpty()
