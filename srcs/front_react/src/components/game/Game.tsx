@@ -3,7 +3,7 @@ import GameMenu from "./menu/Menu";
 import { GameRender } from "./render/Render";
 import WaitingRoom from "./menu/WaitingRoom";
 import { RoomStatus } from "./const/const";
-import { GameContext, GameProvider } from "../../contexts/GameContext";
+import { GameContext } from "../../contexts/GameContext";
 
 function GameBody() {
   const { room } = useContext(GameContext);
@@ -22,9 +22,7 @@ function GameBody() {
 export default function Game() {
   return (
     <div className="game">
-      <GameProvider>
-        <GameBody />
-      </GameProvider>
+      <GameBody />
     </div>
   );
 }

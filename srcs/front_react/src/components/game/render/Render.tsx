@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { draw_game } from "./Draw";
+import { draw_game, draw_game_ended } from "./Draw";
 import {
   border_size_default,
   canvas_back_height,
@@ -23,6 +23,7 @@ import {
 } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { ISetPaddle, IPlayer, Room, IDrawResponsive } from "../types";
+import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 
 let position_y: number = 0;
 export function GameRender() {
@@ -34,6 +35,7 @@ export function GameRender() {
 
   //const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
   const { room, setRoom, socket } = useContext(GameContext) as GameContextType;
+  const { user } = useContext(AuthContext) as AuthContextType;
   //let resize = new IResize();
 
   function resize() {
@@ -122,14 +124,15 @@ export function GameRender() {
           //console.log("status playing =", room.status);
           setPaddle();
           draw_game(ctx, canvas, room, drawResponsive, 0);
-        } else console.log("status ended =", room.status);
-        /*draw_game_ended(
+        } else {
+          draw_game_ended(
             ctx,
-            gameObj.player_p1,
-            gameObj.player_p2,
+            room,
+            user?.id as string,
             canvas.height,
             canvas.width
-          );*/
+          );
+        }
       }
     };
     if (drawResponsive) render();
