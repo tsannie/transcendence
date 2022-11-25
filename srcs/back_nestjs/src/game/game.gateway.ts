@@ -39,30 +39,21 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('GameGateway');
 
   async handleConnection(client: Socket) {
-    this.logger.log(`Client GAME connected: ${client.id}`);
-    try {
-      const user = await this.authService.validateSocket(client);
-
-      if (!user) {
-        return client.disconnect();
-      }
-    } catch {
-      return client.disconnect();
-    }
+    const user = await this.authService.validateSocket(client);
+    this.logger.log(`Client GAME connected: ${user.username}`);
   }
 
   async handleDisconnect(client: Socket) {
-    this.logger.log(`Client GAME disconnected: ${client.id}`);
     const user = await this.authService.validateSocket(client);
+    this.logger.log(`Client GAME disconnected: ${user.username}`);
 
-    console.log('handleDisconnect user: ', user.username);
+    this.gameService.leaveRoom(null, client);
 
-    if (!user) return client.disconnect();
     const room = this.gameService.findRoomBySocketId(client.id);
     if (room) {
       console.log('handleDisconnect room FIND: ');
-      if (room.status === RoomStatus.PLAYING)
-        await this.giveUp(client, room.id);
+      //if (room.status === RoomStatus.PLAYING)
+      //await this.giveUp(client, room.id);
     }
     client.disconnect();
   }
@@ -92,14 +83,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.status = RoomStatus.WAITING;
 
         this.gameService.joinRoom(room.id, client, this.server);
+        this.server.to(room.id).emit('joinedRoom', room);
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
         room.p2_SocketId = client.id;
         room.status = RoomStatus.PLAYING;
 
-        this.gameService.joinRoom(room, client, this.server);
+        this.gameService.joinRoom(room.id, client, this.server);
+        this.server.to(room.id).emit('joinedRoom', room);
         this.gameService.launchGame(room, this.server);
-        // TODO launch game
       }
     }
   }
@@ -108,7 +100,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// LEAVE ROOM/
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('leaveGameRoom')
+  /*@SubscribeMessage('leaveGameRoom') // TODO
   async leaveRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
@@ -125,7 +117,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('ROOM DELETE');
     this.game.delete(room_id); // no ???
     client.leave(room_id);
-  }
+  }*/
 
   ///////////////////////////////////////////////
   //////////////// LEAVE GAME
@@ -163,16 +155,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    const room = this.game.get(data.room_id);
-    if (!room) {
-      console.log('roomnotfound');
-      return;
-    }
+    const room = this.gameService.getRoomById(data.room_id);
+    if (!room) return;
 
-    if (room.p1_SocketId === client.id) {
+    const user = await this.authService.validateSocket(client);
+    if (!user) return;
+
+    if (room.p1_id === user.id) {
       room.p1_y_paddle =
         (data.positionY * canvas_back_height) / data.front_canvas_height;
-    } else if (room.p2_SocketId === client.id) {
+    } else if (room.p2_id === user.id) {
       room.p2_y_paddle =
         (data.positionY * canvas_back_height) / data.front_canvas_height;
     }

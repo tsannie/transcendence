@@ -24,7 +24,6 @@ interface GameContextProps {
 
 export const GameProvider = ({ children }: GameContextProps) => {
   const [room, setRoom] = useState<Room | null>(null);
-  const [isP2, setIsP2] = useState(false);
 
   const { user } = useContext(AuthContext);
   const [socket, setSocket] = useState<Socket | null>(null);

@@ -11,6 +11,8 @@ import { UserService } from 'src/user/service/user.service';
 import { IPayload } from '../models/payload.interface';
 import { IToken } from '../models/token.inferface';
 import { parse } from 'cookie';
+import { FindOptionsRelations } from 'typeorm';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class AuthService {
@@ -82,30 +84,33 @@ export class AuthService {
     return token;
   }
 
-  async getUserWithCookie(cookie: string): Promise<UserEntity> {
+  async getUserWithCookie(
+    cookie: string,
+    relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
+  ): Promise<UserEntity> {
     const payload: IPayload = await this.jwtTokenService.verify(cookie, {
       secret: process.env.JWT_ACCESS_TOKEN_SECRET,
     });
 
-    const user = await this.userService.findById(payload.sub, {
-      owner_of: true,
-      admin_of: true,
-      channels: true,
-      blocked: true,
-      dms: true,
-    });
+    const user = await this.userService.findById(payload.sub, relations_ToLoad);
 
     if (!user.enabled2FA || payload.isSecondFactor) return user;
-    else throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    else throw new WsException('Unauthorized');
   }
 
-  async validateSocket(socket: Socket): Promise<UserEntity> {
+  async validateSocket(
+    socket: Socket,
+    relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
+  ): Promise<UserEntity> {
     const authenticationToken = parse(socket.handshake.headers.cookie)[
       process.env.COOKIE_NAME
     ];
-    if (!authenticationToken)
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-    const user = await this.getUserWithCookie(authenticationToken);
+    if (!authenticationToken) throw new WsException('Unauthorized');
+    const user = await this.getUserWithCookie(
+      authenticationToken,
+      relations_ToLoad,
+    );
+    if (!user) throw new WsException('Unauthorized');
     return user;
   }
 }
