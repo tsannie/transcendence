@@ -1,5 +1,7 @@
 import {
+  forwardRef,
   Get,
+  Inject,
   Injectable,
   Logger,
   Request,
@@ -23,12 +25,12 @@ import { MessageService } from './service/message.service';
 import { UserService } from 'src/user/service/user.service';
 import { DmService } from 'src/dm/service/dm.service';
 import { UserEntity } from 'src/user/models/user.entity';
-import { ConnectedUserEntity } from 'src/connected-user/connected-user.entity';
 import { Repository } from 'typeorm';
-import { ConnectedUserService } from 'src/connected-user/service/connected-user.service';
-import { ConnectedUserDto } from 'src/connected-user/dto/connected-user.dto';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
+import { ChannelService } from 'src/channel/service/channel.service';
+import { ChannelEntity } from 'src/channel/models/channel.entity';
+import { BanEntity, MuteEntity } from 'src/channel/models/ban.entity';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -42,12 +44,13 @@ export class MessageGateway
 {
   constructor(
     private messageService: MessageService,
-    private userService: UserService,
-    private connectedUserService: ConnectedUserService,
     private authService: AuthService,
+    @Inject(forwardRef(() => ChannelService))
+    private channelService: ChannelService,
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
+  connectedUsers = new Map<string, Socket[]>();
 
   @WebSocketServer()
   server: Server;
@@ -56,39 +59,53 @@ export class MessageGateway
     this.logger.log('Init');
   }
 
-  // all clients connect to the server
   async handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
-
-    // get and parse cookie
-
+    let user: UserEntity;
     try {
-      const user = await this.authService.validateSocket(client);
+      user = await this.authService.validateSocket(client);
 
       if (!user) {
         // TODO moove im map and remove ConnectedUserEntity (dov)
-        return this.disconnect(client);
+        return client.disconnect();
       } else {
-        let connectedUser = new ConnectedUserDto();
+        // if user id already have a socket, add the new one to the array
+        if (this.connectedUsers.has(user.id)) {
+          this.connectedUsers.get(user.id).push(client);
+        } else {
+          this.connectedUsers.set(user.id, [client]);
+        }
+        // join all channel of the user
+        const channels = await this.channelService.getChannelsByUser(user.id);
 
-        connectedUser.socketId = client.id;
-        connectedUser.user = user;
-        await this.connectedUserService.create(connectedUser);
+        channels.forEach((channel) => {
+          client.join(channel.id);
+        });
       }
     } catch {
-      return this.disconnect(client);
+      return client.disconnect();
     }
   }
 
-  async handleDisconnect(client: Socket) {
+  async handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
+    const user = await this.authService.validateSocket(client);
 
-    this.connectedUserService.deleteBySocketId(client.id);
-    client.disconnect();
+    if (user) {
+      await this.disconnect(user.id, client);
+    }
+    else
+      client.disconnect();
   }
 
-  private disconnect(client: Socket) {
-    this.connectedUserService.deleteBySocketId(client.id);
+  private async disconnect(userId: string, client: Socket) {
+    const channels = await this.channelService.getChannelsByUser(userId);
+
+    channels.forEach((channel) => {
+      client.leave(channel.id);
+    });
+
+    this.connectedUsers.delete(userId);
     client.disconnect();
   }
 
@@ -97,22 +114,84 @@ export class MessageGateway
     @MessageBody() data: MessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = client.handshake.query.userId; //todo PROTEGER TRYCATCH
+    const user = await this.authService.validateSocket(client);
 
     if (data.isDm === true) {
-      const lastMsg = await this.messageService.addMessagetoDm(
-        data,
-        userId.toString(),
-      );
+      const lastMsg = await this.messageService.addMessagetoDm(data, user.id);
 
-      await this.messageService.emitMessageDm(this.server, lastMsg);
+      this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(
-        data,
-        userId.toString(),
+      const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, user.id);
+      const channel = await this.channelService.getChannelById(
+        lastMsg.channel.id,
       );
 
-      await this.messageService.emitMessageChannel(this.server, lastMsg);
+      if (channel) {
+        this.messageService.emitMessageChannel(
+          channel,
+          lastMsg,
+          this.connectedUsers,
+        );
+      }
+    }
+  }
+
+  createChannel(channel: ChannelEntity, userId: string) {
+    console.log("channel created : " + channel.id);
+
+    this.joinAllSocketToChannel(channel.id, userId);
+    //this.server.emit('newChannel', channel);
+  }
+
+  joinChannel(channel: ChannelEntity, user: UserEntity) {
+    // find the socket of the user
+    this.joinAllSocketToChannel(channel.id, user.id);
+    this.server.to(channel.id).emit('joinChannel', channel, user);
+  }
+
+  muteUser(mutedUser: MuteEntity) {
+    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user, mutedUser.channel.id);
+  }
+
+  unMuteUser(unMutedUser: MuteEntity, channelId: string) {
+    this.server.to(channelId).emit('unMuteUser', unMutedUser.user, channelId);
+  }
+
+  banUser(bannedUser: BanEntity) {
+    this.server.to(bannedUser.channel.id).emit('banUser', bannedUser.user, bannedUser.channel.id);
+  }
+
+  unBanUser(unBannedUser: BanEntity, channelId: string) {
+    this.server.to(channelId).emit('unBanUser', unBannedUser.user, channelId);
+  }
+
+  makeAdmin(newAdmin: UserEntity, channelId: string) {
+    this.server.to(channelId).emit('makeAdmin', newAdmin, channelId);
+  }
+
+  revokeAdmin(revokeAdmin: UserEntity, channelId: string) {
+    this.server.to(channelId).emit('revokeAdmin', revokeAdmin, channelId);
+  }
+
+  joinAllSocketToChannel(channelId: string, userId: string) {
+    const sockets = this.connectedUsers.get(userId);
+
+    if (sockets) {
+      // join the channel
+      sockets.forEach((client) => {
+        client.join(channelId);
+      });
+    }
+  }
+
+  leaveAllSocketToChannel(channel: ChannelEntity, userId: string) {
+    const sockets = this.connectedUsers.get(userId);
+
+    if (sockets) {
+      // leave the channel
+      sockets.forEach((client) => {
+        client.leave(channel.id);
+      });
     }
   }
 }

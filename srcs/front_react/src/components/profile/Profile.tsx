@@ -36,6 +36,7 @@ function Profile() {
       api
         .get("/user/username", { params: { username: params } })
         .then((res: AxiosResponse) => {
+          console.log(res.data);
           setPlayer(res.data as User);
           setisLoad(true);
         })
