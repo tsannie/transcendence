@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
-import { IChannel, IMessageReceived } from "../components/chat/types";
+import { IChannel, IDm, IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
 
 export const MessageContext = createContext<MessageContextInterface>(
@@ -17,7 +17,8 @@ export const MessageContext = createContext<MessageContextInterface>(
 export interface MessageContextInterface {
   socket: Socket | null;
   newMessage: IMessageReceived | null;
-  channelJoined: IChannel | undefined;
+  chatList: (IChannel | IDm)[];
+  setChatList: React.Dispatch<React.SetStateAction<(IChannel | IDm)[]>>;
 }
 
 interface MessageProviderProps {
@@ -27,7 +28,7 @@ interface MessageProviderProps {
 export const MessageProvider = ({ children }: MessageProviderProps) => {
   const [newMessage, setNewMessage] = useState<IMessageReceived | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [channelJoined, setChannelJoined] = useState<IChannel>();
+  const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
 
   useEffect(() => {
     const newSocket: any = io("http://localhost:4000/chat", {
@@ -56,7 +57,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   }, [socket]);
 
   return (
-    <MessageContext.Provider value={{ socket, newMessage, channelJoined }}>
+    <MessageContext.Provider value={{ socket, newMessage, chatList, setChatList }}>
       {children}
     </MessageContext.Provider>
   );
