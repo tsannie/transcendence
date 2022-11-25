@@ -8,9 +8,7 @@ import { GameContext, GameProvider } from "../../contexts/GameContext";
 function GameBody() {
   const { room } = useContext(GameContext);
 
-  return <GameRender />;
-
-  /*if (room) {
+  if (room) {
     if (room.status === RoomStatus.WAITING) {
       return <WaitingRoom />;
     } else {
@@ -18,7 +16,7 @@ function GameBody() {
     }
   } else {
     return <GameMenu />;
-  }*/
+  }
 }
 
 export default function Game() {

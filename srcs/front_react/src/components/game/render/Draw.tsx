@@ -1,26 +1,26 @@
 import { white } from "../const/const";
-import { IBall, Frame, IPaddle, IPlayer, Room } from "../types";
+import { IBall, IDrawResponsive, IPaddle, IPlayer, Room } from "../types";
 
 export function draw_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
   room: Room,
-  frameToDraw: Frame,
+  drawResponsive: IDrawResponsive,
   countdown: number
 ) {
-  if (countdown != 0)
+  /*if (countdown != 0)
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
-    draw_ball(ctx, frameToDraw.ball);
+    draw_ball(ctx, drawResponsive.ball);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
   draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, frameToDraw.p1_paddle);
-  draw_paddle(ctx, frameToDraw.p2_paddle);
+  draw_paddle(ctx, drawResponsive.p1_paddle);
+  draw_paddle(ctx, drawResponsive.p2_paddle);*/
 }
 
-export function draw_game_ended(
+/*export function draw_game_ended(
   isP2: boolean,
   ctx: CanvasRenderingContext2D,
   player_p1: IPlayer,
@@ -165,4 +165,4 @@ function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
   );
   ctx.fill();
   ctx.stroke();
-}
+}*/
