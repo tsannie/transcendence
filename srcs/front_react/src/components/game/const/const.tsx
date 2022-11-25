@@ -4,7 +4,7 @@ export const canvas_back_height: number = canvas_back_width * screen_ratio;
 
 export const rad: number = 20;
 
-export const border_size_default: number = 500;
+export const border_size_default: number = 50;
 export const paddle_margin: number = 100;
 export const paddle_width: number = 50;
 export const paddle_height: number = 600;
