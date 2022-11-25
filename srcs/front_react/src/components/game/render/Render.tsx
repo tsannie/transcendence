@@ -28,6 +28,7 @@ import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
 let position_y: number = 0;
 export function GameRender() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [leave, setLeave] = useState(false);
 
   const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
   //const [frameToDraw, setFrameToDraw] = useState<Frame>();
@@ -71,9 +72,21 @@ export function GameRender() {
     });
   }, [socket]);
 
+  useEffect(() => {
+    socket?.on("updateGame", (room: Room) => {
+      if (!leave) setRoom(room);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (leave) {
+      setRoom(null);
+    }
+  }, [leave]);
+
   function leaveGame() {
     socket?.emit("leaveRoom", room?.id);
-    setRoom(null);
+    setLeave(true);
   }
 
   function setPaddle() {
