@@ -1,4 +1,5 @@
 import {
+  border_size_default,
   paddle_height,
   paddle_margin,
   paddle_width,
@@ -22,9 +23,21 @@ export function draw_game(
     draw_ball(ctx, room.ball, drawResponsive);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
-  draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, room.p1_y_paddle, drawResponsive);
-  draw_paddle(ctx, room.p2_y_paddle, drawResponsive);
+  draw_borders(ctx, canvas.height, canvas.width, drawResponsive);
+  draw_paddle(
+    ctx,
+    room.p1_y_paddle,
+    paddle_margin * drawResponsive.ratio_width,
+    drawResponsive
+  );
+  draw_paddle(
+    ctx,
+    room.p2_y_paddle,
+    drawResponsive.canvas_width -
+      paddle_margin * drawResponsive.ratio_width -
+      paddle_width * drawResponsive.ratio_width,
+    drawResponsive
+  );
 }
 
 export function draw_game_ended(
@@ -91,15 +104,16 @@ function draw_line(
 function draw_borders(
   ctx: CanvasRenderingContext2D,
   canvas_height: number,
-  canvas_width: number
+  canvas_width: number,
+  drawResponsive: IDrawResponsive
 ) {
   ctx.beginPath();
-  ctx.rect(0, 0, canvas_width, canvas_height / 50);
+  ctx.rect(0, 0, canvas_width, drawResponsive.border_size);
   ctx.rect(
     0,
-    canvas_height - canvas_height / 50,
+    canvas_height - drawResponsive.border_size,
     canvas_width,
-    canvas_height / 50
+    drawResponsive.border_size
   );
   ctx.fillStyle = white;
   ctx.fill();
@@ -149,10 +163,11 @@ function draw_score(
 function draw_paddle(
   ctx: CanvasRenderingContext2D,
   y_paddle: number,
+  x_paddle: number,
   drawResponsive: IDrawResponsive
 ) {
   const IPaddle: IPaddle = {
-    x: paddle_margin * drawResponsive.ratio_width,
+    x: x_paddle,
     y: y_paddle * drawResponsive.ratio_height,
     width: paddle_width * drawResponsive.ratio_width,
     height: paddle_height * drawResponsive.ratio_height,
