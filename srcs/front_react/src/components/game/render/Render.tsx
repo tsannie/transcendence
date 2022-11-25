@@ -124,7 +124,6 @@ export function GameRender() {
           draw_game(ctx, canvas, room, drawResponsive, 0);
         } else console.log("status ended =", room.status);
         /*draw_game_ended(
-            isP2,
             ctx,
             gameObj.player_p1,
             gameObj.player_p2,

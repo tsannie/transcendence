@@ -14,11 +14,6 @@ export class PaddleDto {
 
   @IsDefined()
   @IsNotEmpty()
-  @Type(() => Boolean)
-  isP2: boolean;
-
-  @IsDefined()
-  @IsNotEmpty()
   @Type(() => Number)
   front_canvas_height: number;
 }

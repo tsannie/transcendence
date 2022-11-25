@@ -85,6 +85,10 @@ export class GameService {
     return undefined;
   }
 
+  getRoomById(room_id: string): Room | undefined {
+    return this.gamesRoom.get(room_id);
+  }
+
   joinRoom(room_id: string, client: Socket, server: Server) {
     const room_to_leave = this.usersRoom.get(client);
     if (room_to_leave) {
@@ -94,8 +98,9 @@ export class GameService {
     this.usersRoom.set(client, room_id);
   }
 
-  async leaveRoom(room: Room, client: Socket, server: Server) {
-    client.leave(room.id);
+  async leaveRoom(room_id: string, client: Socket) {
+    if (room_id) client.leave(room_id);
+    this.usersRoom.delete(client);
   }
 
   ////////////////////
