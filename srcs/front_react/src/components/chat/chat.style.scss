@@ -66,13 +66,21 @@ $width_chat: calc(450 * var(--res));
 
 .chat__list__items {
   display: flex;
-  border-style: dashed;
+  width: 1;
   justify-content: space-around;
   align-items: center;
   margin: 2.4%;
   transition: 70ms;
   min-width: 0;
   cursor: pointer;
+
+  button {
+    width: 100%;
+    padding: 0;
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
 
   li {
     display: flex;
@@ -81,6 +89,7 @@ $width_chat: calc(450 * var(--res));
     width: 100%;
     justify-content: flex-start;
     align-items: center;
+    padding: 0;
 
     .avatar {
       display: flex;
@@ -313,45 +322,35 @@ form {
 
   h2 {
     display: flex;
-    flex: 0 0 13%;
     align-items: center;
   }
 
   form {
     display: flex;
-    flex: 0 0 34%;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 
     input {
-      width: 100%;
+      width: 60%;
       border-style: dashed;
       margin: 4%;
+      text-align: center;
     }
 
     .create__chan__status {
       display: flex;
       justify-content: space-around;
+      width: 90%;
 
       button {
-        min-width: 45%;
-        margin: 4%;
-
-        &:hover {
-          transform: scale(1.1);
-          filter: none;
-          background-color: green;
-        }
-
-        &:focus {
-          @extend :hover;
-          background-color: red;
-        }
-
-        &:active {
-          @extend :hover;
-          background-color: blue;
-        }
+        width: 25%;
+        border-style: dashed;
+        font-size: calc(18 * var(--res));
+      }
+      .selected {
+        transform: scale(1.1);
+        opacity: 0.5;
       }
     }
 
@@ -359,8 +358,12 @@ form {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 70%;
-      transition: 70ms;
+      width: 55%;
+      margin-top: 4%;
+      input {
+        margin: 2%;
+        font-size: calc(18 * var(--res));
+      }
     }
 
     .create__chan__validator {
@@ -372,7 +375,6 @@ form {
 
 .create__channel__header {
   display: flex;
-  justify-content: center;
   align-items: center;
   justify-content: space-evenly;
   width: 100%;
