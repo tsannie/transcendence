@@ -278,12 +278,8 @@ export class GameService {
     }
 
     if (room.status === RoomStatus.CLOSED) {
-      // TODO: save gameStat
-      server.in(room.id).emit('endGame', room);
-      //room.p1_SocketId.leave(room.id);
-      //room.p2_SocketId.leave(room.id);
+      server.in(room.id).emit('updateGame', room);
       this.gamesRoom.delete(room.id);
     }
-    // leave room
   }
 }
