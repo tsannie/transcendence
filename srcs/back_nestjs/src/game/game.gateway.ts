@@ -100,51 +100,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// LEAVE ROOM/
   ///////////////////////////////////////////////
 
-  /*@SubscribeMessage('leaveGameRoom') // TODO
+  @SubscribeMessage('leaveRoom')
   async leaveRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
   ) {
-    console.log('-----------------leaveRoom-----------------');
-
-    const user = await this.authService.validateSocket(client);
-    if (!user) return;
-    const room = this.game.get(room_id);
-
-    if (!room) return;
-
-    console.log('leaveGameRoom: ');
-    console.log('ROOM DELETE');
-    this.game.delete(room_id); // no ???
-    client.leave(room_id);
-  }*/
-
-  ///////////////////////////////////////////////
-  //////////////// LEAVE GAME
-  /////////////////////////////////////////////////
-
-  /*@SubscribeMessage('giveUp') // TODO: remove and just leave room
-  async giveUp(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() room_id: string,
-  ) {
-    console.log('GIVEUP');
-    //this.game.clear(); // TODO: remove
-    const user = await this.authService.validateSocket(client);
-    if (!user) return;
-
-    const room = this.game.get(room_id);
-    if (!room) console.log('giveUp room not found');
-
-    room.status = RoomStatus.CLOSED;
-    room.won = user.id === room.p1_id ? Winner.P2 : Winner.P1;
-    // TODO: save gameStat
-    console.log('room_before_delete:', room);
-    this.game.delete(room_id);
-
-    this.server.in(room_id).emit('giveUp', room.p1_id, room.p2_id); // TODO GIVE UP
-    client.leave(room_id);
-  }*/
+    this.gameService.leaveRoom(room_id, client);
+  }
 
   ///////////////////////////////////////////////
   //////////////// PADDLE DATA
@@ -170,11 +132,4 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
   ///////////////////////////////////////////////
-
-  /*@SubscribeMessage('resizeIngame')
-  async resizeIngame(@MessageBody() room_id: string) {
-    const room_game = this.game.get(room_id);
-    if (!room_game) return;
-    this.server.in(room_id).emit('resize_game');
-  }*/
 }
