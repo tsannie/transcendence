@@ -1,5 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
@@ -115,6 +117,16 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
                     setUsers(addToList(users, target));
                 }
             });
+            socket.on("leaveChannel", (target, channelId) => {
+                if (channelId === props.currentConvId) {
+                    setUsers(filterList(users, target));
+                }
+            });
+            /* socket.on("deleteChannel", (target, channelId) => {
+                if (channelId === props.currentConvId) {
+                    setUsers(addToList(users, target));
+                }
+            }); */
 
         return (() => {
             socket.off("muteUser");
@@ -124,6 +136,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
             socket.off("banUser");
             socket.off("unBanUser");
             socket.off("joinChannel");
+            socket.off("leaveChannel");
         })}
     }, [muted, users, banned, admins, socket])
 
@@ -171,6 +184,24 @@ function ChannelProfile(props: {channel: IChannel}) {
     const { channel } = props;
     const { user } = useContext(AuthContext);
 
+    const leaveChannel = async () => {
+        await api
+        .post("/channel/leave", { id: props.channel.id })
+        .then(() => toast.success(`${user?.username} left ${channel.name}`))
+        .catch((error: any) => toast.error("HTTP error:" + error));
+    }
+
+    const deleteChannel = async () => {
+        await api
+        .post("/channel/delete", { id: props.channel.id })
+        .then(() => toast.success(`${user?.username} delete ${channel.name}`))
+        .catch((error: any) => toast.error("HTTP error:" + error));
+    }
+
+    useEffect(() => {
+
+    }, [channel])
+
     return (
     <div className="conversation__options__title">
         <div className="text">
@@ -180,14 +211,16 @@ function ChannelProfile(props: {channel: IChannel}) {
             <button className="clickable_profile">
                 <img src={channel.owner?.profile_picture}/>
             </button>
-            <button className="leave-channel" >
-                Leave
-            </button>
-            { props.channel.owner?.id === user?.id &&
-                <button className="delete-channel">
-                    Delete
+            <div className="actions-channel">
+                <button className="leave-channel" onClick={leaveChannel}>
+                    Leave
                 </button>
-            }
+                { props.channel.owner?.id === user?.id &&
+                    <button className="delete-channel" onClick={deleteChannel}>
+                        Delete
+                    </button>
+                }
+            </div>
         </div>
   </div>);
 }

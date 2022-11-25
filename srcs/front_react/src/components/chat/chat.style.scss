@@ -591,26 +591,18 @@ form {
   }
 }
 
-.leave-channel {
+.actions-channel { // TODO: a changer pour avoi un truc style
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  button {
-    display: flex;
-    padding: calc(5 * var(--res));
-    margin-left: calc(20 * var(--res));
-    margin-right: calc(20 * var(--res));
-    margin-bottom: calc(15 * var(--res));
-    border-radius: 50%;
-  }
+.leave-channel {
+  width: "fit-content";
+  height: "fit-content";
 }
 
 .delete-channel {
-
-  button {
-    display: flex;
-    padding: calc(5 * var(--res));
-    margin-left: calc(20 * var(--res));
-    margin-right: calc(20 * var(--res));
-    margin-bottom: calc(15 * var(--res));
-    border-radius: 50%;
-  }
+  width: "fit-content";
+  height: "fit-content";
 }
