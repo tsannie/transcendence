@@ -38,8 +38,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('GameGateway');
 
-  game = new Map<string, Room>();
-
   async handleConnection(client: Socket) {
     this.logger.log(`Client GAME connected: ${client.id}`);
     try {
@@ -60,7 +58,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('handleDisconnect user: ', user.username);
 
     if (!user) return client.disconnect();
-    const room = this.gameService.findRoomBySocketId(client.id, this.game);
+    const room = this.gameService.findRoomBySocketId(client.id);
     if (room) {
       console.log('handleDisconnect room FIND: ');
       if (room.status === RoomStatus.PLAYING)
@@ -73,7 +71,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('createGameRoom')
+  @SubscribeMessage('matchmaking')
   async createRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: CreateRoomDto,
@@ -83,12 +81,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     //this.game.clear();
 
     if (!user) return client.emit('error', 'create Room error !'); // TODO: send error
-    const room: Room = this.gameService.joinFastRoom(user, this.game);
-    console.log(
-      '##############################START###########################\n',
-    );
-
-    console.log('dico (', this.game.size, '):');
+    const room: Room = this.gameService.findRoom(user);
 
     if (room && user) {
       console.log('Hello');
@@ -98,17 +91,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.p1_SocketId = client.id;
         room.status = RoomStatus.WAITING;
 
-        this.game.set(room.id, room);
-        client.join(room.id);
-        this.server.in(room.id).emit('joinedRoom', room);
+        this.gameService.joinRoom(room.id, client, this.server);
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
         room.p2_SocketId = client.id;
         room.status = RoomStatus.PLAYING;
 
-        client.join(room.id);
-        this.server.in(room.id).emit('joinedRoom', room);
-        this.gameService.launchGame(room, this.server, this.game);
+        this.gameService.joinRoom(room, client, this.server);
+        this.gameService.launchGame(room, this.server);
         // TODO launch game
       }
     }
@@ -141,7 +131,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// LEAVE GAME
   /////////////////////////////////////////////////
 
-  @SubscribeMessage('giveUp') // TODO: remove and just leave room
+  /*@SubscribeMessage('giveUp') // TODO: remove and just leave room
   async giveUp(
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
@@ -162,7 +152,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.server.in(room_id).emit('giveUp', room.p1_id, room.p2_id); // TODO GIVE UP
     client.leave(room_id);
-  }
+  }*/
 
   ///////////////////////////////////////////////
   //////////////// PADDLE DATA
