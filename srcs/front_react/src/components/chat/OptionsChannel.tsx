@@ -104,7 +104,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
     useEffect( () => {
         if (channel.id !== props.currentConvId)
             return;
-        let muted: User[];
+        let muted: User[] = [];
 
         setAdmins(channel.admins);
         if (channel.banned)
@@ -114,8 +114,17 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string})
             muted = channel.muted.map((elem) => elem.user);
             setMuted(muted);
         }
-        if (channel.users)
-            setUsers(channel.users.filter( elem => !muted.includes(elem)));
+        if (channel.users){
+            let mutedIds : string[];
+
+            if (muted.length != 0)
+            {
+                mutedIds = muted.map(elem => elem.id);
+                setUsers(channel.users.filter( elem => !mutedIds.includes(elem.id)));
+            }
+            else
+                setUsers(channel.users);
+        }
 
     }, [channel])
 
