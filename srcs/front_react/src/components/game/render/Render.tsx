@@ -134,7 +134,7 @@ export function GameRender() {
       }
     };
     if (drawResponsive) render();
-  }, [room]);
+  }, [room, resize]);
 
   /*function leaveGame() {    // TODO DELETE
     socket?.emit("giveUp", room?.id);
@@ -169,8 +169,7 @@ export function GameRender() {
             height={drawResponsive.canvas_height}
             width={drawResponsive.canvas_width}
             //onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: "black" }}
-          ></canvas>
+            style={{ backgroundColor: "black" }}></canvas>
           <br />
           {/*<button onClick={leaveGame}>Leave The Game</button> */}
         </Fragment>
