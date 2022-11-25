@@ -198,10 +198,12 @@ $width_chat: calc(450 * var(--res));
   height: 100%;
   padding-top: 5%;
   overflow-x: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .category {
     display: flex;
-    position: relative;
     flex-direction: column;
     border-style: dashed;
     border-width: calc(3 * var(--res)) !important;
@@ -216,36 +218,41 @@ $width_chat: calc(450 * var(--res));
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-    }
 
-    .members {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-
-    .dropdown{
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      align-items: center;
-      background-color: $bg-color;
-      opacity: 0.954;
-      border-style: dashed;
-      height: fit-content;
-      z-index: 1;
-
-      .options{
+      .members {
         display: flex;
-        justify-content: center;
-        width: 100%;
-        border-bottom-style: dashed;
-        font-size: calc(18 * var(--res));
-      }
+        position: relative;
+        transition: 0.3s;
+        cursor: pointer;
 
-      button {
-        font-size: calc(16 * var(--res));
-        padding: 1%;
+        // &:hover {
+        //   opacity: 0.6;
+        // }
+      }
+  
+      .dropdown{
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        align-items: center;
+        background-color: $bg-color;
+        opacity: 0.954;
+        border-style: dashed;
+        height: fit-content;
+        z-index: 1;
+        
+        .options{
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          border-bottom-style: dashed;
+          font-size: calc(18 * var(--res));
+        }
+  
+        button {
+          font-size: calc(16 * var(--res));
+          padding: 1%;
+        }
       }
     }
 

@@ -8,7 +8,7 @@ import { IMemberProps } from "./OptionsChannel";
 function UserOptions(props: IMemberProps) {
     const {type, isOwner, isAdmin, channelId, user} = props;
     const [isOpen, setOpen ] = useState<boolean>(false);
-    const buttonRef = useRef<HTMLButtonElement>(null);
+    const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
     const banUser = () => {
@@ -122,23 +122,23 @@ function UserOptions(props: IMemberProps) {
         return () => document.body.removeEventListener("click", closeDropdown);
     }, [])
 
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleButtonClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         let pos = (event.target as HTMLElement).getBoundingClientRect();
-        let x = event.clientX - pos.left;
+        let x = pos.right - event.clientX;
         let y = event.clientY - pos.top;
         dropdownStyle.current = {
-            left: x,
-            top: 2 * y,
+            right: x,
+            top: y,
         }
         setOpen(true);
     }
 
     return (
     <Fragment>
-        <button ref={buttonRef} className="member" onClick={(e) => handleButtonClick(e)}>
+        <div ref={buttonRef} className="members" onClick={(e) => handleButtonClick(e)}>
             <img src={user.profile_picture} />
-        </button>
-        {isOpen ? displayOptions() : null}
+            {isOpen ? displayOptions() : null}
+        </div>
     </Fragment>);
 }
 
