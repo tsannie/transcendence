@@ -18,7 +18,7 @@ import {
   victory_score,
 } from '../const/const';
 import { GameStatEntity } from '../entity/gameStat.entity';
-import Room, { RoomStatus, Winner } from '../class/room.class';
+import Room, { IInfoRoom, RoomStatus, Winner } from '../class/room.class';
 import { v4 as uuidv4 } from 'uuid';
 import Ball from '../class/ball.class';
 
@@ -101,6 +101,26 @@ export class GameService {
       client.leave(room_id);
     }
     this.usersRoom.delete(client);
+  }
+
+  async createInfoRoom(room: Room): Promise<IInfoRoom> {
+    return {
+      id: room.id,
+      p1: await this.userService.findById(room.p1_id),
+      p2: await this.userService.findById(room.p2_id),
+      p1_score: room.p1_score,
+      p2_score: room.p2_score,
+    };
+  }
+
+  async getCurrentRooms(): Promise<IInfoRoom[]> {
+    const current_rooms: IInfoRoom[] = [];
+    for (const room of this.gamesRoom.values()) {
+      if (room.status === RoomStatus.PLAYING) {
+        current_rooms.push(await this.createInfoRoom(room));
+      }
+    }
+    return current_rooms;
   }
 
   ////////////////////
@@ -251,12 +271,7 @@ export class GameService {
     }
   }
 
-  async updateGame(
-    room: Room,
-    server: Server,
-    //
-    //room: string,
-  ) {
+  async updateGame(room: Room, server: Server) {
     room.ball.update();
     await this.ballHitPaddlep1(room);
     await this.ballHitPaddlep2(room);

@@ -29,8 +29,6 @@ import Room, { RoomStatus, Winner } from './class/room.class';
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    // @InjectRepository(RoomEntity)
-    // private all_game: Repository<RoomEntity>,
     private gameService: GameService,
     private authService: AuthService,
   ) {}
@@ -71,7 +69,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: CreateRoomDto,
   ) {
     const user = await this.authService.validateSocket(client);
-    //this.game.clear();
 
     const room: Room = this.gameService.findRoom(user);
 
