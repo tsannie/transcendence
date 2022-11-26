@@ -213,9 +213,7 @@ export class GameService {
     return Math.round(eloDiff);
   }*/
 
-  async ballHitPaddlep1(room: Room, server: Server) {
-    // TODO moove to class ball
-    // TODO async ???
+  async ballHitPaddlep1(room: Room) {
     if (
       room.ball.can_touch_paddle === true &&
       room.ball.x - rad <= paddle_p1_x + paddle_width &&
@@ -231,12 +229,10 @@ export class GameService {
         room.won = Winner.P2;
         room.status = RoomStatus.CLOSED;
       }
-      server.in(room.id).emit('getScore', room.p1_score, room.p2_score);
     }
   }
 
-  async ballHitPaddlep2(room: Room, server: Server) {
-    // TODO moove to class ball
+  async ballHitPaddlep2(room: Room) {
     if (
       room.ball.can_touch_paddle === true &&
       room.ball.x + rad >= paddle_p2_x &&
@@ -252,8 +248,6 @@ export class GameService {
         room.won = Winner.P1;
         room.status = RoomStatus.CLOSED;
       }
-      server.in(room.id).emit('getScore', room.p1_score, room.p2_score);
-      //server.in(room).emit('getScore', p1, p2);
     }
   }
 
@@ -264,8 +258,8 @@ export class GameService {
     //room: string,
   ) {
     room.ball.update();
-    await this.ballHitPaddlep1(room, server);
-    await this.ballHitPaddlep2(room, server);
+    await this.ballHitPaddlep1(room);
+    await this.ballHitPaddlep2(room);
   }
 
   checkGiveUP(socketP1: Socket, socketP2: Socket, room: Room): boolean {
