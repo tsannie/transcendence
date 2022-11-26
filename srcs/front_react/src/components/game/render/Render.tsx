@@ -68,18 +68,6 @@ export function GameRender() {
   });
 
   useEffect(() => {
-    socket?.on("updateGame", (room: Room) => {
-      setRoom(room);
-    });
-  }, [socket]);
-
-  useEffect(() => {
-    socket?.on("updateGame", (room: Room) => {
-      if (!leave) setRoom(room);
-    });
-  }, [socket]);
-
-  useEffect(() => {
     if (leave) {
       setRoom(null);
     }
@@ -88,6 +76,7 @@ export function GameRender() {
   function leaveGame() {
     socket?.emit("leaveRoom", room?.id);
     setLeave(true);
+    setRoom(null);
   }
 
   function setPaddle() {
