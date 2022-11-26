@@ -19,7 +19,7 @@
   }
 
   h2 {
-    font-size: calc(26 * var(--res));
+    font-size: calc(20 * var(--res));
   }
 
   .game__menu__item__header {
@@ -31,7 +31,7 @@
   }
 }
 
-.duel {
+.amical {
   display: flex;
   flex-direction: column;
   align-items: center;

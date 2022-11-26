@@ -7,22 +7,22 @@ import "./game.style.scss";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { ICreateRoom } from "./types";
 import { toast } from "react-toastify";
-import GameDuel from "./menu/GameDuel";
 import GameCurrent from "./menu/GameCurrent";
 import GameContentHeader from "./menu/GameContentHeader";
 import GameMatchmaking from "./menu/GameMatchmaking";
 import GameWaiting from "./menu/GameWaiting";
+import GameAmical from "./menu/GameAmical";
 
 export default function Game() {
-  const { socket, room } = useContext(GameContext) as GameContextType;
+  const { room, displayRender } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
 
-  if (room && room?.status !== RoomStatus.WAITING) return <GameRender />;
+  if (displayRender) return <GameRender />;
   else
     return (
       <div className="game">
         <div className="game__menu">
-          <GameDuel />
+          <GameAmical />
           <GameCurrent />
         </div>
         <div className="game__content">

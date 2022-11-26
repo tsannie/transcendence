@@ -16,6 +16,8 @@ export type GameContextType = {
   room: Room | null;
   setRoom: (room: Room | null) => void;
   socket: Socket | null;
+  setDisplayRender: (display: boolean) => void;
+  displayRender: boolean;
 };
 
 export const GameContext = createContext<Partial<GameContextType>>({});
@@ -26,6 +28,7 @@ interface GameContextProps {
 
 export const GameProvider = ({ children }: GameContextProps) => {
   const [room, setRoom] = useState<Room | null>(null);
+  const [displayRender, setDisplayRender] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -33,11 +36,9 @@ export const GameProvider = ({ children }: GameContextProps) => {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-
     interval = setInterval(() => {
       setTimeQueue((time) => time + 10);
     }, 10);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -50,9 +51,11 @@ export const GameProvider = ({ children }: GameContextProps) => {
   }, [setSocket]); // create a new socket only once
 
   useEffect(() => {
-    socket?.on("updateGame", (room: Room) => {
-      setRoom(room);
-    });
+    if (displayRender) {
+      socket?.on("updateGame", (room: Room) => {
+        setRoom(room);
+      });
+    }
 
     socket?.on("joinQueue", (message: string) => {
       toast.info(message);
@@ -71,6 +74,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
         setRoom,
         socket,
         timeQueue,
+        setDisplayRender,
+        displayRender,
       }}
     >
       {children}
