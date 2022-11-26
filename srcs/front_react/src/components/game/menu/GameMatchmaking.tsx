@@ -29,8 +29,8 @@ function GameMatchmaking() {
       </div>
       <div className="matchmaking__content">
         <button onClick={handleMatchClassic}>CLASSIC</button>
-        <button id="button__transcendance" onClick={handleMatchTrans}>
-          TRANSCENDANCE
+        <button id="button__transcendence" onClick={handleMatchTrans}>
+          TRANSCENDENCE
         </button>
       </div>
     </div>

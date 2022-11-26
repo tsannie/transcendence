@@ -20,7 +20,7 @@ import { UserService } from 'src/user/service/user.service';
 import { CreateRoomDto } from './dto/createRoom.dto';
 import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
-import Room, { RoomStatus, Winner } from './class/room.class';
+import Room, { IInfoGame, RoomStatus, Winner } from './class/room.class';
 import { throwError } from 'rxjs';
 
 @WebSocketGateway({
@@ -49,6 +49,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.allUsers.get(user.id).push(client);
     } else this.allUsers.set(user.id, [client]);
 
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
     this.logger.log(`Client GAME connected: ${user.username}`);
   }
 
@@ -67,19 +68,29 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.allUsers.has(user.id)) {
       const sockets = this.allUsers.get(user.id);
       const index = sockets.indexOf(client);
+      console.log('sockets.length', sockets.length);
       if (index > -1) {
         sockets.splice(index, 1);
-      } else if (sockets.length === 0) {
+      }
+      if (sockets.length === 0) {
         this.allUsers.delete(user.id);
       }
     }
 
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
     client.disconnect();
   }
 
   ///////////////////////////////////////////////
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
+
+  @SubscribeMessage('getInfoGame')
+  getInfo(@ConnectedSocket() client: Socket) {
+    this.server
+      .to(client.id)
+      .emit('infoGame', this.gameService.getInfo(this.allUsers));
+  }
 
   @SubscribeMessage('matchmaking')
   async createRoom(
@@ -92,11 +103,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.gameService.findRoomByUser(user)) {
       throw new WsException('Already in game');
     }
-    console.log('start create room');
 
     const room: Room = this.gameService.findRoom(user, data.mode);
-
-    console.log('room', room);
 
     if (room && user) {
       if (room.status === RoomStatus.EMPTY) {
@@ -115,6 +123,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.gameService.launchGame(room, this.server, this.allUsers);
       }
     }
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
   }
 
   ///////////////////////////////////////////////
@@ -144,6 +153,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     this.gameService.leaveRoom(room_id, client);
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
   }
 
   ///////////////////////////////////////////////
