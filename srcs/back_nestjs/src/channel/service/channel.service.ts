@@ -22,6 +22,7 @@ import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import { IChannelReturn } from '../models/channel_return.interface';
 import { BanEntity, BanMuteEntity, MuteEntity } from '../models/ban.entity';
 import { BanMuteService } from './banmute.service';
+import { ChannelInvitationDto } from '../dto/channelinvitation.dto';
 
 export interface IAdmin {
   target: UserEntity,
@@ -300,6 +301,24 @@ export class ChannelService {
     } else
       throw new ForbiddenException(
         'Only the owner of the channel can delete the channel.',
+      );
+  }
+
+  async inviteChannel(
+    requested_channel: ChannelInvitationDto,
+    user: UserEntity,
+  ): Promise<UserEntity> {
+    if (this.isOwner(requested_channel.id, user)) {
+      user.owner_of.find(
+        (channel) => channel.id === requested_channel.id,
+      );
+      // return User to invite
+      const user_to_invite = await this.userService.findByName(requested_channel.targetUsername); //TODO: change to find by id if i can send id by front
+
+      return user_to_invite;
+    } else
+      throw new ForbiddenException(
+        'Only the owner of the channel can invite someone to the channel.',
       );
   }
 

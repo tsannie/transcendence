@@ -158,6 +158,18 @@ export class MessageGateway
     this.server.to(channelId).emit('deleteChannel', channelId);
   }
 
+  inviteChannel(target: UserEntity, channelId: string) {
+    // find the socket of the user
+    console.log("target username: ", target.username);
+    console.log("channelId: ", channelId);
+    this.connectedUsers.get(target.id).forEach((socket) => {
+      console.log("socket id: ", socket.id);
+      this.server.to(socket.id).emit('inviteChannel', channelId);
+    });
+
+    //this.server.to(channelId).emit('inviteChannel', channelId);
+  }
+
   muteUser(mutedUser: MuteEntity) {
     this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user, mutedUser.channel.id);
   }
