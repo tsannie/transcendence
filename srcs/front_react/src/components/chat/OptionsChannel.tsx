@@ -124,26 +124,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
             });
             socket.on("leaveChannel", (target, channelId, channelOwner) => {
                 const oldOwner = props.owner;
-                /* if (channelId === props.currentConvId) {
-                    let usersCpy = users;
-                    setUsers(filterList(usersCpy, target));
-                    // set chat list only for user who leave the channel
-                    if (user?.id === target.id) {
-                        setChatList(chatList.filter(chat => chat.id !== channelId));
-                        setDisplay(ChatType.EMPTY);
-                    }
-                    if (channelOwner.id !== props.owner?.id) {
-                        props.setOwner(channelOwner);
-                        // if owner leave the channel, and there is more users, make the first user
-                    }
-                    if (user && target.id === props.owner?.id) {
-                        setStatus("owner");
 
-                        setUsers(filterList(usersCpy, user));
-                        setAdmins(filterList(admins, user));
-                    }
-
-                } */
                 if (channelId === props.currentConvId) {
                     let newUsers : User[] | null = users;
                     let newAdmins: User[] | null = admins;
@@ -168,7 +149,9 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
             });
             socket.on("deleteChannel", (channelId) => {
                 setChatList(chatList.filter(chat => chat.id !== channelId));
-                setDisplay(ChatType.EMPTY);
+                if (channelId === props.currentConvId) {
+                    setDisplay(ChatType.EMPTY);
+                }
             });
 
         return (() => {
