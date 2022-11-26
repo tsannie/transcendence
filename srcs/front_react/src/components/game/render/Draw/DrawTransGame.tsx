@@ -7,16 +7,16 @@ import {
   rad,
   white,
   Winner,
-} from "../const/const";
+} from "../../const/const";
 import {
   IBall,
   IDrawResponsive,
   IQuadrilateral,
   IPlayer,
   Room,
-} from "../types";
+} from "../../types";
 
-export function draw_game_trans(
+export function draw_trans_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
   room: Room,
@@ -27,6 +27,8 @@ export function draw_game_trans(
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
+    draw_smasher(ctx, room.smasher, drawResponsive);
+    draw_wall(ctx, room.wall, drawResponsive);
     draw_ball(ctx, room.ball, drawResponsive);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
@@ -45,8 +47,6 @@ export function draw_game_trans(
       paddle_width * drawResponsive.ratio_width,
     drawResponsive
   );
-  draw_smasher(ctx, room.smasher, drawResponsive);
-  draw_wall(ctx, room.wall, drawResponsive);
 }
 
 function draw_smasher(
@@ -80,7 +80,7 @@ function draw_wall(
     wall.x *= drawResponsive.ratio_width;
     wall.y *= drawResponsive.ratio_height;
     wall.width *= drawResponsive.ratio_width;
-    wall.height *= drawResponsive.ratio_width;
+    wall.height *= drawResponsive.ratio_height;
   }
 
   ctx.rect(wall.x, wall.y, wall.width, wall.height);
@@ -121,7 +121,7 @@ function draw_borders(
 ) {
   ctx.beginPath();
 
-  ctx.rect(0, 0, canvas_width, canvas_height);
+  ctx.rect(2, 2, canvas_width - 4, canvas_height - 4);
   ctx.closePath();
 
   ctx.fillStyle = "rgba(0, 0, 0, 0)";
@@ -131,8 +131,6 @@ function draw_borders(
   grd.addColorStop(0.5, "rgba(243,243,21)");
   grd.addColorStop(1, "rgba(255,153,51)");
   ctx.strokeStyle = grd;
-
-  ctx.lineWidth = border_size_default * drawResponsive.ratio_width;
 
   ctx.stroke();
   ctx.fill();
@@ -146,7 +144,7 @@ function draw_countdown(
   countdown: number
 ) {
   ctx.beginPath();
-  ctx.font = canvas_width / 4 + "px Arcade";
+  ctx.font = canvas_width / 4 + "px system-ui";
   ctx.fillStyle = white;
   ctx.textAlign = "center";
   ctx.fillText(countdown.toString(), canvas_height / 2, canvas_width / 2);
@@ -164,7 +162,7 @@ function draw_score(
   canvas_width: number
 ) {
   ctx.beginPath();
-  ctx.font = canvas_width / 10 + "px helvetica";
+  ctx.font = canvas_width / 10 + "px system-ui";
 
   let grd = ctx.createLinearGradient(0, 0, canvas_width, canvas_height);
   grd.addColorStop(0, "rgba(13,213,252)");
@@ -276,12 +274,6 @@ function draw_ball(
 
   ctx.beginPath();
   ctx.fillStyle = white;
-  ctx.arc(
-    IBall.x - 2 * ((rad * drawResponsive.ratio_width) / 2),
-    IBall.y - 2 * ((rad * drawResponsive.ratio_width) / 2),
-    rad * drawResponsive.ratio_width * 2,
-    0,
-    Math.PI * 2
-  );
+  ctx.arc(IBall.x, IBall.y, rad * drawResponsive.ratio_width, 0, Math.PI * 2);
   ctx.fill();
 }
