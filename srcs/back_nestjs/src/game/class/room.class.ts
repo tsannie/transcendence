@@ -16,6 +16,14 @@ export enum Winner {
   P2 = 2,
 }
 
+export interface IInfoRoom {
+  id: string;
+  p1: UserEntity;
+  p2: UserEntity;
+  p1_score: number;
+  p2_score: number;
+}
+
 export default class Room {
   id: string;
 
