@@ -276,12 +276,6 @@ function draw_ball(
 
   ctx.beginPath();
   ctx.fillStyle = white;
-  ctx.arc(
-    IBall.x - 2 * ((rad * drawResponsive.ratio_width) / 2),
-    IBall.y - 2 * ((rad * drawResponsive.ratio_width) / 2),
-    rad * drawResponsive.ratio_width * 2,
-    0,
-    Math.PI * 2
-  );
+  ctx.arc(IBall.x, IBall.y, rad * drawResponsive.ratio_width, 0, Math.PI * 2);
   ctx.fill();
 }
