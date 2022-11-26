@@ -8,6 +8,8 @@ import { IMemberProps } from "./OptionsChannel";
 function UserOptions(props: IMemberProps) {
     const {type, isOwner, isAdmin, channelId, user} = props;
     const [isOpen, setOpen ] = useState<boolean>(false);
+    const [ timer, setTimer ] = useState<number>(0);
+    const [timerOption, setTimerOption ] = useState<boolean>(false);
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
@@ -53,13 +55,33 @@ function UserOptions(props: IMemberProps) {
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
+    const createTimer = () => {
+        setTimerOption(true);
+    }
+
     const adminOptions = () => {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner){
-            adminOptionsJSX.push(<button key={3} onClick={revokeAdmin}>unAdmin</button>);
-            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<button key={1} onClick={revokeAdmin}>unAdmin</button>);
+            {
+                !timerOption ? 
+                adminOptionsJSX.push(<button key={2} onClick={createTimer}>Mute</button>)
+                : adminOptionsJSX.push(
+                <Fragment>
+                    <button key={2}>Mute</button>
+                    <form onSubmit={muteUser}>
+                        <input
+                            type="number"
+                            placeholder="minutes"
+                            onChange={(e: any) =>
+                                setTimer(e.target.value)
+                            }
+                        />
+                    </form>
+                </Fragment>) ;
+            };
+            adminOptionsJSX.push(<button key={3} onClick={banUser}>Ban</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -113,6 +135,8 @@ function UserOptions(props: IMemberProps) {
     }
 
     useEffect(() => {
+        setTimer(0);
+        setTimerOption(false);
         const closeDropdown = (e: any) => {
             if (!e.composedPath().includes(buttonRef.current))
                 setOpen(false);

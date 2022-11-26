@@ -259,6 +259,16 @@ $width_chat: calc(450 * var(--res));
           font-size: calc(13 * var(--res));
           padding: 1%;
         }
+
+        form {
+          border-style: none;
+          width: 100%;
+
+          input {
+            font-size: calc(11 * var(--res));
+            width: 100%;
+          }
+        }
       }
     }
 
