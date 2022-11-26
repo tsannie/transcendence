@@ -47,3 +47,12 @@ export interface IInfoRoom {
   p1_score: number;
   p2_score: number;
 }
+
+export interface IGameStat {
+  p1: User;
+  p2: User;
+  winner: Winner;
+  eloDiff: number;
+  p1_score: number;
+  p2_score: number;
+}

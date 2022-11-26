@@ -32,6 +32,15 @@ export interface IQuadrilateral {
   width: number;
 }
 
+export interface IGameStat {
+  p1: UserEntity;
+  p2: UserEntity;
+  winner: Winner;
+  eloDiff: number;
+  p1_score: number;
+  p2_score: number;
+}
+
 export interface IInfoRoom {
   id: string;
   status: RoomStatus;
