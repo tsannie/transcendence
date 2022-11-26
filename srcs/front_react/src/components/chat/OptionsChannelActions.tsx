@@ -57,9 +57,9 @@ function UserOptions(props: IMemberProps) {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<button key={3} onClick={revokeAdmin}>unAdmin</button>);
             adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
-            adminOptionsJSX.push(<button key={3} onClick={revokeAdmin}>Revoke Admin</button>);
+            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -68,10 +68,10 @@ function UserOptions(props: IMemberProps) {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner)
-            adminOptionsJSX.push(<button key={3} onClick={makeAdmin}>Make Admin</button>)
+            adminOptionsJSX.push(<button key={3} onClick={makeAdmin}>make Admin</button>)
         if (isOwner || isAdmin){
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
             adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
+            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -128,7 +128,6 @@ function UserOptions(props: IMemberProps) {
         const rec = buttonRef.current?.closest("div.conversation__options__members")?.getBoundingClientRect();
         const mouseX = event.clientX;
 
-        console.log(rec?.right, rec?.x, mouseX)
         if (mouseX && rec?.right && ((rec.right - rec.x) / 2 < ( mouseX - rec.x))) {
             let x = pos.right - event.clientX;
             let y = event.clientY - pos.top;
