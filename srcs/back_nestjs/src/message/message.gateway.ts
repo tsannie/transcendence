@@ -136,17 +136,26 @@ export class MessageGateway
     }
   }
 
-  createChannel(channel: ChannelEntity, userId: string) {
-    console.log("channel created : " + channel.id);
-
-    this.joinAllSocketToChannel(channel.id, userId);
+  createChannel(user: UserEntity, channelId: string) {
+    this.joinAllSocketToChannel(user.id, channelId);
     //this.server.emit('newChannel', channel);
   }
 
-  joinChannel(channel: ChannelEntity, user: UserEntity) {
+  joinChannel(user: UserEntity, channelId: string) {
     // find the socket of the user
-    this.joinAllSocketToChannel(channel.id, user.id);
-    this.server.to(channel.id).emit('joinChannel', channel, user);
+    this.joinAllSocketToChannel(user.id, channelId);
+    this.server.to(channelId).emit('joinChannel', user, channelId);
+  }
+
+  leaveChannel(user: UserEntity, channel: ChannelEntity) {
+    // find the socket of the user
+    this.server.to(channel.id).emit('leaveChannel', user, channel.id, channel.owner);
+    this.leaveAllSocketToChannel(user.id, channel.id);
+  }
+
+  deleteChannel(channelId: string) {
+    // find the socket of the user
+    this.server.to(channelId).emit('deleteChannel', channelId);
   }
 
   muteUser(mutedUser: MuteEntity) {
@@ -173,7 +182,7 @@ export class MessageGateway
     this.server.to(channelId).emit('revokeAdmin', revokeAdmin, channelId);
   }
 
-  joinAllSocketToChannel(channelId: string, userId: string) {
+  joinAllSocketToChannel(userId: string, channelId: string) {
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
@@ -184,13 +193,13 @@ export class MessageGateway
     }
   }
 
-  leaveAllSocketToChannel(channel: ChannelEntity, userId: string) {
+  leaveAllSocketToChannel(userId: string, channelId: string) {
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
       // leave the channel
       sockets.forEach((client) => {
-        client.leave(channel.id);
+        client.leave(channelId);
       });
     }
   }
