@@ -244,6 +244,9 @@ function ChannelProfile(props: {channel: IChannel, owner: User | null}) {
                     <button className="delete-channel" onClick={deleteChannel}>
                         Delete
                     </button>
+                    /* <button className="invite-channel" onClick={createChannel}>
+                        Invite
+                    </button> */
                 }
             </div>
         </div>
@@ -254,7 +257,7 @@ function ChannelOptions(props: {currentConvId: string, receivedChannel: IDatas |
     const [ owner, setOwner ] = useState<User | null>(null);
 
     useEffect(() => {
-        if (props.receivedChannel?.data.owner)
+        if (props.receivedChannel?.data)
             setOwner(props.receivedChannel.data.owner);
     }, [props.receivedChannel])
 
