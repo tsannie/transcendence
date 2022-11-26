@@ -20,6 +20,7 @@ import { CreateRoomDto } from './dto/createRoom.dto';
 import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
 import Room, { RoomStatus, Winner } from './class/room.class';
+import { throwError } from 'rxjs';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -29,8 +30,6 @@ import Room, { RoomStatus, Winner } from './class/room.class';
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    // @InjectRepository(RoomEntity)
-    // private all_game: Repository<RoomEntity>,
     private gameService: GameService,
     private authService: AuthService,
   ) {}
@@ -71,7 +70,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: CreateRoomDto,
   ) {
     const user = await this.authService.validateSocket(client);
-    //this.game.clear();
 
     const room: Room = this.gameService.findRoom(user, data.mode);
 
@@ -83,22 +81,31 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.status = RoomStatus.WAITING;
 
         this.gameService.joinRoom(room.id, client, this.server);
-        this.server.to(room.id).emit('joinedRoom', room);
+        this.server.to(room.id).emit('updateGame', room);
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
         room.p2_SocketId = client.id;
         room.status = RoomStatus.PLAYING;
 
         this.gameService.joinRoom(room.id, client, this.server);
-        this.server.to(room.id).emit('joinedRoom', room);
+        this.server.to(room.id).emit('updateGame', room);
         this.gameService.launchGame(room, this.server, this.allUsers);
       }
     }
   }
 
   ///////////////////////////////////////////////
-  //////////////// LEAVE ROOM/
+  //////////////// ROOM/
   ///////////////////////////////////////////////
+
+  @SubscribeMessage('joinRoom')
+  async joinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room_id: string,
+  ) {
+    console.log('joinRoom');
+    this.gameService.joinRoom(room_id, client, this.server);
+  }
 
   @SubscribeMessage('leaveRoom')
   async leaveRoom(

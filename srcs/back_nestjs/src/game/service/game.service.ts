@@ -5,7 +5,12 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
 import { GameStatEntity } from '../entity/gameStat.entity';
-import Room, { GameMode, RoomStatus, Winner } from '../class/room.class';
+import Room, {
+  IInfoRoom,
+  GameMode,
+  RoomStatus,
+  Winner,
+} from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
 import smasher from '../class/smasher.class';
@@ -81,6 +86,7 @@ export class GameService {
   joinRoom(room_id: string, client: Socket, server: Server) {
     const room_to_leave = this.usersRoom.get(client);
     if (room_to_leave) {
+      console.log('leave room');
       client.leave(room_to_leave);
     }
     server.in(client.id).socketsJoin(room_id);
@@ -92,6 +98,26 @@ export class GameService {
       client.leave(room_id);
     }
     this.usersRoom.delete(client);
+  }
+
+  async createInfoRoom(room: Room): Promise<IInfoRoom> {
+    return {
+      id: room.id,
+      p1: await this.userService.findById(room.p1_id),
+      p2: await this.userService.findById(room.p2_id),
+      p1_score: room.p1_score,
+      p2_score: room.p2_score,
+    };
+  }
+
+  async getCurrentRooms(): Promise<IInfoRoom[]> {
+    const current_rooms: IInfoRoom[] = [];
+    for (const room of this.gamesRoom.values()) {
+      if (room.status === RoomStatus.PLAYING) {
+        current_rooms.push(await this.createInfoRoom(room));
+      }
+    }
+    return current_rooms;
   }
 
   ////////////////////

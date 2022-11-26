@@ -26,7 +26,8 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    border-bottom: dashed;
+    margin: calc(10 * var(--res));
+    //border-bottom: dashed;
   }
 }
 
@@ -168,5 +169,67 @@
     #dot3 {
       animation: bounce 2s ease infinite 1.6s;
     }
+  }
+}
+
+.current__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.current__item {
+  display: flex;
+  justify-content: space-around;
+  width: 90%;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  h3 {
+    margin: 0;
+  }
+  border: dashed;
+  border-width: calc(3 * var(--res)) !important;
+}
+
+.current__item__info {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 60%;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.current__pseudo {
+  display: flex;
+  align-items: center;
+  span {
+    font-size: calc(15 * var(--res));
+  }
+}
+
+.current__score {
+  display: flex;
+  span {
+    font-size: calc(17 * var(--res));
+  }
+}
+
+.current__item__spectate {
+  display: flex;
+  button {
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+  svg {
+    width: calc(35 * var(--res));
   }
 }
