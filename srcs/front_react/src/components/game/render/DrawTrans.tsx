@@ -10,7 +10,7 @@ import {
 } from "../const/const";
 import { IBall, IDrawResponsive, IPaddle, IPlayer, Room } from "../types";
 
-export function draw_game_classic(
+export function draw_game_trans(
   ctx: CanvasRenderingContext2D,
   canvas: any,
   room: Room,
@@ -20,7 +20,7 @@ export function draw_game_classic(
   if (countdown != 0)
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
-    draw_line(ctx, canvas.height, canvas.width);
+    //draw_line(ctx, canvas.height, canvas.width);
     draw_ball(ctx, room.ball, drawResponsive);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
@@ -40,42 +40,6 @@ export function draw_game_classic(
     drawResponsive
   );
 }
-
-export function draw_game_ended(
-  ctx: CanvasRenderingContext2D,
-  room: Room,
-  user_id: string,
-  canvas_height: number,
-  canvas_width: number
-) {
-  ctx.beginPath();
-  ctx.rect(0, 0, canvas_width, canvas_height);
-  ctx.fillStyle = black;
-  ctx.fill();
-  ctx.font = canvas_width / 10 + "px Arcade";
-  ctx.fillStyle = white;
-  ctx.textAlign = "center";
-  ctx.fillText("Game Ended\n\n\n\n\n\n", canvas_width / 2, canvas_height / 2);
-  if (
-    (room.won === Winner.P1 && room.p1_id === user_id) ||
-    (room.won === Winner.P2 && room.p2_id === user_id)
-  )
-    ctx.fillText(
-      "you won !",
-      canvas_width / 2,
-      canvas_height / 2 + canvas_height / 4
-    );
-  else if (
-    (room.won === Winner.P2 && room.p1_id === user_id) ||
-    (room.won === Winner.P1 && room.p2_id === user_id)
-  )
-    ctx.fillText(
-      "you lost !",
-      canvas_width / 2,
-      canvas_height / 2 + canvas_height / 4
-    );
-}
-
 ////////////////////////////////////////
 ////// DRAW LINES
 ////////////////////////////////////////
