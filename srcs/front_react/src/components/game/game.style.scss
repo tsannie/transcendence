@@ -120,8 +120,7 @@
     width: calc(250 * var(--res));
     height: calc(170 * var(--res));
   }
-  .button__transcendance {
-    border-width: calc(6 * var(--res)) !important;
+  #button__transcendance {
     border-image: linear-gradient(
       to right,
       rgba(13, 213, 252),
@@ -130,24 +129,17 @@
     );
     border-image-slice: 1;
 
-    // set bakcground-image little size
-    background-image: url(../../assets/img/trans.jpeg) no-repeat top left;
-    background-size: auto;
-
-    p {
-      font-family: "system-ui" !important;
-      font-weight: bolder !important;
-      text-transform: uppercase;
-      font-size: calc(22 * var(--res)) !important;
-      background: -webkit-linear-gradient(
-        rgb(87, 227, 255),
-        rgb(255, 231, 237),
-        rgb(74, 228, 94)
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    font-family: "system-ui" !important;
+    font-size: calc(17 * var(--res));
+    background: linear-gradient(
+      to right,
+      rgba(13, 213, 252),
+      rgba(243, 243, 21),
+      rgba(255, 153, 51)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 

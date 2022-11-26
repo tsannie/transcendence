@@ -28,9 +28,9 @@ function GameMatchmaking() {
         <h3>ranked games</h3>
       </div>
       <div className="matchmaking__content">
-        <button onClick={handleMatchClassic}>classic</button>
-        <button className="button__transcendance" onClick={handleMatchTrans}>
-          <p>transcendence</p>
+        <button onClick={handleMatchClassic}>CLASSIC</button>
+        <button id="button__transcendance" onClick={handleMatchTrans}>
+          TRANSCENDANCE
         </button>
       </div>
     </div>
