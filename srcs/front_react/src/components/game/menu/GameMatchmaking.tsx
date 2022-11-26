@@ -10,7 +10,6 @@ function GameMatchmaking() {
   const joinMatchmaking = (data: ICreateRoom) => {
     if (!room) {
       socket?.emit("matchmaking", data);
-      toast.info("join matchmaking ...");
     }
   };
   const handleMatchClassic = () => {
