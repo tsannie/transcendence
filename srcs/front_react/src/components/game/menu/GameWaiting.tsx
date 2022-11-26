@@ -5,8 +5,9 @@ import { RoomStatus } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 
 export default function GameWaiting() {
-  const { room, setRoom, socket } = useContext(GameContext) as GameContextType;
-  const [time, setTime] = useState(0);
+  const { room, setRoom, socket, timeQueue } = useContext(
+    GameContext
+  ) as GameContextType;
 
   function leaveRoom() {
     if (room?.status === RoomStatus.WAITING) {
@@ -14,16 +15,6 @@ export default function GameWaiting() {
       setRoom(null);
     }
   }
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    interval = setInterval(() => {
-      setTime((time) => time + 10);
-    }, 10);
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="waiting">
@@ -38,10 +29,10 @@ export default function GameWaiting() {
         </div>
         <div className="waiting__search__time">
           <span id="minutes">
-            {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:
+            {("0" + Math.floor((timeQueue / 60000) % 60)).slice(-2)}:
           </span>
           <span id="sec">
-            {("0" + Math.floor((time / 1000) % 60)).slice(-2)}
+            {("0" + Math.floor((timeQueue / 1000) % 60)).slice(-2)}
           </span>
         </div>
       </div>
