@@ -17,20 +17,22 @@ export default function Game() {
   const { socket, room } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
 
-  return (
-    <div className="game">
-      <div className="game__menu">
-        <GameDuel />
-        <GameCurrent />
+  if (room?.status === RoomStatus.PLAYING) return <GameRender />;
+  else
+    return (
+      <div className="game">
+        <div className="game__menu">
+          <GameDuel />
+          <GameCurrent />
+        </div>
+        <div className="game__content">
+          <GameContentHeader />
+          {room?.status === RoomStatus.WAITING ? (
+            <GameWaiting />
+          ) : (
+            <GameMatchmaking />
+          )}
+        </div>
       </div>
-      <div className="game__content">
-        <GameContentHeader />
-        {room?.status !== RoomStatus.WAITING ? (
-          <GameMatchmaking />
-        ) : (
-          <GameWaiting />
-        )}
-      </div>
-    </div>
-  );
+    );
 }

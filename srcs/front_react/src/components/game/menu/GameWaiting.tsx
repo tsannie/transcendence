@@ -5,7 +5,6 @@ import { RoomStatus } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 
 export default function GameWaiting() {
-  const { user } = useContext(AuthContext) as AuthContextType;
   const { room, setRoom, socket } = useContext(GameContext) as GameContextType;
   const [time, setTime] = useState(0);
 
