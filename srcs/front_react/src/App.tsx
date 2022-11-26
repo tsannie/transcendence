@@ -31,6 +31,7 @@ export default function App() {
       <div className="app">
         <Routes location={displayLocation}>
           {/* 404 Page (public) */}
+          <Route path="*" element={<PageNotFound />} />
           {/* Auth Routes (public) */}
           <Route path="/auth" element={<LoginPage />} />
           <Route path="/2fa" element={<TwoFactorPage />} />
