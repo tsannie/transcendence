@@ -1,13 +1,13 @@
 import React from "react";
 
-function GameDuel() {
+function GameAmical() {
   return (
-    <div className="duel">
+    <div className="amical">
       <div className="game__menu__item__header">
-        <h2>duel</h2>
+        <h2>amical</h2>
       </div>
     </div>
   );
 }
 
-export default GameDuel;
+export default GameAmical;

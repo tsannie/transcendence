@@ -112,6 +112,7 @@ export class GameService {
   async createInfoRoom(room: Room): Promise<IInfoRoom> {
     return {
       id: room.id,
+      status: room.status,
       p1: await this.userService.findById(room.p1_id),
       p2: await this.userService.findById(room.p2_id),
       p1_score: room.p1_score,
@@ -258,6 +259,16 @@ export class GameService {
     return false;
   }
 
+  checkNewScore(scoreBeforeUpdate: number[], room: Room): boolean {
+    if (
+      scoreBeforeUpdate[0] !== room.p1_score ||
+      scoreBeforeUpdate[1] !== room.p2_score
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   async launchGame(
     room: Room,
     server: Server,
@@ -265,11 +276,18 @@ export class GameService {
   ) {
     const socketP1 = allUsers.get(room.p1_id);
     const socketP2 = allUsers.get(room.p2_id);
+    let score: number[] = [0, 0];
 
+    server.emit('updateCurrentRoom', await this.createInfoRoom(room));
     while (room.status === RoomStatus.PLAYING) {
+      score = [room.p1_score, room.p2_score];
       this.checkGiveUP(socketP1, socketP2, room);
       room.ball.update(room);
       server.in(room.id).emit('updateGame', room);
+
+      if (this.checkNewScore(score, room))
+        server.emit('updateCurrentRoom', await this.createInfoRoom(room));
+
       await new Promise((f) => setTimeout(f, 8));
     }
 
