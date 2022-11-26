@@ -51,14 +51,18 @@ export const GameProvider = ({ children }: GameContextProps) => {
   }, [setSocket]); // create a new socket only once
 
   useEffect(() => {
-    if (displayRender) {
-      socket?.on("updateGame", (room: Room) => {
-        setRoom(room);
-      });
-    }
+    socket?.on("updateGame", (room: Room) => {
+      setRoom(room);
+    });
 
     socket?.on("joinQueue", (message: string) => {
       toast.info(message);
+      setTimeQueue(0);
+    });
+
+    socket?.on("matchFound", (message: string) => {
+      setDisplayRender(true);
+      toast.success(message);
       setTimeQueue(0);
     });
 

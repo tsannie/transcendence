@@ -6,7 +6,9 @@ import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { IInfoRoom } from "../const/const";
 
 function GameCurrent() {
-  const { socket } = useContext(GameContext) as GameContextType;
+  const { socket, setDisplayRender } = useContext(
+    GameContext
+  ) as GameContextType;
   const [currentRooms, setCurrentRooms] = useState<IInfoRoom[]>([]);
   //getCurrentRooms
 
@@ -18,6 +20,7 @@ function GameCurrent() {
 
   const handleJoinRoom = (e: MouseEvent<HTMLButtonElement>, id: string) => {
     e.preventDefault();
+    setDisplayRender(true);
     socket?.emit("joinRoom", id);
   };
 

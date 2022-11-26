@@ -96,13 +96,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.status = RoomStatus.WAITING;
 
         this.gameService.joinRoom(room.id, client, this.server);
-        this.server.to(room.id).emit('updateGame', room);
         this.server.to(room.id).emit('joinQueue', 'queue joined ...');
+        this.server.to(client.id).emit('updateGame', room);
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
         room.status = RoomStatus.PLAYING;
 
         this.gameService.joinRoom(room.id, client, this.server);
+        this.server.to(room.id).emit('matchFound', 'match found !');
         this.server.to(room.id).emit('updateGame', room);
         this.gameService.launchGame(room, this.server, this.allUsers);
       }
