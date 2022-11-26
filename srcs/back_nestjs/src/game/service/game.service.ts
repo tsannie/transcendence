@@ -90,6 +90,7 @@ export class GameService {
   joinRoom(room_id: string, client: Socket, server: Server) {
     const room_to_leave = this.usersRoom.get(client);
     if (room_to_leave) {
+      console.log('leave room');
       client.leave(room_to_leave);
     }
     server.in(client.id).socketsJoin(room_id);

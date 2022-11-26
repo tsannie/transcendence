@@ -17,7 +17,7 @@ export default function Game() {
   const { socket, room } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
 
-  if (room?.status === RoomStatus.PLAYING) return <GameRender />;
+  if (room && room?.status !== RoomStatus.WAITING) return <GameRender />;
   else
     return (
       <div className="game">
