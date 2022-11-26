@@ -138,6 +138,7 @@ $width_chat: calc(450 * var(--res));
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
 }
 
 .conversation__messages__list {
@@ -344,6 +345,7 @@ form {
   padding-left: 2%;
   border-style: dashed;
   border-radius: calc(15 * var(--res));
+  max-width: 75%;
 }
 
 .send__button {
