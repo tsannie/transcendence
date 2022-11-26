@@ -199,6 +199,9 @@ $width_chat: calc(450 * var(--res));
   height: 100%;
   padding-top: 5%;
   overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .category {
     display: flex;
