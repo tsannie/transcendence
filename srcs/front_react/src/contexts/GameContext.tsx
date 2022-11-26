@@ -71,8 +71,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
         setRoom,
         socket,
         timeQueue,
-      }}
-    >
+      }}>
       {children}
     </GameContext.Provider>
   );
