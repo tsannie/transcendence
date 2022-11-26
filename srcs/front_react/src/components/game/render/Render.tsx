@@ -11,6 +11,7 @@ import React, {
 } from "react";
 import { draw_game, draw_game_ended } from "./Draw";
 import {
+  black,
   border_size_default,
   canvas_back_height,
   canvas_back_width,
@@ -82,7 +83,7 @@ export function GameRender() {
     if (leave) {
       setRoom(null);
     }
-  }, [leave]);
+  }, [leave, room]);
 
   function leaveGame() {
     socket?.emit("leaveRoom", room?.id);
@@ -150,7 +151,7 @@ export function GameRender() {
   }
 
   return (
-    <div>
+    <Fragment>
       {drawResponsive ? (
         <Fragment>
           <canvas
@@ -159,7 +160,7 @@ export function GameRender() {
             height={drawResponsive.canvas_height}
             width={drawResponsive.canvas_width}
             onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: "black" }}
+            style={{ backgroundColor: black }}
           ></canvas>
           <br />
           <button onClick={leaveGame}>Leave The Game</button>
@@ -167,6 +168,6 @@ export function GameRender() {
       ) : (
         <div>loading...</div>
       )}
-    </div>
+    </Fragment>
   );
 }
