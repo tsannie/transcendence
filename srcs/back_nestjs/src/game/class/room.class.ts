@@ -48,6 +48,12 @@ export interface IInfoRoom {
   p2_score: number;
 }
 
+export interface IInfoGame {
+  search: number;
+  ingame: number;
+  online: number;
+}
+
 export default class Room {
   id: string;
 

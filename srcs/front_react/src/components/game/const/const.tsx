@@ -39,6 +39,12 @@ export enum Winner {
   P2 = 2,
 }
 
+export interface IInfoGame {
+  search: number;
+  ingame: number;
+  online: number;
+}
+
 export interface IInfoRoom {
   id: string;
   status: RoomStatus;
