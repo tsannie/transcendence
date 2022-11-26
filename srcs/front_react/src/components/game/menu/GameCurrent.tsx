@@ -23,7 +23,7 @@ function GameCurrent() {
 
   let allRooms = currentRooms.map((room: IInfoRoom) => {
     return (
-      <div className="current__item">
+      <div className="current__item" key={room.id}>
         <div className="current__item__info">
           <div className="current__pseudo">
             <span>
