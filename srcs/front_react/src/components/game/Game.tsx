@@ -27,7 +27,7 @@ export default function Game() {
         </div>
         <div className="game__content">
           <GameContentHeader />
-          {room?.status === RoomStatus.WAITING ? (
+          {room && room.status === RoomStatus.WAITING ? (
             <GameWaiting />
           ) : (
             <GameMatchmaking />
