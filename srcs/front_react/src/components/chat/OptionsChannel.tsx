@@ -175,7 +175,7 @@ function ChannelProfile(props: {channel: IChannel}) {
             <div className="date">conv started at: {channel.createdAt.toLocaleString()}</div>
             <span className="owner">owned by: {channel.owner?.username}</span>
             <button className="clickable_profile">
-                <Link to={"/profile/" + channel.owner?.username}>
+                <Link style={{textDecoration: 'none'}} to={"/profile/" + channel.owner?.username}>
                     <img src={channel.owner?.profile_picture}/>
                 </Link>
             </button>
