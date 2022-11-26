@@ -22,6 +22,8 @@ import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { BanEntity, MuteEntity } from '../models/ban.entity';
 import { Request } from 'express';
 import { MessageGateway } from 'src/message/message.gateway';
+import { UserEntity } from 'src/user/models/user.entity';
+import { ChannelInvitationDto } from '../dto/channelinvitation.dto';
 
 @Controller('channel')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -190,6 +192,20 @@ export class ChannelController {
 
     this.messageGateway.deleteChannel(query_channel.id);
     return old_channel;
+  }
+
+  @Post('invite')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async inviteChannel(
+    @Body() query_channel: ChannelInvitationDto,
+    @Req() req: Request,
+  ): Promise<ChannelInvitationDto> {
+    const target: UserEntity = await this.channelService.inviteChannel(query_channel, req.user);
+
+    // find the user to invite with his id
+    this.messageGateway.inviteChannel(target, query_channel.id);
+    return query_channel;
   }
 
   @Post('addPassword')
