@@ -138,6 +138,7 @@ $width_chat: calc(450 * var(--res));
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
 }
 
 .conversation__messages__list {
@@ -197,14 +198,15 @@ $width_chat: calc(450 * var(--res));
   flex-direction: column;
   height: 100%;
   padding-top: 5%;
-  overflow-x: auto;
+  overflow-y: auto;
 
   .category {
     display: flex;
-    position: relative;
+    flex: 0 0 15%;
     flex-direction: column;
     border-style: dashed;
     border-width: calc(3 * var(--res)) !important;
+    margin-bottom: 2%;
 
     .title {
       font-size: calc(14 * var(--res));
@@ -215,43 +217,48 @@ $width_chat: calc(450 * var(--res));
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-    }
 
-    .members {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-
-    .dropdown{
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      align-items: center;
-      background-color: $bg-color;
-      opacity: 0.954;
-      border-style: dashed;
-      height: fit-content;
-      z-index: 1;
-
-      .options{
+      .members {
         display: flex;
-        justify-content: center;
-        width: 100%;
-        border-bottom-style: dashed;
-        font-size: calc(18 * var(--res));
+        position: relative;
+        transition: 0.3s;
+        cursor: pointer;
+
+        // &:hover {
+        //   opacity: 0.6;
+        // }
       }
 
-      button {
-        font-size: calc(16 * var(--res));
-        padding: 1%;
+      .dropdown{
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        align-items: center;
+        background-color: $bg-color;
+        opacity: 0.954;
+        border-style: dashed;
+        height: fit-content;
+        z-index: 1;
+
+        .options{
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          border-bottom-style: dashed;
+          font-size: calc(18 * var(--res));
+        }
+
+        button {
+          font-size: calc(16 * var(--res));
+          padding: 1%;
+        }
       }
     }
 
     button {
       width: fit-content;
       border-style: none;
-      padding: 0%;
+      padding: 0.6%;
     }
 
     img {
@@ -338,6 +345,7 @@ form {
   padding-left: 2%;
   border-style: dashed;
   border-radius: calc(15 * var(--res));
+  max-width: 75%;
 }
 
 .send__button {

@@ -1,5 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
@@ -214,7 +215,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
     return (
         <Fragment>
         { channel ?
-        <div className="conversation__options__members" key={props.currentConvId} >
+        <div className="conversation__options__members" key={props.currentConvId} onClick={ (e) =>{ console.log("bubble2 =", (e.target as HTMLElement).getBoundingClientRect()); console.log((e.target as HTMLElement).getBoundingClientRect().top, (e.target as HTMLElement).getBoundingClientRect().left)}}>
             <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={admins}/>
             <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={users as User[] | null}/>
             <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={muted as User[] | null}/>
@@ -248,7 +249,9 @@ function ChannelProfile(props: {channel: IChannel, owner: User | null}) {
             <div className="date">conv started at: {channel.createdAt.toLocaleString()}</div>
             <span className="owner">owned by: {owner?.username}</span>
             <button className="clickable_profile">
-                <img src={owner?.profile_picture}/>
+                <Link to={"/profile/" + owner?.username}>
+                    <img src={owner?.profile_picture}/>
+                </Link>
             </button>
             <div className="actions-channel">
                 <button className="leave-channel" onClick={leaveChannel}>
