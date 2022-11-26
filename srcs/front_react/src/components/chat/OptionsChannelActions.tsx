@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { IMemberProps } from "./OptionsChannel";
@@ -7,7 +8,7 @@ import { IMemberProps } from "./OptionsChannel";
 function UserOptions(props: IMemberProps) {
     const {type, isOwner, isAdmin, channelId, user} = props;
     const [isOpen, setOpen ] = useState<boolean>(false);
-    const buttonRef = useRef<HTMLButtonElement>(null);
+    const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
     const banUser = async () => {
@@ -96,11 +97,14 @@ function UserOptions(props: IMemberProps) {
 
     // TODO: button redirect to profile page of user
     const displayOptions = () => {
-        console.log(dropdownStyle);
         return (
         <div className="dropdown" style={dropdownStyle.current}>
-            <div className="options">Options</div>
-            <button>Profile</button>
+            <div className="options">{user.username}</div>
+            <button>
+                <Link style={{textDecoration: 'none'}} to={"/profile/" + user.username}>
+                    Profile
+                </Link>
+            </button>
             {type === "Admins" && adminOptions()}
             {type === "Members" && memberOptions()}
             {type === "Muted" && mutedOptions()}
@@ -118,23 +122,25 @@ function UserOptions(props: IMemberProps) {
         return () => document.body.removeEventListener("click", closeDropdown);
     }, [])
 
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleButtonClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        console.log((event.target as HTMLElement).getBoundingClientRect());
         let pos = (event.target as HTMLElement).getBoundingClientRect();
-        let x = event.clientX - pos.left;
+        console.log(pos.top, pos.left);
+        let x = pos.right - event.clientX;
         let y = event.clientY - pos.top;
         dropdownStyle.current = {
-            left: x,
-            top: 2 * y,
+            right: x,
+            top: y,
         }
         setOpen(true);
     }
 
     return (
     <Fragment>
-        <button ref={buttonRef} className="member" onClick={(e) => handleButtonClick(e)}>
+        <div ref={buttonRef} className="members" onClick={(e) => handleButtonClick(e)}>
             <img src={user.profile_picture} />
-        </button>
-        {isOpen ? displayOptions() : null}
+            {isOpen ? displayOptions() : null}
+        </div>
     </Fragment>);
 }
 
