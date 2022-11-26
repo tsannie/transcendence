@@ -46,9 +46,9 @@ export function GameRender() {
 
     setDrawResponsive({
       canvas_width: lowerSize,
-      canvas_height: lowerSize / screen_ratio,
+      canvas_height: lowerSize * screen_ratio,
       ratio_width: lowerSize / canvas_back_width,
-      ratio_height: lowerSize / screen_ratio / canvas_back_height,
+      ratio_height: (lowerSize * screen_ratio) / canvas_back_height,
       border_size:
         border_size_default * (lowerSize / screen_ratio / canvas_back_height),
     });
