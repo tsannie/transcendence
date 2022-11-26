@@ -144,7 +144,7 @@ function draw_countdown(
   countdown: number
 ) {
   ctx.beginPath();
-  ctx.font = canvas_width / 4 + "px Arcade";
+  ctx.font = canvas_width / 4 + "px system-ui";
   ctx.fillStyle = white;
   ctx.textAlign = "center";
   ctx.fillText(countdown.toString(), canvas_height / 2, canvas_width / 2);
@@ -162,7 +162,7 @@ function draw_score(
   canvas_width: number
 ) {
   ctx.beginPath();
-  ctx.font = canvas_width / 10 + "px helvetica";
+  ctx.font = canvas_width / 10 + "px system-ui";
 
   let grd = ctx.createLinearGradient(0, 0, canvas_width, canvas_height);
   grd.addColorStop(0, "rgba(13,213,252)");
