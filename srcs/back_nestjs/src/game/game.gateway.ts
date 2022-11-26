@@ -8,6 +8,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
@@ -34,14 +35,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private authService: AuthService,
   ) {}
 
-  private allUsers: Map<string, Socket> = new Map();
+  // Player / SocketPlayer
+  private allUsers: Map<string, Socket[]> = new Map();
 
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('GameGateway');
 
   async handleConnection(client: Socket) {
     const user = await this.authService.validateSocket(client);
-    this.allUsers.set(user.id, client);
+
+    if (this.allUsers.has(user.id)) {
+      this.allUsers.get(user.id).push(client);
+    } else this.allUsers.set(user.id, [client]);
+
     this.logger.log(`Client GAME connected: ${user.username}`);
   }
 
@@ -55,7 +61,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     this.gameService.leaveRoom(null, client);
-    this.allUsers.delete(user.id);
+
+    if (this.allUsers.has(user.id)) {
+      const sockets = this.allUsers.get(user.id);
+      const index = sockets.indexOf(client);
+      if (index > -1) {
+        sockets.splice(index, 1);
+      } else if (sockets.length === 0) {
+        this.allUsers.delete(user.id);
+      }
+    }
 
     client.disconnect();
   }
@@ -71,20 +86,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const user = await this.authService.validateSocket(client);
 
+    if (this.gameService.findRoomByUser(user)) {
+      throw new WsException('Already in game');
+    }
     const room: Room = this.gameService.findRoom(user, data.mode);
 
     if (room && user) {
       if (room.status === RoomStatus.EMPTY) {
-        room.game_mode = data.mode;
-        room.p1_id = user.id;
-        room.p1_SocketId = client.id;
         room.status = RoomStatus.WAITING;
 
         this.gameService.joinRoom(room.id, client, this.server);
         this.server.to(room.id).emit('updateGame', room);
+        this.server.to(room.id).emit('joinQueue', 'queue joined ...');
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
-        room.p2_SocketId = client.id;
         room.status = RoomStatus.PLAYING;
 
         this.gameService.joinRoom(room.id, client, this.server);
@@ -103,7 +118,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
   ) {
-    console.log('joinRoom');
     this.gameService.joinRoom(room_id, client, this.server);
   }
 

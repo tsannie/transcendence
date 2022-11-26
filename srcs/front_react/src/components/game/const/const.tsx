@@ -16,6 +16,11 @@ export const paddle_height: number = 600;
 export const white = "#fff8dc";
 export const black = "#1d1d1d";
 
+export interface IException {
+  status: string;
+  message: string;
+}
+
 export enum GameMode {
   PONG_CLASSIC = 0,
   PONG_TRANS = 1,

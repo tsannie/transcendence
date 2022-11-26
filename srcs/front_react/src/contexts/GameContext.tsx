@@ -6,11 +6,13 @@ import {
   useState,
 } from "react";
 import { AuthContext } from "./AuthContext";
-import { RoomStatus } from "../components/game/const/const";
+import { IException, RoomStatus } from "../components/game/const/const";
 import { Room } from "../components/game/types";
 import { io, Socket } from "socket.io-client";
+import { toast } from "react-toastify";
 
 export type GameContextType = {
+  timeQueue: number;
   room: Room | null;
   setRoom: (room: Room | null) => void;
   socket: Socket | null;
@@ -27,6 +29,17 @@ export const GameProvider = ({ children }: GameContextProps) => {
 
   const { user } = useContext(AuthContext);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [timeQueue, setTimeQueue] = useState<number>(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    interval = setInterval(() => {
+      setTimeQueue((time) => time + 10);
+    }, 10);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect((): ReturnType<EffectCallback> => {
     const newSocket: any = io("http://localhost:4000/game", {
@@ -40,6 +53,15 @@ export const GameProvider = ({ children }: GameContextProps) => {
     socket?.on("updateGame", (room: Room) => {
       setRoom(room);
     });
+
+    socket?.on("joinQueue", (message: string) => {
+      toast.info(message);
+      setTimeQueue(0);
+    });
+
+    socket?.on("exception", (data: IException) => {
+      toast.error(data.message);
+    });
   }, [socket]);
 
   return (
@@ -48,6 +70,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
         room,
         setRoom,
         socket,
+        timeQueue,
       }}
     >
       {children}

@@ -39,22 +39,21 @@ export class GameService {
 
   findRoom(user: UserEntity, mode: GameMode): Room {
     let room: Room;
-    let already_in_game: boolean = false;
 
     const size = this.gamesRoom.size;
     if (size !== 0) {
       const all_rooms = this.gamesRoom.values();
       for (const room_db of all_rooms) {
         if (
-          (room_db.p1_id && user.id === room_db.p1_id) ||
-          (room_db.p2_id && user.id === room_db.p2_id)
-        )
-          already_in_game = true; // TODO
-        else if (room_db.status === RoomStatus.WAITING && !room_db.p2_id)
+          room_db.status === RoomStatus.WAITING &&
+          room_db.game_mode === mode
+        ) {
           room = room_db;
+          break;
+        }
       }
     }
-    if (!room && already_in_game === false) {
+    if (!room) {
       room = new Room(user.id, mode);
 
       this.gamesRoom.set(room.id, room);
@@ -79,14 +78,24 @@ export class GameService {
     return undefined;
   }
 
+  findRoomByUser(user: UserEntity): Room | undefined {
+    for (const room of this.gamesRoom.values()) {
+      if (room.p1_id === user.id || room.p2_id === user.id) {
+        return room;
+      }
+    }
+    return undefined;
+  }
+
   getRoomById(room_id: string): Room | undefined {
     return this.gamesRoom.get(room_id);
   }
 
   joinRoom(room_id: string, client: Socket, server: Server) {
+    console.log('join room');
     const room_to_leave = this.usersRoom.get(client);
+    console.log('room to leave', room_to_leave);
     if (room_to_leave) {
-      console.log('leave room');
       client.leave(room_to_leave);
     }
     server.in(client.id).socketsJoin(room_id);
@@ -230,31 +239,36 @@ export class GameService {
     return Math.round(eloDiff);
   }*/
 
-  async updateGame(room: Room) {
-    room.ball.update(room);
-  }
+  checkGiveUP(socketP1: Socket[], socketP2: Socket[], room: Room): boolean {
+    // if no socket is equal to this.usersRoom.get(socketP1) return true
 
-  checkGiveUP(socketP1: Socket, socketP2: Socket, room: Room): boolean {
-    if (this.usersRoom.get(socketP1) !== room.id) {
+    if (socketP1.every((socket) => this.usersRoom.get(socket) !== room.id)) {
       room.won = Winner.P2;
       room.status = RoomStatus.CLOSED;
+      console.log('P1 GIVE UP');
       return true;
-    } else if (this.usersRoom.get(socketP2) !== room.id) {
+    } else if (
+      socketP2.every((socket) => this.usersRoom.get(socket) !== room.id)
+    ) {
       room.won = Winner.P1;
       room.status = RoomStatus.CLOSED;
+      console.log('P2 GIVE UP');
       return true;
     }
     return false;
   }
 
-  async launchGame(room: Room, server: Server, allUsers: Map<string, Socket>) {
-    // TODO cooldown
+  async launchGame(
+    room: Room,
+    server: Server,
+    allUsers: Map<string, Socket[]>,
+  ) {
     const socketP1 = allUsers.get(room.p1_id);
     const socketP2 = allUsers.get(room.p2_id);
 
     while (room.status === RoomStatus.PLAYING) {
       this.checkGiveUP(socketP1, socketP2, room);
-      this.updateGame(room);
+      room.ball.update(room);
       server.in(room.id).emit('updateGame', room);
       await new Promise((f) => setTimeout(f, 8));
     }
