@@ -231,7 +231,7 @@ $width_chat: calc(450 * var(--res));
         //   opacity: 0.6;
         // }
       }
-  
+
       .dropdown{
         display: flex;
         flex-direction: column;
@@ -254,7 +254,7 @@ $width_chat: calc(450 * var(--res));
           overflow: hidden;
           text-overflow: ellipsis;
         }
-  
+
         button {
           font-size: calc(13 * var(--res));
           padding: 1%;
@@ -604,4 +604,20 @@ form {
     border-style: dashed;
     margin-right: 3%;
   }
+}
+
+.actions-channel { // TODO: a changer pour avoi un truc style
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.leave-channel {
+  width: "fit-content";
+  height: "fit-content";
+}
+
+.delete-channel {
+  width: "fit-content";
+  height: "fit-content";
 }

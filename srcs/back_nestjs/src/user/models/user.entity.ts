@@ -89,15 +89,15 @@ export class UserEntity {
   @Column({ nullable: true })
   profile_picture: string;
 
-  @Expose({ groups: ['user'] })
+  @Expose({ groups: ['user', 'me'] })
   @Column({ default: 1000 })
   elo: number;
 
-  @Expose({ groups: ['user'] })
+  @Expose({ groups: ['user', 'me'] })
   @Column({ default: 0 })
   matches: number;
 
-  @Expose({ groups: ['user'] })
+  @Expose({ groups: ['user', 'me'] })
   @Column({ default: 0 })
   wins: number;
 
