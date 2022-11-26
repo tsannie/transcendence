@@ -48,7 +48,7 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
   return (
   <div className="conversation__options__title">
     <button className="clickable_profile">
-      <Link to={"/profile/" + user2?.username}>
+      <Link style={{textDecoration: 'none'}} to={"/profile/" + user2?.username}>
         <img src={user2?.profile_picture} />
       </Link>
     </button>
