@@ -101,7 +101,7 @@ function UserOptions(props: IMemberProps) {
         <div className="dropdown" style={dropdownStyle.current}>
             <div className="options">{user.username}</div>
             <button>
-                <Link style={{textDecoration: 'none'}} to={"/profile/" + user.username}>
+                <Link to={"/profile/" + user.username}>
                     Profile
                 </Link>
             </button>
@@ -123,14 +123,27 @@ function UserOptions(props: IMemberProps) {
     }, [])
 
     const handleButtonClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        console.log((event.target as HTMLElement).getBoundingClientRect());
         let pos = (event.target as HTMLElement).getBoundingClientRect();
-        console.log(pos.top, pos.left);
-        let x = pos.right - event.clientX;
-        let y = event.clientY - pos.top;
-        dropdownStyle.current = {
-            right: x,
-            top: y,
+
+        const rec = buttonRef.current?.closest("div.conversation__options__members")?.getBoundingClientRect();
+        const mouseX = event.clientX;
+
+        console.log(rec?.right, rec?.x, mouseX)
+        if (mouseX && rec?.right && ((rec.right - rec.x) / 2 < ( mouseX - rec.x))) {
+            let x = pos.right - event.clientX;
+            let y = event.clientY - pos.top;
+            dropdownStyle.current = {
+                right: x,
+                top: y,
+            }
+        }
+        else{
+            let x = event.clientX - pos.left;
+            let y = event.clientY -  pos.top;
+            dropdownStyle.current = {
+                left: x,
+                top: y,
+            }
         }
         setOpen(true);
     }
