@@ -3,12 +3,23 @@ import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { ReactComponent as SpectateIcon } from "../../../assets/img/icon/read.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { IInfoRoom } from "../const/const";
+import { IInfoRoom, RoomStatus } from "../const/const";
 
 function GameCurrent() {
-  const { socket } = useContext(GameContext) as GameContextType;
+  const { socket, setDisplayRender } = useContext(
+    GameContext
+  ) as GameContextType;
   const [currentRooms, setCurrentRooms] = useState<IInfoRoom[]>([]);
   //getCurrentRooms
+
+  useEffect(() => {
+    socket?.on("updateCurrentRoom", (room: IInfoRoom) => {
+      const tmp = currentRooms.filter((r) => r.id !== room.id);
+      setCurrentRooms(
+        room.status === RoomStatus.PLAYING ? [...tmp, room] : tmp
+      );
+    });
+  }, [socket]);
 
   useEffect(() => {
     api.get("game/rooms").then((res: AxiosResponse) => {
@@ -18,6 +29,7 @@ function GameCurrent() {
 
   const handleJoinRoom = (e: MouseEvent<HTMLButtonElement>, id: string) => {
     e.preventDefault();
+    setDisplayRender(true);
     socket?.emit("joinRoom", id);
   };
 
