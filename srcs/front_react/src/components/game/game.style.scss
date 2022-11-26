@@ -176,9 +176,6 @@
   .dot {
     display: flex;
     margin-left: calc(20 * var(--res));
-    h3 {
-      font-size: calc(60 * var(--res));
-    }
 
     #dot1 {
       height: 100%;
