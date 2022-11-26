@@ -1,5 +1,3 @@
-import { Interface } from 'readline';
-import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { victory_score } from '../const/const';
