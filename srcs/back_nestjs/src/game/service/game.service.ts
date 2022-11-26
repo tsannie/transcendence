@@ -97,7 +97,9 @@ export class GameService {
   }
 
   async leaveRoom(room_id: string, client: Socket) {
-    if (room_id) client.leave(room_id);
+    if (room_id) {
+      client.leave(room_id);
+    }
     this.usersRoom.delete(client);
   }
 
