@@ -94,9 +94,7 @@ export class GameService {
   }
 
   joinRoom(room_id: string, client: Socket, server: Server) {
-    console.log('join room');
     const room_to_leave = this.usersRoom.get(client);
-    console.log('room to leave', room_to_leave);
     if (room_to_leave) {
       client.leave(room_to_leave);
     }
@@ -135,8 +133,6 @@ export class GameService {
   getInfo(allUsers: Map<string, Socket[]>): IInfoGame {
     let player_in_game = 0;
     let player_in_waiting = 0;
-
-    console.log('all users', allUsers.size);
 
     for (const room of this.gamesRoom.values()) {
       if (room.status === RoomStatus.PLAYING) {
