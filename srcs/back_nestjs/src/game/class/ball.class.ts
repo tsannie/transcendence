@@ -1,3 +1,4 @@
+import { Server } from 'socket.io';
 import {
   canvas_back_height,
   canvas_back_width,
@@ -26,8 +27,10 @@ export default class Ball {
 
   update(room: Room) {
     this.mouvBall(room);
+
     this.hitPaddleP1(room);
     this.hitPaddleP2(room);
+
     if (room.game_mode === GameMode.PONG_TRANS) {
       this.hitWall(room);
       this.hitSmasher(room);
@@ -100,7 +103,9 @@ export default class Ball {
       this.y - rad <= room.p1_y_paddle + paddle_height
     )
       this.hitPaddle(room.p1_y_paddle);
-    else if (this.x - rad <= -(rad * 3)) room.updateScore(Winner.P2);
+    else if (this.x - rad <= -(rad * 3)) {
+      room.updateScore(Winner.P2);
+    }
   }
 
   hitPaddleP2(room: Room) {
@@ -134,8 +139,9 @@ export default class Ball {
       this.y - rad <= room.p2_y_paddle + paddle_height
     )
       this.hitPaddle(room.p2_y_paddle);
-    else if (this.x + rad >= canvas_back_width + rad * 3)
+    else if (this.x + rad >= canvas_back_width + rad * 3) {
       room.updateScore(Winner.P1);
+    }
   }
 
   hitWall(room: Room) {

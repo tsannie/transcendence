@@ -1,5 +1,5 @@
 import { Interface } from 'readline';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { victory_score } from '../const/const';
@@ -34,6 +34,7 @@ export interface IQuadrilateral {
 
 export interface IInfoRoom {
   id: string;
+  status: RoomStatus;
   p1: UserEntity;
   p2: UserEntity;
   p1_score: number;

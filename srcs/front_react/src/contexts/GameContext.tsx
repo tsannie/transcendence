@@ -30,7 +30,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [displayRender, setDisplayRender] = useState<boolean>(false);
 
-  const { user } = useContext(AuthContext);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [timeQueue, setTimeQueue] = useState<number>(0);
 
