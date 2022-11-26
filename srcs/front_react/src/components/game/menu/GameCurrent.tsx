@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { ReactComponent as SpectateIcon } from "../../../assets/img/icon/read.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
@@ -16,24 +16,48 @@ function GameCurrent() {
     });
   }, []);
 
+  const handleJoinRoom = (e: MouseEvent<HTMLButtonElement>, id: string) => {
+    e.preventDefault();
+    socket?.emit("joinRoom", id);
+  };
+
+  let allRooms = currentRooms.map((room: IInfoRoom) => {
+    return (
+      <div className="current__item">
+        <div className="current__item__info">
+          <div className="current__pseudo">
+            <span>
+              {room.p1.username.substring(0, 10)}
+              {room.p1.username.length > 10 ? "..." : ""}-
+              {room.p2.username.substring(0, 10)}
+              {room.p2.username.length > 10 ? "..." : ""}
+            </span>
+          </div>
+          <div className="current__score">
+            <span>
+              {room.p1_score} : {room.p2_score}
+            </span>
+          </div>
+        </div>
+        <div className="current__item__spectate">
+          <button
+            onClick={(e: MouseEvent<HTMLButtonElement>) =>
+              handleJoinRoom(e, room.id)
+            }
+          >
+            <SpectateIcon />
+          </button>
+        </div>
+      </div>
+    );
+  });
+
   return (
     <div className="current">
       <div className="game__menu__item__header">
         <h2>current</h2>
       </div>
-      <div className="current__item">
-        <div className="current__item__pseudo">
-          <span className="pseudo">tsannieeeeeeeeeeeeeeeeeeeeee</span>
-          <span>-</span>
-          <span className="pseudo">gpetittttttttttttttttttt</span>
-        </div>
-        <div className="current__score">
-          <span>10 - 7</span>
-        </div>
-        <button>
-          <SpectateIcon />
-        </button>
-      </div>
+      <div className="current__list">{allRooms}</div>
     </div>
   );
 }
