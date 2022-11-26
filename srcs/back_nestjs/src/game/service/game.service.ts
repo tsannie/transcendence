@@ -11,6 +11,7 @@ import Room, {
   RoomStatus,
   Winner,
   IGameStat,
+  IInfoGame,
 } from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
@@ -131,6 +132,28 @@ export class GameService {
     return current_rooms;
   }
 
+  getInfo(allUsers: Map<string, Socket[]>): IInfoGame {
+    let player_in_game = 0;
+    let player_in_waiting = 0;
+
+    console.log('all users', allUsers.size);
+
+    for (const room of this.gamesRoom.values()) {
+      if (room.status === RoomStatus.PLAYING) {
+        player_in_game += 2;
+      } else if (room.status === RoomStatus.WAITING) {
+        player_in_waiting += 1;
+      }
+    }
+
+    const info: IInfoGame = {
+      search: player_in_waiting,
+      ingame: player_in_game,
+      online: allUsers.size,
+    };
+    return info;
+  }
+
   ////////////////////
   // INGAME FUNCTIONS
   ////////////////////
@@ -155,7 +178,6 @@ export class GameService {
     for (const stat of history) {
       const p1 = await this.userService.findById(stat.p1_id);
       const p2 = await this.userService.findById(stat.p2_id);
-      //const winner = await this.userService.findById(stat.winner_id);
 
       historyGame.push({
         p1: p1,
