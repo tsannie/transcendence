@@ -41,6 +41,7 @@ export enum Winner {
 
 export interface IInfoRoom {
   id: string;
+  status: RoomStatus;
   p1: User;
   p2: User;
   p1_score: number;
