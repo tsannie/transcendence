@@ -14,42 +14,42 @@ function UserOptions(props: IMemberProps) {
     const banUser = async () => {
         await api
         .post("/channel/ban", { id: channelId, targetId: user.id })
-        .then(() => toast.success(`${user.username} has been banned`))
+        .then(() => toast.info(`${user.username} has been banned`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
     const unBanUser = async () => {
         await api
         .post("/channel/unban", { id: channelId, targetId: user.id })
-        .then(() => toast.success(`${user.username} has been unbanned`))
+        .then(() => toast.info(`${user.username} has been unbanned`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
     const muteUser = async () => {
         await api
         .post("/channel/mute", { id: channelId, targetId: user.id })
-        .then(() => toast.success(`${user.username} has been muted`))
+        .then(() => toast.info(`${user.username} has been muted`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
     const unMuteUser = async () => {
         await api
         .post("/channel/unmute", { id: channelId, targetId: user.id })
-        .then(() => toast.success(`${user.username} has been unmuted`))
+        .then(() => toast.info(`${user.username} has been unmuted`))
         .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
     const makeAdmin = async () => {
         await api
         .post("/channel/makeAdmin", { id: channelId, targetId: user.id })
-        .then(() => toast.success(`${user.username} is now an admin`))
+        .then(() => toast.info(`${user.username} is now an admin`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
     const revokeAdmin = async () => {
         await api
         .post("/channel/revokeAdmin", { id: channelId, targetId: user.id })
-        .then(() => toast.success(`${user.username} is no more an admin`))
+        .then(() => toast.info(`${user.username} is no more an admin`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
