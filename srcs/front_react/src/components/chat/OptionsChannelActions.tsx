@@ -101,7 +101,7 @@ function UserOptions(props: IMemberProps) {
         <div className="dropdown" style={dropdownStyle.current}>
             <div className="options">{user.username}</div>
             <button>
-                <Link to={"/profile/" + user.username}>
+                <Link style={{textDecoration: 'none'}} to={"/profile/" + user.username}>
                     Profile
                 </Link>
             </button>

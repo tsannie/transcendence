@@ -7,7 +7,7 @@ do
 	--data-raw '{
 		    "username": "player'$i'",
 			    "channel": {
-					        "name":"e964bd1f-651f-4112-a146-dc3deba3c7c2"
+					        "name":"e9b73768-f5d5-4d3b-9d55-7c1479cf5cee"
 							    }
 	}'
 done
