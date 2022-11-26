@@ -28,13 +28,13 @@ import { draw_trans_game } from "./Draw/DrawTransGame";
 let position_y: number = 0;
 export function GameRender() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [leave, setLeave] = useState(false);
-
   const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
   //const [frameToDraw, setFrameToDraw] = useState<Frame>();
 
   //const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
-  const { room, setRoom, socket } = useContext(GameContext) as GameContextType;
+  const { room, socket, setDisplayRender, setRoom } = useContext(
+    GameContext
+  ) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
   //let resize = new IResize();
 
@@ -66,16 +66,10 @@ export function GameRender() {
     };
   });
 
-  useEffect(() => {
-    if (leave) {
-      setRoom(null);
-    }
-  }, [leave, room]);
-
   function leaveGame() {
     socket?.emit("leaveRoom", room?.id);
-    setLeave(true);
     setRoom(null);
+    setDisplayRender(false);
   }
 
   function setPaddle() {
@@ -95,7 +89,8 @@ export function GameRender() {
         if (ctx) {
           if (room.status === RoomStatus.PLAYING) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            setPaddle();
+
+            if (user?.id === room.p1_id || user?.id === room.p2_id) setPaddle();
 
             if (room.game_mode === GameMode.PONG_CLASSIC)
               draw_classic_game(ctx, canvas, room, drawResponsive, 0);
@@ -152,7 +147,8 @@ export function GameRender() {
             height={drawResponsive.canvas_height}
             width={drawResponsive.canvas_width}
             onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: black }}></canvas>
+            style={{ backgroundColor: black }}
+          ></canvas>
           <br />
           <button onClick={leaveGame}>Leave The Game</button>
         </Fragment>

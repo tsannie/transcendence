@@ -32,6 +32,7 @@ export interface IQuadrilateral {
 
 export interface IInfoRoom {
   id: string;
+  status: RoomStatus;
   p1: UserEntity;
   p2: UserEntity;
   p1_score: number;
