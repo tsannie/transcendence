@@ -51,7 +51,7 @@ export interface Room {
   p2_score: number;
 
   won: Winner;
-  game_mode: string;
+  game_mode: GameMode;
 
   p1_y_paddle: number;
   p2_y_paddle: number;

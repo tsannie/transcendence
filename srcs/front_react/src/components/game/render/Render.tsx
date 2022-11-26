@@ -9,22 +9,21 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { draw_game, draw_game_ended } from "./Draw";
+import { draw_game_classic, draw_game_ended } from "./Draw";
 import {
   black,
   border_size_default,
   canvas_back_height,
   canvas_back_width,
+  GameMode,
   paddle_height,
-  paddle_margin,
-  paddle_width,
-  rad,
   RoomStatus,
   screen_ratio,
 } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { ISetPaddle, IPlayer, Room, IDrawResponsive } from "../types";
 import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
+import { draw_game_trans } from "./DrawTrans";
 
 let position_y: number = 0;
 export function GameRender() {
@@ -108,7 +107,11 @@ export function GameRender() {
           if (room.status === RoomStatus.PLAYING) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             setPaddle();
-            draw_game(ctx, canvas, room, drawResponsive, 0);
+
+            if (room.game_mode === GameMode.PONG_CLASSIC)
+              draw_game_classic(ctx, canvas, room, drawResponsive, 0);
+            else if (room.game_mode === GameMode.PONG_TRANS)
+              draw_game_trans(ctx, canvas, room, drawResponsive, 0);
           } else {
             draw_game_ended(
               ctx,
@@ -160,8 +163,7 @@ export function GameRender() {
             height={drawResponsive.canvas_height}
             width={drawResponsive.canvas_width}
             onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: black }}
-          ></canvas>
+            style={{ backgroundColor: black }}></canvas>
           <br />
           <button onClick={leaveGame}>Leave The Game</button>
         </Fragment>
