@@ -140,6 +140,16 @@ export class GameService {
       where: [{ p1_id: user.id }, { p2_id: user.id }],
     });
 
+    // sort history by date
+    history.sort((a, b) => {
+      return a.date.getTime() - b.date.getTime();
+    });
+
+    // keep only the last 20 games
+    if (history.length > 20) {
+      history.splice(0, history.length - 20);
+    }
+
     let historyGame: IGameStat[] = [];
 
     for (const stat of history) {
@@ -156,6 +166,7 @@ export class GameService {
         p2_score: stat.p2_score,
       });
     }
+
     return historyGame;
   }
 
