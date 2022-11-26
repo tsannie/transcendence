@@ -1,3 +1,5 @@
+import { User } from "../../../contexts/AuthContext";
+
 export const canvas_back_width: number = 1920;
 export const screen_ratio: number = 16 / 9;
 export const canvas_back_height: number = canvas_back_width * screen_ratio;
@@ -30,4 +32,12 @@ export enum Winner {
   INMATCH = 0,
   P1 = 1,
   P2 = 2,
+}
+
+export interface IInfoRoom {
+  id: string;
+  p1: User;
+  p2: User;
+  p1_score: number;
+  p2_score: number;
 }

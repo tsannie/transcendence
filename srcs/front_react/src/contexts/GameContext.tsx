@@ -37,11 +37,9 @@ export const GameProvider = ({ children }: GameContextProps) => {
   }, [setSocket]); // create a new socket only once
 
   useEffect(() => {
-    if (user && socket) {
-      socket.on("joinedRoom", (room: Room) => {
-        setRoom(room);
-      });
-    }
+    socket?.on("updateGame", (room: Room) => {
+      setRoom(room);
+    });
   }, [socket]);
 
   return (
