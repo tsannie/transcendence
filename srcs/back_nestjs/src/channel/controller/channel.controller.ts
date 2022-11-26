@@ -72,7 +72,7 @@ export class ChannelController {
       const newChannel = await this.channelService.createChannel(channel, req.user);
 
       if (newChannel)
-        this.messageGateway.createChannel(newChannel, req.user.id);
+        this.messageGateway.createChannel(req.user, newChannel.id);
       return newChannel;
   }
 
@@ -162,7 +162,7 @@ export class ChannelController {
     //return await this.channelService.joinChannel(query_channel, req.user);
     const channel: ChannelEntity = await this.channelService.joinChannel(query_channel, req.user)
 
-    this.messageGateway.joinChannel(channel, req.user);
+    this.messageGateway.joinChannel(req.user, channel.id);
     return channel;
   }
 
@@ -170,14 +170,26 @@ export class ChannelController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async leaveChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    return await this.channelService.leaveChannel(query_channel, req.user);
+    //return await this.channelService.leaveChannel(query_channel, req.user);
+    const channel: ChannelEntity = await this.channelService.leaveChannel(query_channel, req.user)
+
+    console.log("channel after delete in leave: ", channel);
+    if (!channel.id)
+      this.messageGateway.deleteChannel(query_channel.id);
+    else
+      this.messageGateway.leaveChannel(req.user, channel);
+    return channel;
   }
 
   @Post('delete')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async deleteChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    return await this.channelService.deleteChannel(query_channel, req.user);
+    //return await this.channelService.deleteChannel(query_channel, req.user);
+    const old_channel = await this.channelService.deleteChannel(query_channel, req.user);
+
+    this.messageGateway.deleteChannel(query_channel.id);
+    return old_channel;
   }
 
   @Post('addPassword')

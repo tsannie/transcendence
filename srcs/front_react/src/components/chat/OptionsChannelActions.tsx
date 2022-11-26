@@ -11,43 +11,43 @@ function UserOptions(props: IMemberProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
-    const banUser = () => {
-        api
+    const banUser = async () => {
+        await api
         .post("/channel/ban", { id: channelId, targetId: user.id })
         .then(() => toast.success(`${user.username} has been banned`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const unBanUser = () => {
-        api
+    const unBanUser = async () => {
+        await api
         .post("/channel/unban", { id: channelId, targetId: user.id })
         .then(() => toast.success(`${user.username} has been unbanned`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const muteUser = () => {
-        api
+    const muteUser = async () => {
+        await api
         .post("/channel/mute", { id: channelId, targetId: user.id })
         .then(() => toast.success(`${user.username} has been muted`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const unMuteUser = () => {
-        api
+    const unMuteUser = async () => {
+        await api
         .post("/channel/unmute", { id: channelId, targetId: user.id })
         .then(() => toast.success(`${user.username} has been unmuted`))
         .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
-    const makeAdmin = () => {
-        api
+    const makeAdmin = async () => {
+        await api
         .post("/channel/makeAdmin", { id: channelId, targetId: user.id })
         .then(() => toast.success(`${user.username} is now an admin`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const revokeAdmin = () => {
-        api
+    const revokeAdmin = async () => {
+        await api
         .post("/channel/revokeAdmin", { id: channelId, targetId: user.id })
         .then(() => toast.success(`${user.username} is no more an admin`))
         .catch((error: any) => toast.error("HTTP error:" + error));
