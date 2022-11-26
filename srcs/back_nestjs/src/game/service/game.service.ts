@@ -178,6 +178,8 @@ export class GameService {
     let statGame: GameStatEntity = this.getGameStat(p1, p2, room);
 
     await this.gameStatRepository.save(statGame);
+    await this.userService.add(p1);
+    await this.userService.add(p2);
   }
 
   getElo(room: Room, p1: UserEntity, p2: UserEntity): number {
