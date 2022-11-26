@@ -1,4 +1,4 @@
-import React, { useContext} from "react";
+import React, { useContext } from "react";
 import "./app.style.scss";
 import "./components/background/bg.style.scss";
 import "./components/menu/menu.style.scss";
@@ -31,7 +31,6 @@ export default function App() {
       <div className="app">
         <Routes location={displayLocation}>
           {/* 404 Page (public) */}
-          <Route path="*" element={<PageNotFound />} />
           {/* Auth Routes (public) */}
           <Route path="/auth" element={<LoginPage />} />
           <Route path="/2fa" element={<TwoFactorPage />} />
