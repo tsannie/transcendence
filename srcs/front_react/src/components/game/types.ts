@@ -12,7 +12,7 @@ export interface IBall {
   y: number;
 }
 
-export interface IPaddle {
+export interface IQuadrilateral {
   x: number;
   y: number;
   height: number;
@@ -57,6 +57,9 @@ export interface Room {
   p2_y_paddle: number;
 
   ball: IBall;
+
+  smasher: IQuadrilateral;
+  wall: IQuadrilateral;
 }
 
 export interface IDrawResponsive {
@@ -68,7 +71,7 @@ export interface IDrawResponsive {
 }
 
 /*export interface IFrameResponsive {
-  p1_paddle: IPaddle;
-  p2_paddle: IPaddle;
+  p1_paddle: IQuadrilateral;
+  p2_paddle: IQuadrilateral;
   ball: IBall;
 }*/
