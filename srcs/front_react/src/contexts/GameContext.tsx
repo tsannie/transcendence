@@ -78,8 +78,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
         timeQueue,
         setDisplayRender,
         displayRender,
-      }}
-    >
+      }}>
       {children}
     </GameContext.Provider>
   );

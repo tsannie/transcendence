@@ -7,16 +7,16 @@ import {
   rad,
   white,
   Winner,
-} from "../const/const";
+} from "../../const/const";
 import {
   IBall,
   IDrawResponsive,
   IQuadrilateral,
   IPlayer,
   Room,
-} from "../types";
+} from "../../types";
 
-export function draw_game_classic(
+export function draw_classic_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
   room: Room,
