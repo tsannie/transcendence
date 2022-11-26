@@ -92,10 +92,14 @@ export class AuthService {
       secret: process.env.JWT_ACCESS_TOKEN_SECRET,
     });
 
-    const user = await this.userService.findById(payload.sub, relations_ToLoad);
+    const user = await this.userService.findByIdSocket(
+      payload.sub,
+      relations_ToLoad,
+    );
+
+    if (!user) return null;
 
     if (!user.enabled2FA || payload.isSecondFactor) return user;
-    else throw new WsException('Unauthorized');
   }
 
   async validateSocket(
@@ -105,12 +109,12 @@ export class AuthService {
     const authenticationToken = parse(socket.handshake.headers.cookie)[
       process.env.COOKIE_NAME
     ];
-    if (!authenticationToken) throw new WsException('Unauthorized');
+    if (!authenticationToken) return null;
     const user = await this.getUserWithCookie(
       authenticationToken,
       relations_ToLoad,
     );
-    if (!user) throw new WsException('Unauthorized');
+    if (!user) return null;
     return user;
   }
 }

@@ -24,6 +24,7 @@ import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { IUserSearch } from '../models/iusersearch.interface';
 import { GameStatEntity } from 'src/game/entity/gameStat.entity';
+import { WsException } from '@nestjs/websockets';
 //import { GameService } from 'src/game/service/game.service';
 
 const AVATAR_DEST: string = '/nestjs/datas/users/avatars';
@@ -151,6 +152,32 @@ export class UserService {
       throw new UnprocessableEntityException(
         `User ${input_id} is not registered in database.`,
       );
+    return user;
+  }
+
+  async findByIdSocket(
+    input_id: string,
+    relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
+  ): Promise<UserEntity> {
+    const user = await this.allUser.findOne({
+      where: {
+        id: input_id,
+      },
+      select: {
+        friends: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+        friend_requests: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+      },
+      relations: relations_ToLoad,
+    });
+    if (!user) return null;
     return user;
   }
 

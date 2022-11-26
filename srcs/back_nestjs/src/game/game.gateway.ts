@@ -43,6 +43,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     const user = await this.authService.validateSocket(client);
+    if (!user) return;
 
     if (this.allUsers.has(user.id)) {
       this.allUsers.get(user.id).push(client);
@@ -53,6 +54,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleDisconnect(client: Socket) {
     const user = await this.authService.validateSocket(client);
+    if (!user) return;
     this.logger.log(`Client GAME disconnected: ${user.username}`);
 
     const room = this.gameService.findRoomBySocket(client);
@@ -85,6 +87,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: CreateRoomDto,
   ) {
     const user = await this.authService.validateSocket(client);
+    if (!user) throw new WsException('User not found');
 
     if (this.gameService.findRoomByUser(user)) {
       throw new WsException('Already in game');
@@ -132,6 +135,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() room_id: string,
   ) {
     const user = await this.authService.validateSocket(client);
+    if (!user) throw new WsException('User not found');
 
     const room: Room = this.gameService.getRoomById(room_id);
 
@@ -151,11 +155,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
+    const user = await this.authService.validateSocket(client);
+    if (!user) throw new WsException('User not found');
+
     const room = this.gameService.getRoomById(data.room_id);
     if (!room) return;
-
-    const user = await this.authService.validateSocket(client);
-    if (!user) return;
 
     if (room.p1_id === user.id) {
       room.p1_y_paddle =
