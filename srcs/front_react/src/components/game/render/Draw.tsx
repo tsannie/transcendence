@@ -8,7 +8,13 @@ import {
   white,
   Winner,
 } from "../const/const";
-import { IBall, IDrawResponsive, IPaddle, IPlayer, Room } from "../types";
+import {
+  IBall,
+  IDrawResponsive,
+  IQuadrilateral,
+  IPlayer,
+  Room,
+} from "../types";
 
 export function draw_game_classic(
   ctx: CanvasRenderingContext2D,
@@ -167,7 +173,7 @@ function draw_paddle(
   x_paddle: number,
   drawResponsive: IDrawResponsive
 ) {
-  const IPaddle: IPaddle = {
+  const paddle: IQuadrilateral = {
     x: x_paddle,
     y: y_paddle * drawResponsive.ratio_height,
     width: paddle_width * drawResponsive.ratio_width,
@@ -175,9 +181,9 @@ function draw_paddle(
   };
 
   ctx.beginPath();
-  ctx.rect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
+  ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
   ctx.fillStyle = white;
-  ctx.strokeRect(IPaddle.x, IPaddle.y, IPaddle.width, IPaddle.height);
+  ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
   ctx.fill();
 }
 

@@ -73,7 +73,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await this.authService.validateSocket(client);
     //this.game.clear();
 
-    const room: Room = this.gameService.findRoom(user);
+    const room: Room = this.gameService.findRoom(user, data.mode);
 
     if (room && user) {
       if (room.status === RoomStatus.EMPTY) {

@@ -4,23 +4,14 @@ import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
-import {
-  canvas_back_height,
-  canvas_back_width,
-  gravity,
-  paddle_height,
-  paddle_p1_x,
-  paddle_p2_x,
-  paddle_width,
-  rad,
-  spawn_speed,
-  speed,
-  victory_score,
-} from '../const/const';
 import { GameStatEntity } from '../entity/gameStat.entity';
-import Room, { RoomStatus, Winner } from '../class/room.class';
-import { v4 as uuidv4 } from 'uuid';
+import Room, { GameMode, RoomStatus, Winner } from '../class/room.class';
 import Ball from '../class/ball.class';
+import wall from '../class/wall.class';
+import smasher from '../class/smasher.class';
+import { RdbmsSchemaBuilder } from 'typeorm/schema-builder/RdbmsSchemaBuilder';
+import Wall from '../class/wall.class';
+import Smasher from '../class/smasher.class';
 
 @Injectable()
 export class GameService {
@@ -41,7 +32,7 @@ export class GameService {
     return await this.all_game.find();
   } */
 
-  findRoom(user: UserEntity): Room {
+  findRoom(user: UserEntity, mode: GameMode): Room {
     let room: Room;
     let already_in_game: boolean = false;
 
@@ -53,14 +44,14 @@ export class GameService {
           (room_db.p1_id && user.id === room_db.p1_id) ||
           (room_db.p2_id && user.id === room_db.p2_id)
         )
-          already_in_game = true;
+          already_in_game = true; // TODO
         else if (room_db.status === RoomStatus.WAITING && !room_db.p2_id)
           room = room_db;
       }
     }
     if (!room && already_in_game === false) {
-      room = new Room();
-      room.id = uuidv4();
+      room = new Room(user.id, mode);
+
       this.gamesRoom.set(room.id, room);
     }
     return room;
@@ -213,93 +204,8 @@ export class GameService {
     return Math.round(eloDiff);
   }*/
 
-  async ballHitPaddlep1(room: Room) {
-    if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x - rad <= paddle_p1_x + paddle_width &&
-      room.ball.x + rad / 3 >= paddle_p1_x &&
-      room.ball.y + rad >= room.p1_y_paddle &&
-      room.ball.y + rad <= room.p1_y_paddle + 10
-    ) {
-      console.log('top');
-      room.ball.direction_y = -1;
-      room.ball.can_touch_paddle = false;
-    } else if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x - rad <= paddle_p1_x + paddle_width &&
-      room.ball.x + rad / 3 >= paddle_p1_x &&
-      room.ball.y - rad <= room.p1_y_paddle + paddle_height &&
-      room.ball.y - rad >= room.p1_y_paddle + paddle_height - 10
-    ) {
-      console.log('bot');
-      room.ball.direction_y = 1;
-      room.ball.can_touch_paddle = false;
-    } else if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x - rad <= paddle_p1_x + paddle_width &&
-      room.ball.x + rad / 3 >= paddle_p1_x &&
-      room.ball.y + rad >= room.p1_y_paddle &&
-      room.ball.y - rad <= room.p1_y_paddle + paddle_height
-    )
-      room.ball.hitPaddle(room.p1_y_paddle);
-    else if (room.ball.x - rad <= -(rad * 3)) {
-      room.ball.reset();
-      room.p2_score += 1;
-      if (room.p2_score === victory_score) {
-        room.won = Winner.P2;
-        room.status = RoomStatus.CLOSED;
-      }
-    }
-  }
-
-  async ballHitPaddlep2(room: Room) {
-    if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x + rad >= paddle_p2_x &&
-      room.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
-      room.ball.y + rad >= room.p2_y_paddle &&
-      room.ball.y + rad <= room.p2_y_paddle + 10
-    ) {
-      console.log('top');
-      room.ball.direction_y = -1;
-      room.ball.can_touch_paddle = false;
-    } else if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x + rad >= paddle_p2_x &&
-      room.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
-      room.ball.y - rad <= room.p2_y_paddle + paddle_height &&
-      room.ball.y - rad >= room.p2_y_paddle + paddle_height - 10
-    ) {
-      console.log('bot');
-      room.ball.direction_y = 1;
-      room.ball.can_touch_paddle = false;
-    } else if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x + rad >= paddle_p2_x &&
-      room.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
-      room.ball.y + rad >= room.p2_y_paddle &&
-      room.ball.y - rad <= room.p2_y_paddle + paddle_height
-    ) {
-      room.ball.hitPaddle(room.p2_y_paddle);
-    } else if (room.ball.x + rad >= canvas_back_width + rad * 3) {
-      room.ball.reset();
-      room.p1_score += 1;
-      if (room.p1_score === victory_score) {
-        room.won = Winner.P1;
-        room.status = RoomStatus.CLOSED;
-      }
-    }
-  }
-
-  async updateGame(
-    room: Room,
-    server: Server,
-    //
-    //room: string,
-  ) {
-    room.ball.update();
-    await this.ballHitPaddlep1(room);
-    await this.ballHitPaddlep2(room);
+  async updateGame(room: Room) {
+    room.ball.update(room);
   }
 
   checkGiveUP(socketP1: Socket, socketP2: Socket, room: Room): boolean {
@@ -322,7 +228,7 @@ export class GameService {
 
     while (room.status === RoomStatus.PLAYING) {
       this.checkGiveUP(socketP1, socketP2, room);
-      this.updateGame(room, server);
+      this.updateGame(room);
       server.in(room.id).emit('updateGame', room);
       await new Promise((f) => setTimeout(f, 8));
     }
