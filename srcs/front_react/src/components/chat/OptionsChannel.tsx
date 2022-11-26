@@ -9,6 +9,8 @@ import { MessageContext } from "../../contexts/MessageContext";
 import { IDatas } from "./Conversation";
 import UserOptions from "./OptionsChannelActions";
 import { IChannel } from "./types";
+import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
 
 export interface IMemberProps {
     type: string;
@@ -221,7 +223,7 @@ function ChannelProfile(props: {channel: IChannel, owner: User | null}) {
     const deleteChannel = async () => {
         await api
         .post("/channel/delete", { id: channel.id })
-        .then(() => toast.success(`${user?.username} delete ${channel.name}`))
+        .then(() => toast.info(`${user?.username} delete ${channel.name}`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
@@ -236,13 +238,18 @@ function ChannelProfile(props: {channel: IChannel, owner: User | null}) {
                     <img src={owner?.profile_picture}/>
                 </Link>
             </button>
-            <div className="actions-channel">
-                <button className="leave-channel" onClick={leaveChannel}>
+            <div className="actions__channel">
+                {/* <button className="leave-channel" onClick={leaveChannel}>
                     Leave
+                </button> */}
+                <button className="action">
+                    <LeaveIcon onClick={leaveChannel}/>
+                    <span>leave</span>      
                 </button>
                 { owner?.id === user?.id &&
-                    <button className="delete-channel" onClick={deleteChannel}>
-                        Delete
+                    <button className="action">
+                        <DeleteIcon onClick={deleteChannel}/>
+                        <span>delete</span>      
                     </button>
                 }
             </div>

@@ -61,7 +61,7 @@ function JoinChannelForm() {
             : { id: selectChannel.id, password: password }
         )
         .then((res: AxiosResponse) => {
-          toast.success("Channel joined");
+          toast.info("Channel joined");
           setDisplay(ChatType.CONV);
           setCurrentConv(res.data.id);
           setIsChannel(true);
