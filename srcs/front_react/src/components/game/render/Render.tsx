@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { draw_game_classic, draw_game_ended } from "./Draw";
+import { draw_classic_game, draw_game_ended } from "./Draw/DrawClassicGame";
 import {
   black,
   border_size_default,
@@ -23,7 +23,7 @@ import {
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { ISetPaddle, IPlayer, Room, IDrawResponsive } from "../types";
 import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
-import { draw_game_trans } from "./DrawTrans";
+import { draw_trans_game } from "./Draw/DrawTransGame";
 
 let position_y: number = 0;
 export function GameRender() {
@@ -98,9 +98,9 @@ export function GameRender() {
             setPaddle();
 
             if (room.game_mode === GameMode.PONG_CLASSIC)
-              draw_game_classic(ctx, canvas, room, drawResponsive, 0);
+              draw_classic_game(ctx, canvas, room, drawResponsive, 0);
             else if (room.game_mode === GameMode.PONG_TRANS)
-              draw_game_trans(ctx, canvas, room, drawResponsive, 0);
+              draw_trans_game(ctx, canvas, room, drawResponsive, 0);
           } else {
             draw_game_ended(
               ctx,

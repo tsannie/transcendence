@@ -7,16 +7,16 @@ import {
   rad,
   white,
   Winner,
-} from "../const/const";
+} from "../../const/const";
 import {
   IBall,
   IDrawResponsive,
   IQuadrilateral,
   IPlayer,
   Room,
-} from "../types";
+} from "../../types";
 
-export function draw_game_trans(
+export function draw_trans_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
   room: Room,
@@ -121,7 +121,7 @@ function draw_borders(
 ) {
   ctx.beginPath();
 
-  ctx.rect(0, 0, canvas_width, canvas_height);
+  ctx.rect(2, 2, canvas_width - 4, canvas_height - 4);
   ctx.closePath();
 
   ctx.fillStyle = "rgba(0, 0, 0, 0)";
