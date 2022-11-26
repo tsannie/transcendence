@@ -20,6 +20,8 @@ function ProfileStatsBar(props: IProps) {
     });
   }
 
+  console.log("props.player", props.player);
+
   useEffect(() => {
     getLeaderboardRank();
   }, []);
