@@ -27,6 +27,8 @@ export function draw_game_trans(
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
+    draw_smasher(ctx, room.smasher, drawResponsive);
+    draw_wall(ctx, room.wall, drawResponsive);
     draw_ball(ctx, room.ball, drawResponsive);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
@@ -45,8 +47,6 @@ export function draw_game_trans(
       paddle_width * drawResponsive.ratio_width,
     drawResponsive
   );
-  draw_smasher(ctx, room.smasher, drawResponsive);
-  draw_wall(ctx, room.wall, drawResponsive);
 }
 
 function draw_smasher(
@@ -80,7 +80,7 @@ function draw_wall(
     wall.x *= drawResponsive.ratio_width;
     wall.y *= drawResponsive.ratio_height;
     wall.width *= drawResponsive.ratio_width;
-    wall.height *= drawResponsive.ratio_width;
+    wall.height *= drawResponsive.ratio_height;
   }
 
   ctx.rect(wall.x, wall.y, wall.width, wall.height);
@@ -131,8 +131,6 @@ function draw_borders(
   grd.addColorStop(0.5, "rgba(243,243,21)");
   grd.addColorStop(1, "rgba(255,153,51)");
   ctx.strokeStyle = grd;
-
-  ctx.lineWidth = border_size_default * drawResponsive.ratio_width;
 
   ctx.stroke();
   ctx.fill();
