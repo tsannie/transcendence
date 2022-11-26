@@ -5,7 +5,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AuthContext } from "./AuthContext";
 import { IException, RoomStatus } from "../components/game/const/const";
 import { Room } from "../components/game/types";
 import { io, Socket } from "socket.io-client";
