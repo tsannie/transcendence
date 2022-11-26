@@ -73,7 +73,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await this.authService.validateSocket(client);
     //this.game.clear();
 
-    if (!user) return client.emit('error', 'create Room error !'); // TODO: send error
     const room: Room = this.gameService.findRoom(user);
 
     if (room && user) {
@@ -106,6 +105,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
   ) {
+    const user = await this.authService.validateSocket(client);
+
+    const room: Room = this.gameService.getRoomById(room_id);
+
+    if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {
+      this.gameService.deleteRoomById(room.id);
+    }
+
     this.gameService.leaveRoom(room_id, client);
   }
 
