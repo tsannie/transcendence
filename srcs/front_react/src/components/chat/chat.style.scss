@@ -240,19 +240,23 @@ $width_chat: calc(450 * var(--res));
         background-color: $bg-color;
         opacity: 0.954;
         border-style: dashed;
+        border-width: calc(3 * var(--res)) !important;
+        width: calc(75 * var(--res));
         height: fit-content;
         z-index: 1;
 
         .options{
-          display: flex;
-          justify-content: center;
           width: 100%;
           border-bottom-style: dashed;
-          font-size: calc(18 * var(--res));
+          border-width: calc(3 * var(--res)) !important;
+          font-size: calc(14 * var(--res));
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
   
         button {
-          font-size: calc(16 * var(--res));
+          font-size: calc(13 * var(--res));
           padding: 1%;
         }
       }
