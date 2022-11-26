@@ -5,12 +5,10 @@ import { GameMode } from "../const/const";
 import { ICreateRoom } from "../types";
 
 function GameMatchmaking() {
-  const { socket, room } = useContext(GameContext) as GameContextType;
+  const { socket } = useContext(GameContext) as GameContextType;
 
   const joinMatchmaking = (data: ICreateRoom) => {
-    if (!room) {
-      socket?.emit("matchmaking", data);
-    }
+    socket?.emit("matchmaking", data);
   };
   const handleMatchClassic = () => {
     joinMatchmaking({
