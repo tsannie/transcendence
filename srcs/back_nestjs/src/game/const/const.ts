@@ -7,7 +7,7 @@ export const victory_score: number = 2000;
 // BALL DATA
 export const rad: number = 20;
 export const gravity: number = 10; // TODO ask to ph change or not ?
-export const speed_spawn: number = 2;
+export const speed_spawn: number = 20;
 export const speed: number = 6;
 export const speed_smasher: number = 12;
 
