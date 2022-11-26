@@ -284,7 +284,7 @@ export class ChannelService {
       channel.users = channel.users.filter(
         (channel_users) => channel_users.id !== user.id,
       );
-    await this.channelRepository.save(channel);
+    return await this.channelRepository.save(channel);
   }
 
   /* This function delete channel, only if the requester is owner of this channel */
@@ -755,6 +755,7 @@ export class ChannelService {
     let user = new UserEntity();
     user.username = username;
     user.email = username + '@student.42.fr';
+    user.profile_picture = "https://pyxis.nymag.com/v1/imgs/882/0b5/2df62e812b846c05049fd0f9f456c13b5d-22-gandalf-wedding-ian-mckellan.rsquare.w700.jpg"
     user = await this.userService.add(user);
     return await this.getUser(user.id, { channels: true });
   }
