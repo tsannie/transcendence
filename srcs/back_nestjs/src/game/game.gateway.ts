@@ -11,17 +11,12 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Repository } from 'typeorm';
 import { canvas_back_height } from './const/const';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
-import { UserEntity } from 'src/user/models/user.entity';
-import { UserService } from 'src/user/service/user.service';
 import { CreateRoomDto } from './dto/createRoom.dto';
-import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
 import Room, { IInfoGame, RoomStatus, Winner } from './class/room.class';
-import { throwError } from 'rxjs';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -111,15 +106,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         room.status = RoomStatus.WAITING;
 
         this.gameService.joinRoom(room.id, client, this.server);
-        this.server.to(room.id).emit('joinQueue', 'queue joined ...');
         this.server.to(client.id).emit('updateGame', room);
+        this.server.to(room.id).emit('joinQueue', 'queue joined ...');
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
         room.status = RoomStatus.PLAYING;
 
         this.gameService.joinRoom(room.id, client, this.server);
-        this.server.to(room.id).emit('matchFound', 'match found !');
         this.server.to(room.id).emit('updateGame', room);
+        this.server.to(room.id).emit('matchFound', 'match found !');
         this.gameService.launchGame(room, this.server, this.allUsers);
       }
     }
