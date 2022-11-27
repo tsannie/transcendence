@@ -100,11 +100,4 @@ export class UserEntity {
   @Expose({ groups: ['user', 'me'] })
   @Column({ default: 0 })
   wins: number;
-
-  @Expose({ groups: ['user', 'me'] })
-  @ManyToMany(() => GameStatEntity, (gameStat) => gameStat.players, {
-    nullable: true,
-  })
-  @JoinTable()
-  history: GameStatEntity[];
 }

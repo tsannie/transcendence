@@ -396,6 +396,7 @@ form {
         font-size: calc(18 * var(--res));
       }
       .selected {
+        animation: bounce 1s ease forwards;
         transform: scale(1.1);
         opacity: 0.5;
       }

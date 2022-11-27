@@ -8,6 +8,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Repository } from 'typeorm';
@@ -19,7 +20,8 @@ import { UserService } from 'src/user/service/user.service';
 import { CreateRoomDto } from './dto/createRoom.dto';
 import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
-import Room, { RoomStatus, Winner } from './class/room.class';
+import Room, { IInfoGame, RoomStatus, Winner } from './class/room.class';
+import { throwError } from 'rxjs';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -29,43 +31,53 @@ import Room, { RoomStatus, Winner } from './class/room.class';
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
-    // @InjectRepository(RoomEntity)
-    // private all_game: Repository<RoomEntity>,
     private gameService: GameService,
     private authService: AuthService,
   ) {}
 
+  // Player / SocketPlayer
+  private allUsers: Map<string, Socket[]> = new Map();
+
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('GameGateway');
 
-  game = new Map<string, Room>();
-
   async handleConnection(client: Socket) {
-    this.logger.log(`Client GAME connected: ${client.id}`);
-    try {
-      const user = await this.authService.validateSocket(client);
+    const user = await this.authService.validateSocket(client);
+    if (!user) return;
 
-      if (!user) {
-        return client.disconnect();
-      }
-    } catch {
-      return client.disconnect();
-    }
+    if (this.allUsers.has(user.id)) {
+      this.allUsers.get(user.id).push(client);
+    } else this.allUsers.set(user.id, [client]);
+
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
+    this.logger.log(`Client GAME connected: ${user.username}`);
   }
 
   async handleDisconnect(client: Socket) {
-    this.logger.log(`Client GAME disconnected: ${client.id}`);
     const user = await this.authService.validateSocket(client);
+    if (!user) return;
+    this.logger.log(`Client GAME disconnected: ${user.username}`);
 
-    console.log('handleDisconnect user: ', user.username);
-
-    if (!user) return client.disconnect();
-    const room = this.gameService.findRoomBySocketId(client.id, this.game);
-    if (room) {
-      console.log('handleDisconnect room FIND: ');
-      if (room.status === RoomStatus.PLAYING)
-        await this.giveUp(client, room.id);
+    const room = this.gameService.findRoomBySocket(client);
+    if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {
+      this.gameService.deleteRoomById(room.id);
     }
+
+    this.gameService.leaveRoom(null, client);
+
+    if (this.allUsers.has(user.id)) {
+      const sockets = this.allUsers.get(user.id);
+      const index = sockets.indexOf(client);
+      console.log('sockets.length', sockets.length);
+      if (index > -1) {
+        sockets.splice(index, 1);
+      }
+      if (sockets.length === 0) {
+        this.allUsers.delete(user.id);
+      }
+    }
+
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
     client.disconnect();
   }
 
@@ -73,95 +85,75 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('createGameRoom')
+  @SubscribeMessage('getInfoGame')
+  getInfo(@ConnectedSocket() client: Socket) {
+    this.server
+      .to(client.id)
+      .emit('infoGame', this.gameService.getInfo(this.allUsers));
+  }
+
+  @SubscribeMessage('matchmaking')
   async createRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: CreateRoomDto,
   ) {
-    console.log('createRoom');
     const user = await this.authService.validateSocket(client);
-    //this.game.clear();
+    if (!user) throw new WsException('User not found');
 
-    if (!user) return client.emit('error', 'create Room error !'); // TODO: send error
-    const room: Room = this.gameService.joinFastRoom(user, this.game);
-    console.log(
-      '##############################START###########################\n',
-    );
+    if (this.gameService.findRoomByUser(user)) {
+      throw new WsException('Already in game');
+    }
 
-    console.log('dico (', this.game.size, '):');
+    const room: Room = this.gameService.findRoom(user, data.mode);
 
     if (room && user) {
-      console.log('Hello');
       if (room.status === RoomStatus.EMPTY) {
-        room.game_mode = data.mode;
-        room.p1_id = user.id;
-        room.p1_SocketId = client.id;
         room.status = RoomStatus.WAITING;
 
-        this.game.set(room.id, room);
-        client.join(room.id);
-        this.server.in(room.id).emit('joinedRoom', room);
+        this.gameService.joinRoom(room.id, client, this.server);
+        this.server.to(room.id).emit('joinQueue', 'queue joined ...');
+        this.server.to(client.id).emit('updateGame', room);
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
-        room.p2_SocketId = client.id;
         room.status = RoomStatus.PLAYING;
 
-        client.join(room.id);
-        this.server.in(room.id).emit('joinedRoom', room);
-        this.gameService.launchGame(room, this.server, this.game);
-        // TODO launch game
+        this.gameService.joinRoom(room.id, client, this.server);
+        this.server.to(room.id).emit('matchFound', 'match found !');
+        this.server.to(room.id).emit('updateGame', room);
+        this.gameService.launchGame(room, this.server, this.allUsers);
       }
     }
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
   }
 
   ///////////////////////////////////////////////
-  //////////////// LEAVE ROOM/
+  //////////////// ROOM/
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('leaveGameRoom')
+  @SubscribeMessage('joinRoom')
+  async joinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room_id: string,
+  ) {
+    this.gameService.joinRoom(room_id, client, this.server);
+  }
+
+  @SubscribeMessage('leaveRoom')
   async leaveRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() room_id: string,
   ) {
-    console.log('-----------------leaveRoom-----------------');
-
     const user = await this.authService.validateSocket(client);
-    if (!user) return;
-    const room = this.game.get(room_id);
+    if (!user) throw new WsException('User not found');
 
-    if (!room) return;
+    const room: Room = this.gameService.getRoomById(room_id);
 
-    console.log('leaveGameRoom: ');
-    console.log('ROOM DELETE');
-    this.game.delete(room_id); // no ???
-    client.leave(room_id);
-  }
+    if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {
+      this.gameService.deleteRoomById(room.id);
+    }
 
-  ///////////////////////////////////////////////
-  //////////////// LEAVE GAME
-  /////////////////////////////////////////////////
-
-  @SubscribeMessage('giveUp') // TODO: remove and just leave room
-  async giveUp(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() room_id: string,
-  ) {
-    console.log('GIVEUP');
-    //this.game.clear(); // TODO: remove
-    const user = await this.authService.validateSocket(client);
-    if (!user) return;
-
-    const room = this.game.get(room_id);
-    if (!room) console.log('giveUp room not found');
-
-    room.status = RoomStatus.CLOSED;
-    room.won = user.id === room.p1_id ? Winner.P2 : Winner.P1;
-    // TODO: save gameStat
-    console.log('room_before_delete:', room);
-    this.game.delete(room_id);
-
-    this.server.in(room_id).emit('giveUp', room.p1_id, room.p2_id); // TODO GIVE UP
-    client.leave(room_id);
+    this.gameService.leaveRoom(room_id, client);
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
   }
 
   ///////////////////////////////////////////////
@@ -173,26 +165,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
-    const room = this.game.get(data.room_id);
-    if (!room) {
-      console.log('roomnotfound');
-      return;
-    }
+    const user = await this.authService.validateSocket(client);
+    if (!user) throw new WsException('User not found');
 
-    if (room.p1_SocketId === client.id) {
+    const room = this.gameService.getRoomById(data.room_id);
+    if (!room) return;
+
+    if (room.p1_id === user.id) {
       room.p1_y_paddle =
         (data.positionY * canvas_back_height) / data.front_canvas_height;
-    } else if (room.p2_SocketId === client.id) {
+    } else if (room.p2_id === user.id) {
       room.p2_y_paddle =
         (data.positionY * canvas_back_height) / data.front_canvas_height;
     }
   }
   ///////////////////////////////////////////////
-
-  /*@SubscribeMessage('resizeIngame')
-  async resizeIngame(@MessageBody() room_id: string) {
-    const room_game = this.game.get(room_id);
-    if (!room_game) return;
-    this.server.in(room_id).emit('resize_game');
-  }*/
 }
