@@ -25,7 +25,7 @@ export default function LoginPage() {
   }, []);
 
   if (is2FA === true) return <Navigate to="/2fa" />;
-  else if (isAlreadyLog === true) return <Navigate to="/" />;
+  else if (isAlreadyLog === true) return <Navigate to="/game" />;
 
   return (
     <div className="login">

@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
-import { ReactComponent as VerifIcon } from "../../assets/img/icon/circle_check.svg";
+import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
 import { api } from "../../const/const";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";

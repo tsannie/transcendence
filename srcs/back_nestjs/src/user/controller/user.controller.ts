@@ -27,6 +27,7 @@ import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express, Request, Response } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
 import { IUserSearch } from '../models/iusersearch.interface';
+import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 
@@ -52,13 +53,17 @@ export class UserController {
   @Get('username')
   @SerializeOptions({ groups: ['user'] })
   async getUserByUsername(@Query() body: TargetNameDto): Promise<UserEntity> {
-    return await this.userService.findByName(body.username, { friends: true });
+    return await this.userService.findByName(body.username, {
+      friends: true,
+    });
   }
 
   @Get('id')
   @SerializeOptions({ groups: ['user'] })
   async getUserById(@Query() body: TargetIdDto): Promise<UserEntity> {
-    return await this.userService.findById(body.id, { friends: true });
+    return await this.userService.findById(body.id, {
+      friends: true,
+    });
   }
 
   @Get()
@@ -202,5 +207,13 @@ export class UserController {
       friends: true,
     });
     return await this.userService.removeFriend(req.user, userTarget);
+  }
+
+  @Get('leaderboard')
+  @UseGuards(JwtTwoFactorGuard)
+  async getLeaderboard(@Req() req: Request): Promise<number> {
+    const allUsers = await this.userService.getAllUsersWithElo();
+
+    return this.userService.getLeaderBoard(req.user.id, allUsers);
   }
 }

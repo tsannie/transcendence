@@ -31,7 +31,6 @@ function Conversation() {
   }
 
   const searchExistingConv = async () => {
-    console.log("MONSIEUR MOUTARDE DANS LA CUISINE");
     await api
       .get("/dm/target", {params: {targetId: targetRedirection}})
       .then((res) => {
