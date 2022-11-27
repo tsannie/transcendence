@@ -1,10 +1,69 @@
 .game {
   display: flex;
   border-style: dashed;
-  padding: calc(10 * var(--res));
   width: calc(820 * var(--res));
-  height: calc(500 * var(--res));
+  height: calc(600 * var(--res));
+  padding: calc(10 * var(--res));
+
+  canvas {
+    display: flex;
+    flex: 0 0 80%;
+    width: 100%;
+  }
 }
+
+.game__render {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+
+.game__header {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  width: 100%;
+
+  #timer {
+    font-size: calc(50 * var(--res));
+  }
+
+  svg {
+    width: calc(30 * var(--res));
+  }
+
+  button {
+    display: flex;
+    border-radius: 50%;
+    padding: 1%;
+    border-width: calc(3 * var(--res)) !important;
+  }
+}
+
+.game__header__player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(20 * var(--res));
+  font-weight: bold;
+  text-align: center;
+  min-width: 30%;
+  overflow: hidden;
+  span {
+    font-size: calc(15 * var(--res));
+    font-weight: normal;
+  }
+
+  img {
+    width: calc(100 * var(--res));
+    border-radius: 50%;
+  }
+}
+
 .game__menu {
   display: flex;
   flex: 0 0 30%;
