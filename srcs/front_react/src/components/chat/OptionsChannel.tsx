@@ -255,14 +255,12 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   const leaveChannel = async () => {
     await api
       .post("/channel/leave", { id: channel.id })
-      .then(() => toast.success(`${user?.username} left ${channel.name}`))
       .catch((error: any) => toast.error("HTTP error:" + error));
   };
 
   const deleteChannel = async () => {
     await api
       .post("/channel/delete", { id: channel.id })
-      .then(() => toast.success(`${user?.username} delete ${channel.name}`))
       .catch((error: any) => toast.error("HTTP error:" + error));
   };
 
@@ -272,11 +270,6 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
         id: channel.id,
         targetUsername: targetUsername,
       })
-      .then(() =>
-        toast.success(
-          `${user?.username} invite ${targetUsername} to ${channel.name}`
-        )
-      )
       .catch((error: any) => toast.error("HTTP error:" + error));
   };
 
