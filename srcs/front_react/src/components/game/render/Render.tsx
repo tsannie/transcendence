@@ -38,9 +38,6 @@ export function GameRender() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
   const [players, setPlayers] = useState<User[]>();
-  //const [frameToDraw, setFrameToDraw] = useState<Frame>();
-
-  //const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
   const { room, socket, setDisplayRender, setRoom } = useContext(
     GameContext
   ) as GameContextType;
@@ -179,9 +176,9 @@ export function GameRender() {
     <div className="game">
       <div className="game__render">
         <div className="game__header">
-          {/* <button onClick={leaveGame}>
+          <button id="leave" onClick={leaveGame}>
             <LogOutIcon />
-          </button> */}
+          </button>
           <div className="game__header__player" id="left">
             <img src={players[0].profile_picture} alt="player1" />
             <span>

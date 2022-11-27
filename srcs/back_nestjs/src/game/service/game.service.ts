@@ -83,6 +83,7 @@ export class GameService {
   findRoomByUser(user: UserEntity): Room | undefined {
     for (const room of this.gamesRoom.values()) {
       if (room.p1_id === user.id || room.p2_id === user.id) {
+        console.log('room found', room);
         return room;
       }
     }

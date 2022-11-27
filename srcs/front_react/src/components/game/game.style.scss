@@ -18,6 +18,23 @@
   width: 100%;
   height: 100%;
   flex-direction: column;
+
+  svg {
+    width: calc(30 * var(--res));
+  }
+
+  #leave {
+    position: absolute;
+    top: calc(15 * var(--res));
+    left: calc(15 * var(--res));
+  }
+
+  button {
+    display: flex;
+    border-radius: 50%;
+    padding: 1%;
+    border-width: calc(3 * var(--res)) !important;
+  }
 }
 
 .game__header {
@@ -29,17 +46,6 @@
 
   #timer {
     font-size: calc(50 * var(--res));
-  }
-
-  svg {
-    width: calc(30 * var(--res));
-  }
-
-  button {
-    display: flex;
-    border-radius: 50%;
-    padding: 1%;
-    border-width: calc(3 * var(--res)) !important;
   }
 }
 
