@@ -17,6 +17,7 @@ import { PaddleDto } from './dto/paddle.dto';
 import { CreateRoomDto } from './dto/createRoom.dto';
 import { AuthService } from 'src/auth/service/auth.service';
 import Room, { IInfoGame, RoomStatus, Winner } from './class/room.class';
+import { UserEntity } from 'src/user/models/user.entity';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -80,11 +81,20 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('getInfoGame')
-  getInfo(@ConnectedSocket() client: Socket) {
+  @SubscribeMessage('getFriendsLog')
+  async getFriendsLog(@ConnectedSocket() client: Socket) {
+    const user = await this.authService.validateSocket(client, {
+      friends: true,
+    });
+    if (!user) throw new WsException('User not found');
+
     this.server
       .to(client.id)
-      .emit('infoGame', this.gameService.getInfo(this.allUsers));
+      .emit('friendsLog', this.gameService.getFriendsLog(this.allUsers, user));
+  }
+
+  getInfo(): IInfoGame {
+    return this.gameService.getInfo(this.allUsers);
   }
 
   @SubscribeMessage('matchmaking')
