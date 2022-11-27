@@ -75,14 +75,16 @@ function SearchBarPlayer() {
   }
 
   async function getDictionary(search: string): Promise<IUserSearch[]> {
-    return await api
-      .get("/user/search", { params: { username: search } })
-      .then((res: AxiosResponse) => {
-        return res.data;
-      })
-      .catch(() => {
-        return [];
-      });
+    if (search.length)
+      return await api
+        .get("/user/search", { params: { username: search } })
+        .then((res: AxiosResponse) => {
+          return res.data;
+        })
+        .catch(() => {
+          return [];
+        });
+    return [];
   }
 
   const handleOnChange = async (e: FormEvent<HTMLInputElement>) => {
