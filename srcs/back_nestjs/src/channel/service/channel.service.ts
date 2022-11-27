@@ -197,25 +197,6 @@ export class ChannelService {
     else return returned_channel;
   }
 
-  // get a channel by id (used for message)
-  async getChannelById(inputed_id: string): Promise<ChannelEntity> {
-    let ret = await this.channelRepository
-      .createQueryBuilder('channel')
-      .where('channel.id = :id', { id: inputed_id })
-      .leftJoin('channel.users', 'users')
-      .addSelect('users.id')
-      .addSelect('users.username')
-      .leftJoin('channel.admins', 'admins')
-      .addSelect('admins.id')
-      .addSelect('admins.username')
-      .leftJoin('channel.owner', 'owner')
-      .addSelect('owner.username')
-      .addSelect('owner.id')
-      .getOne();
-
-    return ret;
-  }
-
   /* This function compares hashed password in db, with the one the user just typed */
   async checkPassword(inputed_password: string, channel_password: string) {
     if (!inputed_password)
@@ -312,8 +293,6 @@ export class ChannelService {
       user.owner_of.find(
         (channel) => channel.id === requested_channel.id,
       );
-      // return User to invite
-      //const user_to_invite = await this.userService.findByName(requested_channel.targetUsername); //TODO: change to find by id if i can send id by front
       const channel = await this.getChannel(requested_channel.id, {
         owner: true,
         admins: true,

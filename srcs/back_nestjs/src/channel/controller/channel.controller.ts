@@ -74,7 +74,7 @@ export class ChannelController {
       const newChannel = await this.channelService.createChannel(channel, req.user);
 
       if (newChannel)
-        this.messageGateway.createChannel(req.user, newChannel.id);
+        this.messageGateway.joinAllSocketToChannel(req.user.id, newChannel.id);
       return newChannel;
   }
 
