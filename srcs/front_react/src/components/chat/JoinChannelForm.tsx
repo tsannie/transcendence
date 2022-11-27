@@ -6,7 +6,7 @@
 /*   By: dodjian <dodjian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/23 14:20:39 by dodjian           #+#    #+#             */
-/*   Updated: 2022/11/24 13:24:10 by dodjian          ###   ########.fr       */
+/*   Updated: 2022/11/27 12:47:49 by dodjian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ function JoinChannelForm() {
             : { id: selectChannel.id, password: password }
         )
         .then((res: AxiosResponse) => {
-          toast.success("Channel joined");
           setDisplay(ChatType.CONV);
           setCurrentConv(res.data.id);
           setIsChannel(true);
