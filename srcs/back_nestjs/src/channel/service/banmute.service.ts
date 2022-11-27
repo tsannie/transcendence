@@ -31,17 +31,10 @@ export class BanMuteService {
         else
             new_action.end = null;
 
-		console.log(new_action);
         if (new_action instanceof BanEntity)
-        {
-            console.log("ban ACTION");
 		    return await this.banRepository.save(new_action);
-        }
         else
-        {
-            console.log("mute ACTION");
             return await this.muteRepository.save(new_action);
-        }
     }
 
     async remove(c: BanEntity | MuteEntity) : Promise<BanEntity | MuteEntity> {
