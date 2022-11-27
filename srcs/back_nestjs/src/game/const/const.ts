@@ -7,9 +7,9 @@ export const victory_score: number = 200;
 // BALL DATA
 export const rad: number = 20;
 export const gravity: number = 5;
-export const speed_spawn: number = 2;
-export const speed: number = 6;
-export const speed_smasher: number = 8;
+export const speed_spawn: number = 4;
+export const speed: number = 12;
+export const speed_smasher: number = 16;
 
 // PADDLE DATA
 export const paddle_margin: number = 100;
