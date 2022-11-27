@@ -102,6 +102,77 @@
   align-items: center;
   flex: 0 0 35%;
   border: dashed;
+  overflow: hidden;
+}
+
+.duel__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.duel__list__item {
+  display: flex;
+  border: dashed;
+  width: 90%;
+  padding: 1%;
+  border-width: calc(3 * var(--res)) !important;
+}
+
+.duel__list__item__info {
+  display: flex;
+  align-items: center;
+  flex: 0 0 70%;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  button {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+  img {
+    width: calc(35 * var(--res));
+    border-radius: 50%;
+    margin-right: calc(10 * var(--res));
+  }
+  span {
+    font-size: calc(17 * var(--res));
+    margin: 0;
+  }
+}
+
+.duel__list__item__action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+  svg {
+    width: calc(30 * var(--res));
+  }
+  #trans {
+    svg {
+      width: calc(30 * var(--res));
+
+      fill: transparent;
+      background: linear-gradient(
+        to right,
+        rgba(13, 213, 252),
+        rgba(243, 243, 21),
+        rgba(255, 153, 51)
+      );
+      //clip-path: url(#myClip);
+    }
+  }
 }
 
 .current {
@@ -261,14 +332,15 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  .no-room {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    span {
-      font-size: calc(20 * var(--res));
-    }
+}
+
+.no-room {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  span {
+    font-size: calc(18 * var(--res));
   }
 }
 

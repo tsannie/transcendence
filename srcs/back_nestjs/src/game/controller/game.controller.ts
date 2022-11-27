@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
+import { UserEntity } from 'src/user/models/user.entity';
 import { IGameStat, IInfoGame, IInfoRoom } from '../class/room.class';
 import { GameGateway } from '../game.gateway';
 import { GameService } from '../service/game.service';
@@ -37,11 +38,11 @@ export class GameController {
     return this.gameService.getHistory(req.user);
   }
 
-  @Get('info')
+  @Get('friends-log')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  getInfo(@Req() req: Request): IInfoGame {
-    return this.gameGateway.getInfo();
+  getFriendsLog(@Req() req: Request): UserEntity[] {
+    return this.gameGateway.getFriendsLog(req.user);
   }
 
   /*@Get()

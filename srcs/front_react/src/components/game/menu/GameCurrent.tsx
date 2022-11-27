@@ -12,7 +12,6 @@ function GameCurrent() {
   ) as GameContextType;
   const [currentRooms, setCurrentRooms] = useState<IInfoRoom[]>([]);
   let allRooms: JSX.Element[];
-  //getCurrentRooms
 
   useEffect(() => {
     socket?.on("updateCurrentRoom", (room: IInfoRoom) => {
