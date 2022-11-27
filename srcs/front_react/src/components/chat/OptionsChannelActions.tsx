@@ -12,24 +12,10 @@ function UserOptions(props: IMemberProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
-    const banUser = async () => {
-        await api
-        .post("/channel/ban", { id: channelId, targetId: user.id })
-        .then(() => toast.info(`${user.username} has been banned`))
-        .catch((error: any) => toast.error("HTTP error:" + error));
-    }
-
     const unBanUser = async () => {
         await api
         .post("/channel/unban", { id: channelId, targetId: user.id })
         .then(() => toast.info(`${user.username} has been unbanned`))
-        .catch((error: any) => toast.error("HTTP error:" + error));
-    }
-
-    const muteUser = async () => {
-        await api
-        .post("/channel/mute", { id: channelId, targetId: user.id })
-        .then(() => toast.info(`${user.username} has been muted`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
@@ -60,9 +46,8 @@ function UserOptions(props: IMemberProps) {
         if (isOwner){
             let key : number = 2;
             adminOptionsJSX.push(<button key={key++} onClick={revokeAdmin}>unAdmin</button>);
-            adminOptionsJSX.push(<BanMuteButton key={key++} type="Mute" onClickEvent={muteUser}/> )
-            // adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban"/>)
-            adminOptionsJSX.push(<button key={key++} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Mute" channelId={channelId} user={user} /> )
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban" channelId={channelId} user={user} /> )
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -74,8 +59,8 @@ function UserOptions(props: IMemberProps) {
         if (isOwner)
             adminOptionsJSX.push(<button key={key++} onClick={makeAdmin}>make Admin</button>)
         if (isOwner || isAdmin){
-            adminOptionsJSX.push(<button key={key++} onClick={muteUser}>Mute</button>);
-            adminOptionsJSX.push(<button key={key++} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Mute" channelId={channelId} user={user} /> );
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban" channelId={channelId} user={user} /> );
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -86,7 +71,7 @@ function UserOptions(props: IMemberProps) {
 
         if (isAdmin || isOwner){
             adminOptionsJSX.push(<button key={key++} onClick={unMuteUser}>Unmute</button>);
-            adminOptionsJSX.push(<button key={key++} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban" channelId={channelId} user={user} /> );
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
