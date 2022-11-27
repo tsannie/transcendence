@@ -233,19 +233,24 @@ $height__title: calc(60 * var(--res));
     cursor: pointer;
   }
   svg {
-    width: calc(35 * var(--res));
-    cursor: pointer;
+    width: calc(28 * var(--res));
   }
 
   .info__request {
     display: flex;
-    flex: 0 0 60%;
+    flex: 0 0 40%;
     flex-direction: column;
     align-items: center;
     word-break: break-all;
     span {
       font-size: calc(15 * var(--res));
     }
+  }
+
+  .friend__request_button {
+    display: flex;
+    border-radius: 50%;
+    border-width: calc(3 * var(--res)) !important;
   }
 }
 
@@ -320,12 +325,7 @@ $height__title: calc(60 * var(--res));
   width: 60%;
   margin-bottom: calc(5 * var(--res));
   svg {
-    padding: calc(7 * var(--res));
-    border-radius: 50%;
-    border-width: calc(3 * var(--res)) !important;
-    border-style: dashed;
     width: calc(35 * var(--res));
-    cursor: pointer;
   }
 
   .action-bar__item {
@@ -335,6 +335,12 @@ $height__title: calc(60 * var(--res));
     flex-direction: column;
     span {
       font-size: calc(15 * var(--res));
+    }
+    button {
+      display: flex;
+      border-radius: 50%;
+      padding: calc(7 * var(--res));
+      border-width: calc(3 * var(--res)) !important;
     }
   }
 }
