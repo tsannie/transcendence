@@ -4,6 +4,7 @@ import { api } from "../../../const/const";
 import { ReactComponent as SpectateIcon } from "../../../assets/img/icon/read.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { IInfoRoom, RoomStatus } from "../const/const";
+import { Link } from "react-router-dom";
 
 function GameCurrent() {
   const { socket, setDisplayRender } = useContext(
@@ -39,13 +40,30 @@ function GameCurrent() {
       return (
         <div className="current__item" key={room.id}>
           <div className="current__item__info">
-            <div className="current__pseudo">
-              <span>
-                {room.p1.username.substring(0, 10)}
-                {room.p1.username.length > 10 ? "..." : ""}-
-                {room.p2.username.substring(0, 10)}
-                {room.p2.username.length > 10 ? "..." : ""}
-              </span>
+            <div className="current__profile-picture">
+              <Link to={`/profile/${room.p1.username}`}>
+                <button
+                  title={room.p1.username.length > 8 ? room.p1.username : ""}
+                >
+                  <span>
+                    {room.p1.username.length > 8
+                      ? room.p1.username.slice(0, 5) + "..."
+                      : room.p1.username}
+                  </span>
+                </button>
+              </Link>
+              <span id="separator"> - </span>
+              <Link to={`/profile/${room.p2.username}`}>
+                <button
+                  title={room.p2.username.length > 8 ? room.p2.username : ""}
+                >
+                  <span>
+                    {room.p2.username.length > 8
+                      ? room.p2.username.slice(0, 5) + "..."
+                      : room.p2.username}
+                  </span>
+                </button>
+              </Link>
             </div>
             <div className="current__score">
               <span>
