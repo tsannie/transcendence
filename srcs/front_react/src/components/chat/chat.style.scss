@@ -263,8 +263,10 @@ $width_chat: calc(450 * var(--res));
         form {
           border-style: none;
           width: 100%;
-
+          
           input {
+            border-width: calc(1 * var(--res)) !important;
+            margin: 0% 8% 0% 8%;
             font-size: calc(11 * var(--res));
             width: 100%;
           }
