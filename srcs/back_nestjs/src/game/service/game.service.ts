@@ -131,6 +131,22 @@ export class GameService {
     return current_rooms;
   }
 
+  getFriendsLog(
+    allUsers: Map<string, Socket[]>,
+    user: UserEntity,
+  ): UserEntity[] {
+    const friends: UserEntity[] = user.friends;
+    const friendsLog: UserEntity[] = [];
+
+    for (const friend of friends) {
+      if (allUsers.has(friend.id)) {
+        friendsLog.push(friend);
+      }
+    }
+    console.log('friendsLog', friendsLog);
+    return friendsLog;
+  }
+
   getInfo(allUsers: Map<string, Socket[]>): IInfoGame {
     let player_in_game = 0;
     let player_in_waiting = 0;
