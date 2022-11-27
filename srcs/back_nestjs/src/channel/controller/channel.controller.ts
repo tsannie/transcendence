@@ -200,12 +200,12 @@ export class ChannelController {
   async inviteChannel(
     @Body() query_channel: ChannelInvitationDto,
     @Req() req: Request,
-  ): Promise<ChannelInvitationDto> {
-    const target: UserEntity = await this.channelService.inviteChannel(query_channel, req.user);
+  ): Promise<ChannelEntity> {
+    const channel: ChannelEntity = await this.channelService.inviteChannel(query_channel, req.user);
 
     // find the user to invite with his id
-    this.messageGateway.inviteChannel(target, query_channel.id);
-    return query_channel;
+    await this.messageGateway.inviteChannel(query_channel.targetUsername, channel);
+    return channel;
   }
 
   @Post('addPassword')

@@ -307,15 +307,20 @@ export class ChannelService {
   async inviteChannel(
     requested_channel: ChannelInvitationDto,
     user: UserEntity,
-  ): Promise<UserEntity> {
+  ): Promise<ChannelEntity> {
     if (this.isOwner(requested_channel.id, user)) {
       user.owner_of.find(
         (channel) => channel.id === requested_channel.id,
       );
       // return User to invite
-      const user_to_invite = await this.userService.findByName(requested_channel.targetUsername); //TODO: change to find by id if i can send id by front
+      //const user_to_invite = await this.userService.findByName(requested_channel.targetUsername); //TODO: change to find by id if i can send id by front
+      const channel = await this.getChannel(requested_channel.id, {
+        owner: true,
+        admins: true,
+        users: true,
+      });
 
-      return user_to_invite;
+      return channel;
     } else
       throw new ForbiddenException(
         'Only the owner of the channel can invite someone to the channel.',

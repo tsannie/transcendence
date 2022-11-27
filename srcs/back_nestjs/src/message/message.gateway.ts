@@ -47,6 +47,8 @@ export class MessageGateway
     private authService: AuthService,
     @Inject(forwardRef(() => ChannelService))
     private channelService: ChannelService,
+
+    private userService: UserService,
   ) {}
 
   private readonly logger: Logger = new Logger('messageGateway');
@@ -158,10 +160,13 @@ export class MessageGateway
     this.server.to(channelId).emit('deleteChannel', channelId);
   }
 
-  inviteChannel(target: UserEntity, channelId: string) {
+  async inviteChannel(targetUsername: string, channel: ChannelEntity) {
     // find the socket of the user
+    const target = await this.userService.findByName(targetUsername); //TODO: change to find by id if i can send id by front
+
+    console.log("target == ", target);
     this.connectedUsers.get(target.id).forEach((socket) => {
-      this.server.to(socket.id).emit('inviteChannel', channelId);
+      this.server.to(socket.id).emit('inviteChannel', channel);
     });
 
     //this.server.to(channelId).emit('inviteChannel', channelId);
