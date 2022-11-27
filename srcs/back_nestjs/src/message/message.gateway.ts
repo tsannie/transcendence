@@ -68,7 +68,6 @@ export class MessageGateway
       user = await this.authService.validateSocket(client);
 
       if (!user) {
-        // TODO moove im map and remove ConnectedUserEntity (dov)
         return client.disconnect();
       } else {
         // if user id already have a socket, add the new one to the array
@@ -124,9 +123,12 @@ export class MessageGateway
       this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
       const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, user.id);
-      const channel = await this.channelService.getChannelById(
-        lastMsg.channel.id,
-      );
+      const channel = await this.channelService.getChannel(lastMsg.channel.id,
+      {
+        owner: true,
+        admins: true,
+        users: true,
+      });
 
       if (channel) {
         this.messageService.emitMessageChannel(
@@ -138,37 +140,27 @@ export class MessageGateway
     }
   }
 
-  createChannel(user: UserEntity, channelId: string) {
-    this.joinAllSocketToChannel(user.id, channelId);
-    //this.server.emit('newChannel', channel);
-  }
-
   joinChannel(user: UserEntity, channelId: string) {
-    // find the socket of the user
     this.joinAllSocketToChannel(user.id, channelId);
     this.server.to(channelId).emit('joinChannel', user, channelId);
   }
 
   leaveChannel(user: UserEntity, channel: ChannelEntity) {
-    // find the socket of the user
     this.server.to(channel.id).emit('leaveChannel', user, channel.id, channel.owner);
     this.leaveAllSocketToChannel(user.id, channel.id);
   }
 
   deleteChannel(channelId: string) {
-    // find the socket of the user
     this.server.to(channelId).emit('deleteChannel', channelId);
   }
 
   async inviteChannel(targetUsername: string, channel: ChannelEntity) {
-    // find the socket of the user
     const target = await this.userService.findByName(targetUsername); //TODO: change to find by id if i can send id by front
 
     console.log("target == ", target);
     this.connectedUsers.get(target.id).forEach((socket) => {
       this.server.to(socket.id).emit('inviteChannel', channel);
     });
-
     //this.server.to(channelId).emit('inviteChannel', channelId);
   }
 
@@ -200,7 +192,6 @@ export class MessageGateway
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
-      // join the channel
       sockets.forEach((client) => {
         client.join(channelId);
       });
@@ -211,7 +202,6 @@ export class MessageGateway
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
-      // leave the channel
       sockets.forEach((client) => {
         client.leave(channelId);
       });
