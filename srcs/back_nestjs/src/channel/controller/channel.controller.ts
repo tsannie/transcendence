@@ -2,7 +2,9 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  forwardRef,
   Get,
+  Inject,
   Post,
   Query,
   Req,
@@ -19,11 +21,16 @@ import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { BanEntity, MuteEntity } from '../models/ban.entity';
 import { Request } from 'express';
+import { MessageGateway } from 'src/message/message.gateway';
 
 @Controller('channel')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ChannelController {
-  constructor(private channelService: ChannelService) {}
+  constructor(
+    private channelService: ChannelService,
+    @Inject(forwardRef(() => MessageGateway))
+    private messageGateway: MessageGateway,
+  ) {}
 
   @Get('datas')
   @SerializeOptions({ groups: ['user'] })
@@ -61,9 +68,13 @@ export class ChannelController {
     @Req() req: Request,
   ): Promise<void | ChannelEntity> {
     return await this.channelService.createChannel(channel, req.user);
+    //const channelCreated: ChannelEntity | void =
+
+    //await this.channelService.createChannel(channel, req.user);
+    //return this.messageGateway.createChannel(channelCreated);
   }
 
-  @Post('banUser')
+  @Post('ban')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async banUser(
@@ -73,7 +84,7 @@ export class ChannelController {
     return await this.channelService.banUser(ban_request, req.user);
   }
 
-  @Post('unBanUser')
+  @Post('unban')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async unBanUser(
@@ -93,17 +104,20 @@ export class ChannelController {
     return await this.channelService.makeAdmin(channel, req.user);
   }
 
-  @Post('muteUser')
+  @Post('mute')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async muteUser(
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
-  ): Promise<MuteEntity> {
-    return await this.channelService.muteUser(channel, req.user);
+  ) {
+    //return await this.channelService.muteUser(channel, req.user);
+    const userMuted: MuteEntity = await this.channelService.muteUser(channel, req.user);
+
+    this.messageGateway.muteUser(userMuted);
   }
 
-  @Post('unMuteUser')
+  @Post('unmute')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async unMuteUser(

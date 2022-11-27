@@ -10,18 +10,18 @@ import { toast } from "react-toastify";
 function SendMessageForm(props: any) {
     const convId = props.convId;
     const isChannel = props.isChannel;
-  
+
     const { socket } = useContext(MessageContext);
     const { isRedirection, setRedirection, targetRedirection, setNewConv, setCurrentConv } = useContext(ChatDisplayContext);
     const [input, setInput] = useState<string>("");
-  
+
     const actualize_input = (event: any) => {
       setInput(event.target.value);
     };
-  
+
     const createConv = async () => {
       let createdId : string | null = null;
-  
+
       await api
         .post("/dm/create", {targetId: targetRedirection.toString()})
         .then((res) => {
@@ -34,17 +34,17 @@ function SendMessageForm(props: any) {
         })
         return createdId;
     }
-  
+
     const sendMessage = async (event: any) => {
       let inputConvId : string | null = convId;
-    
+
       event.preventDefault();
       if (input === "") return;
       if (isRedirection && targetRedirection)
         inputConvId = await createConv();
       if (!inputConvId)
         return ;
-  
+
       const data: IMessageSent = {
         convId: inputConvId,
         content: input,
@@ -53,7 +53,7 @@ function SendMessageForm(props: any) {
       socket?.emit("message", data);
       setInput("");
     };
-  
+
     return (
       <form onSubmit={sendMessage}>
         <input

@@ -10,7 +10,7 @@ import {
 } from "../../contexts/ChatDisplayContext";
 import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
-import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/circle_plus.svg";
+import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -109,8 +109,7 @@ function ChannelList() {
     if (!conv) return;
     if (conv.name) title = conv.name;
     else {
-      if (!conv.users)
-        return;
+      if (!conv.users) return;
       user2 =
         conv.users[0].username !== user?.username
           ? conv.users[0]
@@ -118,21 +117,23 @@ function ChannelList() {
       title = user2?.username;
     }
     return (
-      <button className="chat__list__items" key={conv.id}>
-        <li title={title} onClick={() => clickItem(conv)}>
-          <div className="avatar">
-            {user2 ? (
-              <img src={user2.profile_picture + "&size=small"} />
-            ) : (
-              <GroupChatIcon />
-            )}
-          </div>
-          <div className="text__notif">
-            <span>{title}</span>
-            {displayNotif(conv.id)}
-          </div>
-        </li>
-      </button>
+      <div className="chat__list__items" key={conv.id}>
+        <button>
+          <li title={title} onClick={() => clickItem(conv)}>
+            <div className="avatar">
+              {user2 ? (
+                <img src={user2.profile_picture + "&size=small"} />
+              ) : (
+                <GroupChatIcon />
+              )}
+            </div>
+            <div className="text__notif">
+              <span>{title}</span>
+              {displayNotif(conv.id)}
+            </div>
+          </li>
+        </button>
+      </div>
     );
   });
 
