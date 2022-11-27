@@ -48,7 +48,7 @@ function BanMuteButton(props: {key: number, type : string, channelId: string, us
     }, [])
 
     const createTimer = () => {
-        setTimerOption(true);
+        setTimerOption(!timerOption);
     }
 
     const handleAction = (event: any) => {
@@ -68,7 +68,7 @@ function BanMuteButton(props: {key: number, type : string, channelId: string, us
                 <button key={key} onClick={createTimer}>{type}</button>
                 : 
                 <Fragment>
-                    <button key={key}>{type}</button>
+                    <button key={key} onClick={createTimer}>{type}</button>
                     <form onSubmit={handleAction}>
                         <input
                             type="number"
