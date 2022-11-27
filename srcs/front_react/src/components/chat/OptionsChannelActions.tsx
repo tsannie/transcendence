@@ -3,13 +3,12 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
+import BanMuteButton from "./OptionsBanMute";
 import { IMemberProps } from "./OptionsChannel";
 
 function UserOptions(props: IMemberProps) {
     const {type, isOwner, isAdmin, channelId, user} = props;
     const [isOpen, setOpen ] = useState<boolean>(false);
-    const [ timer, setTimer ] = useState<number>(0);
-    const [timerOption, setTimerOption ] = useState<boolean>(false);
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
@@ -55,64 +54,49 @@ function UserOptions(props: IMemberProps) {
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const createTimer = () => {
-        setTimerOption(true);
-    }
-
     const adminOptions = () => {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={revokeAdmin}>unAdmin</button>);
-            {
-                !timerOption ? 
-                adminOptionsJSX.push(<button key={2} onClick={createTimer}>Mute</button>)
-                : adminOptionsJSX.push(
-                <Fragment>
-                    <button key={2}>Mute</button>
-                    <form onSubmit={muteUser}>
-                        <input
-                            type="number"
-                            placeholder="minutes"
-                            onChange={(e: any) =>
-                                setTimer(e.target.value)
-                            }
-                        />
-                    </form>
-                </Fragment>) ;
-            };
-            adminOptionsJSX.push(<button key={3} onClick={banUser}>Ban</button>);
+            let key : number = 2;
+            adminOptionsJSX.push(<button key={key++} onClick={revokeAdmin}>unAdmin</button>);
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Mute" onClickEvent={muteUser}/> )
+            // adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban"/>)
+            adminOptionsJSX.push(<button key={key++} onClick={banUser}>Ban</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
 
     const memberOptions = () => {
+        let key : number = 2;
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner)
-            adminOptionsJSX.push(<button key={3} onClick={makeAdmin}>make Admin</button>)
+            adminOptionsJSX.push(<button key={key++} onClick={makeAdmin}>make Admin</button>)
         if (isOwner || isAdmin){
-            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<button key={key++} onClick={muteUser}>Mute</button>);
+            adminOptionsJSX.push(<button key={key++} onClick={banUser}>Ban</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
 
     const mutedOptions = () => {
+        let key : number = 2;
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isAdmin || isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={unMuteUser}>Unmute</button>);
-            adminOptionsJSX.push(<button key={2} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<button key={key++} onClick={unMuteUser}>Unmute</button>);
+            adminOptionsJSX.push(<button key={key++} onClick={banUser}>Ban</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
 
     const bannedOptions = () => {
+        let key : number = 2;
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isAdmin || isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={unBanUser}>UnBan</button>);
+            adminOptionsJSX.push(<button key={key++} onClick={unBanUser}>UnBan</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -122,7 +106,7 @@ function UserOptions(props: IMemberProps) {
         return (
         <div className="dropdown" style={dropdownStyle.current}>
             <div className="options">{user.username}</div>
-            <button>
+            <button key={1}>
                 <Link style={{textDecoration: 'none'}} to={"/profile/" + user.username}>
                     Profile
                 </Link>
@@ -135,8 +119,6 @@ function UserOptions(props: IMemberProps) {
     }
 
     useEffect(() => {
-        setTimer(0);
-        setTimerOption(false);
         const closeDropdown = (e: any) => {
             if (!e.composedPath().includes(buttonRef.current))
                 setOpen(false);
