@@ -165,9 +165,6 @@ function ChannelMembers(props: {
           setDisplay(ChatType.EMPTY);
         }
       });
-      socket.on("inviteChannel", (channelId) => {
-        console.log("inviteChannel === ", channelId);
-      });
 
       return () => {
         socket.off("muteUser");
@@ -179,7 +176,6 @@ function ChannelMembers(props: {
         socket.off("joinChannel");
         socket.off("leaveChannel");
         socket.off("deleteChannel");
-        socket.off("inviteChannel");
       };
     }
   }, [muted, users, banned, admins, socket]);

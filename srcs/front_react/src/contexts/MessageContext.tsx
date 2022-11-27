@@ -49,9 +49,13 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       /* socket.on("newChannel", (data) => {
         console.log("newChannel === ", data);
       }); */
+      socket.on("inviteChannel", (channelId) => {
+        console.log("inviteChannel === ", channelId);
+      });
       return () => {
         socket.off("message");
         socket.off("error");
+        socket.off("inviteChannel");
       };
     }
   }, [socket]);
