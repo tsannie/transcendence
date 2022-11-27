@@ -38,8 +38,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('GameGateway');
 
   async handleConnection(client: Socket) {
-    const user = await this.authService.validateSocket(client);
+    const user = await this.authService.validateSocket(client, {
+      friends: true,
+    });
     if (!user) return;
+
+    // if user dont have other socket send to his friends that he is online
+    if (!this.allUsers.has(user.id))
+      this.gameService.preventConnexionOfFriends(
+        this.server,
+        user,
+        this.allUsers,
+      );
 
     if (this.allUsers.has(user.id)) {
       this.allUsers.get(user.id).push(client);
@@ -50,9 +60,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(client: Socket) {
-    const user = await this.authService.validateSocket(client);
+    const user = await this.authService.validateSocket(client, {
+      friends: true,
+    });
     if (!user) return;
-    this.logger.log(`Client GAME disconnected: ${user.username}`);
+
+    // if user dont have other socket send to his friends that he is offline
+    if (this.allUsers.get(user.id).length === 1)
+      this.gameService.preventConnexionOfFriends(
+        this.server,
+        user,
+        this.allUsers,
+        false,
+      );
 
     const room = this.gameService.findRoomBySocket(client);
     if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {
@@ -64,7 +84,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.allUsers.has(user.id)) {
       const sockets = this.allUsers.get(user.id);
       const index = sockets.indexOf(client);
-      console.log('sockets.length', sockets.length);
+      //console.log('sockets.length', sockets.length);
       if (index > -1) {
         sockets.splice(index, 1);
       }
@@ -75,26 +95,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
     client.disconnect();
+    this.logger.log(`Client GAME disconnected: ${user.username}`);
   }
 
   ///////////////////////////////////////////////
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
 
-  @SubscribeMessage('getFriendsLog')
-  async getFriendsLog(@ConnectedSocket() client: Socket) {
-    const user = await this.authService.validateSocket(client, {
-      friends: true,
-    });
-    if (!user) throw new WsException('User not found');
-
-    this.server
-      .to(client.id)
-      .emit('friendsLog', this.gameService.getFriendsLog(this.allUsers, user));
-  }
-
-  getInfo(): IInfoGame {
-    return this.gameService.getInfo(this.allUsers);
+  getFriendsLog(user: UserEntity): UserEntity[] {
+    return this.gameService.getFriendsLog(this.allUsers, user);
   }
 
   @SubscribeMessage('matchmaking')

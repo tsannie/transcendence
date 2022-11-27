@@ -131,6 +131,47 @@ export class GameService {
     return current_rooms;
   }
 
+  preventConnexionOfFriends(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+    login: boolean = true,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    if (login) {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogin', user);
+      });
+    } else {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogout', user);
+      });
+    }
+  }
+
+  sendUserDisconnect(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    sockets.forEach((socket) => {
+      server.to(socket.id).emit('friendsDisconnect', user);
+    });
+  }
+
+  getSocketsOfFriends(user: UserEntity, allUsers: Map<string, Socket[]>) {
+    const friends: UserEntity[] = this.getFriendsLog(allUsers, user);
+    // get all socket of his friends
+    const sockets: Socket[] = friends.reduce((acc, friend) => {
+      if (allUsers.has(friend.id)) {
+        acc.push(...allUsers.get(friend.id));
+      }
+      return acc;
+    }, []);
+    return sockets;
+  }
+
   getFriendsLog(
     allUsers: Map<string, Socket[]>,
     user: UserEntity,
@@ -138,12 +179,14 @@ export class GameService {
     const friends: UserEntity[] = user.friends;
     const friendsLog: UserEntity[] = [];
 
+    if (!friends) return friendsLog;
+
     for (const friend of friends) {
       if (allUsers.has(friend.id)) {
         friendsLog.push(friend);
       }
     }
-    console.log('friendsLog', friendsLog);
+    //console.log('friendsLog', friendsLog);
     return friendsLog;
   }
 
@@ -311,7 +354,7 @@ export class GameService {
       if (this.checkNewScore(score, room))
         server.emit('updateCurrentRoom', await this.createInfoRoom(room));
 
-      await new Promise((f) => setTimeout(f, 8));
+      await new Promise((f) => setTimeout(f, 1000 / 60));
     }
 
     if (room.status === RoomStatus.CLOSED) {
