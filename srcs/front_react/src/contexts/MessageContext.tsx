@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { IChannel, IDm, IMessageReceived } from "../components/chat/types";
 import { AuthContext, AuthContextType } from "./AuthContext";
+import { ChatDisplayContext } from "./ChatDisplayContext";
 
 export const MessageContext = createContext<MessageContextInterface>(
   {} as MessageContextInterface
@@ -29,6 +30,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   const [newMessage, setNewMessage] = useState<IMessageReceived | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
+  const { setNewConv } = useContext(ChatDisplayContext);
 
   useEffect(() => {
     const newSocket: any = io("http://localhost:4000/chat", {
@@ -49,8 +51,9 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       /* socket.on("newChannel", (data) => {
         console.log("newChannel === ", data);
       }); */
-      socket.on("inviteChannel", (channelId) => {
-        console.log("inviteChannel === ", channelId);
+      socket.on("inviteChannel", (channel) => {
+        console.log("inviteChannel === ", channel);
+        //setNewConv(channel);
       });
       return () => {
         socket.off("message");
