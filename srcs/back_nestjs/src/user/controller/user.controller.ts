@@ -55,7 +55,6 @@ export class UserController {
   async getUserByUsername(@Query() body: TargetNameDto): Promise<UserEntity> {
     return await this.userService.findByName(body.username, {
       friends: true,
-      history: true,
     });
   }
 
@@ -64,7 +63,6 @@ export class UserController {
   async getUserById(@Query() body: TargetIdDto): Promise<UserEntity> {
     return await this.userService.findById(body.id, {
       friends: true,
-      history: true,
     });
   }
 
@@ -209,12 +207,6 @@ export class UserController {
       friends: true,
     });
     return await this.userService.removeFriend(req.user, userTarget);
-  }
-
-  @Get('gameHistory')
-  @UseGuards(JwtTwoFactorGuard)
-  async getGameHistory(@Req() req: Request): Promise<GameStatEntity[]> {
-    return await this.userService.getGameHistory(req.user);
   }
 
   @Get('leaderboard')

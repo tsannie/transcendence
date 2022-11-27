@@ -29,7 +29,6 @@ function ActionBar(props: IProps) {
     api.post("/user/remove-friend", { id: props.player?.id }).then(
       () => {
         props.setReloadPlayer(true);
-        toast.success("friend removed !");
       },
       () => {
         toast.error("error while removing friend");
@@ -45,7 +44,6 @@ function ActionBar(props: IProps) {
         .post("/user/accept-friend-request", { id: props.player?.id })
         .then(() => {
           props.setReloadPlayer(true);
-          toast.success("you are now friend with " + props.player?.username);
         })
         .catch(() => {
           toast.error("error while accepting friend request");
@@ -58,7 +56,7 @@ function ActionBar(props: IProps) {
           toast.info("friend request sent !");
         })
         .catch(() => {
-          toast.error("error while sending friend request");
+          toast.error("Friend request already sent");
         });
     }
   };
@@ -74,22 +72,30 @@ function ActionBar(props: IProps) {
   return (
     <div className="action-bar">
       <div className="action-bar__item">
-        <ChatIcon alt="chat" onClick={handleDm} />
+        <button onClick={handleDm}>
+          <ChatIcon alt="chat" />
+        </button>
         <span>chat</span>
       </div>
       {props.player?.friends.find((friend) => friend.id === user?.id) ? (
         <div className="action-bar__item">
-          <RemoveFriendIcon alt="remove-friend" onClick={handleRemoveFriend} />
+          <button onClick={handleRemoveFriend}>
+            <RemoveFriendIcon alt="remove-friend" />
+          </button>
           <span>remove friend</span>
         </div>
       ) : (
         <div className="action-bar__item">
-          <AddFriendIcon alt="add-friend" onClick={handleAddFriend} />
+          <button onClick={handleAddFriend}>
+            <AddFriendIcon alt="add-friend" />
+          </button>
           <span>add friend</span>
         </div>
       )}
       <div className="action-bar__item">
-        <BlockIcon alt="block" />
+        <button>
+          <BlockIcon alt="block" />
+        </button>
         <span>block</span>
       </div>
     </div>

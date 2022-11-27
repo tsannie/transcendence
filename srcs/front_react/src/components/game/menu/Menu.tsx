@@ -9,35 +9,35 @@ export default function GameMenu() {
   const { socket, room } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext);
 
-  let game_mode = GameMode.PONG_1972;
+  let game_mode = GameMode.PONG_CLASSIC;
 
-  function createGameRoom() {
+  function matchmakingClassic() {
     let data: ICreateRoom = {
       mode: game_mode,
     };
 
     if (!room) {
       console.log("socket id == ", socket?.id);
-      socket?.emit("createGameRoom", data);
-      toast.success("Room created !");
+      socket?.emit("matchmaking", data);
+      toast.info("join matchmaking ...");
     }
   }
 
-  function createGameRoomTRANS() {
+  function matchmakingTrans() {
     game_mode = GameMode.PONG_TRANS;
-    createGameRoom();
+    matchmakingClassic();
   }
 
   return (
-    <div className="Game">
+    <div className="game">
       {!room && (
         <div className="GameMenu">
           <h2> you are : {user?.username} </h2>
           <br />
-          <button onClick={createGameRoom}>PONG 1972</button>
+          <button onClick={matchmakingClassic}>classic</button>
           <br />
           <br />
-          <button onClick={createGameRoomTRANS}>PONG TRANSCENDENCE</button>
+          <button onClick={matchmakingTrans}>pong transcendence</button>
         </div>
       )}
     </div>

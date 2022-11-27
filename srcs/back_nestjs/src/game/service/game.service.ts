@@ -4,66 +4,63 @@ import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { Repository } from 'typeorm';
-import {
-  canvas_back_height,
-  canvas_back_width,
-  gravity,
-  paddle_height,
-  paddle_p1_x,
-  paddle_p2_x,
-  paddle_width,
-  rad,
-  spawn_speed,
-  speed,
-  victory_score,
-} from '../const/const';
 import { GameStatEntity } from '../entity/gameStat.entity';
-import Room, { RoomStatus, Winner } from '../class/room.class';
-import { v4 as uuidv4 } from 'uuid';
+import Room, {
+  IInfoRoom,
+  GameMode,
+  RoomStatus,
+  Winner,
+  IGameStat,
+  IInfoGame,
+} from '../class/room.class';
 import Ball from '../class/ball.class';
+import wall from '../class/wall.class';
+import smasher from '../class/smasher.class';
+import { RdbmsSchemaBuilder } from 'typeorm/schema-builder/RdbmsSchemaBuilder';
+import Wall from '../class/wall.class';
+import Smasher from '../class/smasher.class';
 
 @Injectable()
 export class GameService {
   constructor(
-    // @InjectRepository(RoomEntity)
-    //private all_game: Repository<RoomEntity>,
-
     @InjectRepository(GameStatEntity)
     private gameStatRepository: Repository<GameStatEntity>,
 
     private readonly userService: UserService,
   ) {}
 
+  /* RoomID, room */
+  private gamesRoom: Map<string, Room> = new Map();
+
+  /* Socket, RoomID */
+  private usersRoom: Map<Socket, string> = new Map();
+
   /*   async findAll(): Promise<RoomEntity[]> {
     return await this.all_game.find();
   } */
 
-  joinFastRoom(user: UserEntity, game: Map<string, Room>): Room {
-    console.log('joinFastRoom');
-    let room_game: Room;
-    let already_in_game: boolean = false;
+  findRoom(user: UserEntity, mode: GameMode): Room {
+    let room: Room;
 
-    console.log('game.size : ', game.size);
-    const size = game.size;
+    const size = this.gamesRoom.size;
     if (size !== 0) {
-      console.log('Join room');
-      const all_rooms = game.values();
+      const all_rooms = this.gamesRoom.values();
       for (const room_db of all_rooms) {
         if (
-          (room_db.p1_id && user.id === room_db.p1_id) ||
-          (room_db.p2_id && user.id === room_db.p2_id)
-        )
-          already_in_game = true;
-        else if (room_db.status === RoomStatus.WAITING && !room_db.p2_id)
-          room_game = room_db;
+          room_db.status === RoomStatus.WAITING &&
+          room_db.game_mode === mode
+        ) {
+          room = room_db;
+          break;
+        }
       }
     }
-    if (!room_game && already_in_game === false) {
-      console.log('Create room');
-      room_game = new Room();
-      room_game.id = uuidv4();
+    if (!room) {
+      room = new Room(user.id, mode);
+
+      this.gamesRoom.set(room.id, room);
     }
-    return room_game;
+    return room;
   }
 
   /*   async deleteUser(): Promise<void> {
@@ -73,93 +70,151 @@ export class GameService {
     });
   } */
 
-  findRoomBySocketId(
-    socket_id: string,
-    game: Map<string, Room>,
-  ): Room | undefined {
-    const all_rooms = game.values();
-    for (const room of all_rooms) {
-      if (room.p1_SocketId === socket_id || room.p2_SocketId === socket_id)
+  deleteRoomById(room_id: string) {
+    this.gamesRoom.delete(room_id);
+  }
+
+  findRoomBySocket(socket: Socket): Room | undefined {
+    const room_id = this.usersRoom.get(socket);
+    if (room_id) return this.gamesRoom.get(room_id);
+    return undefined;
+  }
+
+  findRoomByUser(user: UserEntity): Room | undefined {
+    for (const room of this.gamesRoom.values()) {
+      if (room.p1_id === user.id || room.p2_id === user.id) {
         return room;
+      }
     }
     return undefined;
+  }
+
+  getRoomById(room_id: string): Room | undefined {
+    return this.gamesRoom.get(room_id);
+  }
+
+  joinRoom(room_id: string, client: Socket, server: Server) {
+    const room_to_leave = this.usersRoom.get(client);
+    if (room_to_leave) {
+      client.leave(room_to_leave);
+    }
+    server.in(client.id).socketsJoin(room_id);
+    this.usersRoom.set(client, room_id);
+  }
+
+  async leaveRoom(room_id: string, client: Socket) {
+    if (room_id) {
+      client.leave(room_id);
+    }
+    this.usersRoom.delete(client);
+  }
+
+  async createInfoRoom(room: Room): Promise<IInfoRoom> {
+    return {
+      id: room.id,
+      status: room.status,
+      p1: await this.userService.findById(room.p1_id),
+      p2: await this.userService.findById(room.p2_id),
+      p1_score: room.p1_score,
+      p2_score: room.p2_score,
+    };
+  }
+
+  async getCurrentRooms(): Promise<IInfoRoom[]> {
+    const current_rooms: IInfoRoom[] = [];
+    for (const room of this.gamesRoom.values()) {
+      if (room.status === RoomStatus.PLAYING) {
+        current_rooms.push(await this.createInfoRoom(room));
+      }
+    }
+    return current_rooms;
+  }
+
+  getInfo(allUsers: Map<string, Socket[]>): IInfoGame {
+    let player_in_game = 0;
+    let player_in_waiting = 0;
+
+    for (const room of this.gamesRoom.values()) {
+      if (room.status === RoomStatus.PLAYING) {
+        player_in_game += 2;
+      } else if (room.status === RoomStatus.WAITING) {
+        player_in_waiting += 1;
+      }
+    }
+
+    const info: IInfoGame = {
+      search: player_in_waiting,
+      ingame: player_in_game,
+      online: allUsers.size,
+    };
+    return info;
   }
 
   ////////////////////
   // INGAME FUNCTIONS
   ////////////////////
 
-  /*async losePoint(
-    // TODO : update score
-    player: PlayerEntity,
-    p1: PlayerEntity,
-    p2: PlayerEntity,
-    room: Room,
-    server: Server,
-  ) {
-    room.ball.x = canvas_back_width / 2;
-    room.ball.y = canvas_back_height / 2;
-    room.ball.direction_y = 1;
-    room.ball.first_col = false;
+  async getHistory(user: UserEntity): Promise<IGameStat[]> {
+    const history = await this.gameStatRepository.find({
+      where: [{ p1_id: user.id }, { p2_id: user.id }],
+    });
 
-    player.score += 1;
-    if (player.score === victory_score) player.won = true;
-    await this.all_player.save(player);
-    server.in(room).emit('getScore', p1, p2);
-  }*/
+    // sort history by date
+    history.sort((a, b) => {
+      return a.date.getTime() - b.date.getTime();
+    });
 
-  /*getGameStat(p1: UserEntity, p2: UserEntity, room: Room): GameStatEntity {
-    // TODO edit setentity
+    // keep only the last 20 games
+    if (history.length > 20) {
+      history.splice(0, history.length - 20);
+    }
+
+    let historyGame: IGameStat[] = [];
+
+    for (const stat of history) {
+      const p1 = await this.userService.findById(stat.p1_id);
+      const p2 = await this.userService.findById(stat.p2_id);
+
+      historyGame.push({
+        p1: p1,
+        p2: p2,
+        winner: stat.winner_id === p1.id ? Winner.P1 : Winner.P2,
+        eloDiff: stat.eloDiff,
+        p1_score: stat.p1_score,
+        p2_score: stat.p2_score,
+      });
+    }
+
+    return historyGame;
+  }
+
+  getGameStat(p1: UserEntity, p2: UserEntity, room: Room): GameStatEntity {
     let statGame = new GameStatEntity();
 
-    statGame.players = [p1, p2];
+    statGame.p1_id = p1.id;
+    statGame.p2_id = p2.id;
     statGame.p1_score = room.p1_score;
     statGame.p2_score = room.p2_score;
-    if (room.p1.won) statGame.winner_id = p1.id; // TODO
+    if (room.won === Winner.P1) statGame.winner_id = p1.id;
     else statGame.winner_id = p2.id;
-    statGame.eloDiff = this.getElo(root, p1, p2);
+    statGame.eloDiff = this.getElo(room, p1, p2);
     return statGame;
   }
 
   async getStat(room: Room) {
-    console.log('CRASH 1');
-    console.log(room);
     const p1: UserEntity = await this.userService.findById(room.p1_id);
-    console.log('p1 : ', p1);
-    console.log('CRASH 2');
     const p2: UserEntity = await this.userService.findById(room.p2_id);
-    console.log('p2 : ', p2);
-    console.log('CRASH 3');
     let statGame: GameStatEntity = this.getGameStat(p1, p2, room);
-    console.log('statGame : ', statGame);
-    console.log('CRASH 4');
 
-    await this.updateHistory(p1, p2, statGame);
-    console.log('CRASH 5');
     await this.gameStatRepository.save(statGame);
-    console.log('CRASH 6');
-  }
-
-  async updateHistory(
-    p1: UserEntity,
-    p2: UserEntity,
-    statGame: GameStatEntity,
-  ) {
-    if (!p1.history) p1.history = [];
-    if (!p2.history) p2.history = [];
-    p1.history.push(statGame);
-    p2.history.push(statGame);
-
     await this.userService.add(p1);
     await this.userService.add(p2);
   }
 
   getElo(room: Room, p1: UserEntity, p2: UserEntity): number {
     let eloDiff: number = 0;
-    if (set.p1.won) {
-      // TODO
+    if (room.won === Winner.P1) {
       eloDiff = this.calculateElo(p1.elo, p2.elo, true);
-
       p1.elo += eloDiff;
       p2.elo -= eloDiff;
       p1.wins++;
@@ -190,82 +245,62 @@ export class GameService {
     } else {
       eloDiff = 30 * (1 - p2);
     }
-    // round elodiff to be a number
-    console.log('elo diff = ', eloDiff, ' == ', Math.round(eloDiff));
     return Math.round(eloDiff);
-  }*/
-
-  async ballHitPaddlep1(room: Room, server: Server) {
-    // TODO moove to class ball
-    // TODO async ???
-    if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x - rad <= paddle_p1_x + paddle_width &&
-      room.ball.x + rad / 3 >= paddle_p1_x &&
-      room.ball.y + rad >= room.p1_y_paddle &&
-      room.ball.y - rad <= room.p1_y_paddle + paddle_height
-    )
-      room.ball.hitPaddle(room.p1_y_paddle);
-    else if (room.ball.x - rad <= -(rad * 3)) {
-      room.ball.reset();
-      room.p2_score += 1;
-      if (room.p2_score === victory_score) {
-        room.won = Winner.P2;
-        room.status = RoomStatus.CLOSED;
-      }
-      server.in(room.id).emit('getScore', room.p1_score, room.p2_score);
-    }
   }
 
-  async ballHitPaddlep2(room: Room, server: Server) {
-    // TODO moove to class ball
-    if (
-      room.ball.can_touch_paddle === true &&
-      room.ball.x + rad >= paddle_p2_x &&
-      room.ball.x - rad / 3 <= paddle_p2_x + paddle_width &&
-      room.ball.y + rad >= room.p2_y_paddle &&
-      room.ball.y - rad <= room.p2_y_paddle + paddle_height
-    )
-      room.ball.hitPaddle(room.p2_y_paddle);
-    else if (room.ball.x + rad >= canvas_back_width + rad * 3) {
-      room.ball.reset();
-      room.p1_score += 1;
-      if (room.p1_score === victory_score) {
-        room.won = Winner.P1;
-        room.status = RoomStatus.CLOSED;
-      }
-      server.in(room.id).emit('getScore', room.p1_score, room.p2_score);
-      //server.in(room).emit('getScore', p1, p2);
+  checkGiveUP(socketP1: Socket[], socketP2: Socket[], room: Room): boolean {
+    // if no socket is equal to this.usersRoom.get(socketP1) return true
+
+    if (socketP1.every((socket) => this.usersRoom.get(socket) !== room.id)) {
+      room.won = Winner.P2;
+      room.status = RoomStatus.CLOSED;
+      return true;
+    } else if (
+      socketP2.every((socket) => this.usersRoom.get(socket) !== room.id)
+    ) {
+      room.won = Winner.P1;
+      room.status = RoomStatus.CLOSED;
+      return true;
     }
+    return false;
   }
 
-  async updateGame(
+  checkNewScore(scoreBeforeUpdate: number[], room: Room): boolean {
+    if (
+      scoreBeforeUpdate[0] !== room.p1_score ||
+      scoreBeforeUpdate[1] !== room.p2_score
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  async launchGame(
     room: Room,
     server: Server,
-    //
-    //room: string,
+    allUsers: Map<string, Socket[]>,
   ) {
-    room.ball.update();
-    await this.ballHitPaddlep1(room, server);
-    await this.ballHitPaddlep2(room, server);
-  }
+    const socketP1 = allUsers.get(room.p1_id);
+    const socketP2 = allUsers.get(room.p2_id);
+    let score: number[] = [0, 0];
 
-  async launchGame(room: Room, server: Server, game: Map<string, Room>) {
-    // TODO cooldown
-
+    server.emit('updateCurrentRoom', await this.createInfoRoom(room));
     while (room.status === RoomStatus.PLAYING) {
-      this.updateGame(room, server);
+      score = [room.p1_score, room.p2_score];
+      this.checkGiveUP(socketP1, socketP2, room);
+      room.ball.update(room);
       server.in(room.id).emit('updateGame', room);
+
+      if (this.checkNewScore(score, room))
+        server.emit('updateCurrentRoom', await this.createInfoRoom(room));
+
       await new Promise((f) => setTimeout(f, 8));
     }
 
     if (room.status === RoomStatus.CLOSED) {
-      // TODO: save gameStat
-      server.in(room.id).emit('endGame', room);
-      //room.p1_SocketId.leave(room.id);
-      //room.p2_SocketId.leave(room.id);
-      game.delete(room.id);
+      this.getStat(room);
+      server.in(room.id).emit('updateGame', room);
+      this.gamesRoom.delete(room.id);
     }
-    // leave room
   }
 }

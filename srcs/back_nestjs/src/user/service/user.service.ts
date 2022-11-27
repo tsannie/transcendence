@@ -24,6 +24,7 @@ import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { IUserSearch } from '../models/iusersearch.interface';
 import { GameStatEntity } from 'src/game/entity/gameStat.entity';
+import { WsException } from '@nestjs/websockets';
 //import { GameService } from 'src/game/service/game.service';
 
 const AVATAR_DEST: string = '/nestjs/datas/users/avatars';
@@ -154,6 +155,32 @@ export class UserService {
     return user;
   }
 
+  async findByIdSocket(
+    input_id: string,
+    relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
+  ): Promise<UserEntity> {
+    const user = await this.allUser.findOne({
+      where: {
+        id: input_id,
+      },
+      select: {
+        friends: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+        friend_requests: {
+          id: true,
+          username: true,
+          profile_picture: true,
+        },
+      },
+      relations: relations_ToLoad,
+    });
+    if (!user) return null;
+    return user;
+  }
+
   // TODO DELETE
   async getAllUser(): Promise<UserEntity[]> {
     return await this.allUser.find({
@@ -164,7 +191,6 @@ export class UserService {
         admin_of: true,
         friend_requests: true,
         friends: true,
-        history: true,
       },
     });
   }
@@ -456,10 +482,6 @@ export class UserService {
     );
 
     return await this.allUser.save(user);
-  }
-
-  async getGameHistory(user: UserEntity): Promise<GameStatEntity[]> {
-    return user.history;
   }
 
   getLeaderBoard(userId: string, usersElo: UserEntity[]): number {

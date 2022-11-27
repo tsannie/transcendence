@@ -7,21 +7,12 @@ import {
   Winner,
 } from "./const/const";
 
-export interface IGameObj {
-  ball: IBall; // edit delete ???
-  paddle_p1: IPaddle;
-  paddle_p2: IPaddle;
-  player_p1: IPlayer;
-  player_p2: IPlayer;
-}
-
 export interface IBall {
   x: number;
   y: number;
-  rad: number;
 }
 
-export interface IPaddle {
+export interface IQuadrilateral {
   x: number;
   y: number;
   height: number;
@@ -35,8 +26,8 @@ export interface IPlayer {
   gave_up: boolean;
 }
 
-export interface IaskPaddle {
-  room_id?: string;
+export interface ISetPaddle {
+  room_id: string;
   positionY: number;
   front_canvas_height: number;
 }
@@ -53,23 +44,34 @@ export interface Room {
   p1_id: string;
   p2_id: string;
 
-  p1_SocketId: string;
-  p2_SocketId: string;
+  //p1_SocketId: string;
+  //p2_SocketId: string;
 
   p1_score: number;
   p2_score: number;
 
   won: Winner;
-  game_mode: string;
+  game_mode: GameMode;
 
   p1_y_paddle: number;
   p2_y_paddle: number;
 
   ball: IBall;
+
+  smasher: IQuadrilateral;
+  wall: IQuadrilateral;
 }
 
-export interface IFrame {
-  p1_paddle: IPaddle;
-  p2_paddle: IPaddle;
-  ball: IBall;
+export interface IDrawResponsive {
+  canvas_width: number;
+  canvas_height: number;
+  ratio_width: number;
+  ratio_height: number;
+  border_size: number;
 }
+
+/*export interface IFrameResponsive {
+  p1_paddle: IQuadrilateral;
+  p2_paddle: IQuadrilateral;
+  ball: IBall;
+}*/
