@@ -89,7 +89,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.gameService.findRoomByUser(user)) {
       throw new WsException('Already in game');
     }
+    console.log('start create room');
+
     const room: Room = this.gameService.findRoom(user, data.mode);
+
+    console.log('room', room);
 
     if (room && user) {
       if (room.status === RoomStatus.EMPTY) {

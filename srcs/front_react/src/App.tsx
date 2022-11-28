@@ -1,4 +1,4 @@
-import React, { useContext} from "react";
+import React, { useContext } from "react";
 import "./app.style.scss";
 import "./components/background/bg.style.scss";
 import "./components/menu/menu.style.scss";
