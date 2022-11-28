@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { User } from "../../../contexts/AuthContext";
 import { ReactComponent as BallIcon } from "../../../assets/img/icon/full_ball.svg";
-import { ReactComponent as BallTransIcon } from "../../../assets/img/icon/full_ball_trans.svg";
+import { ReactComponent as BallTransIcon } from "../../../assets/img/icon/ball-reverse.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { Link } from "react-router-dom";
 
