@@ -93,6 +93,13 @@ export const GameProvider = ({ children }: GameContextProps) => {
         setFriendsLog((friendsLog: User[]) =>
           friendsLog.filter((friend: User) => friend.id !== friend.id)
         );
+
+        // remove friend ivitation
+        setInviteReceived((inviteReceived: IInvitation[]) =>
+          inviteReceived.filter(
+            (invite: IInvitation) => invite.user_id !== friend.id
+          )
+        );
       });
 
       socket.on("invite", (user_id: string, mode: GameMode) => {
