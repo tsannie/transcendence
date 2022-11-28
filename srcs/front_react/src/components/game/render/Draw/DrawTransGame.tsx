@@ -17,7 +17,6 @@ export function draw_trans_game(
   if (countdown != 0)
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
-    draw_line(ctx, canvas.height, canvas.width);
     draw_smasher(ctx, room.smasher);
     draw_wall(ctx, room.wall);
     draw_ball(ctx, room.ball);
@@ -48,31 +47,6 @@ function draw_wall(ctx: CanvasRenderingContext2D, wall: IQuadrilateral) {
   ctx.rect(wall.x, wall.y, wall.width, wall.height);
   ctx.fill();
   ctx.stroke();
-}
-////////////////////////////////////////
-////// DRAW LINES
-////////////////////////////////////////
-
-function draw_line(
-  ctx: CanvasRenderingContext2D,
-  canvas_height: number,
-  canvas_width: number
-) {
-  ctx.beginPath();
-
-  for (
-    let x = canvas_height / 50;
-    x <= canvas_height + canvas_height / 2;
-    x += canvas_height / 12
-  )
-    ctx.rect(
-      canvas_width / 2 - canvas_width / 200 / 2,
-      x,
-      canvas_width / 200,
-      canvas_height / 20
-    );
-  ctx.fillStyle = white;
-  ctx.fill();
 }
 
 function draw_borders(
@@ -111,10 +85,6 @@ function draw_countdown(
   ctx.fillText(countdown.toString(), canvas_height / 2, canvas_width / 2);
 }
 
-////////////////////////
-//// DRAW STATUS
-////////////////////////
-
 function draw_score(
   ctx: CanvasRenderingContext2D,
   p1_score: number,
@@ -140,10 +110,6 @@ function draw_score(
   );
   ctx.fill();
 }
-
-////////////////////////
-//////// DRAW ELEMENTS
-////////////////////////
 
 function draw_paddle_rounded(
   ctx: CanvasRenderingContext2D,
@@ -223,11 +189,6 @@ function draw_paddle(
 }
 
 function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
-  if (IBall.x != IBall.x) {
-    IBall.x = IBall.x;
-    IBall.y = IBall.y;
-  }
-
   ctx.beginPath();
   ctx.fillStyle = white;
   ctx.arc(IBall.x, IBall.y, rad, 0, Math.PI * 2);
