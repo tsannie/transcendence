@@ -28,7 +28,6 @@ import { MessageGateway } from 'src/message/message.gateway';
 export class ChannelController {
   constructor(
     private channelService: ChannelService,
-    @Inject(forwardRef(() => MessageGateway))
     private messageGateway: MessageGateway,
   ) {}
 

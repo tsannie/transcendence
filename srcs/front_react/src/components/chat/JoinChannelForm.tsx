@@ -70,7 +70,7 @@ function JoinChannelForm() {
           setMuteDate(null);
         })
         .catch((err: AxiosError) => {
-          toast.error("Wrong password");
+          toast.error("HTTP error: " + err.message);
         });
     }
   };
