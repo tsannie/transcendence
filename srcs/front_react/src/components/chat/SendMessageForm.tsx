@@ -14,10 +14,11 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
     const { convId, isChannel, data } = props;
 
     const { user } = useContext(AuthContext);
-    const { isMuted, setMuted } = useContext(ChatDisplayContext);
+    const { isMuted, setMuted, muteDate, setMuteDate } = useContext(ChatDisplayContext);
     const { socket } = useContext(MessageContext);
     const { isRedirection, setRedirection, targetRedirection, setCurrentConv } = useContext(ChatDisplayContext);
     const [ input, setInput ] = useState<string>("");
+    const [ remainingTime, setRemainingTime ] = useState<number>(0);
 
     const actualize_input = (event: any) => {
       setInput(event.target.value);
@@ -62,17 +63,49 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
       if (isChannel && data){
         let channel : IChannel = (data as IDatas).data;
 
-        if (channel && channel.muted?.find( (muted) => muted.user.id == user?.id)) 
-          setMuted(true);
+        if (channel) {
+          let mute = channel.muted?.find( (muted) => muted.user.id == user?.id);
+          if (mute){
+            setMuted(true);
+            setMuteDate(mute.end);
+          }
+        }
       }
     }, [data])
+
+    useEffect( () => {
+      if (muteDate){
+        const released : Date = new Date(muteDate);
+
+        let time = released.getTime() - Date.now();
+        const interval = setInterval(() => {
+          if (time < 0){
+            setMuted(false);
+            setMuteDate(null);
+            return;
+          }
+          setRemainingTime(time);
+          time = time - 1000;
+        }, 1000)
+
+        return () => clearInterval(interval);
+      }
+    }, [muteDate])
+
+    const displayMinutesSeconds = (remainingTime : number) => {
+      const minutes = Math.trunc((remainingTime / 1000) / 60);
+      const seconds = Math.floor((remainingTime / 1000) % 60);
+      return (`${minutes}:${('0' + seconds).slice(-2)}`)
+    }
 
     return (
       <form onSubmit={sendMessage}>
         <input
           className="input__form"
           type="text"
-          placeholder="add message..."
+          placeholder={isMuted ? 
+            muteDate ? `unmute in   ${displayMinutesSeconds(remainingTime)}` : "you're muted. Shushh, silence." :
+            "add message..."}
           value={input}
           onChange={actualize_input}
           disabled={isMuted}

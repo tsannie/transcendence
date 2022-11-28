@@ -22,10 +22,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server, Namespace } from 'socket.io';
 import { MessageService } from './service/message.service';
-import { UserService } from 'src/user/service/user.service';
-import { DmService } from 'src/dm/service/dm.service';
 import { UserEntity } from 'src/user/models/user.entity';
-import { Repository } from 'typeorm';
 import { MessageDto } from './dto/message.dto';
 import { AuthService } from 'src/auth/service/auth.service';
 import { ChannelService } from 'src/channel/service/channel.service';
@@ -43,6 +40,7 @@ export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   constructor(
+    @Inject(forwardRef(() => MessageService))
     private messageService: MessageService,
     private authService: AuthService,
     @Inject(forwardRef(() => ChannelService))
@@ -121,7 +119,7 @@ export class MessageGateway
 
       this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(this.server, client.id, data, user.id);
+      const lastMsg = await this.messageService.addMessagetoChannel(data, user.id);
       const channel = await this.channelService.getChannelById(
         lastMsg.channel.id,
       );
@@ -159,7 +157,7 @@ export class MessageGateway
   }
 
   muteUser(mutedUser: MuteEntity) {
-    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user, mutedUser.channel.id);
+    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user, mutedUser.channel.id,  mutedUser.end);
   }
 
   unMuteUser(unMutedUser: MuteEntity, channelId: string) {
