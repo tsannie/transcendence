@@ -90,8 +90,14 @@ export const GameProvider = ({ children }: GameContextProps) => {
       });
 
       socket.on("friendsLogout", (friend: User) => {
-        setFriendsLog((friendsLog: User[]) =>
-          friendsLog.filter((friend: User) => friend.id !== friend.id)
+        const tmp = friendsLog.filter((f) => f.id !== friend.id);
+        setFriendsLog(tmp);
+
+        // remove friend ivitation
+        setInviteReceived((inviteReceived: IInvitation[]) =>
+          inviteReceived.filter(
+            (invite: IInvitation) => invite.user_id !== friend.id
+          )
         );
       });
 
@@ -142,10 +148,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
         console.log(err);
       });
   }, []);
-
-  useEffect(() => {
-    console.log("inviteReceived", inviteReceived);
-  }, [inviteReceived]);
 
   return (
     <GameContext.Provider
