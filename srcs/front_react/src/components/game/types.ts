@@ -1,11 +1,4 @@
-import {
-  canvas_back_height,
-  canvas_back_width,
-  GameMode,
-  RoomStatus,
-  screen_ratio,
-  Winner,
-} from "./const/const";
+import { GameMode, RoomStatus, Winner } from "./const/const";
 
 export interface IBall {
   x: number;

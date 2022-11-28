@@ -117,19 +117,17 @@ export default class Ball {
 
   hitPaddleP1(room: Room) {
     if (
-      room.game_mode === GameMode.PONG_CLASSIC &&
       this.can_hit_paddle === true &&
       this.x - rad / 3 <= paddle_p1_x + paddle_width &&
-      this.x + rad / 3 >= paddle_p1_x &&
+      this.x + rad / 2 >= paddle_p1_x &&
       this.y + rad >= room.p1_y_paddle &&
       this.y + rad <= room.p1_y_paddle + 10
     ) {
       this.hitSidesPaddle(-1);
     } else if (
-      room.game_mode === GameMode.PONG_CLASSIC &&
       this.can_hit_paddle === true &&
       this.x - rad / 3 <= paddle_p1_x + paddle_width &&
-      this.x + rad / 3 >= paddle_p1_x &&
+      this.x + rad / 2 >= paddle_p1_x &&
       this.y - rad <= room.p1_y_paddle + paddle_height &&
       this.y - rad >= room.p1_y_paddle + paddle_height - 10
     ) {
@@ -137,7 +135,7 @@ export default class Ball {
     } else if (
       this.can_hit_paddle === true &&
       this.x - rad <= paddle_p1_x + paddle_width &&
-      this.x + rad / 3 >= paddle_p1_x &&
+      this.x + rad / 2 >= paddle_p1_x &&
       this.y + rad >= room.p1_y_paddle &&
       this.y - rad <= room.p1_y_paddle + paddle_height
     ) {
@@ -149,19 +147,17 @@ export default class Ball {
 
   hitPaddleP2(room: Room) {
     if (
-      room.game_mode === GameMode.PONG_CLASSIC &&
       this.can_hit_paddle === true &&
       this.x + rad / 3 >= paddle_p2_x &&
-      this.x - rad / 3 <= paddle_p2_x + paddle_width &&
+      this.x - rad / 2 <= paddle_p2_x + paddle_width &&
       this.y + rad >= room.p2_y_paddle &&
       this.y + rad <= room.p2_y_paddle + 10
     ) {
       this.hitSidesPaddle(-1);
     } else if (
-      room.game_mode === GameMode.PONG_CLASSIC &&
       this.can_hit_paddle === true &&
       this.x + rad / 3 >= paddle_p2_x &&
-      this.x - rad / 3 <= paddle_p2_x + paddle_width &&
+      this.x - rad / 2 <= paddle_p2_x + paddle_width &&
       this.y - rad <= room.p2_y_paddle + paddle_height &&
       this.y - rad >= room.p2_y_paddle + paddle_height - 10
     ) {
@@ -169,7 +165,7 @@ export default class Ball {
     } else if (
       this.can_hit_paddle === true &&
       this.x + rad >= paddle_p2_x &&
-      this.x - rad / 3 <= paddle_p2_x + paddle_width &&
+      this.x - rad / 2 <= paddle_p2_x + paddle_width &&
       this.y + rad >= room.p2_y_paddle &&
       this.y - rad <= room.p2_y_paddle + paddle_height
     ) {

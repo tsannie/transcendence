@@ -18,11 +18,10 @@ import {
   GameMode,
   paddle_height,
   RoomStatus,
-  screen_ratio,
 } from "../const/const";
 import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { ISetPaddle, IPlayer, Room, IDrawResponsive } from "../types";
+import { ISetPaddle } from "../types";
 import {
   AuthContext,
   AuthContextType,
@@ -122,25 +121,14 @@ export function GameRender() {
     if (room) requestAnimationFrame(render);
   }, [room]);
 
-  /*     setDrawResponsive({
-      canvas_width: lowerSize,
-      canvas_height: lowerSize * screen_ratio,
-      ratio_width: lowerSize / canvas_back_width,
-      ratio_height: (lowerSize * screen_ratio) / canvas_back_height,
-      border_size:
-        border_size_default * (lowerSize / screen_ratio / canvas_back_height),
-    }); */
-
   function mouv_mouse(e: any) {
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
 
     const front_canvas_height: number = canvasRef.current
       ?.clientHeight as number;
-
     const paddle: number =
       paddle_height * (front_canvas_height / canvas_back_height);
-
     const border: number =
       border_size_default * (front_canvas_height / canvas_back_height);
 
