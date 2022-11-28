@@ -41,8 +41,8 @@ export default function Sidebar() {
           <Link to="/chat">
             <ChatIcon className={path === "/chat" ? "selected" : ""} />
           </Link>
-          <Link to="/game">
-            <GameIcon className={path === "/game" ? "selected" : ""} />
+          <Link to="/">
+            <GameIcon className={path === "/" ? "selected" : ""} />
           </Link>
           <Link to="/settings">
             <SettingsIcon className={path === "/settings" ? "selected" : ""} />
