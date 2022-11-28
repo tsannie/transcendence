@@ -6,13 +6,18 @@ import {
   useState,
 } from "react";
 import {
+  GameMode,
   IException,
   IInfoGame,
+  IInvitation,
   RoomStatus,
 } from "../components/game/const/const";
 import { Room } from "../components/game/types";
 import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
+import { User } from "./AuthContext";
+import { api } from "../const/const";
+import { AxiosResponse } from "axios";
 
 export type GameContextType = {
   timeQueue: number;
@@ -22,6 +27,8 @@ export type GameContextType = {
   setDisplayRender: (display: boolean) => void;
   displayRender: boolean;
   info: IInfoGame | null;
+  inviteReceived: IInvitation[];
+  friendsLog: User[];
 };
 
 export const GameContext = createContext<Partial<GameContextType>>({});
@@ -34,6 +41,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [displayRender, setDisplayRender] = useState<boolean>(false);
   const [info, setInfo] = useState<IInfoGame>();
+  const [inviteReceived, setInviteReceived] = useState<IInvitation[]>([]);
+  const [friendsLog, setFriendsLog] = useState<User[]>([]);
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [timeQueue, setTimeQueue] = useState<number>(0);
@@ -55,29 +64,88 @@ export const GameProvider = ({ children }: GameContextProps) => {
   }, [setSocket]); // create a new socket only once
 
   useEffect(() => {
-    socket?.on("updateGame", (room: Room) => {
-      setRoom(room);
-    });
+    if (socket) {
+      socket.on("joinQueue", (message: string) => {
+        toast.info(message);
+        setTimeQueue(0);
+      });
 
-    socket?.on("joinQueue", (message: string) => {
-      toast.info(message);
-      setTimeQueue(0);
-    });
+      socket.on("matchFound", (message: string) => {
+        setDisplayRender(true);
+        toast.success(message);
+        setTimeQueue(0);
+      });
 
-    socket?.on("matchFound", (message: string) => {
-      setDisplayRender(true);
-      toast.success(message);
-      setTimeQueue(0);
-    });
+      socket.on("exception", (data: IException) => {
+        toast.error(data.message);
+      });
 
-    socket?.on("exception", (data: IException) => {
-      toast.error(data.message);
-    });
+      socket.on("infoGame", (info: IInfoGame) => {
+        setInfo(info);
+      });
 
-    socket?.on("infoGame", (info: IInfoGame) => {
-      setInfo(info);
-    });
+      socket.on("friendsLogin", (friend: User) => {
+        const tmp = friendsLog.filter((f) => f.id !== friend.id);
+        setFriendsLog([...tmp, friend]);
+      });
+
+      socket.on("friendsLogout", (friend: User) => {
+        setFriendsLog((friendsLog: User[]) =>
+          friendsLog.filter((friend: User) => friend.id !== friend.id)
+        );
+      });
+
+      socket.on("invite", (user_id: string, mode: GameMode) => {
+        // check if user is already in the list
+        const already_sent = inviteReceived.some(
+          (inv) => inv.user_id === user_id && inv.mode === mode
+        );
+        if (already_sent) return;
+
+        const tmp = inviteReceived.filter(
+          (invitation) => invitation.user_id !== user_id
+        );
+        setInviteReceived([...tmp, { user_id, mode }]);
+      });
+
+      return () => {
+        socket.off("invite");
+        socket.off("friendsLogout");
+        socket.off("friendsLogin");
+        socket.off("infoGame");
+        socket.off("exception");
+        socket.off("matchFound");
+        socket.off("joinQueue");
+      };
+    }
+  }, [socket, inviteReceived, friendsLog]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("updateGame", (room: Room) => {
+        setRoom(room);
+      });
+
+      return () => {
+        socket.off("updateGame");
+      };
+    }
   }, [socket]);
+
+  useEffect(() => {
+    api
+      .get("/game/friends-log")
+      .then((res: AxiosResponse) => {
+        setFriendsLog(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    console.log("inviteReceived", inviteReceived);
+  }, [inviteReceived]);
 
   return (
     <GameContext.Provider
@@ -89,6 +157,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
         setDisplayRender,
         displayRender,
         info,
+        inviteReceived,
+        friendsLog,
       }}
     >
       {children}
