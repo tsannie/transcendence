@@ -25,6 +25,7 @@ import { ReactComponent as PlusIcon } from "../../assets/img/icon/circle_plus.sv
 import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
 import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
 import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
+import { AxiosResponse } from "axios";
 
 export interface IMemberProps {
   type: string;
@@ -255,7 +256,9 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
   const [isDeletePassword, setIsDeletePassword] = useState<boolean>(false);
   const [channelPassword, setChannelPassword] = useState<string>("");
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
+
   const { channel, owner } = props;
+  const [newChannel, setNewChannel] = useState<IChannel>(channel);
   const { user } = useContext(AuthContext);
 
   const onClickChangePassword = () => {
@@ -275,10 +278,18 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
   };
 
   const modifyPassword = async () => {
-    console.log("modify password");
+    console.log("passwordVerifier == ", passwordVerifier);
     await api
       .post("/channel/modifyPassword", {
         id: channel.id,
+        //current_password: channel.password,
+        new_password: passwordVerifier,
+      })
+      .then((res: AxiosResponse) => {
+        console.log("response == ", res.data);
+        setIsChangePassword(false);
+        setIsModifyPassword(false);
+        setIsDeletePassword(false);
       })
       .catch((error: any) => toast.error("HTTP error:" + error));
     setChannelPassword("");
@@ -289,6 +300,13 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
     await api
       .post("/channel/deletePassword", {
         id: channel.id,
+        password: passwordVerifier,
+      })
+      .then((res: AxiosResponse) => {
+        setIsChangePassword(false);
+        setIsModifyPassword(false);
+        setIsDeletePassword(false);
+        setNewChannel(res.data);
       })
       .catch((error: any) => toast.error("HTTP error:" + error));
     setPasswordVerifier("");
@@ -296,20 +314,20 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
 
   return (
     <Fragment>
-      {owner?.id === user?.id && channel.status === "Protected" && (
-        <button className="action">
-          <LockIcon onClick={onClickChangePassword} />
+      {owner?.id === user?.id && newChannel.status === "Protected" && (
+        <button className="action" onClick={onClickChangePassword}>
+          <LockIcon />
           <span>password</span>
         </button>
       )}
       {isChangePassword && (
         <Fragment>
-          <button className="action">
-            <EditIcon onClick={onClickEditPassword} />
+          <button className="action" onClick={onClickEditPassword}>
+            <EditIcon />
             <span>edit</span>
           </button>
-          <button className="action">
-            <DeleteIcon onClick={onClickDeletePassword} />
+          <button className="action" onClick={onClickDeletePassword}>
+            <DeleteIcon />
             <span>delete</span>
           </button>
         </Fragment>
@@ -334,11 +352,13 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
             }
             disabled={!channel.name}
           />
-          <button className="action"
+          <button
+            className="action"
             onClick={modifyPassword}
             disabled={
-                ((!channelPassword || channelPassword !== passwordVerifier) ||
-              !channel.name)
+              !channelPassword ||
+              channelPassword !== passwordVerifier ||
+              !channel.name
             }
           >
             <VerifIcon />
@@ -359,9 +379,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
           />
           <button
             className="action"
-            disabled={
-              (!passwordVerifier || !channel.name)
-            }
+            disabled={!passwordVerifier || !channel.name}
             onClick={deletePassword}
           >
             <VerifIcon />
@@ -416,19 +434,22 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
           </Link>
         </button>
         <div className="actions__channel">
-          <button className="action">
-            <LeaveIcon onClick={leaveChannel} />
+          <button className="action" onClick={leaveChannel}>
+            <LeaveIcon />
             <span>leave</span>
           </button>
           {owner?.id === user?.id && (
-            <button className="action">
-              <DeleteIcon onClick={deleteChannel} />
+            <button className="action" onClick={deleteChannel}>
+              <DeleteIcon />
               <span>delete</span>
             </button>
           )}
           {owner?.id === user?.id && channel.status === "Private" && (
-            <button className="action">
-              <PlusIcon onClick={() => inviteChannel(targetUsername)} />
+            <button
+              className="action"
+              onClick={() => inviteChannel(targetUsername)}
+            >
+              <PlusIcon />
               <span>invite</span>
             </button>
           )}
