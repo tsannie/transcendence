@@ -258,7 +258,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
 
   const { channel, owner } = props;
-  const [newChannel, setNewChannel] = useState<IChannel>(channel);
+  const [newChannelStatus, setNewChannelStatus] = useState<string>(channel.status);
   const { user } = useContext(AuthContext);
 
   const onClickChangePassword = () => {
@@ -268,30 +268,31 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
   };
 
   const onClickEditPassword = () => {
+    setChannelPassword("");
+    setPasswordVerifier("");
     setIsModifyPassword(!isModifyPassword);
     setIsDeletePassword(false);
   };
 
   const onClickDeletePassword = () => {
+    setPasswordVerifier("");
     setIsDeletePassword(!isDeletePassword);
     setIsModifyPassword(false);
   };
 
   const modifyPassword = async () => {
-    console.log("passwordVerifier == ", passwordVerifier);
     await api
       .post("/channel/modifyPassword", {
         id: channel.id,
-        //current_password: channel.password,
+        current_password: channelPassword,
         new_password: passwordVerifier,
       })
-      .then((res: AxiosResponse) => {
-        console.log("response == ", res.data);
+      .then(() => {
         setIsChangePassword(false);
         setIsModifyPassword(false);
         setIsDeletePassword(false);
       })
-      .catch((error: any) => toast.error("HTTP error:" + error));
+      .catch(() => toast.error("Wrong password"));
     setChannelPassword("");
     setPasswordVerifier("");
   };
@@ -306,15 +307,15 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         setIsChangePassword(false);
         setIsModifyPassword(false);
         setIsDeletePassword(false);
-        setNewChannel(res.data);
+        setNewChannelStatus(res.data.status);
       })
-      .catch((error: any) => toast.error("HTTP error:" + error));
+      .catch(() => toast.error("Wrong password"));
     setPasswordVerifier("");
   };
 
   return (
     <Fragment>
-      {owner?.id === user?.id && newChannel.status === "Protected" && (
+      {owner?.id === user?.id && newChannelStatus === "Protected" && (
         <button className="action" onClick={onClickChangePassword}>
           <LockIcon />
           <span>password</span>
@@ -336,7 +337,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         <div className="channel__change__password">
           <input
             type="password"
-            placeholder="Enter Password..."
+            placeholder="Current Password..."
             value={channelPassword}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setChannelPassword(e.target.value)
@@ -345,7 +346,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
           />
           <input
             type="password"
-            placeholder="Verify Password..."
+            placeholder="New Password..."
             value={passwordVerifier}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setPasswordVerifier(e.target.value)
@@ -356,13 +357,10 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
             className="action"
             onClick={modifyPassword}
             disabled={
-              !channelPassword ||
-              channelPassword !== passwordVerifier ||
-              !channel.name
+              !channelPassword || !passwordVerifier || !channel.name
             }
           >
             <VerifIcon />
-            <span>verify</span>
           </button>
         </div>
       )}
@@ -370,7 +368,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         <div className="channel__delete__password">
           <input
             type="password"
-            placeholder="Verify Password..."
+            placeholder="Current Password..."
             value={passwordVerifier}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setPasswordVerifier(e.target.value)
@@ -383,7 +381,6 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
             onClick={deletePassword}
           >
             <VerifIcon />
-            <span>verify</span>
           </button>
         </div>
       )}
