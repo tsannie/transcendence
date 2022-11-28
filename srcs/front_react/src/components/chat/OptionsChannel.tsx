@@ -40,15 +40,16 @@ function MemberCategory(props: {type: string, isOwner: boolean, isAdmin: boolean
 function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, owner: User | null, setOwner: React.Dispatch<React.SetStateAction<User | null>>}) {
     const loadedStatus = props.receivedChannel.status;
     const channel = props.receivedChannel.data;
+
+    const { setMuted, setMuteDate, setDisplay } = useContext(ChatDisplayContext);
     const { socket, chatList, setChatList } = useContext(MessageContext);
     const { user } = useContext(AuthContext);
 
     const [ status, setStatus ] = useState<string | null>(null);
     const [ admins, setAdmins ] = useState<User[] | null>(null);
     const [ users, setUsers ] = useState<User[] | null>(null);
-    const [ muted, setMuted ] = useState<User[] | null>(null);
+    const [ mutedMembers, setMutedMembers ] = useState<User[] | null>(null);
     const [ banned, setBanned ] = useState<User[] | null>(null);
-    const { setDisplay } = useContext(ChatDisplayContext);
 
     const filterList = (list: User[]| null, target: User) => {
         if (!list)
@@ -66,19 +67,26 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
     useEffect( () => {
         if (socket)
         {
-            socket.on("muteUser", (target, channelId) => {
+            socket.on("muteUser", (target, channelId, end) => {
+                console.log("UP")
                 if (channelId === props.currentConvId){
                     setAdmins(filterList(admins, target));
                     setUsers(filterList(users, target));
-                    setMuted(addToList(muted, target));
+                    setMutedMembers(addToList(mutedMembers, target));
                 }
-                if (user?.id === target.id)
+                if (user?.id === target.id){
                     setStatus("user");
+                    setMuted(true);
+                    if (end)
+                        setMuteDate(end);
+                }
             });
             socket.on("unMuteUser", (target, channelId) => {
+                console.log(target);
+                console.log(channelId);
                 if (channelId === props.currentConvId){
                     setUsers(addToList(users, target));
-                    setMuted(filterList(muted, target));
+                    setMutedMembers(filterList(mutedMembers, target));
                 }
                 if (user?.id === target.id)
                     setStatus("user");
@@ -87,7 +95,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
                 if (channelId === props.currentConvId) {
                     setAdmins(filterList(admins, target));
                     setUsers(filterList(users, target));
-                    setMuted(filterList(muted, target));
+                    setMutedMembers(filterList(mutedMembers, target));
                     setBanned(addToList(banned, target));
                 }
                 if (user?.id === target.id) {
@@ -167,7 +175,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
             socket.off("leaveChannel");
             socket.off("deleteChannel");
         })}
-    }, [muted, users, banned, admins, socket])
+    }, [mutedMembers, users, banned, admins, socket])
 
     useEffect( () => {
         if (channel.id !== props.currentConvId)
@@ -181,7 +189,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
 
         if (channel.muted){
             muted = channel.muted.map((elem) => elem.user);
-            setMuted(muted);
+            setMutedMembers(muted);
         }
         if (channel.users){
             let mutedIds : string[];
@@ -203,7 +211,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
             <div className="conversation__options__members" key={props.currentConvId}>
                 <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={admins}/>
                 <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={users as User[] | null}/>
-                <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={muted as User[] | null}/>
+                <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={mutedMembers as User[] | null}/>
                 <MemberCategory type={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={banned as User[] | null}/>
             </div> : null}
         </Fragment>);
@@ -261,7 +269,7 @@ function ChannelOptions(props: {currentConvId: string, receivedChannel: IDatas |
     const [ owner, setOwner ] = useState<User | null>(null);
 
     useEffect(() => {
-        if (props.receivedChannel?.data.owner)
+        if (props.receivedChannel && props.receivedChannel.data)
             setOwner(props.receivedChannel.data.owner);
     }, [props.receivedChannel])
 
