@@ -166,25 +166,27 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await this.authService.validateSocket(client, {
       friends: true,
     });
+    const username_invited = user.friends.find(
+      (friend) => friend.id === data.invitation_user_id,
+    ).username;
     if (!user) {
       throw new WsException('User not found');
-    } else if (!this.allUsers.has(data.invitation_user_id)) {
-      throw new WsException('User invited not connected');
-    } else if (user.id === data.invitation_user_id) {
-      throw new WsException('You can not invite yourself');
     } else if (
       !user.friends.find((friend) => friend.id === data.invitation_user_id)
     ) {
-      throw new WsException('User is not your friend');
-    }
-    if (!this.gameService.checkUserIsAvailable(user.id)) {
-      throw new WsException('Already in game');
-    }
-    if (!this.gameService.checkUserIsAvailable(data.invitation_user_id)) {
-      const username = user.friends.find(
-        (friend) => friend.id === data.invitation_user_id,
-      ).username;
-      throw new WsException(`${username} is already in game or in queue`);
+      throw new WsException(username_invited + ' is not your friend');
+    } else if (!this.allUsers.has(data.invitation_user_id)) {
+      throw new WsException(username_invited + 'is not connected');
+    } else if (user.id === data.invitation_user_id) {
+      throw new WsException('you can not invite yourself');
+    } else if (!this.gameService.checkUserIsAvailable(user.id)) {
+      throw new WsException('you are already in game');
+    } else if (
+      !this.gameService.checkUserIsAvailable(data.invitation_user_id)
+    ) {
+      throw new WsException(
+        username_invited + ' is already in game or in queue',
+      );
     }
 
     const room = this.gameService.createPrivateRoom(
@@ -205,6 +207,13 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     sockets.forEach((socket: Socket) => {
       this.server.to(socket.id).emit('invite', invitation);
     });
+
+    this.gameService.waitingResponse(
+      client,
+      room,
+      this.server,
+      username_invited,
+    );
   }
 
   @SubscribeMessage('joinRoom')
@@ -229,9 +238,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (room && room.status === RoomStatus.WAITING && room.private_room) {
       // send to p2 that room is deleted so invitation is canceled
       const sockets: Socket[] = this.allUsers.get(room.p2_id);
-      sockets.forEach((socket: Socket) => {
-        this.server.to(socket.id).emit('cancelInvitation', room.id);
-      });
+      if (sockets) {
+        sockets.forEach((socket: Socket) => {
+          this.server.to(socket.id).emit('cancelInvitation', room.id);
+        });
+      }
     }
 
     if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {

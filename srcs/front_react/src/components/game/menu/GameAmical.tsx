@@ -10,7 +10,7 @@ import { ICreateRoom } from "../types";
 import { toast } from "react-toastify";
 
 function GameAmical() {
-  const { socket, friendsLog, inviteReceived } = useContext(
+  const { socket, friendsLog, inviteReceived, setTimeQueue } = useContext(
     GameContext
   ) as GameContextType;
 
@@ -24,6 +24,7 @@ function GameAmical() {
         invitation_user_id: friend_id,
       };
       socket.emit("createPrivateRoom", data);
+      setTimeQueue(0);
     }
   };
 

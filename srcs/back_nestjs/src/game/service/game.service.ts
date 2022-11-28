@@ -93,6 +93,35 @@ export class GameService {
     this.gamesRoom.delete(room_id);
   }
 
+  async waitingResponse(
+    client: Socket,
+    room: Room,
+    server: Server,
+    username_stalk: string,
+  ) {
+    let log: boolean = true;
+    while (room && room.status === RoomStatus.WAITING) {
+      log = this.gameGateway.getAllUsers().has(room.p2_id);
+      if (!this.checkUserIsAvailable(room.p2_id) || !log) {
+        this.leaveRoom(room.id, client);
+        this.deleteRoomById(room.id);
+        server.to(client.id).emit('playerNotAvailable', username_stalk);
+
+        if (log) {
+          const sockets: Socket[] = this.gameGateway
+            .getAllUsers()
+            .get(room.p2_id);
+          sockets.forEach((socket: Socket) => {
+            server.to(socket.id).emit('cancelInvitation', room.id);
+          });
+        }
+        return;
+      }
+
+      await new Promise((f) => setTimeout(f, 1000));
+    }
+  }
+
   findRoomBySocket(socket: Socket): Room | undefined {
     const room_id = this.usersRoom.get(socket);
     if (room_id) return this.gamesRoom.get(room_id);
