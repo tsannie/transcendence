@@ -101,9 +101,9 @@ export function GameRender() {
 
             if (user?.id === room.p1_id || user?.id === room.p2_id) setPaddle();
 
-            if (room.game_mode === GameMode.PONG_CLASSIC)
+            if (room.game_mode === GameMode.CLASSIC)
               draw_classic_game(ctx, canvas, room, 0);
-            else if (room.game_mode === GameMode.PONG_TRANS)
+            else if (room.game_mode === GameMode.TRANS)
               draw_trans_game(ctx, canvas, room, 0);
           } else {
             draw_game_ended(
@@ -172,7 +172,8 @@ export function GameRender() {
             height={canvas_back_height}
             width={canvas_back_width}
             onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: black }}></canvas>
+            style={{ backgroundColor: black }}
+          ></canvas>
         </div>
       </div>
     </div>

@@ -101,17 +101,25 @@ export const GameProvider = ({ children }: GameContextProps) => {
         );
       });
 
-      socket.on("invite", (user_id: string, mode: GameMode) => {
+      socket.on("invite", (data: IInvitation) => {
         // check if user is already in the list
         const already_sent = inviteReceived.some(
-          (inv) => inv.user_id === user_id && inv.mode === mode
+          (inv) => inv.user_id === data.user_id && inv.mode === data.mode
         );
         if (already_sent) return;
 
         const tmp = inviteReceived.filter(
-          (invitation) => invitation.user_id !== user_id
+          (invitation) => invitation.user_id !== data.user_id
         );
-        setInviteReceived([...tmp, { user_id, mode }]);
+        setInviteReceived([...tmp, data]);
+      });
+
+      socket.on("cancelInvitation", (room_id: string) => {
+        setInviteReceived((inviteReceived: IInvitation[]) =>
+          inviteReceived.filter(
+            (invite: IInvitation) => invite.room_id !== room_id
+          )
+        );
       });
 
       return () => {
