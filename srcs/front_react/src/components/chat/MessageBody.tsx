@@ -39,7 +39,6 @@ function MessageList(props: any) {
 
 function MessageBody(props: {currentConvId: string, isChannel: boolean, data: IDm|IDatas|null}) {
   const {currentConvId, isChannel, data} = props;
-  const { isRedirection } = useContext(ChatDisplayContext);
   const { user } = useContext(AuthContext) as AuthContextType;
   const { newMessage } = useContext(MessageContext);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -56,9 +55,7 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
 
   const loadMessage = async () => {
     let route: string;
-
-    if (!currentConvId)
-      return ;
+  
     if (isChannel) route = "/message/channel";
     else route = "/message/dm";
 
@@ -82,7 +79,7 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
   };
 
   useEffect(() => {
-    if (!currentConvId || isRedirection) return;
+    if (!currentConvId) return;
     const async_func = async () => {
       await loadMessage();
     };

@@ -21,7 +21,7 @@ interface IProps {
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection } =
+  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection, setCurrentConv } =
     useContext(ChatDisplayContext) as ChatDisplayContextInterface;
   const nav = useNavigate();
 
@@ -68,6 +68,7 @@ function ActionBar(props: IProps) {
     setDisplay(ChatType.CONV);
     setIsChannel(false);
     setTargetRedirection(props.player?.id as string);
+    setCurrentConv("");
     nav("/chat");
   };
 
