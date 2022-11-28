@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
@@ -19,14 +24,17 @@ import smasher from '../class/smasher.class';
 import { RdbmsSchemaBuilder } from 'typeorm/schema-builder/RdbmsSchemaBuilder';
 import Wall from '../class/wall.class';
 import Smasher from '../class/smasher.class';
+import { GameGateway } from '../game.gateway';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(GameStatEntity)
     private gameStatRepository: Repository<GameStatEntity>,
-
     private readonly userService: UserService,
+    // add gae gateway
+    @Inject(forwardRef(() => GameGateway))
+    private readonly gameGateway: GameGateway,
   ) {}
 
   /* RoomID, room */
@@ -161,7 +169,7 @@ export class GameService {
   }
 
   getSocketsOfFriends(user: UserEntity, allUsers: Map<string, Socket[]>) {
-    const friends: UserEntity[] = this.getFriendsLog(allUsers, user);
+    const friends: UserEntity[] = this.getFriendsLog(user);
     // get all socket of his friends
     const sockets: Socket[] = friends.reduce((acc, friend) => {
       if (allUsers.has(friend.id)) {
@@ -172,12 +180,12 @@ export class GameService {
     return sockets;
   }
 
-  getFriendsLog(
-    allUsers: Map<string, Socket[]>,
-    user: UserEntity,
-  ): UserEntity[] {
+  getFriendsLog(user: UserEntity): UserEntity[] {
     const friends: UserEntity[] = user.friends;
     const friendsLog: UserEntity[] = [];
+
+    // recall all users beacause getFriendsLog can be call by service
+    const allUsers: Map<string, Socket[]> = this.gameGateway.getAllUsers();
 
     if (!friends) return friendsLog;
 
@@ -208,6 +216,27 @@ export class GameService {
       online: allUsers.size,
     };
     return info;
+  }
+
+  invite(user_invited_id: string, mode: GameMode, user: UserEntity): string {
+    const allUsers: Map<string, Socket[]> = this.gameGateway.getAllUsers();
+
+    if (!allUsers.has(user.id)) {
+      throw new UnauthorizedException('User not connected');
+    } else if (!allUsers.has(user_invited_id)) {
+      throw new UnauthorizedException('User invited not connected');
+    } else if (user.id === user_invited_id) {
+      throw new UnauthorizedException('You can not invite yourself');
+    } else if (!user.friends.find((friend) => friend.id === user_invited_id)) {
+      throw new UnauthorizedException('User is not your friend');
+    }
+
+    const sockets: Socket[] = allUsers.get(user_invited_id);
+    const server: Server = this.gameGateway.getServer();
+    sockets.forEach((socket) => {
+      server.to(socket.id).emit('invite', user.id, mode);
+    });
+    return user_invited_id;
   }
 
   ////////////////////
