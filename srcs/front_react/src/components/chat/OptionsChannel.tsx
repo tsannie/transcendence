@@ -68,7 +68,6 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
         if (socket)
         {
             socket.on("muteUser", (target, channelId, end) => {
-                console.log("UP")
                 if (channelId === props.currentConvId){
                     setAdmins(filterList(admins, target));
                     setUsers(filterList(users, target));
@@ -82,8 +81,6 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
                 }
             });
             socket.on("unMuteUser", (target, channelId) => {
-                console.log(target);
-                console.log(channelId);
                 if (channelId === props.currentConvId){
                     setUsers(addToList(users, target));
                     setMutedMembers(filterList(mutedMembers, target));
