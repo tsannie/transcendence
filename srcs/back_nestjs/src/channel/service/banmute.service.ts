@@ -44,7 +44,7 @@ export class BanMuteService {
             return await this.muteRepository.remove(c);
     }
 
-    async isMuted(channel : ChannelEntity, user: UserEntity) : Promise<boolean> {
+    async isMuted(channel : ChannelEntity, user: UserEntity) : Promise<MuteEntity | boolean> {
         let request = await this.muteRepository
         .createQueryBuilder("mute")
         .select("mute.id")
@@ -62,10 +62,7 @@ export class BanMuteService {
             if (!this.checkDuration(request))
 				return true;
 			else
-            {
-				await this.remove(request) as MuteEntity;
-                return false;
-            }
+				return await this.remove(request) as MuteEntity;
         }
         else
             return false;

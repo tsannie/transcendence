@@ -259,6 +259,18 @@ $width_chat: calc(450 * var(--res));
           font-size: calc(13 * var(--res));
           padding: 1%;
         }
+
+        form {
+          border-style: none;
+          width: 100%;
+          
+          input {
+            border-width: calc(1 * var(--res)) !important;
+            margin: 0% 8% 0% 8%;
+            font-size: calc(11 * var(--res));
+            width: 100%;
+          }
+        }
       }
     }
 
@@ -312,6 +324,28 @@ $width_chat: calc(450 * var(--res));
 
     .date {
       font-size: calc(11 * var(--res));
+    }
+
+    .actions__channel { // TODO: a changer pour avoi un truc style
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      width: 100%;
+
+      .action {
+        display: flex;
+        flex-direction: column;
+        border: none;
+        
+        svg {
+          align-self: center;
+          width: calc(25 * var(--res))
+        }
+
+        span {
+          font-size: calc(12 * var(--res));
+        }
+      }
     }
   }
 
@@ -607,18 +641,3 @@ form {
   }
 }
 
-.actions-channel { // TODO: a changer pour avoi un truc style
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.leave-channel {
-  width: "fit-content";
-  height: "fit-content";
-}
-
-.delete-channel {
-  width: "fit-content";
-  height: "fit-content";
-}
