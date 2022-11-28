@@ -154,8 +154,8 @@ export class MessageGateway
     this.server.to(channelId).emit('deleteChannel', channelId);
   }
 
-  async inviteChannel(targetUsername: string, channel: ChannelEntity) {
-    const target = await this.userService.findByName(targetUsername); //TODO: change to find by id if i can send id by front
+  async inviteChannel(targetId: string, channel: ChannelEntity) {
+    const target = await this.userService.findById(targetId); //TODO: change to find by id if i can send id by front
 
     console.log("target == ", target);
     this.connectedUsers.get(target.id).forEach((socket) => {

@@ -9,6 +9,6 @@ export class ChannelInvitationDto {
 	@IsDefined()
 	@IsNotEmpty()
 	@IsString()
-	targetUsername: string;
+	targetId: string;
 
 }

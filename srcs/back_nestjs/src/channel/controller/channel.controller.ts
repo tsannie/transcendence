@@ -204,7 +204,7 @@ export class ChannelController {
     const channel: ChannelEntity = await this.channelService.inviteChannel(query_channel, req.user);
 
     // find the user to invite with his id
-    await this.messageGateway.inviteChannel(query_channel.targetUsername, channel);
+    await this.messageGateway.inviteChannel(query_channel.targetId, channel);
     return channel;
   }
 
