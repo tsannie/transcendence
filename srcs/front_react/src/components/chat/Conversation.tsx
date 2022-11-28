@@ -50,7 +50,7 @@ function Conversation() {
   }, [currentConv])
 
   useEffect( () => {
-    if (!targetRedirection || !isRedirection) return ;
+    if (!targetRedirection) return ;
     const async_fct = async () => {
       await searchExistingConv();
     }
