@@ -20,6 +20,7 @@ import { api } from "../const/const";
 import { AxiosResponse } from "axios";
 
 export type GameContextType = {
+  setTimeQueue: (time: number) => void;
   timeQueue: number;
   room: Room | null;
   setRoom: (room: Room | null) => void;
@@ -114,6 +115,11 @@ export const GameProvider = ({ children }: GameContextProps) => {
         setInviteReceived([...tmp, data]);
       });
 
+      socket.on("playerNotAvailable", (pseudo: string) => {
+        toast.error(pseudo + " is no longer available");
+        setRoom(null);
+      });
+
       socket.on("cancelInvitation", (room_id: string) => {
         setInviteReceived((inviteReceived: IInvitation[]) =>
           inviteReceived.filter(
@@ -130,6 +136,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
         socket.off("exception");
         socket.off("matchFound");
         socket.off("joinQueue");
+        socket.off("cancelInvitation");
+        socket.off("playerNotAvailable");
       };
     }
   }, [socket, inviteReceived, friendsLog]);
@@ -169,6 +177,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
         info,
         inviteReceived,
         friendsLog,
+        setTimeQueue,
       }}
     >
       {children}
