@@ -372,6 +372,7 @@ export class UserService {
 
     return filteredSuggestions.map((suggestion) => {
       return {
+        id: suggestion.id,
         username: suggestion.username,
         picture: suggestion.profile_picture,
       };

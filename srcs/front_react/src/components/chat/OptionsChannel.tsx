@@ -27,6 +27,7 @@ import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
 import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
 import { AxiosResponse } from "axios";
 import ChannelPassword from "./OptionsChannelPassword";
+import SearchBarPlayerInvitation from "./SearchBarPlayerInvitation";
 
 export interface IMemberProps {
   type: string;
@@ -254,7 +255,7 @@ function ChannelMembers(props: {
 function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   const { channel, owner } = props;
   const { user } = useContext(AuthContext);
-  const [targetUsername, setTargetUsername] = useState<string>("tsannie"); // TODO: a modifier
+  const [ searchBar, setSearchBar ] = useState<boolean>(false);
 
   const leaveChannel = async () => {
     await api
@@ -265,15 +266,6 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   const deleteChannel = async () => {
     await api
       .post("/channel/delete", { id: channel.id })
-      .catch((error: any) => toast.error("HTTP error:" + error));
-  };
-
-  const inviteChannel = async (targetUsername: string) => {
-    await api
-      .post("/channel/invite", {
-        id: channel.id,
-        targetUsername: targetUsername,
-      })
       .catch((error: any) => toast.error("HTTP error:" + error));
   };
 
@@ -307,12 +299,17 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
           {owner?.id === user?.id && channel.status === "Private" && (
             <button
               className="action"
-              onClick={() => inviteChannel(targetUsername)}
+              onClick={() => setSearchBar(!searchBar)}
             >
               <PlusIcon />
               <span>invite</span>
             </button>
           )}
+          {
+            searchBar && (
+              <SearchBarPlayerInvitation channel={channel}/>
+            )
+          }
           <ChannelPassword owner={owner} channel={channel} />
         </div>
         <div></div>
