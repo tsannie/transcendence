@@ -22,6 +22,9 @@ import { IChannel } from "./types";
 import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
 import { ReactComponent as PlusIcon } from "../../assets/img/icon/circle_plus.svg";
+import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
+import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
+import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
 
 export interface IMemberProps {
   type: string;
@@ -183,44 +186,191 @@ function ChannelMembers(props: {
     }
   }, [muted, users, banned, admins, socket]);
 
-  useEffect( () => {
-    if (channel.id !== props.currentConvId)
-        return;
+  useEffect(() => {
+    if (channel.id !== props.currentConvId) return;
     let muted: User[] = [];
 
     setStatus(loadedStatus);
     setAdmins(channel.admins);
-    if (channel.banned)
-        setBanned(channel.banned.map((elem) => elem.user));
+    if (channel.banned) setBanned(channel.banned.map((elem) => elem.user));
 
-    if (channel.muted){
-        muted = channel.muted.map((elem) => elem.user);
-        setMuted(muted);
+    if (channel.muted) {
+      muted = channel.muted.map((elem) => elem.user);
+      setMuted(muted);
     }
-    if (channel.users){
-        let mutedIds : string[];
+    if (channel.users) {
+      let mutedIds: string[];
 
-        if (muted.length != 0)
-        {
-            mutedIds = muted.map(elem => elem.id);
-            setUsers(channel.users.filter( elem => !mutedIds.includes(elem.id)));
-        }
-        else
-            setUsers(channel.users);
+      if (muted.length != 0) {
+        mutedIds = muted.map((elem) => elem.id);
+        setUsers(channel.users.filter((elem) => !mutedIds.includes(elem.id)));
+      } else setUsers(channel.users);
     }
-
-}, [channel])
+  }, [channel]);
 
   return (
     <Fragment>
-        { channel ?
-        <div className="conversation__options__members" key={props.currentConvId}>
-            <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={admins}/>
-            <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={users as User[] | null}/>
-            <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={muted as User[] | null}/>
-            <MemberCategory type={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={banned as User[] | null}/>
-        </div> : null}
-    </Fragment>);
+      {channel ? (
+        <div
+          className="conversation__options__members"
+          key={props.currentConvId}
+        >
+          <MemberCategory
+            type={"Admins"}
+            isOwner={status === "owner"}
+            isAdmin={status === "admin"}
+            channelId={channel.id}
+            users={admins}
+          />
+          <MemberCategory
+            type={"Members"}
+            isOwner={status === "owner"}
+            isAdmin={status === "admin"}
+            channelId={channel.id}
+            users={users as User[] | null}
+          />
+          <MemberCategory
+            type={"Muted"}
+            isOwner={status === "owner"}
+            isAdmin={status === "admin"}
+            channelId={channel.id}
+            users={muted as User[] | null}
+          />
+          <MemberCategory
+            type={"Banned"}
+            isOwner={status === "owner"}
+            isAdmin={status === "admin"}
+            channelId={channel.id}
+            users={banned as User[] | null}
+          />
+        </div>
+      ) : null}
+    </Fragment>
+  );
+}
+
+function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
+  const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
+  const [isModifyPassword, setIsModifyPassword] = useState<boolean>(false);
+  const [isDeletePassword, setIsDeletePassword] = useState<boolean>(false);
+  const [channelPassword, setChannelPassword] = useState<string>("");
+  const [passwordVerifier, setPasswordVerifier] = useState<string>("");
+  const { channel, owner } = props;
+  const { user } = useContext(AuthContext);
+
+  const onClickChangePassword = () => {
+    setIsChangePassword(!isChangePassword);
+    setIsModifyPassword(false);
+    setIsDeletePassword(false);
+  };
+
+  const onClickEditPassword = () => {
+    setIsModifyPassword(!isModifyPassword);
+    setIsDeletePassword(false);
+  };
+
+  const onClickDeletePassword = () => {
+    setIsDeletePassword(!isDeletePassword);
+    setIsModifyPassword(false);
+  };
+
+  const modifyPassword = async () => {
+    console.log("modify password");
+    await api
+      .post("/channel/modifyPassword", {
+        id: channel.id,
+      })
+      .catch((error: any) => toast.error("HTTP error:" + error));
+    setChannelPassword("");
+    setPasswordVerifier("");
+  };
+
+  const deletePassword = async () => {
+    await api
+      .post("/channel/deletePassword", {
+        id: channel.id,
+      })
+      .catch((error: any) => toast.error("HTTP error:" + error));
+    setPasswordVerifier("");
+  };
+
+  return (
+    <Fragment>
+      {owner?.id === user?.id && channel.status === "Protected" && (
+        <button className="action">
+          <LockIcon onClick={onClickChangePassword} />
+          <span>password</span>
+        </button>
+      )}
+      {isChangePassword && (
+        <Fragment>
+          <button className="action">
+            <EditIcon onClick={onClickEditPassword} />
+            <span>edit</span>
+          </button>
+          <button className="action">
+            <DeleteIcon onClick={onClickDeletePassword} />
+            <span>delete</span>
+          </button>
+        </Fragment>
+      )}
+      {isModifyPassword && (
+        <div className="channel__change__password">
+          <input
+            type="password"
+            placeholder="Enter Password..."
+            value={channelPassword}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setChannelPassword(e.target.value)
+            }
+            disabled={!channel.name}
+          />
+          <input
+            type="password"
+            placeholder="Verify Password..."
+            value={passwordVerifier}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPasswordVerifier(e.target.value)
+            }
+            disabled={!channel.name}
+          />
+          <button className="action"
+            onClick={modifyPassword}
+            disabled={
+                ((!channelPassword || channelPassword !== passwordVerifier) ||
+              !channel.name)
+            }
+          >
+            <VerifIcon />
+            <span>verify</span>
+          </button>
+        </div>
+      )}
+      {isDeletePassword && (
+        <div className="channel__delete__password">
+          <input
+            type="password"
+            placeholder="Verify Password..."
+            value={passwordVerifier}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setPasswordVerifier(e.target.value)
+            }
+            disabled={!channel.name}
+          />
+          <button
+            className="action"
+            disabled={
+              (!passwordVerifier || !channel.name)
+            }
+            onClick={deletePassword}
+          >
+            <VerifIcon />
+            <span>verify</span>
+          </button>
+        </div>
+      )}
+    </Fragment>
+  );
 }
 
 function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
@@ -251,36 +401,43 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
 
   return (
     <div className="conversation__options__title">
-        <div className="text">
-            <span>{channel.name}</span>
-            <div className="date">conv started at: {channel.createdAt.toLocaleString()}</div>
-            <span className="owner">owned by: {owner?.username}</span>
-            <button className="clickable_profile">
-                <Link style={{textDecoration: 'none'}} to={"/profile/" + owner?.username}>
-                    <img src={owner?.profile_picture}/>
-                </Link>
-            </button>
-            <div className="actions__channel">
-                <button className="action">
-                    <LeaveIcon onClick={leaveChannel}/>
-                    <span>leave</span>
-                </button>
-                { owner?.id === user?.id &&
-                    <button className="action">
-                        <DeleteIcon onClick={deleteChannel}/>
-                        <span>delete</span>
-                    </button>
-                }
-                {owner?.id === user?.id &&
-                    <button className="action">
-                        <PlusIcon onClick={() => inviteChannel(targetUsername)}/>
-                        <span>invite</span>
-                    </button>
-                }
-            </div>
+      <div className="text">
+        <span>{channel.name}</span>
+        <div className="date">
+          conv started at: {channel.createdAt.toLocaleString()}
         </div>
+        <span className="owner">owned by: {owner?.username}</span>
+        <button className="clickable_profile">
+          <Link
+            style={{ textDecoration: "none" }}
+            to={"/profile/" + owner?.username}
+          >
+            <img src={owner?.profile_picture} />
+          </Link>
+        </button>
+        <div className="actions__channel">
+          <button className="action">
+            <LeaveIcon onClick={leaveChannel} />
+            <span>leave</span>
+          </button>
+          {owner?.id === user?.id && (
+            <button className="action">
+              <DeleteIcon onClick={deleteChannel} />
+              <span>delete</span>
+            </button>
+          )}
+          {owner?.id === user?.id && channel.status === "Private" && (
+            <button className="action">
+              <PlusIcon onClick={() => inviteChannel(targetUsername)} />
+              <span>invite</span>
+            </button>
+          )}
+          <ChannelPassword owner={owner} channel={channel} />
+        </div>
+        <div></div>
       </div>
-      );
+    </div>
+  );
 }
 
 function ChannelOptions(props: {
