@@ -30,7 +30,6 @@ import { ChannelInvitationDto } from '../dto/channelinvitation.dto';
 export class ChannelController {
   constructor(
     private channelService: ChannelService,
-    @Inject(forwardRef(() => MessageGateway))
     private messageGateway: MessageGateway,
   ) {}
 
