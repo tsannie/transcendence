@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../const/const";
-import { User } from "../../contexts/AuthContext";
+import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 
 interface IProps {
   player: User | null;

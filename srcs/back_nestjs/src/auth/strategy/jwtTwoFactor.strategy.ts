@@ -28,7 +28,6 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
       dms: true,
       friends: true,
       friend_requests: true,
-      history: true,
     });
     if (!user.enabled2FA) {
       return user;

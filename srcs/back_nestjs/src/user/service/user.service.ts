@@ -164,7 +164,6 @@ export class UserService {
         admin_of: true,
         friend_requests: true,
         friends: true,
-        history: true,
       },
     });
   }
@@ -456,10 +455,6 @@ export class UserService {
     );
 
     return await this.allUser.save(user);
-  }
-
-  async getGameHistory(user: UserEntity): Promise<GameStatEntity[]> {
-    return user.history;
   }
 
   getLeaderBoard(userId: string, usersElo: UserEntity[]): number {
