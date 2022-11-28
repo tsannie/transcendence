@@ -138,6 +138,7 @@ export class MessageService {
       throw new WsException("You've Been Muted ! Shhhh. silence.")
     }
     if (responseStatus instanceof MuteEntity){
+      responseStatus.user = user;
       this.messageGateway.unMuteUser(responseStatus, channel.id)
     }
 
