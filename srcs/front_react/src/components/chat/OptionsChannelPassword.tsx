@@ -129,7 +129,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         </div>
       )}
       {isDeletePassword && (
-        <div className="channel__delete__password">
+        <div className="channel__change__password">
           <input
             type="password"
             placeholder="Current Password..."
