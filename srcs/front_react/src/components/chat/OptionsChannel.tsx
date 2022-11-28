@@ -19,6 +19,8 @@ import { MessageContext } from "../../contexts/MessageContext";
 import { IDatas } from "./Conversation";
 import UserOptions from "./OptionsChannelActions";
 import { IChannel } from "./types";
+import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
 
 export interface IMemberProps {
   type: string;
@@ -180,67 +182,44 @@ function ChannelMembers(props: {
     }
   }, [muted, users, banned, admins, socket]);
 
-  useEffect(() => {
-    if (channel.id !== props.currentConvId) return;
+  useEffect( () => {
+    if (channel.id !== props.currentConvId)
+        return;
     let muted: User[] = [];
 
     setStatus(loadedStatus);
     setAdmins(channel.admins);
-    if (channel.banned) setBanned(channel.banned.map((elem) => elem.user));
+    if (channel.banned)
+        setBanned(channel.banned.map((elem) => elem.user));
 
-    if (channel.muted) {
-      muted = channel.muted.map((elem) => elem.user);
-      setMuted(muted);
+    if (channel.muted){
+        muted = channel.muted.map((elem) => elem.user);
+        setMuted(muted);
     }
-    if (channel.users) {
-      let mutedIds: string[];
+    if (channel.users){
+        let mutedIds : string[];
 
-      if (muted.length != 0) {
-        mutedIds = muted.map((elem) => elem.id);
-        setUsers(channel.users.filter((elem) => !mutedIds.includes(elem.id)));
-      } else setUsers(channel.users);
+        if (muted.length != 0)
+        {
+            mutedIds = muted.map(elem => elem.id);
+            setUsers(channel.users.filter( elem => !mutedIds.includes(elem.id)));
+        }
+        else
+            setUsers(channel.users);
     }
-  }, [channel]);
+
+}, [channel])
 
   return (
     <Fragment>
-      {channel ? (
-        <div
-          className="conversation__options__members"
-          key={props.currentConvId}
-        >
-          <MemberCategory
-            type={"Admins"}
-            isOwner={status === "owner"}
-            isAdmin={status === "admin"}
-            channelId={channel.id}
-            users={admins}
-          />
-          <MemberCategory
-            type={"Members"}
-            isOwner={status === "owner"}
-            isAdmin={status === "admin"}
-            channelId={channel.id}
-            users={users as User[] | null}
-          />
-          <MemberCategory
-            type={"Muted"}
-            isOwner={status === "owner"}
-            isAdmin={status === "admin"}
-            channelId={channel.id}
-            users={muted as User[] | null}
-          />
-          <MemberCategory
-            type={"Banned"}
-            isOwner={status === "owner"}
-            isAdmin={status === "admin"}
-            channelId={channel.id}
-            users={banned as User[] | null}
-          />
-        </div>
-      ) : null}
-    </Fragment>
-  );
+        { channel ?
+        <div className="conversation__options__members" key={props.currentConvId}>
+            <MemberCategory type={"Admins"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={admins}/>
+            <MemberCategory type={"Members"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={users as User[] | null}/>
+            <MemberCategory type={"Muted"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={muted as User[] | null}/>
+            <MemberCategory type={"Banned"} isOwner={status === "owner"} isAdmin={status === "admin"} channelId={channel.id} users={banned as User[] | null}/>
+        </div> : null}
+    </Fragment>);
 }
 
 function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
@@ -271,50 +250,36 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
 
   return (
     <div className="conversation__options__title">
-      <div className="text">
-        <span>{channel.name}</span>
-        <div className="date">
-          conv started at: {channel.createdAt.toLocaleString()}
-        </div>
-        <span className="owner">owned by: {owner?.username}</span>
-        <button className="clickable_profile">
-          <Link
-            style={{ textDecoration: "none" }}
-            to={"/profile/" + owner?.username}
-          >
-            <img src={owner?.profile_picture} />
-          </Link>
-        </button>
-        <div className="actions-channel">
-          <button className="leave-channel" onClick={leaveChannel}>
-            Leave
-          </button>
-          {owner?.id === user?.id && (
-            <div className="owner-actions">
-              <button className="delete-channel" onClick={deleteChannel}>
-                Delete
-              </button>
-              {channel.status === "Private" && (
-                <button
-                  className="invite-channel"
-                  onClick={() => inviteChannel(targetUsername)} // a changer par targetUsername OU par le component de recherche de Theo
-                >
-                  Invite
+        <div className="text">
+            <span>{channel.name}</span>
+            <div className="date">conv started at: {channel.createdAt.toLocaleString()}</div>
+            <span className="owner">owned by: {owner?.username}</span>
+            <button className="clickable_profile">
+                <Link style={{textDecoration: 'none'}} to={"/profile/" + owner?.username}>
+                    <img src={owner?.profile_picture}/>
+                </Link>
+            </button>
+            <div className="actions__channel">
+                <button className="action">
+                    <LeaveIcon onClick={leaveChannel}/>
+                    <span>leave</span>
                 </button>
-              )}
-              {/* <input
-                  placeholder="username"
-                  value={targetUsername}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setTargetUsername(e.target.value)
-                  }
-                /> */}
+                { owner?.id === user?.id &&
+                    <button className="action">
+                        <DeleteIcon onClick={deleteChannel}/>
+                        <span>delete</span>
+                    </button>
+                }
+                {owner?.id === user?.id &&
+                    <button className="action">
+                        <DeleteIcon onClick={inviteChannel}/>
+                        <span>invite</span>
+                    </button>
+                }
             </div>
-          )}
         </div>
       </div>
-    </div>
-  );
+      );
 }
 
 function ChannelOptions(props: {

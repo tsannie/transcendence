@@ -11,12 +11,12 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { BanMuteService } from 'src/channel/service/banmute.service';
-import { DmService } from 'src/dm/service/dm.service';
 import { Server } from 'socket.io';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { MessageDto } from '../dto/message.dto';
 import { Socket } from 'socket.io';
-import { Console } from 'console';
+import { WsException } from '@nestjs/websockets';
+import { MuteEntity } from 'src/channel/models/ban.entity';
 
 const LOADED_MESSAGES = 20;
 
@@ -111,7 +111,7 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(socket: Server, clientId: string, data: MessageDto, userId: string): Promise<MessageEntity | null> {
+  async addMessagetoChannel(socket: Server, clientId: string, data: MessageDto, userId: string): Promise<MessageEntity > {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -130,12 +130,10 @@ export class MessageService {
     if (!channel)
       throw new UnauthorizedException("you are not part of this channel");
 
+    let responseStatus = await this.banMuteService.isMuted(channel, user);
     //TODO SWITCH TO WS THROWABLE ERROR
-    if (await this.banMuteService.isMuted(channel, user))
-    {
-      //TODO send back error Message
-      socket.to(clientId).emit("error", "You've Been Muted ! Shhhh. silence.");
-      return null;
+    if (responseStatus === true){
+      throw new WsException("You've Been Muted ! Shhhh. silence.")
     }
 
     const message = new MessageEntity();
