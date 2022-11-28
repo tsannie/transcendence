@@ -17,10 +17,10 @@ export default function Game() {
   const { room, displayRender } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
 
-  if (displayRender) return <GameRender />;
+  if (displayRender && room) return <GameRender />;
   else
     return (
-      <div className="game">
+      <div className="game" id="menu">
         <div className="game__menu">
           <GameAmical />
           <GameCurrent />

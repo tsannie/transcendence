@@ -10,7 +10,7 @@ import {
 } from "../../contexts/ChatDisplayContext";
 import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
-import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/circle_plus.svg";
+import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;

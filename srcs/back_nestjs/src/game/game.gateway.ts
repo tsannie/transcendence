@@ -11,17 +11,13 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Repository } from 'typeorm';
 import { canvas_back_height } from './const/const';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
-import { UserEntity } from 'src/user/models/user.entity';
-import { UserService } from 'src/user/service/user.service';
 import { CreateRoomDto } from './dto/createRoom.dto';
-import { GameStatEntity } from './entity/gameStat.entity';
 import { AuthService } from 'src/auth/service/auth.service';
-import Room, { RoomStatus, Winner } from './class/room.class';
-import { throwError } from 'rxjs';
+import Room, { IInfoGame, RoomStatus, Winner } from './class/room.class';
+import { UserEntity } from 'src/user/models/user.entity';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -42,18 +38,41 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private logger: Logger = new Logger('GameGateway');
 
   async handleConnection(client: Socket) {
-    const user = await this.authService.validateSocket(client);
+    const user = await this.authService.validateSocket(client, {
+      friends: true,
+    });
+    if (!user) return;
+
+    // if user dont have other socket send to his friends that he is online
+    if (!this.allUsers.has(user.id))
+      this.gameService.preventConnexionOfFriends(
+        this.server,
+        user,
+        this.allUsers,
+      );
 
     if (this.allUsers.has(user.id)) {
       this.allUsers.get(user.id).push(client);
     } else this.allUsers.set(user.id, [client]);
 
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
     this.logger.log(`Client GAME connected: ${user.username}`);
   }
 
   async handleDisconnect(client: Socket) {
-    const user = await this.authService.validateSocket(client);
-    this.logger.log(`Client GAME disconnected: ${user.username}`);
+    const user = await this.authService.validateSocket(client, {
+      friends: true,
+    });
+    if (!user) return;
+
+    // if user dont have other socket send to his friends that he is offline
+    if (this.allUsers.get(user.id).length === 1)
+      this.gameService.preventConnexionOfFriends(
+        this.server,
+        user,
+        this.allUsers,
+        false,
+      );
 
     const room = this.gameService.findRoomBySocket(client);
     if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {
@@ -65,19 +84,27 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.allUsers.has(user.id)) {
       const sockets = this.allUsers.get(user.id);
       const index = sockets.indexOf(client);
+      //console.log('sockets.length', sockets.length);
       if (index > -1) {
         sockets.splice(index, 1);
-      } else if (sockets.length === 0) {
+      }
+      if (sockets.length === 0) {
         this.allUsers.delete(user.id);
       }
     }
 
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
     client.disconnect();
+    this.logger.log(`Client GAME disconnected: ${user.username}`);
   }
 
   ///////////////////////////////////////////////
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
+
+  getFriendsLog(user: UserEntity): UserEntity[] {
+    return this.gameService.getFriendsLog(this.allUsers, user);
+  }
 
   @SubscribeMessage('matchmaking')
   async createRoom(
@@ -85,33 +112,32 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: CreateRoomDto,
   ) {
     const user = await this.authService.validateSocket(client);
+    if (!user) throw new WsException('User not found');
 
     if (this.gameService.findRoomByUser(user)) {
       throw new WsException('Already in game');
     }
-    console.log('start create room');
 
     const room: Room = this.gameService.findRoom(user, data.mode);
-
-    console.log('room', room);
 
     if (room && user) {
       if (room.status === RoomStatus.EMPTY) {
         room.status = RoomStatus.WAITING;
 
         this.gameService.joinRoom(room.id, client, this.server);
-        this.server.to(room.id).emit('joinQueue', 'queue joined ...');
         this.server.to(client.id).emit('updateGame', room);
+        this.server.to(room.id).emit('joinQueue', 'queue joined ...');
       } else if (room.status === RoomStatus.WAITING) {
         room.p2_id = user.id;
         room.status = RoomStatus.PLAYING;
 
         this.gameService.joinRoom(room.id, client, this.server);
-        this.server.to(room.id).emit('matchFound', 'match found !');
         this.server.to(room.id).emit('updateGame', room);
+        this.server.to(room.id).emit('matchFound', 'match found !');
         this.gameService.launchGame(room, this.server, this.allUsers);
       }
     }
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
   }
 
   ///////////////////////////////////////////////
@@ -132,6 +158,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() room_id: string,
   ) {
     const user = await this.authService.validateSocket(client);
+    if (!user) throw new WsException('User not found');
 
     const room: Room = this.gameService.getRoomById(room_id);
 
@@ -140,6 +167,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     this.gameService.leaveRoom(room_id, client);
+    this.server.emit('infoGame', this.gameService.getInfo(this.allUsers));
   }
 
   ///////////////////////////////////////////////
@@ -151,11 +179,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: PaddleDto,
   ) {
+    const user = await this.authService.validateSocket(client);
+    if (!user) throw new WsException('User not found');
+
     const room = this.gameService.getRoomById(data.room_id);
     if (!room) return;
-
-    const user = await this.authService.validateSocket(client);
-    if (!user) return;
 
     if (room.p1_id === user.id) {
       room.p1_y_paddle =
