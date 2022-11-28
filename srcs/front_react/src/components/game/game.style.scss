@@ -1,3 +1,5 @@
+@import "../../const.style.scss";
+
 .game {
   display: flex;
   border-style: dashed;
@@ -163,14 +165,13 @@
     svg {
       width: calc(30 * var(--res));
 
-      fill: transparent;
+      fill: $bg-color;
       background: linear-gradient(
         to right,
         rgba(13, 213, 252),
         rgba(243, 243, 21),
         rgba(255, 153, 51)
       );
-      //clip-path: url(#myClip);
     }
   }
 }
