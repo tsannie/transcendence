@@ -28,8 +28,7 @@ export interface IPlayer {
 
 export interface ISetPaddle {
   room_id: string;
-  positionY: number;
-  front_canvas_height: number;
+  posY: number;
 }
 
 export interface ICreateRoom {

@@ -185,13 +185,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const room = this.gameService.getRoomById(data.room_id);
     if (!room) return;
 
-    if (room.p1_id === user.id) {
-      room.p1_y_paddle =
-        (data.positionY * canvas_back_height) / data.front_canvas_height;
-    } else if (room.p2_id === user.id) {
-      room.p2_y_paddle =
-        (data.positionY * canvas_back_height) / data.front_canvas_height;
-    }
+    if (room.p1_id === user.id) room.p1_y_paddle = data.posY;
+    else if (room.p2_id === user.id) room.p2_y_paddle = data.posY;
   }
   ///////////////////////////////////////////////
 }
