@@ -34,6 +34,7 @@ export interface ISetPaddle {
 
 export interface ICreateRoom {
   mode: GameMode;
+  invitation_user_id?: string;
 }
 
 export interface Room {
