@@ -72,7 +72,7 @@ function BanMuteButton(props: {type : string, channelId: string, user : User}) {
                     <form onSubmit={handleAction}>
                         <input
                             type="number"
-                            min="0"
+                            min="1"
                             placeholder="minutes"
                             onChange={(e: any) =>
                                 setTimer(e.target.value)

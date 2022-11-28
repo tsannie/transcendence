@@ -79,7 +79,7 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
 
         let time = released.getTime() - Date.now();
         const interval = setInterval(() => {
-          if (time < 0){
+          if (time <= 0){
             setMuted(false);
             setMuteDate(null);
             return;
