@@ -1,8 +1,8 @@
 import userEvent from "@testing-library/user-event";
 import React, { Fragment, MouseEvent, useContext } from "react";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
-import { ReactComponent as AddIcon } from "../../assets/img/icon/circle_check.svg";
-import { ReactComponent as RemoveIcon } from "../../assets/img/icon/circle_remove.svg";
+import { ReactComponent as AddIcon } from "../../assets/img/icon/check.svg";
+import { ReactComponent as RemoveIcon } from "../../assets/img/icon/remove.svg";
 import { Link } from "react-router-dom";
 import { api } from "../../const/const";
 import { toast } from "react-toastify";
@@ -31,7 +31,6 @@ function ProfileFriends(props: IProps) {
     api
       .post("/user/refuse-friend-request", { id: id })
       .then(() => {
-        toast.success("friend request refused");
         props.setReloadPlayer(true);
       })
       .catch(() => {
@@ -47,7 +46,6 @@ function ProfileFriends(props: IProps) {
     api
       .post("/user/accept-friend-request", { id: id })
       .then(() => {
-        toast.success("friend request accepted");
         props.setReloadPlayer(true);
       })
       .catch((err) => {
@@ -74,18 +72,22 @@ function ProfileFriends(props: IProps) {
                   {request.username.length > 10 ? "..." : ""}
                 </span>
               </div>
-              <AddIcon
-                alt="accept-friend-request"
-                onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                  handleAcceptRequest(e, request.id)
-                }
-              />
-              <RemoveIcon
-                alt="refuse-friend-request"
-                onClick={(e: MouseEvent<HTMLButtonElement>) =>
-                  handleRefuseRequest(e, request.id)
-                }
-              />
+              <button className="friend__request_button">
+                <AddIcon
+                  alt="accept-friend-request"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                    handleAcceptRequest(e, request.id)
+                  }
+                />
+              </button>
+              <button className="friend__request_button">
+                <RemoveIcon
+                  alt="refuse-friend-request"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                    handleRefuseRequest(e, request.id)
+                  }
+                />
+              </button>
             </div>
             <hr />
           </Fragment>

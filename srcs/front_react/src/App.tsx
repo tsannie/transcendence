@@ -7,7 +7,6 @@ import LoginPage from "./components/auth/oauth/LoginPage";
 import TwoFactorPage from "./components/auth/2fa/TwoFactorPage";
 import { PrivateRoute } from "./components/routes/PrivateRoute";
 import Settings from "./components/settings/Settings";
-import Home from "./components/home/Home";
 import Background from "./components/background/Background";
 import {
   TransitionContext,
@@ -36,7 +35,6 @@ export default function App() {
           <Route path="/auth" element={<LoginPage />} />
           <Route path="/2fa" element={<TwoFactorPage />} />
           {/* Main Routes (private) */}
-          <Route path="/" element={<PrivateRoute component={Home} />} />
 
           <Route
             path="/profile/:id"
@@ -48,14 +46,18 @@ export default function App() {
           />
 
           <Route path="/chat" element={<PrivateRoute component={Chat} />} />
-          <Route path="/game" element={<PrivateRoute component={Game} />} />
+          <Route path="/" element={<PrivateRoute component={Game} />} />
           <Route
             path="/settings"
             element={<PrivateRoute component={Settings} />}
           />
         </Routes>
       </div>
-      <ToastContainer toastClassName={"toast"} pauseOnFocusLoss={false} />
+      <ToastContainer
+        autoClose={2000}
+        toastClassName={"toast"}
+        pauseOnFocusLoss={false}
+      />
     </div>
   );
 }

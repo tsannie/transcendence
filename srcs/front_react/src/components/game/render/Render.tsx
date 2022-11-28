@@ -20,23 +20,28 @@ import {
   RoomStatus,
   screen_ratio,
 } from "../const/const";
+import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { ISetPaddle, IPlayer, Room, IDrawResponsive } from "../types";
-import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
+import {
+  AuthContext,
+  AuthContextType,
+  User,
+} from "../../../contexts/AuthContext";
 import { draw_trans_game } from "./Draw/DrawTransGame";
+import { api } from "../../../const/const";
+import { AxiosResponse } from "axios";
+import { toast } from "react-toastify";
 
 let position_y: number = 0;
 export function GameRender() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
-  //const [frameToDraw, setFrameToDraw] = useState<Frame>();
-
-  //const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
+  const [players, setPlayers] = useState<User[]>();
   const { room, socket, setDisplayRender, setRoom } = useContext(
     GameContext
   ) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
-  //let resize = new IResize();
 
   function resize() {
     const lowerSize =
@@ -55,7 +60,35 @@ export function GameRender() {
   }
 
   useEffect(() => {
-    // for the first mount
+    const getPlayers = async () => {
+      console.log("getPlayers");
+      console.log("room", room);
+
+      const player1 = await api
+        .get("/user/id", { params: { id: room?.p1_id } })
+        .then((res: AxiosResponse) => {
+          return res.data;
+        })
+        .catch((err) => {
+          leaveGame();
+          console.log(err);
+        });
+
+      const player2 = await api
+        .get("/user/id", { params: { id: room?.p2_id } })
+        .then((res: AxiosResponse) => {
+          return res.data;
+        })
+        .catch((err) => {
+          leaveGame();
+          console.log(err);
+        });
+
+      console.log("players:", player1, player2);
+      setPlayers([player1, player2]);
+    };
+
+    getPlayers();
     resize();
   }, []);
 
@@ -137,24 +170,45 @@ export function GameRender() {
     }
   }
 
+  if (!drawResponsive || !room || !players || !user)
+    return <span>loading...</span>;
   return (
-    <Fragment>
-      {drawResponsive ? (
-        <Fragment>
-          <canvas
-            id="canvas"
-            ref={canvasRef}
-            height={drawResponsive.canvas_height}
-            width={drawResponsive.canvas_width}
-            onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: black }}
-          ></canvas>
-          <br />
-          <button onClick={leaveGame}>Leave The Game</button>
-        </Fragment>
-      ) : (
-        <div>loading...</div>
-      )}
-    </Fragment>
+    <div className="game">
+      <div className="game__render">
+        <div className="game__header">
+          <button id="leave" onClick={leaveGame}>
+            <LogOutIcon />
+          </button>
+          <div className="game__header__player" id="left">
+            <img src={players[0].profile_picture} alt="player1" />
+            <span>
+              {players[0].username}({players[0].elo})
+            </span>
+          </div>
+
+          <div className="game__header__player" id="right">
+            <img src={players[1].profile_picture} alt="player2" />
+            <span>
+              {players[1].username}({players[1].elo})
+            </span>
+          </div>
+        </div>
+
+        <div className="game__body">
+          {drawResponsive ? (
+            <canvas
+              id="canvas"
+              ref={canvasRef}
+              height={drawResponsive.canvas_height}
+              width={drawResponsive.canvas_width}
+              onMouseMove={(e) => mouv_mouse(e)}
+              style={{ backgroundColor: black }}
+            ></canvas>
+          ) : (
+            <span>loading...</span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
