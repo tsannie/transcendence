@@ -151,8 +151,7 @@ export function GameRender() {
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
 
-    const tmp_pos =
-      e.clientY - rect?.top - (paddle_height * drawResponsive.ratio_height) / 2;
+    const tmp_pos = e.clientY - rect?.top;
 
     if (tmp_pos <= drawResponsive.border_size) {
       position_y = drawResponsive.border_size + 1;
@@ -202,8 +201,7 @@ export function GameRender() {
               height={drawResponsive.canvas_height}
               width={drawResponsive.canvas_width}
               onMouseMove={(e) => mouv_mouse(e)}
-              style={{ backgroundColor: black }}
-            ></canvas>
+              style={{ backgroundColor: black }}></canvas>
           ) : (
             <span>loading...</span>
           )}
