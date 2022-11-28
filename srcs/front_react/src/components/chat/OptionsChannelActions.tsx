@@ -3,6 +3,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
+import BanMuteButton from "./OptionsBanMute";
 import { IMemberProps } from "./OptionsChannel";
 
 function UserOptions(props: IMemberProps) {
@@ -11,21 +12,9 @@ function UserOptions(props: IMemberProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
-    const banUser = async () => {
-        await api
-        .post("/channel/ban", { id: channelId, targetId: user.id })
-        .catch((error: any) => toast.error("HTTP error:" + error));
-    }
-
     const unBanUser = async () => {
         await api
         .post("/channel/unban", { id: channelId, targetId: user.id })
-        .catch((error: any) => toast.error("HTTP error:" + error));
-    }
-
-    const muteUser = async () => {
-        await api
-        .post("/channel/mute", { id: channelId, targetId: user.id })
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
@@ -51,40 +40,44 @@ function UserOptions(props: IMemberProps) {
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner){
-            adminOptionsJSX.push(<button key={3} onClick={revokeAdmin}>unAdmin</button>);
-            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
+            let key : number = 2;
+            adminOptionsJSX.push(<button key={key++} onClick={revokeAdmin}>unAdmin</button>);
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Mute" channelId={channelId} user={user} /> )
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban" channelId={channelId} user={user} /> )
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
 
     const memberOptions = () => {
+        let key : number = 2;
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isOwner)
-            adminOptionsJSX.push(<button key={3} onClick={makeAdmin}>make Admin</button>)
+            adminOptionsJSX.push(<button key={key++} onClick={makeAdmin}>make Admin</button>)
         if (isOwner || isAdmin){
-            adminOptionsJSX.push(<button key={2} onClick={muteUser}>Mute</button>);
-            adminOptionsJSX.push(<button key={1} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Mute" channelId={channelId} user={user} /> );
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban" channelId={channelId} user={user} /> );
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
 
     const mutedOptions = () => {
+        let key : number = 2;
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isAdmin || isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={unMuteUser}>Unmute</button>);
-            adminOptionsJSX.push(<button key={2} onClick={banUser}>Ban</button>);
+            adminOptionsJSX.push(<button key={key++} onClick={unMuteUser}>Unmute</button>);
+            adminOptionsJSX.push(<BanMuteButton key={key++} type="Ban" channelId={channelId} user={user} /> );
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
 
     const bannedOptions = () => {
+        let key : number = 2;
         let adminOptionsJSX: JSX.Element[] = [];
 
         if (isAdmin || isOwner){
-            adminOptionsJSX.push(<button key={1} onClick={unBanUser}>UnBan</button>);
+            adminOptionsJSX.push(<button key={key++} onClick={unBanUser}>UnBan</button>);
         }
         return <Fragment>{adminOptionsJSX}</Fragment>;
     }
@@ -94,7 +87,7 @@ function UserOptions(props: IMemberProps) {
         return (
         <div className="dropdown" style={dropdownStyle.current}>
             <div className="options">{user.username}</div>
-            <button>
+            <button key={1}>
                 <Link style={{textDecoration: 'none'}} to={"/profile/" + user.username}>
                     Profile
                 </Link>
