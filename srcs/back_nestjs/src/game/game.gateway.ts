@@ -1,4 +1,9 @@
-import { Logger } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConnectedSocket,
@@ -27,11 +32,12 @@ import { UserEntity } from 'src/user/models/user.entity';
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
+    @Inject(forwardRef(() => GameService))
     private gameService: GameService,
     private authService: AuthService,
   ) {}
 
-  // Player / SocketPlayer
+  // Player_ID / SocketPlayer
   private allUsers: Map<string, Socket[]> = new Map();
 
   @WebSocketServer() server: Server;
@@ -101,10 +107,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ///////////////////////////////////////////////
   //////////////// CREATE ROOM
   ///////////////////////////////////////////////
-
-  getFriendsLog(user: UserEntity): UserEntity[] {
-    return this.gameService.getFriendsLog(this.allUsers, user);
-  }
 
   @SubscribeMessage('matchmaking')
   async createRoom(
@@ -189,4 +191,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     else if (room.p2_id === user.id) room.p2_y_paddle = data.posY;
   }
   ///////////////////////////////////////////////
+
+  getAllUsers(): Map<string, Socket[]> {
+    return this.allUsers;
+  }
+
+  getServer(): Server {
+    return this.server;
+  }
 }
