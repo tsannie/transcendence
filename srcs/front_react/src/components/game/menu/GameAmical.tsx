@@ -62,7 +62,11 @@ function GameAmical() {
             >
               <BallIcon />
             </button>
-            <button id="trans" title="Invite in trans mode">
+            <button
+              id="trans"
+              title="Invite in trans mode"
+              onClick={() => handleInvite(friend.id, GameMode.PONG_TRANS)}
+            >
               <BallTransIcon />
             </button>
           </div>
