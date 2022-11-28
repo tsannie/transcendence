@@ -4,13 +4,14 @@ import { api } from "../../../const/const";
 import { ReactComponent as SpectateIcon } from "../../../assets/img/icon/read.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { IInfoRoom, RoomStatus } from "../const/const";
+import { Link } from "react-router-dom";
 
 function GameCurrent() {
   const { socket, setDisplayRender } = useContext(
     GameContext
   ) as GameContextType;
   const [currentRooms, setCurrentRooms] = useState<IInfoRoom[]>([]);
-  //getCurrentRooms
+  let allRooms: JSX.Element[];
 
   useEffect(() => {
     socket?.on("updateCurrentRoom", (room: IInfoRoom) => {
@@ -33,36 +34,61 @@ function GameCurrent() {
     socket?.emit("joinRoom", id);
   };
 
-  let allRooms = currentRooms.map((room: IInfoRoom) => {
-    return (
-      <div className="current__item" key={room.id}>
-        <div className="current__item__info">
-          <div className="current__pseudo">
-            <span>
-              {room.p1.username.substring(0, 10)}
-              {room.p1.username.length > 10 ? "..." : ""}-
-              {room.p2.username.substring(0, 10)}
-              {room.p2.username.length > 10 ? "..." : ""}
-            </span>
+  if (currentRooms.length) {
+    allRooms = currentRooms.map((room: IInfoRoom) => {
+      return (
+        <div className="current__item" key={room.id}>
+          <div className="current__item__info">
+            <div className="current__profile-picture">
+              <Link to={`/profile/${room.p1.username}`}>
+                <button
+                  title={room.p1.username.length > 8 ? room.p1.username : ""}
+                >
+                  <span>
+                    {room.p1.username.length > 8
+                      ? room.p1.username.slice(0, 5) + "..."
+                      : room.p1.username}
+                  </span>
+                </button>
+              </Link>
+              <span id="separator"> - </span>
+              <Link to={`/profile/${room.p2.username}`}>
+                <button
+                  title={room.p2.username.length > 8 ? room.p2.username : ""}
+                >
+                  <span>
+                    {room.p2.username.length > 8
+                      ? room.p2.username.slice(0, 5) + "..."
+                      : room.p2.username}
+                  </span>
+                </button>
+              </Link>
+            </div>
+            <div className="current__score">
+              <span>
+                {room.p1_score} : {room.p2_score}
+              </span>
+            </div>
           </div>
-          <div className="current__score">
-            <span>
-              {room.p1_score} : {room.p2_score}
-            </span>
+          <div className="current__item__spectate">
+            <button
+              onClick={(e: MouseEvent<HTMLButtonElement>) =>
+                handleJoinRoom(e, room.id)
+              }
+            >
+              <SpectateIcon />
+            </button>
           </div>
         </div>
-        <div className="current__item__spectate">
-          <button
-            onClick={(e: MouseEvent<HTMLButtonElement>) =>
-              handleJoinRoom(e, room.id)
-            }
-          >
-            <SpectateIcon />
-          </button>
-        </div>
-      </div>
-    );
-  });
+      );
+    });
+  } else {
+    allRooms = [
+      <div className="no-room" key="no-room">
+        <span>no players in play</span>
+      </div>,
+    ];
+  }
 
   return (
     <div className="current">

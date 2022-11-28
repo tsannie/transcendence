@@ -21,11 +21,10 @@ interface IProps {
 
 enum TransitionPageLvl {
   NULL = 0,
-  HOME = 1,
-  PROFILE = 2,
-  CHAT = 3,
-  GAME = 4,
-  SETTINGS = 5,
+  PROFILE = 1,
+  CHAT = 2,
+  GAME = 3,
+  SETTINGS = 4,
 }
 
 export const TransitionProvider = ({ children }: IProps) => {
@@ -38,13 +37,11 @@ export const TransitionProvider = ({ children }: IProps) => {
 
   function getTransitionStage(path: string) {
     switch (path.split("/")[1]) {
-      case "":
-        return TransitionPageLvl.HOME;
       case "profile":
         return TransitionPageLvl.PROFILE;
       case "chat":
         return TransitionPageLvl.CHAT;
-      case "game":
+      case "":
         return TransitionPageLvl.GAME;
       case "settings":
         return TransitionPageLvl.SETTINGS;

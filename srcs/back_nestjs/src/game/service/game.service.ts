@@ -11,6 +11,7 @@ import Room, {
   RoomStatus,
   Winner,
   IGameStat,
+  IInfoGame,
 } from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
@@ -82,6 +83,7 @@ export class GameService {
   findRoomByUser(user: UserEntity): Room | undefined {
     for (const room of this.gamesRoom.values()) {
       if (room.p1_id === user.id || room.p2_id === user.id) {
+        console.log('room found', room);
         return room;
       }
     }
@@ -93,9 +95,7 @@ export class GameService {
   }
 
   joinRoom(room_id: string, client: Socket, server: Server) {
-    console.log('join room');
     const room_to_leave = this.usersRoom.get(client);
-    console.log('room to leave', room_to_leave);
     if (room_to_leave) {
       client.leave(room_to_leave);
     }
@@ -131,6 +131,85 @@ export class GameService {
     return current_rooms;
   }
 
+  preventConnexionOfFriends(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+    login: boolean = true,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    if (login) {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogin', user);
+      });
+    } else {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogout', user);
+      });
+    }
+  }
+
+  sendUserDisconnect(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    sockets.forEach((socket) => {
+      server.to(socket.id).emit('friendsDisconnect', user);
+    });
+  }
+
+  getSocketsOfFriends(user: UserEntity, allUsers: Map<string, Socket[]>) {
+    const friends: UserEntity[] = this.getFriendsLog(allUsers, user);
+    // get all socket of his friends
+    const sockets: Socket[] = friends.reduce((acc, friend) => {
+      if (allUsers.has(friend.id)) {
+        acc.push(...allUsers.get(friend.id));
+      }
+      return acc;
+    }, []);
+    return sockets;
+  }
+
+  getFriendsLog(
+    allUsers: Map<string, Socket[]>,
+    user: UserEntity,
+  ): UserEntity[] {
+    const friends: UserEntity[] = user.friends;
+    const friendsLog: UserEntity[] = [];
+
+    if (!friends) return friendsLog;
+
+    for (const friend of friends) {
+      if (allUsers.has(friend.id)) {
+        friendsLog.push(friend);
+      }
+    }
+    //console.log('friendsLog', friendsLog);
+    return friendsLog;
+  }
+
+  getInfo(allUsers: Map<string, Socket[]>): IInfoGame {
+    let player_in_game = 0;
+    let player_in_waiting = 0;
+
+    for (const room of this.gamesRoom.values()) {
+      if (room.status === RoomStatus.PLAYING) {
+        player_in_game += 2;
+      } else if (room.status === RoomStatus.WAITING) {
+        player_in_waiting += 1;
+      }
+    }
+
+    const info: IInfoGame = {
+      search: player_in_waiting,
+      ingame: player_in_game,
+      online: allUsers.size,
+    };
+    return info;
+  }
+
   ////////////////////
   // INGAME FUNCTIONS
   ////////////////////
@@ -140,12 +219,21 @@ export class GameService {
       where: [{ p1_id: user.id }, { p2_id: user.id }],
     });
 
+    // sort history by date
+    history.sort((a, b) => {
+      return a.date.getTime() - b.date.getTime();
+    });
+
+    // keep only the last 20 games
+    if (history.length > 20) {
+      history.splice(0, history.length - 20);
+    }
+
     let historyGame: IGameStat[] = [];
 
     for (const stat of history) {
       const p1 = await this.userService.findById(stat.p1_id);
       const p2 = await this.userService.findById(stat.p2_id);
-      //const winner = await this.userService.findById(stat.winner_id);
 
       historyGame.push({
         p1: p1,
@@ -156,6 +244,7 @@ export class GameService {
         p2_score: stat.p2_score,
       });
     }
+
     return historyGame;
   }
 
@@ -178,6 +267,8 @@ export class GameService {
     let statGame: GameStatEntity = this.getGameStat(p1, p2, room);
 
     await this.gameStatRepository.save(statGame);
+    await this.userService.add(p1);
+    await this.userService.add(p2);
   }
 
   getElo(room: Room, p1: UserEntity, p2: UserEntity): number {
@@ -263,7 +354,7 @@ export class GameService {
       if (this.checkNewScore(score, room))
         server.emit('updateCurrentRoom', await this.createInfoRoom(room));
 
-      await new Promise((f) => setTimeout(f, 8));
+      await new Promise((f) => setTimeout(f, 1000 / 60));
     }
 
     if (room.status === RoomStatus.CLOSED) {

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 
 function PageNotFound() {
   const nav = useNavigate();

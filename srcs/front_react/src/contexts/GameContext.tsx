@@ -5,7 +5,11 @@ import {
   useEffect,
   useState,
 } from "react";
-import { IException, RoomStatus } from "../components/game/const/const";
+import {
+  IException,
+  IInfoGame,
+  RoomStatus,
+} from "../components/game/const/const";
 import { Room } from "../components/game/types";
 import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
@@ -17,6 +21,7 @@ export type GameContextType = {
   socket: Socket | null;
   setDisplayRender: (display: boolean) => void;
   displayRender: boolean;
+  info: IInfoGame | null;
 };
 
 export const GameContext = createContext<Partial<GameContextType>>({});
@@ -28,6 +33,7 @@ interface GameContextProps {
 export const GameProvider = ({ children }: GameContextProps) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [displayRender, setDisplayRender] = useState<boolean>(false);
+  const [info, setInfo] = useState<IInfoGame>();
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [timeQueue, setTimeQueue] = useState<number>(0);
@@ -67,6 +73,10 @@ export const GameProvider = ({ children }: GameContextProps) => {
     socket?.on("exception", (data: IException) => {
       toast.error(data.message);
     });
+
+    socket?.on("infoGame", (info: IInfoGame) => {
+      setInfo(info);
+    });
   }, [socket]);
 
   return (
@@ -78,7 +88,9 @@ export const GameProvider = ({ children }: GameContextProps) => {
         timeQueue,
         setDisplayRender,
         displayRender,
-      }}>
+        info,
+      }}
+    >
       {children}
     </GameContext.Provider>
   );
