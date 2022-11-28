@@ -1,21 +1,12 @@
 import {
-  black,
-  border_size_default,
   canvas_back_width,
   paddle_height,
   paddle_margin,
   paddle_width,
   rad,
   white,
-  Winner,
 } from "../../const/const";
-import {
-  IBall,
-  IDrawResponsive,
-  IQuadrilateral,
-  IPlayer,
-  Room,
-} from "../../types";
+import { IBall, IQuadrilateral, Room } from "../../types";
 
 export function draw_trans_game(
   ctx: CanvasRenderingContext2D,

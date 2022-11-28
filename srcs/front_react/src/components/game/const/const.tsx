@@ -1,8 +1,7 @@
 import { User } from "../../../contexts/AuthContext";
 
 export const canvas_back_width: number = 1920;
-export const screen_ratio: number = 9 / 16;
-export const canvas_back_height: number = canvas_back_width * screen_ratio;
+export const canvas_back_height: number = (canvas_back_width * 9) / 16;
 
 export const rad: number = 20;
 

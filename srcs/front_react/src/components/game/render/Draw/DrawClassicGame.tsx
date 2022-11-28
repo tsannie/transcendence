@@ -9,13 +9,7 @@ import {
   white,
   Winner,
 } from "../../const/const";
-import {
-  IBall,
-  IDrawResponsive,
-  IQuadrilateral,
-  IPlayer,
-  Room,
-} from "../../types";
+import { IBall, Room } from "../../types";
 
 export function draw_classic_game(
   ctx: CanvasRenderingContext2D,
@@ -163,17 +157,10 @@ function draw_paddle(
   y_paddle: number,
   x_paddle: number
 ) {
-  const paddle: IQuadrilateral = {
-    x: x_paddle,
-    y: y_paddle,
-    width: paddle_width,
-    height: paddle_height,
-  };
-
   ctx.beginPath();
-  ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+  ctx.rect(x_paddle, y_paddle, paddle_width, paddle_height);
   ctx.fillStyle = white;
-  ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
+  ctx.strokeRect(x_paddle, y_paddle, paddle_width, paddle_height);
   ctx.fill();
 }
 
