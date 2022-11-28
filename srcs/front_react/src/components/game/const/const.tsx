@@ -45,6 +45,11 @@ export interface IInfoGame {
   online: number;
 }
 
+export interface IInvitation {
+  user_id: string;
+  mode: GameMode;
+}
+
 export interface IInfoRoom {
   id: string;
   status: RoomStatus;
