@@ -71,8 +71,8 @@ export default class Room {
   p2_y_paddle: number = 0;
 
   ball: Ball;
-  smasher: IQuadrilateral;
-  wall: IQuadrilateral;
+  smasher: Smasher;
+  wall: Wall;
 
   constructor(p1_id: string, mode: GameMode) {
     this.id = uuidv4();
@@ -87,9 +87,11 @@ export default class Room {
   }
 
   updateScore(player: Winner) {
-    this.ball = new Ball();
+    this.ball.reset();
     if (this.game_mode === GameMode.PONG_TRANS) {
+      this.wall = null;
       this.wall = new Wall();
+      this.smasher = null;
       this.smasher = new Smasher();
     }
     if (player === Winner.P2) {
