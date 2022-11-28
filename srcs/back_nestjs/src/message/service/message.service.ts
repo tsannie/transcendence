@@ -43,7 +43,7 @@ export class MessageService {
         return null;
       else return dm;
     } else if (type === 'channel') {
-      let owner_of = user.owner_of.find((elem) => elem.id === inputed_id); // TODO check if == is ok
+      let owner_of = user.owner_of.find((elem) => elem.id === inputed_id);
       let admin_of = user.admin_of.find((elem) => elem.id === inputed_id);
       let user_of = user.channels.find((elem) => elem.id === inputed_id);
       if (!owner_of && !admin_of && !user_of)

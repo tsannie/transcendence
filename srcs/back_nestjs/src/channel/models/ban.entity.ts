@@ -4,7 +4,6 @@ import { UserEntity } from '../../user/models/user.entity';
 
 @Entity()
 export abstract class BanMuteEntity {
-    //TODO switch to UUID
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
