@@ -68,10 +68,6 @@ export function draw_game_ended(
     );
 }
 
-////////////////////////////////////////
-////// DRAW LINES
-////////////////////////////////////////
-
 function draw_line(
   ctx: CanvasRenderingContext2D,
   canvas_height: number,
@@ -124,10 +120,6 @@ function draw_countdown(
   ctx.fillText(countdown.toString(), canvas_height / 2, canvas_width / 2);
 }
 
-////////////////////////
-//// DRAW STATUS
-////////////////////////
-
 function draw_score(
   ctx: CanvasRenderingContext2D,
   p1_score: number,
@@ -148,10 +140,6 @@ function draw_score(
   ctx.fill();
 }
 
-////////////////////////
-//////// DRAW ELEMENTS
-////////////////////////
-
 function draw_paddle(
   ctx: CanvasRenderingContext2D,
   y_paddle: number,
@@ -165,9 +153,6 @@ function draw_paddle(
 }
 
 function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
-  IBall.x = IBall.x;
-  IBall.y = IBall.y;
-
   ctx.beginPath();
   ctx.fillStyle = white;
   ctx.rect(IBall.x - 2 * (rad / 2), IBall.y - 2 * (rad / 2), rad * 2, rad * 2);

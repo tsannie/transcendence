@@ -52,7 +52,6 @@ export default class Ball {
     this.gravity = Math.abs(this.gravity);
     this.direction_y = direction_y;
     this.hit_smasher = false;
-    this.first_speed = false;
     this.can_hit_paddle = false;
     this.can_hit_wall = true;
     this.can_hit_border = true;
