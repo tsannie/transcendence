@@ -59,7 +59,7 @@ function Conversation() {
 
     return (
       <Fragment>
-        <MessageBody currentConvId={currentConv} isChannel={isChannel}/>
+        <MessageBody currentConvId={currentConv} isChannel={isChannel} data={dm}/>
         <Options currentConvId={currentConv} isChannel={isChannel} data={dm} targetRedirection={targetRedirection}/>
       </Fragment>);
   }

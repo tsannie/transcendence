@@ -1,12 +1,13 @@
 import "./chat.style.scss";
 import { MessageContext } from "../../contexts/MessageContext";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
-import { IMessageReceived } from "./types";
+import { IChannel, IDm, IMessageReceived } from "./types";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import SendMessageForm from "./SendMessageForm";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { toast } from "react-toastify";
+import { IDatas } from "./Conversation";
 
 function MessageList(props: any) {
   const user: User = props.user;
@@ -36,8 +37,8 @@ function MessageList(props: any) {
   );
 }
 
-function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
-  const {currentConvId, isChannel} = props;
+function MessageBody(props: {currentConvId: string, isChannel: boolean, data: IDm|IDatas|null}) {
+  const {currentConvId, isChannel, data} = props;
   const { isRedirection } = useContext(ChatDisplayContext);
   const { user } = useContext(AuthContext) as AuthContextType;
   const { newMessage } = useContext(MessageContext);
@@ -108,7 +109,7 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean}) {
           <MessageList messages={messages} user={user} />
           <div ref={messagesEndRef} />
         </ul>
-        <SendMessageForm convId={currentConvId} isChannel={isChannel} />
+        <SendMessageForm convId={currentConvId} isChannel={isChannel} data={data}/>
       </div>
     </Fragment>
   );
