@@ -54,10 +54,10 @@ function GameAmical() {
             </span>
           </div>
           <div className="duel__list__item__action">
-            <button id="classic">
+            <button id="classic" title="Invite in classic mode">
               <BallIcon />
             </button>
-            <button id="trans">
+            <button id="trans" title="Invite in trans mode">
               <BallTransIcon />
             </button>
           </div>
