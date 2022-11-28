@@ -24,6 +24,8 @@ function ChannelList() {
     setIsChannel,
     newConv,
     setRedirection,
+    setMuted,
+    setMuteDate,
   } = useContext(ChatDisplayContext);
   const messagesTopRef = useRef<null | HTMLDivElement>(null);
 
@@ -88,6 +90,8 @@ function ChannelList() {
   };
 
   const clickItem = (conv: IChannel) => {
+    setMuted(false);
+    setMuteDate(null);
     setDisplay(ChatType.CONV);
     setCurrentConv(conv.id);
     setRedirection(false);
