@@ -395,6 +395,13 @@ form {
   height: calc(30 * var(--res));
 }
 
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
 .create__channel {
   display: flex;
   flex-direction: column;
