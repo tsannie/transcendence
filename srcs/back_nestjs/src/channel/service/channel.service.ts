@@ -20,8 +20,9 @@ import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import { IChannelReturn } from '../models/channel_return.interface';
-import { BanEntity, BanMuteEntity, MuteEntity } from '../models/ban.entity';
+import { BanEntity, MuteEntity } from '../models/ban.entity';
 import { BanMuteService } from './banmute.service';
+import { MessageGateway } from 'src/message/message.gateway';
 
 export interface IAdmin {
   target: UserEntity,
@@ -32,11 +33,13 @@ export interface IAdmin {
 @Catch()
 export class ChannelService {
   constructor(
+    private readonly banmuteService: BanMuteService,
     @InjectRepository(ChannelEntity)
     private channelRepository: Repository<ChannelEntity>,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
-    private readonly banmuteService: BanMuteService,
+    @Inject(forwardRef( () => MessageGateway))
+    private readonly messageGateway: MessageGateway
   ) {}
 
   /* This function return all the public datas of channel */
@@ -325,7 +328,11 @@ export class ChannelService {
       users: true,
       banned: true,
     });
-    await this.verifyBanned(channel, user.id);
+    let banned = await this.verifyBanned(channel, user.id);
+    if (banned) {
+      banned.user = user;
+      this.messageGateway.unBanUser(banned, channel.id);
+    }
 
     if (channel.status === 'Protected') {
       returned_channel = await this.joinProtectedChannels(
@@ -415,7 +422,7 @@ export class ChannelService {
       throw new UnprocessableEntityException(
         `${target.username} is not banned.`,
       );
-    else return (await this.banmuteService.remove(banned)) as BanEntity;
+    else return await this.banmuteService.remove(banned) as BanEntity;
   }
 
   /* This function allows to ban a user, based on level of clearance of caller.
@@ -685,13 +692,14 @@ export class ChannelService {
   async verifyBanned(
     channel: ChannelEntity,
     targetId: string,
-  ): Promise<BanEntity> {
+  ): Promise<BanEntity | null> {
     let banned: BanEntity;
     if ((banned = this.findBanned(channel, targetId))) {
       if (!this.banmuteService.checkDuration(banned))
         throw new ForbiddenException(`Target is banned from ${channel.name}`);
       else return (await this.banmuteService.remove(banned)) as BanEntity;
     }
+    return null;
   }
 
   findBanned(channel: ChannelEntity, targetId: string): BanEntity {

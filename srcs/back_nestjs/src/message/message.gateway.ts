@@ -40,9 +40,9 @@ export class MessageGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   constructor(
+    private authService: AuthService,
     @Inject(forwardRef(() => MessageService))
     private messageService: MessageService,
-    private authService: AuthService,
     @Inject(forwardRef(() => ChannelService))
     private channelService: ChannelService,
   ) {}
