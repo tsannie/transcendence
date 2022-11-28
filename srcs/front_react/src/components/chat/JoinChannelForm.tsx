@@ -36,7 +36,7 @@ function JoinChannelForm() {
   const [selectChannel, setSelectChannel] = useState<IChannel>();
   const [refresh, setRefresh] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
-  const { display, currentConv, isChannel, newConv, setDisplay, setCurrentConv, setIsChannel, setNewConv } =
+  const { setMuted, setMuteDate, setDisplay, setCurrentConv, setIsChannel, setNewConv } =
     useContext(ChatDisplayContext);
   const { socket } = useContext(MessageContext);
 
@@ -65,9 +65,11 @@ function JoinChannelForm() {
           setCurrentConv(res.data.id);
           setIsChannel(true);
           setNewConv(res.data);
+          setMuted(false);
+          setMuteDate(null);
         })
         .catch((err: AxiosError) => {
-          toast.error("Wrong password");
+          toast.error("HTTP error: " + err.message);
         });
     }
   };

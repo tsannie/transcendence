@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -11,12 +13,11 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { BanMuteService } from 'src/channel/service/banmute.service';
-import { Server } from 'socket.io';
-import { ChannelService } from 'src/channel/service/channel.service';
 import { MessageDto } from '../dto/message.dto';
 import { Socket } from 'socket.io';
 import { WsException } from '@nestjs/websockets';
 import { MuteEntity } from 'src/channel/models/ban.entity';
+import { MessageGateway } from '../message.gateway';
 
 const LOADED_MESSAGES = 20;
 
@@ -26,8 +27,9 @@ export class MessageService {
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
     private userService: UserService,
-    private channelService: ChannelService,
     private banMuteService: BanMuteService,
+    @Inject(forwardRef(() => MessageGateway))
+    private readonly messageGateway: MessageGateway,
   ) {}
 
   /* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
@@ -111,7 +113,7 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(socket: Server, clientId: string, data: MessageDto, userId: string): Promise<MessageEntity > {
+  async addMessagetoChannel(data: MessageDto, userId: string): Promise<MessageEntity > {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -134,6 +136,10 @@ export class MessageService {
     //TODO SWITCH TO WS THROWABLE ERROR
     if (responseStatus === true){
       throw new WsException("You've Been Muted ! Shhhh. silence.")
+    }
+    if (responseStatus instanceof MuteEntity){
+      responseStatus.user = user;
+      this.messageGateway.unMuteUser(responseStatus, channel.id)
     }
 
     const message = new MessageEntity();
