@@ -10,6 +10,7 @@ import Room, {
   GameMode,
   RoomStatus,
   Winner,
+  IGameStat,
 } from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
@@ -134,77 +135,55 @@ export class GameService {
   // INGAME FUNCTIONS
   ////////////////////
 
-  /*async losePoint(
-    // TODO : update score
-    player: PlayerEntity,
-    p1: PlayerEntity,
-    p2: PlayerEntity,
-    room: Room,
-    server: Server,
-  ) {
-    room.ball.x = canvas_back_width / 2;
-    room.ball.y = canvas_back_height / 2;
-    room.ball.direction_y = 1;
-    room.ball.first_col = false;
+  async getHistory(user: UserEntity): Promise<IGameStat[]> {
+    const history = await this.gameStatRepository.find({
+      where: [{ p1_id: user.id }, { p2_id: user.id }],
+    });
 
-    player.score += 1;
-    if (player.score === victory_score) player.won = true;
-    await this.all_player.save(player);
-    server.in(room).emit('getScore', p1, p2);
-  }*/
+    let historyGame: IGameStat[] = [];
 
-  /*getGameStat(p1: UserEntity, p2: UserEntity, room: Room): GameStatEntity {
-    // TODO edit setentity
+    for (const stat of history) {
+      const p1 = await this.userService.findById(stat.p1_id);
+      const p2 = await this.userService.findById(stat.p2_id);
+      //const winner = await this.userService.findById(stat.winner_id);
+
+      historyGame.push({
+        p1: p1,
+        p2: p2,
+        winner: stat.winner_id === p1.id ? Winner.P1 : Winner.P2,
+        eloDiff: stat.eloDiff,
+        p1_score: stat.p1_score,
+        p2_score: stat.p2_score,
+      });
+    }
+    return historyGame;
+  }
+
+  getGameStat(p1: UserEntity, p2: UserEntity, room: Room): GameStatEntity {
     let statGame = new GameStatEntity();
 
-    statGame.players = [p1, p2];
+    statGame.p1_id = p1.id;
+    statGame.p2_id = p2.id;
     statGame.p1_score = room.p1_score;
     statGame.p2_score = room.p2_score;
-    if (room.p1.won) statGame.winner_id = p1.id; // TODO
+    if (room.won === Winner.P1) statGame.winner_id = p1.id;
     else statGame.winner_id = p2.id;
-    statGame.eloDiff = this.getElo(root, p1, p2);
+    statGame.eloDiff = this.getElo(room, p1, p2);
     return statGame;
   }
 
   async getStat(room: Room) {
-    console.log('CRASH 1');
-    console.log(room);
     const p1: UserEntity = await this.userService.findById(room.p1_id);
-    console.log('p1 : ', p1);
-    console.log('CRASH 2');
     const p2: UserEntity = await this.userService.findById(room.p2_id);
-    console.log('p2 : ', p2);
-    console.log('CRASH 3');
     let statGame: GameStatEntity = this.getGameStat(p1, p2, room);
-    console.log('statGame : ', statGame);
-    console.log('CRASH 4');
 
-    await this.updateHistory(p1, p2, statGame);
-    console.log('CRASH 5');
-    await this.gamesRoomStatRepository.save(statGame);
-    console.log('CRASH 6');
-  }
-
-  async updateHistory(
-    p1: UserEntity,
-    p2: UserEntity,
-    statGame: GameStatEntity,
-  ) {
-    if (!p1.history) p1.history = [];
-    if (!p2.history) p2.history = [];
-    p1.history.push(statGame);
-    p2.history.push(statGame);
-
-    await this.userService.add(p1);
-    await this.userService.add(p2);
+    await this.gameStatRepository.save(statGame);
   }
 
   getElo(room: Room, p1: UserEntity, p2: UserEntity): number {
     let eloDiff: number = 0;
-    if (set.p1.won) {
-      // TODO
+    if (room.won === Winner.P1) {
       eloDiff = this.calculateElo(p1.elo, p2.elo, true);
-
       p1.elo += eloDiff;
       p2.elo -= eloDiff;
       p1.wins++;
@@ -235,10 +214,8 @@ export class GameService {
     } else {
       eloDiff = 30 * (1 - p2);
     }
-    // round elodiff to be a number
-    console.log('elo diff = ', eloDiff, ' == ', Math.round(eloDiff));
     return Math.round(eloDiff);
-  }*/
+  }
 
   checkGiveUP(socketP1: Socket[], socketP2: Socket[], room: Room): boolean {
     // if no socket is equal to this.usersRoom.get(socketP1) return true
@@ -246,14 +223,12 @@ export class GameService {
     if (socketP1.every((socket) => this.usersRoom.get(socket) !== room.id)) {
       room.won = Winner.P2;
       room.status = RoomStatus.CLOSED;
-      console.log('P1 GIVE UP');
       return true;
     } else if (
       socketP2.every((socket) => this.usersRoom.get(socket) !== room.id)
     ) {
       room.won = Winner.P1;
       room.status = RoomStatus.CLOSED;
-      console.log('P2 GIVE UP');
       return true;
     }
     return false;
@@ -292,6 +267,7 @@ export class GameService {
     }
 
     if (room.status === RoomStatus.CLOSED) {
+      this.getStat(room);
       server.in(room.id).emit('updateGame', room);
       this.gamesRoom.delete(room.id);
     }
