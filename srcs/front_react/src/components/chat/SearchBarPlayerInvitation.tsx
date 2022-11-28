@@ -5,6 +5,7 @@ import React, {
   Fragment,
   KeyboardEvent,
   MouseEvent,
+  useRef,
   useState,
 } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -51,8 +52,10 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
 
   if (showSuggestion && userInput) {
     if (suggestions.length) {
+      const rec = document.getElementsByClassName("actions__channel")[0].getBoundingClientRect();
+      console.log(rec);
       suggestionsListComponent.push(
-        <ul className="suggestions" key="on">
+        <ul /* style={{top: rec.bottom, left: rec.left}} */ className="suggestions" key="on">
           {suggestions.map((suggestion, index) => {
             let className;
 
