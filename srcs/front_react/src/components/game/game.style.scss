@@ -120,6 +120,7 @@
   border: dashed;
   width: 90%;
   padding: 1%;
+  margin: 1%;
   border-width: calc(3 * var(--res)) !important;
 }
 
@@ -172,6 +173,13 @@
         rgba(243, 243, 21),
         rgba(255, 153, 51)
       );
+    }
+  }
+  #classic {
+    svg {
+      width: calc(30 * var(--res));
+      fill: $bg-color;
+      background: $white-color;
     }
   }
 }
