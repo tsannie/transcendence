@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { User } from "../../../contexts/AuthContext";
@@ -6,41 +6,42 @@ import { ReactComponent as BallIcon } from "../../../assets/img/icon/full_ball.s
 import { ReactComponent as BallTransIcon } from "../../../assets/img/icon/ball-reverse.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { Link } from "react-router-dom";
+import { GameMode } from "../const/const";
+import { ICreateRoom } from "../types";
+import { toast } from "react-toastify";
 
 function GameAmical() {
-  const { socket } = useContext(GameContext) as GameContextType;
-  const [friendsLog, setFriendsLog] = useState<User[]>([]);
+  const { socket, friendsLog, inviteReceived } = useContext(
+    GameContext
+  ) as GameContextType;
 
   let allFriends: JSX.Element[];
 
-  useEffect(() => {
-    socket?.on("friendsLogin", (friend: User) => {
-      const tmp = friendsLog.filter((f) => f.id !== friend.id);
-      setFriendsLog([...tmp, friend]);
-    });
-
-    socket?.on("friendsLogout", (friend: User) => {
-      setFriendsLog((friendsLog: User[]) =>
-        friendsLog.filter((friend: User) => friend.id !== friend.id)
-      );
-    });
-  }, [socket]);
-
-  useEffect(() => {
+  const handleInvite = (friend_id: string, mode: GameMode) => {
+    const data: ICreateRoom = {
+      mode: mode,
+      invitation_user_id: friend_id,
+    };
     api
-      .get("/game/friends-log")
+      .post("/game/invite", data)
       .then((res: AxiosResponse) => {
-        setFriendsLog(res.data);
+        if (res.data === friend_id) {
+          toast("Invitation sent");
+        }
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response) {
+          toast.error(err.response.data.message);
+        } else {
+          toast.error("Server error");
+        }
       });
-  }, []);
+  };
 
   if (friendsLog.length) {
     allFriends = friendsLog.map((friend: User) => {
       return (
-        <div className="duel__list__item">
+        <div className="duel__list__item" key={friend.id}>
           <div className="duel__list__item__info">
             <Link to={`/profile/${friend.username}`}>
               <button>
@@ -54,7 +55,11 @@ function GameAmical() {
             </span>
           </div>
           <div className="duel__list__item__action">
-            <button id="classic" title="Invite in classic mode">
+            <button
+              id="classic"
+              title="Invite in classic mode"
+              onClick={() => handleInvite(friend.id, GameMode.PONG_CLASSIC)}
+            >
               <BallIcon />
             </button>
             <button id="trans" title="Invite in trans mode">

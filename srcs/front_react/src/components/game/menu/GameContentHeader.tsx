@@ -10,7 +10,7 @@ function GameContentHeader() {
   return (
     <div className="game__content__header">
       <div className="game__content__header__title">
-        <h1>game</h1>
+        <h1>play</h1>
       </div>
       <div className="game__content__header__stat">
         <div className="stat__item">
