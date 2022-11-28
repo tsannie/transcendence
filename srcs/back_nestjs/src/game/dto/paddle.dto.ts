@@ -10,10 +10,5 @@ export class PaddleDto {
   @IsDefined()
   @IsNotEmpty()
   @Type(() => Number)
-  positionY: number;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @Type(() => Number)
-  front_canvas_height: number;
+  posY: number;
 }

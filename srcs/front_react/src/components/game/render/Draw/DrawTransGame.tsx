@@ -1,6 +1,7 @@
 import {
   black,
   border_size_default,
+  canvas_back_width,
   paddle_height,
   paddle_margin,
   paddle_width,
@@ -20,68 +21,38 @@ export function draw_trans_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
   room: Room,
-  drawResponsive: IDrawResponsive,
   countdown: number
 ) {
   if (countdown != 0)
     draw_countdown(ctx, canvas.width, canvas.height, countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
-    draw_smasher(ctx, room.smasher, drawResponsive);
-    draw_wall(ctx, room.wall, drawResponsive);
-    draw_ball(ctx, room.ball, drawResponsive);
+    draw_smasher(ctx, room.smasher);
+    draw_wall(ctx, room.wall);
+    draw_ball(ctx, room.ball);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
   }
-  draw_borders(ctx, canvas.height, canvas.width, drawResponsive);
-  draw_paddle(
-    ctx,
-    room.p1_y_paddle,
-    paddle_margin * drawResponsive.ratio_width,
-    drawResponsive
-  );
+  draw_borders(ctx, canvas.height, canvas.width);
+  draw_paddle(ctx, room.p1_y_paddle, paddle_margin);
   draw_paddle(
     ctx,
     room.p2_y_paddle,
-    drawResponsive.canvas_width -
-      paddle_margin * drawResponsive.ratio_width -
-      paddle_width * drawResponsive.ratio_width,
-    drawResponsive
+    canvas_back_width - paddle_margin - paddle_width
   );
 }
 
-function draw_smasher(
-  ctx: CanvasRenderingContext2D,
-  smasher: IQuadrilateral,
-  drawResponsive: IDrawResponsive
-) {
+function draw_smasher(ctx: CanvasRenderingContext2D, smasher: IQuadrilateral) {
   ctx.beginPath();
   ctx.fillStyle = white;
 
-  if (smasher.x != smasher.x * drawResponsive.ratio_width) {
-    smasher.x *= drawResponsive.ratio_width;
-    smasher.y *= drawResponsive.ratio_height;
-    smasher.width *= drawResponsive.ratio_width;
-    smasher.height *= drawResponsive.ratio_width;
-  }
   ctx.rect(smasher.x, smasher.y, smasher.width, smasher.height);
   ctx.fill();
   ctx.stroke();
 }
 
-function draw_wall(
-  ctx: CanvasRenderingContext2D,
-  wall: IQuadrilateral,
-  drawResponsive: IDrawResponsive
-) {
+function draw_wall(ctx: CanvasRenderingContext2D, wall: IQuadrilateral) {
   ctx.beginPath();
   ctx.fillStyle = white;
-
-  if (wall.x != wall.x * drawResponsive.ratio_width) {
-    wall.x *= drawResponsive.ratio_width;
-    wall.y *= drawResponsive.ratio_height;
-    wall.width *= drawResponsive.ratio_width;
-    wall.height *= drawResponsive.ratio_height;
-  }
 
   ctx.rect(wall.x, wall.y, wall.width, wall.height);
   ctx.fill();
@@ -116,8 +87,7 @@ function draw_line(
 function draw_borders(
   ctx: CanvasRenderingContext2D,
   canvas_height: number,
-  canvas_width: number,
-  drawResponsive: IDrawResponsive
+  canvas_width: number
 ) {
   ctx.beginPath();
 
@@ -245,14 +215,13 @@ function draw_neon_paddle(
 function draw_paddle(
   ctx: CanvasRenderingContext2D,
   y_paddle: number,
-  x_paddle: number,
-  drawResponsive: IDrawResponsive
+  x_paddle: number
 ) {
   const paddle: IQuadrilateral = {
     x: x_paddle,
-    y: y_paddle * drawResponsive.ratio_height,
-    width: paddle_width * drawResponsive.ratio_width,
-    height: paddle_height * drawResponsive.ratio_height,
+    y: y_paddle,
+    width: paddle_width,
+    height: paddle_height,
   };
 
   ctx.beginPath();
@@ -262,18 +231,14 @@ function draw_paddle(
   ctx.fill();
 }
 
-function draw_ball(
-  ctx: CanvasRenderingContext2D,
-  IBall: IBall,
-  drawResponsive: IDrawResponsive
-) {
-  if (IBall.x != IBall.x * drawResponsive.ratio_width) {
-    IBall.x = IBall.x * drawResponsive.ratio_width;
-    IBall.y = IBall.y * drawResponsive.ratio_height;
+function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
+  if (IBall.x != IBall.x) {
+    IBall.x = IBall.x;
+    IBall.y = IBall.y;
   }
 
   ctx.beginPath();
   ctx.fillStyle = white;
-  ctx.arc(IBall.x, IBall.y, rad * drawResponsive.ratio_width, 0, Math.PI * 2);
+  ctx.arc(IBall.x, IBall.y, rad, 0, Math.PI * 2);
   ctx.fill();
 }

@@ -36,28 +36,11 @@ import { toast } from "react-toastify";
 let position_y: number = 0;
 export function GameRender() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
   const [players, setPlayers] = useState<User[]>();
   const { room, socket, setDisplayRender, setRoom } = useContext(
     GameContext
   ) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
-
-  function resize() {
-    const lowerSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
-
-    setDrawResponsive({
-      canvas_width: lowerSize,
-      canvas_height: lowerSize * screen_ratio,
-      ratio_width: lowerSize / canvas_back_width,
-      ratio_height: (lowerSize * screen_ratio) / canvas_back_height,
-      border_size:
-        border_size_default * (lowerSize / screen_ratio / canvas_back_height),
-    });
-  }
 
   useEffect(() => {
     const getPlayers = async () => {
@@ -89,15 +72,7 @@ export function GameRender() {
     };
 
     getPlayers();
-    resize();
   }, []);
-
-  useEffect(() => {
-    window.addEventListener("resize", resize);
-    return () => {
-      window.removeEventListener("resize", resize);
-    };
-  });
 
   function leaveGame() {
     socket?.emit("leaveRoom", room?.id);
@@ -106,10 +81,12 @@ export function GameRender() {
   }
 
   function setPaddle() {
+    const front_canvas_height: number = canvasRef.current
+      ?.clientHeight as number;
+
     const data: ISetPaddle = {
       room_id: room?.id as string,
-      positionY: position_y,
-      front_canvas_height: drawResponsive?.canvas_height as number,
+      posY: (position_y * canvas_back_height) / front_canvas_height,
     };
     socket?.emit("setPaddle", data);
   }
@@ -117,7 +94,7 @@ export function GameRender() {
   useEffect(() => {
     const render = () => {
       const canvas = canvasRef.current;
-      if (room && canvas && drawResponsive) {
+      if (room && canvas) {
         const ctx = canvas.getContext("2d");
         if (ctx) {
           if (room.status === RoomStatus.PLAYING) {
@@ -126,9 +103,9 @@ export function GameRender() {
             if (user?.id === room.p1_id || user?.id === room.p2_id) setPaddle();
 
             if (room.game_mode === GameMode.PONG_CLASSIC)
-              draw_classic_game(ctx, canvas, room, drawResponsive, 0);
+              draw_classic_game(ctx, canvas, room, 0);
             else if (room.game_mode === GameMode.PONG_TRANS)
-              draw_trans_game(ctx, canvas, room, drawResponsive, 0);
+              draw_trans_game(ctx, canvas, room, 0);
           } else {
             draw_game_ended(
               ctx,
@@ -142,35 +119,42 @@ export function GameRender() {
       }
     };
 
-    if (drawResponsive && room) requestAnimationFrame(render);
-  }, [room, drawResponsive]);
+    if (room) requestAnimationFrame(render);
+  }, [room]);
+
+  /*     setDrawResponsive({
+      canvas_width: lowerSize,
+      canvas_height: lowerSize * screen_ratio,
+      ratio_width: lowerSize / canvas_back_width,
+      ratio_height: (lowerSize * screen_ratio) / canvas_back_height,
+      border_size:
+        border_size_default * (lowerSize / screen_ratio / canvas_back_height),
+    }); */
 
   function mouv_mouse(e: any) {
-    if (!drawResponsive) return;
-
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
 
-    const tmp_pos = e.clientY - rect?.top;
+    const front_canvas_height: number = canvasRef.current
+      ?.clientHeight as number;
 
-    if (tmp_pos <= drawResponsive.border_size) {
-      position_y = drawResponsive.border_size + 1;
-    } else if (
-      tmp_pos + paddle_height * drawResponsive.ratio_height >=
-      drawResponsive.canvas_height - drawResponsive.border_size
-    ) {
-      position_y =
-        drawResponsive.canvas_height -
-        1 -
-        drawResponsive.border_size -
-        paddle_height * drawResponsive.ratio_height;
+    const paddle: number =
+      paddle_height * (front_canvas_height / canvas_back_height);
+
+    const border: number =
+      border_size_default * (front_canvas_height / canvas_back_height);
+
+    const tmp_pos = e.clientY - rect?.top - paddle / 2;
+    if (tmp_pos <= border) {
+      position_y = border;
+    } else if (tmp_pos + paddle >= front_canvas_height - border) {
+      position_y = front_canvas_height - border - paddle;
     } else {
       position_y = tmp_pos;
     }
   }
 
-  if (!drawResponsive || !room || !players || !user)
-    return <span>loading...</span>;
+  if (!room || !players || !user) return <span>loading...</span>;
   return (
     <div className="game">
       <div className="game__render">
@@ -194,17 +178,13 @@ export function GameRender() {
         </div>
 
         <div className="game__body">
-          {drawResponsive ? (
-            <canvas
-              id="canvas"
-              ref={canvasRef}
-              height={drawResponsive.canvas_height}
-              width={drawResponsive.canvas_width}
-              onMouseMove={(e) => mouv_mouse(e)}
-              style={{ backgroundColor: black }}></canvas>
-          ) : (
-            <span>loading...</span>
-          )}
+          <canvas
+            id="canvas"
+            ref={canvasRef}
+            height={canvas_back_height}
+            width={canvas_back_width}
+            onMouseMove={(e) => mouv_mouse(e)}
+            style={{ backgroundColor: black }}></canvas>
         </div>
       </div>
     </div>
