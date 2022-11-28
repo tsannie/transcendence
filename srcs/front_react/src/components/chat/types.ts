@@ -22,7 +22,6 @@ export interface ICreateChannel {
   status: string;
 }
 
-// TODO: add id
 export interface IChannel {
   id: string;
   name: string;
