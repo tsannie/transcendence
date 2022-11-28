@@ -242,7 +242,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
             isOwner={status === "owner"}
             isAdmin={status === "admin"}
             channelId={channel.id}
-            users={muted as User[] | null}
+            users={mutedMembers as User[] | null}
           />
           <MemberCategory
             type={"Banned"}

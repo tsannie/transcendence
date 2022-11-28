@@ -674,3 +674,12 @@ form {
   }
 }
 
+.profile__header__search__item{
+  width: 100%;
+  border-width: calc(2 * var(--res)) !important;
+  position: relative;
+}
+
+.suggestions {
+  position: absolute
+}
