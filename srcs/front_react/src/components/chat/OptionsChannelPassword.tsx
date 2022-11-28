@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   Fragment,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { toast } from "react-toastify";
@@ -20,9 +21,9 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
   const [isDeletePassword, setIsDeletePassword] = useState<boolean>(false);
   const [channelPassword, setChannelPassword] = useState<string>("");
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
+  const [newChannelStatus, setNewChannelStatus] = useState<string>("");
 
   const { channel, owner } = props;
-  const [newChannelStatus, setNewChannelStatus] = useState<string>(channel.status);
   const { user } = useContext(AuthContext);
 
   const onClickChangePassword = () => {
@@ -77,6 +78,10 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
     setPasswordVerifier("");
   };
 
+  useEffect(() => {
+    setNewChannelStatus(channel.status);
+  }, [channel.status]);
+
   return (
     <Fragment>
       {owner?.id === user?.id && newChannelStatus === "Protected" && (
@@ -101,7 +106,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         <div className="channel__change__password">
           <input
             type="password"
-            placeholder="Current Password..."
+            placeholder="Current Password"
             value={channelPassword}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setChannelPassword(e.target.value)
@@ -110,7 +115,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
           />
           <input
             type="password"
-            placeholder="New Password..."
+            placeholder="New Password"
             value={passwordVerifier}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setPasswordVerifier(e.target.value)
@@ -132,7 +137,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         <div className="channel__change__password">
           <input
             type="password"
-            placeholder="Current Password..."
+            placeholder="Current Password"
             value={passwordVerifier}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setPasswordVerifier(e.target.value)
