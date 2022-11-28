@@ -9,8 +9,8 @@ export interface IMuteBan {
     duration: number,
 }
 
-function BanMuteButton(props: {key: number, type : string, channelId: string, user : User}) {
-    const { key, type, channelId, user } = props;
+function BanMuteButton(props: {type : string, channelId: string, user : User}) {
+    const { type, channelId, user } = props;
     const [ timer, setTimer ] = useState<number>(0);
     const [ timerOption, setTimerOption ] = useState<boolean>(false);
 
@@ -65,16 +65,15 @@ function BanMuteButton(props: {key: number, type : string, channelId: string, us
         <Fragment>
             {
                 !timerOption ? 
-                <button key={key} onClick={createTimer}>{type}</button>
+                <button onClick={createTimer}>{type}</button>
                 : 
                 <Fragment>
-                    <button key={key} onClick={createTimer}>{type}</button>
+                    <button onClick={createTimer}>{type}</button>
                     <form onSubmit={handleAction}>
                         <input
                             type="number"
                             min="0"
                             placeholder="minutes"
-                            value={timer}
                             onChange={(e: any) =>
                                 setTimer(e.target.value)
                             }
