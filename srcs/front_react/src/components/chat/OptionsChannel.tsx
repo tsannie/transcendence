@@ -21,6 +21,7 @@ import UserOptions from "./OptionsChannelActions";
 import { IChannel } from "./types";
 import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
 import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
+import { ReactComponent as PlusIcon } from "../../assets/img/icon/circle_plus.svg";
 
 export interface IMemberProps {
   type: string;
@@ -272,7 +273,7 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
                 }
                 {owner?.id === user?.id &&
                     <button className="action">
-                        <DeleteIcon onClick={inviteChannel}/>
+                        <PlusIcon onClick={() => inviteChannel(targetUsername)}/>
                         <span>invite</span>
                     </button>
                 }
