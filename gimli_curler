@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in {151..200}
+for i in {1..50}
 do
 	curl --location --request POST 'http://localhost:4000/channel/falseUsergenerator' \
 --header 'Content-Type: application/json' \

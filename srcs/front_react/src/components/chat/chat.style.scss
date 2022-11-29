@@ -331,6 +331,7 @@ $width_chat: calc(450 * var(--res));
       flex-wrap: wrap;
       justify-content: space-evenly;
       align-items: center;
+      position: relative;
       width: 100%;
 
       .action {
@@ -681,5 +682,28 @@ form {
 }
 
 .suggestions {
-  position: absolute
+  position: absolute;
+  border-width: calc(2 * var(--res)) !important;
+  width: 100%;
+
+  li {    
+    span {
+      font-size: calc(18 * var(--res)) !important;
+    }
+
+    img{
+      width: calc(25 * var(--res));
+      height: calc(25 * var(--res));
+    }
+  }
+
+  li:not(:last-of-type) {
+    border-bottom: dashed;
+    border-width: calc(2 * var(--res)) !important;
+  }
+}
+
+.no-suggestions {
+  position: relative;
+  margin-top: 0;
 }
