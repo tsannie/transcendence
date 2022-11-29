@@ -707,3 +707,25 @@ form {
   position: relative;
   margin-top: 0;
 }
+
+.invitations {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  width: 100%;
+
+  li {
+    display: flex;
+    border-style: dashed;
+
+    .invite_info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .invite_buttons {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

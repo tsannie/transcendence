@@ -30,7 +30,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   const [newMessage, setNewMessage] = useState<IMessageReceived | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
-  const { setNewConv } = useContext(ChatDisplayContext);
+  const { inviteList, setInvite } = useContext(ChatDisplayContext);
 
   useEffect(() => {
     const newSocket: any = io("http://localhost:4000/chat", {
@@ -53,7 +53,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       }); */
       socket.on("inviteChannel", (channel) => {
         console.log("inviteChannel === ", channel);
-        //setNewConv(channel);
+        setInvite([channel, ...inviteList]);
       });
       return () => {
         socket.off("message");

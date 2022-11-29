@@ -11,6 +11,7 @@ import {
 import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
 import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
+import InviteList from "./InviteList";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
@@ -175,6 +176,7 @@ function ChannelList() {
       </div>
       <ul className="chat__list__body">
         <div ref={messagesTopRef} />
+        <InviteList />
         {MessageListItems}
       </ul>
     </div>

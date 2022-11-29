@@ -54,9 +54,7 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
 
   if (showSuggestion && userInput) {
     if (suggestions.length) {
-      console.log(document.getElementsByClassName("actions__channel")[0]);
       const rec = document.getElementsByClassName("actions__channel")[0].getBoundingClientRect();
-      console.log(rec);
       suggestionsListComponent.push(
         <ul style={{top: rec.height, left: 0}} className="suggestions invite-suggestion" key="on">
           {suggestions.map((suggestion, index) => {
