@@ -25,6 +25,7 @@ import { RdbmsSchemaBuilder } from 'typeorm/schema-builder/RdbmsSchemaBuilder';
 import Wall from '../class/wall.class';
 import Smasher from '../class/smasher.class';
 import { GameGateway } from '../game.gateway';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class GameService {
@@ -47,6 +48,8 @@ export class GameService {
     return await this.all_game.find();
   } */
 
+  //getInvitations(user_id: string):  {
+
   findRoom(user: UserEntity, mode: GameMode): Room {
     let room: Room;
 
@@ -56,7 +59,8 @@ export class GameService {
       for (const room_db of all_rooms) {
         if (
           room_db.status === RoomStatus.WAITING &&
-          room_db.game_mode === mode
+          room_db.game_mode === mode &&
+          !room_db.private_room
         ) {
           room = room_db;
           break;
@@ -78,8 +82,44 @@ export class GameService {
     });
   } */
 
+  createPrivateRoom(user: UserEntity, p2: string, game_mode: GameMode): Room {
+    const room = new Room(user.id, game_mode, true);
+    room.p2_id = p2;
+    this.gamesRoom.set(room.id, room);
+    return room;
+  }
+
   deleteRoomById(room_id: string) {
     this.gamesRoom.delete(room_id);
+  }
+
+  async waitingResponse(
+    client: Socket,
+    room: Room,
+    server: Server,
+    username_stalk: string,
+  ) {
+    let log: boolean = true;
+    while (room && room.status === RoomStatus.WAITING) {
+      log = this.gameGateway.getAllUsers().has(room.p2_id);
+      if (!this.checkUserIsAvailable(room.p2_id) || !log) {
+        this.leaveRoom(room.id, client);
+        this.deleteRoomById(room.id);
+        server.to(client.id).emit('playerNotAvailable', username_stalk);
+
+        if (log) {
+          const sockets: Socket[] = this.gameGateway
+            .getAllUsers()
+            .get(room.p2_id);
+          sockets.forEach((socket: Socket) => {
+            server.to(socket.id).emit('cancelInvitation', room.id);
+          });
+        }
+        return;
+      }
+
+      await new Promise((f) => setTimeout(f, 1000));
+    }
   }
 
   findRoomBySocket(socket: Socket): Room | undefined {
@@ -88,18 +128,21 @@ export class GameService {
     return undefined;
   }
 
-  findRoomByUser(user: UserEntity): Room | undefined {
-    for (const room of this.gamesRoom.values()) {
-      if (room.p1_id === user.id || room.p2_id === user.id) {
-        console.log('room found', room);
-        return room;
-      }
-    }
-    return undefined;
-  }
-
   getRoomById(room_id: string): Room | undefined {
     return this.gamesRoom.get(room_id);
+  }
+
+  checkUserIsAvailable(user_id: string): boolean {
+    for (const room of this.gamesRoom.values()) {
+      if (
+        ((room.p1_id === user_id || room.p2_id === user_id) &&
+          room.status === RoomStatus.PLAYING) ||
+        (room.p1_id === user_id && room.status === RoomStatus.WAITING)
+      ) {
+        return false;
+      }
+    }
+    return true;
   }
 
   joinRoom(room_id: string, client: Socket, server: Server) {
@@ -194,7 +237,6 @@ export class GameService {
         friendsLog.push(friend);
       }
     }
-    //console.log('friendsLog', friendsLog);
     return friendsLog;
   }
 
@@ -205,7 +247,7 @@ export class GameService {
     for (const room of this.gamesRoom.values()) {
       if (room.status === RoomStatus.PLAYING) {
         player_in_game += 2;
-      } else if (room.status === RoomStatus.WAITING) {
+      } else if (room.status === RoomStatus.WAITING && !room.private_room) {
         player_in_waiting += 1;
       }
     }
@@ -216,27 +258,6 @@ export class GameService {
       online: allUsers.size,
     };
     return info;
-  }
-
-  invite(user_invited_id: string, mode: GameMode, user: UserEntity): string {
-    const allUsers: Map<string, Socket[]> = this.gameGateway.getAllUsers();
-
-    if (!allUsers.has(user.id)) {
-      throw new UnauthorizedException('User not connected');
-    } else if (!allUsers.has(user_invited_id)) {
-      throw new UnauthorizedException('User invited not connected');
-    } else if (user.id === user_invited_id) {
-      throw new UnauthorizedException('You can not invite yourself');
-    } else if (!user.friends.find((friend) => friend.id === user_invited_id)) {
-      throw new UnauthorizedException('User is not your friend');
-    }
-
-    const sockets: Socket[] = allUsers.get(user_invited_id);
-    const server: Server = this.gameGateway.getServer();
-    sockets.forEach((socket) => {
-      server.to(socket.id).emit('invite', user.id, mode);
-    });
-    return user_invited_id;
   }
 
   ////////////////////

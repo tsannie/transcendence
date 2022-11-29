@@ -21,15 +21,14 @@ export interface IException {
 }
 
 export enum GameMode {
-  PONG_CLASSIC = 0,
-  PONG_TRANS = 1,
+  CLASSIC = 0,
+  TRANS = 1,
 }
 
 export enum RoomStatus {
-  EMPTY = 0,
-  WAITING = 1,
-  PLAYING = 2,
-  CLOSED = 3,
+  WAITING = 0,
+  PLAYING = 1,
+  CLOSED = 2,
 }
 
 export enum Winner {
@@ -46,6 +45,7 @@ export interface IInfoGame {
 
 export interface IInvitation {
   user_id: string;
+  room_id: string;
   mode: GameMode;
 }
 
