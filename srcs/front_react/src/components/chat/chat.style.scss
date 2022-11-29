@@ -675,13 +675,13 @@ form {
   }
 }
 
-.profile__header__search__item{
+.invite{
   width: 100%;
   border-width: calc(2 * var(--res)) !important;
   position: relative;
 }
 
-.suggestions {
+.invite-suggestion{
   position: absolute;
   border-width: calc(2 * var(--res)) !important;
   width: 100%;
@@ -703,7 +703,7 @@ form {
   }
 }
 
-.no-suggestions {
+.invite-no-suggestions{
   position: relative;
   margin-top: 0;
 }

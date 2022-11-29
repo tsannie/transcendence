@@ -54,7 +54,7 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
       const rec = document.getElementsByClassName("actions__channel")[0].getBoundingClientRect();
       console.log(rec);
       suggestionsListComponent.push(
-        <ul style={{top: rec.height, left: 0}} className="suggestions" key="on">
+        <ul style={{top: rec.height, left: 0}} className="suggestions invite-suggestion" key="on">
           {suggestions.map((suggestion, index) => {
             let className;
 
@@ -81,7 +81,7 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
       );
     } else {
       suggestionsListComponent.push(
-        <div className="no-suggestions" key="off">
+        <div className="no-suggestions invite-no-suggestions" key="off">
           <em>unknown username !</em>
         </div>
       );
@@ -156,7 +156,7 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
 
   return (
     <Fragment>
-      <div className="profile__header__search__item">
+      <div className="profile__header__search__item invite">
         <SearchIcon />
         <input
           type="text"
