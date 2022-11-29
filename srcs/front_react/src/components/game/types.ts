@@ -51,6 +51,7 @@ export interface Room {
 
   smasher: IQuadrilateral;
   wall: IQuadrilateral;
+  countdown: number;
 }
 
 export interface IDrawResponsive {

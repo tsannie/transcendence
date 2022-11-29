@@ -14,11 +14,10 @@ import { IBall, Room } from "../../types";
 export function draw_classic_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
-  room: Room,
-  countdown: number
+  room: Room
 ) {
-  if (countdown != 0)
-    draw_countdown(ctx, canvas.width, canvas.height, countdown);
+  if (room.countdown >= 1000)
+    draw_countdown(ctx, canvas.width, canvas.height, room.countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
     draw_ball(ctx, room.ball);
@@ -113,6 +112,7 @@ function draw_countdown(
   canvas_width: number,
   countdown: number
 ) {
+  countdown = Math.floor(countdown / 1000);
   ctx.beginPath();
   ctx.font = canvas_width / 4 + "px Arcade";
   ctx.fillStyle = white;
