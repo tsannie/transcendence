@@ -5,10 +5,8 @@ import React, {
   Fragment,
   KeyboardEvent,
   MouseEvent,
-  useRef,
   useState,
 } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
 import { api } from "../../const/const";
@@ -52,10 +50,11 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
 
   if (showSuggestion && userInput) {
     if (suggestions.length) {
+      console.log(document.getElementsByClassName("actions__channel")[0]);
       const rec = document.getElementsByClassName("actions__channel")[0].getBoundingClientRect();
       console.log(rec);
       suggestionsListComponent.push(
-        <ul /* style={{top: rec.bottom, left: rec.left}} */ className="suggestions" key="on">
+        <ul style={{top: rec.height, left: 0}} className="suggestions" key="on">
           {suggestions.map((suggestion, index) => {
             let className;
 
