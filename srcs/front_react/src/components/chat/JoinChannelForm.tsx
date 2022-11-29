@@ -61,12 +61,12 @@ function JoinChannelForm() {
             : { id: selectChannel.id, password: password }
         )
         .then((res: AxiosResponse) => {
-          setDisplay(ChatType.CONV);
+          setMuted(false);
+          setMuteDate(null);
           setCurrentConv(res.data.id);
           setIsChannel(true);
           setNewConv(res.data);
-          setMuted(false);
-          setMuteDate(null);
+          setDisplay(ChatType.CONV);
         })
         .catch((err: AxiosError) => {
           toast.error("HTTP error: " + err.message);

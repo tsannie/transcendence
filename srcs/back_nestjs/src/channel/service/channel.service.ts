@@ -244,6 +244,7 @@ export class ChannelService {
       owner: true,
       admins: true,
       users: true,
+      muted: true,
     });
 
     if (this.isOwner(requested_channel.id, user)) {
