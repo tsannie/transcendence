@@ -172,6 +172,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
           }
           setUsers(filterList(newUsers, target));
           setAdmins(filterList(newAdmins, target));
+          setMutedMembers(filterList(mutedMembers, target));
         }
       });
       socket.on("deleteChannel", (channelId) => {
@@ -276,6 +277,7 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   };
 
   useEffect( () => {
+    if (!currentConv) return;
     setSearchBar(false);
   }, [currentConv])
 

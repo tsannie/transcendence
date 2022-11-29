@@ -91,8 +91,10 @@ function ChannelList() {
   };
 
   const clickItem = (conv: IChannel) => {
-    setMuted(false);
-    setMuteDate(null);
+    if (conv.id !== currentConv){
+      setMuted(false);
+      setMuteDate(null);
+    }
     setDisplay(ChatType.CONV);
     setCurrentConv(conv.id);
     setRedirection(false);
