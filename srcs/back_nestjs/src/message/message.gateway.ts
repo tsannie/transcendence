@@ -92,9 +92,7 @@ export class MessageGateway
 
     if (user) {
       await this.disconnect(user.id, client);
-    }
-    else
-      client.disconnect();
+    } else client.disconnect();
   }
 
   private async disconnect(userId: string, client: Socket) {
@@ -120,10 +118,15 @@ export class MessageGateway
 
       this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
-      const lastMsg = await this.messageService.addMessagetoChannel(data, user.id);
-      const channel = await this.channelService.getChannel(
-        lastMsg.channel.id,
+      const lastMsg = await this.messageService.addMessagetoChannel(
+        data,
+        user.id,
       );
+      const channel = await this.channelService.getChannel(lastMsg.channel.id, {
+        owner: true,
+        users: true,
+        admins: true,
+      });
 
       if (channel) {
         this.messageService.emitMessageChannel(
@@ -141,7 +144,9 @@ export class MessageGateway
   }
 
   leaveChannel(user: UserEntity, channel: ChannelEntity) {
-    this.server.to(channel.id).emit('leaveChannel', user, channel.id, channel.owner);
+    this.server
+      .to(channel.id)
+      .emit('leaveChannel', user, channel.id, channel.owner);
     this.leaveAllSocketToChannel(user.id, channel.id);
   }
 
@@ -152,7 +157,7 @@ export class MessageGateway
   async inviteChannel(targetId: string, channel: ChannelEntity) {
     const target = await this.userService.findById(targetId); //TODO: change to find by id if i can send id by front
 
-    console.log("target == ", target);
+    console.log('target == ', target);
     this.connectedUsers.get(target.id).forEach((socket) => {
       this.server.to(socket.id).emit('inviteChannel', channel);
     });
@@ -160,7 +165,9 @@ export class MessageGateway
   }
 
   muteUser(mutedUser: MuteEntity) {
-    this.server.to(mutedUser.channel.id).emit('muteUser', mutedUser.user, mutedUser.channel.id,  mutedUser.end);
+    this.server
+      .to(mutedUser.channel.id)
+      .emit('muteUser', mutedUser.user, mutedUser.channel.id, mutedUser.end);
   }
 
   unMuteUser(unMutedUser: MuteEntity, channelId: string) {
@@ -168,7 +175,9 @@ export class MessageGateway
   }
 
   banUser(bannedUser: BanEntity) {
-    this.server.to(bannedUser.channel.id).emit('banUser', bannedUser.user, bannedUser.channel.id);
+    this.server
+      .to(bannedUser.channel.id)
+      .emit('banUser', bannedUser.user, bannedUser.channel.id);
   }
 
   unBanUser(unBannedUser: BanEntity, channelId: string) {
