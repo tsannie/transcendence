@@ -3,6 +3,8 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { User } from "../../../contexts/AuthContext";
 import { ReactComponent as BallIcon } from "../../../assets/img/icon/ball-reverse.svg";
+import { ReactComponent as CheckIcon } from "../../../assets/img/icon/reverse_check.svg";
+import { ReactComponent as RemoveIcon } from "../../../assets/img/icon/reverse_remove.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { Link } from "react-router-dom";
 import { GameMode, IInvitation } from "../const/const";
@@ -55,14 +57,14 @@ function GameAmical() {
                   title="Accept"
                   //onClick={() => handleAccept(friend.id)}
                 >
-                  <BallIcon />
+                  <CheckIcon />
                 </button>
                 <button
                   id={invite.mode === GameMode.CLASSIC ? "classic" : "trans"}
                   title="Decline"
                   //onClick={() => handleDecline(friend.id)}
                 >
-                  <BallIcon />
+                  <RemoveIcon />
                 </button>
               </div>
             </div>

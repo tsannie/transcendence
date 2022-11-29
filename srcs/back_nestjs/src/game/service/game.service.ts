@@ -17,6 +17,7 @@ import Room, {
   Winner,
   IGameStat,
   IInfoGame,
+  IInvitation,
 } from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
@@ -75,12 +76,23 @@ export class GameService {
     return room;
   }
 
-  /*   async deleteUser(): Promise<void> {
-    const all_game = await this.all_game.find();
-    all_game.forEach(async (game) => {
-      await this.all_game.delete({ id: game.id });
-    });
-  } */
+  getInvitations(user_id: string): IInvitation[] {
+    const invitations: IInvitation[] = [];
+    for (const room of this.gamesRoom.values()) {
+      if (
+        room.p2_id === user_id &&
+        room.status === RoomStatus.WAITING &&
+        room.private_room
+      ) {
+        invitations.push({
+          user_id: room.p1_id,
+          room_id: room.id,
+          mode: room.game_mode,
+        });
+      }
+    }
+    return invitations;
+  }
 
   createPrivateRoom(user: UserEntity, p2: string, game_mode: GameMode): Room {
     const room = new Room(user.id, game_mode, true);
@@ -118,7 +130,7 @@ export class GameService {
         return;
       }
 
-      await new Promise((f) => setTimeout(f, 1000));
+      await new Promise((f) => setTimeout(f, 5000));
     }
   }
 
