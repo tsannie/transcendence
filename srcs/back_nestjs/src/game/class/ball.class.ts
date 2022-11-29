@@ -31,7 +31,7 @@ export default class Ball {
     this.hitPaddleP1(room);
     this.hitPaddleP2(room);
 
-    if (room.game_mode === GameMode.PONG_TRANS) {
+    if (room.game_mode === GameMode.TRANS) {
       this.hitWall(room);
       this.hitSmasher(room);
     }

@@ -20,6 +20,7 @@ import { api } from "../const/const";
 import { AxiosResponse } from "axios";
 
 export type GameContextType = {
+  setTimeQueue: (time: number) => void;
   timeQueue: number;
   room: Room | null;
   setRoom: (room: Room | null) => void;
@@ -101,17 +102,30 @@ export const GameProvider = ({ children }: GameContextProps) => {
         );
       });
 
-      socket.on("invite", (user_id: string, mode: GameMode) => {
+      socket.on("invite", (data: IInvitation) => {
         // check if user is already in the list
         const already_sent = inviteReceived.some(
-          (inv) => inv.user_id === user_id && inv.mode === mode
+          (inv) => inv.user_id === data.user_id && inv.mode === data.mode
         );
         if (already_sent) return;
 
         const tmp = inviteReceived.filter(
-          (invitation) => invitation.user_id !== user_id
+          (invitation) => invitation.user_id !== data.user_id
         );
-        setInviteReceived([...tmp, { user_id, mode }]);
+        setInviteReceived([...tmp, data]);
+      });
+
+      socket.on("playerNotAvailable", (pseudo: string) => {
+        toast.error(pseudo + " is no longer available");
+        setRoom(null);
+      });
+
+      socket.on("cancelInvitation", (room_id: string) => {
+        setInviteReceived((inviteReceived: IInvitation[]) =>
+          inviteReceived.filter(
+            (invite: IInvitation) => invite.room_id !== room_id
+          )
+        );
       });
 
       return () => {
@@ -122,6 +136,8 @@ export const GameProvider = ({ children }: GameContextProps) => {
         socket.off("exception");
         socket.off("matchFound");
         socket.off("joinQueue");
+        socket.off("cancelInvitation");
+        socket.off("playerNotAvailable");
       };
     }
   }, [socket, inviteReceived, friendsLog]);
@@ -161,6 +177,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
         info,
         inviteReceived,
         friendsLog,
+        setTimeQueue,
       }}
     >
       {children}
