@@ -258,6 +258,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
 }
 
 function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
+  const { currentConv } = useContext(ChatDisplayContext);
   const { channel, owner } = props;
   const { user } = useContext(AuthContext);
   const [ searchBar, setSearchBar ] = useState<boolean>(false);
@@ -273,6 +274,10 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
       .post("/channel/delete", { id: channel.id })
       .catch((error: any) => toast.error("HTTP error:" + error));
   };
+
+  useEffect( () => {
+    setSearchBar(false);
+  }, [currentConv])
 
   return (
     <div className="conversation__options__title">
