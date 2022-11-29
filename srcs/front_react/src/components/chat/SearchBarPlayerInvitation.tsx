@@ -5,11 +5,13 @@ import React, {
   Fragment,
   KeyboardEvent,
   MouseEvent,
+  useContext,
   useState,
 } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
 import { api } from "../../const/const";
+import { AuthContext } from "../../contexts/AuthContext";
 import { IChannel } from "./types";
 
 interface IUserSearch {
@@ -19,6 +21,8 @@ interface IUserSearch {
 }
 
 function SearchBarPlayerInvitation(props: {channel: IChannel}) {
+  const { user } = useContext(AuthContext);
+
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
   const [lengthDictionary, setLengthDictionary] = useState<number>(0);
   const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
@@ -65,6 +69,7 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
               <li
                 key={index}
                 className={className}
+                title={suggestion.username}
                 onClick={(e: MouseEvent) => {
                   handleClick(e, suggestion);
                 }}
@@ -103,9 +108,20 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
 
   const handleOnChange = async (e: FormEvent<HTMLInputElement>) => {
     const userInput: string = e.currentTarget.value;
-    //const userId: string = e.currentTarget.value;
-
-    const dictionary = await getDictionary(userInput);
+    let dictionary = await getDictionary(userInput);
+    
+    if (channel && channel.admins && channel.users && channel.banned) {
+      let adminsId : string[], memberId : string[], bannedId: string[];
+      
+      adminsId = channel.admins.map( elem => elem.id);
+      memberId = channel.users.map(elem => elem.id);
+      bannedId = channel.banned.map(elem => elem.user.id);
+      dictionary = dictionary.filter( (foundUser) => 
+      foundUser.id !== user?.id 
+      && !adminsId.includes(foundUser.id)
+      && !memberId.includes(foundUser.id)
+      && !bannedId.includes(foundUser.id) );
+    }
 
     setLengthDictionary(dictionary.length);
 
