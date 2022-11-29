@@ -28,6 +28,7 @@ import { AuthService } from 'src/auth/service/auth.service';
 import { ChannelService } from 'src/channel/service/channel.service';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { BanEntity, MuteEntity } from 'src/channel/models/ban.entity';
+import { UserService } from 'src/user/service/user.service';
 
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
@@ -121,7 +122,7 @@ export class MessageGateway
       this.messageService.emitMessageDm(lastMsg, this.connectedUsers);
     } else {
       const lastMsg = await this.messageService.addMessagetoChannel(data, user.id);
-      const channel = await this.channelService.getChannelById(
+      const channel = await this.channelService.getChannel(
         lastMsg.channel.id,
       );
 
