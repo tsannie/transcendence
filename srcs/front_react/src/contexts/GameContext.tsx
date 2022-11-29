@@ -178,8 +178,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
         inviteReceived,
         friendsLog,
         setTimeQueue,
-      }}
-    >
+      }}>
       {children}
     </GameContext.Provider>
   );
