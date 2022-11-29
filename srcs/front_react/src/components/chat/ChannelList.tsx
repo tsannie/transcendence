@@ -14,7 +14,7 @@ import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { newMessage } = useContext(MessageContext);
+  const { newMessage, chatList, setChatList } = useContext(MessageContext);
   const { addChannel, changeNotif, isNotif } = useContext(NotifContext);
   const {
     currentConv,
@@ -24,10 +24,11 @@ function ChannelList() {
     setIsChannel,
     newConv,
     setRedirection,
+    setMuted,
+    setMuteDate,
   } = useContext(ChatDisplayContext);
   const messagesTopRef = useRef<null | HTMLDivElement>(null);
 
-  const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
 
   const scrollToTop = () => {
     setTimeout(() => {
@@ -89,6 +90,8 @@ function ChannelList() {
   };
 
   const clickItem = (conv: IChannel) => {
+    setMuted(false);
+    setMuteDate(null);
     setDisplay(ChatType.CONV);
     setCurrentConv(conv.id);
     setRedirection(false);
