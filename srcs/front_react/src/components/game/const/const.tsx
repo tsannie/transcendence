@@ -5,7 +5,7 @@ export const canvas_back_height: number = (canvas_back_width * 9) / 16;
 
 export const rad: number = 20;
 
-export const border_size_default: number = 5;
+export const border_size_default: number = 10;
 export const paddle_margin: number = 100;
 export const paddle_width: number = 40;
 export const paddle_height: number = 200;

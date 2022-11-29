@@ -26,6 +26,8 @@ import Wall from '../class/wall.class';
 import Smasher from '../class/smasher.class';
 import { GameGateway } from '../game.gateway';
 import { WsException } from '@nestjs/websockets';
+import { interval } from 'rxjs';
+import { frame_ms } from '../const/const';
 
 @Injectable()
 export class GameService {
@@ -398,13 +400,13 @@ export class GameService {
     while (room.status === RoomStatus.PLAYING) {
       score = [room.p1_score, room.p2_score];
       this.checkGiveUP(socketP1, socketP2, room);
-      room.ball.update(room);
+      room.gameLoop();
       server.in(room.id).emit('updateGame', room);
 
       if (this.checkNewScore(score, room))
         server.emit('updateCurrentRoom', await this.createInfoRoom(room));
 
-      await new Promise((f) => setTimeout(f, 1000 / 60));
+      await new Promise((f) => setTimeout(f, frame_ms));
     }
 
     if (room.status === RoomStatus.CLOSED) {

@@ -1,4 +1,5 @@
 import {
+  border_size_default,
   canvas_back_width,
   paddle_height,
   paddle_margin,
@@ -11,11 +12,10 @@ import { IBall, IQuadrilateral, Room } from "../../types";
 export function draw_trans_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
-  room: Room,
-  countdown: number
+  room: Room
 ) {
-  if (countdown != 0)
-    draw_countdown(ctx, canvas.width, canvas.height, countdown);
+  if (room.countdown >= 1000)
+    draw_countdown(ctx, canvas.width, canvas.height, room.countdown);
   else {
     draw_smasher(ctx, room.smasher);
     draw_wall(ctx, room.wall);
@@ -78,6 +78,7 @@ function draw_countdown(
   canvas_width: number,
   countdown: number
 ) {
+  countdown = Math.floor(countdown / 1000);
   ctx.beginPath();
   ctx.font = canvas_width / 4 + "px system-ui";
   ctx.fillStyle = white;
@@ -111,15 +112,18 @@ function draw_score(
   ctx.fill();
 }
 
+// PADDLLE
+
 function draw_paddle_rounded(
   ctx: CanvasRenderingContext2D,
   paddle: IQuadrilateral
 ) {
-  let radius = 10;
+  let radius = 16;
   if (paddle.width < 2 * radius) radius = paddle.width / 2;
   if (paddle.height < 2 * radius) radius = paddle.height / 2;
   ctx.beginPath();
   ctx.moveTo(paddle.x + radius, paddle.y);
+
   ctx.arcTo(
     paddle.x + paddle.width,
     paddle.y,
@@ -134,6 +138,7 @@ function draw_paddle_rounded(
     paddle.y + paddle.height,
     radius
   );
+
   ctx.arcTo(paddle.x, paddle.y + paddle.height, paddle.x, paddle.y, radius);
   ctx.arcTo(paddle.x, paddle.y, paddle.x + paddle.width, paddle.y, radius);
 
@@ -149,24 +154,20 @@ function draw_neon_paddle(
 ) {
   let shadow_color = "rgba(13,213,252, 0.5)";
   let strokestyle_color = "rgba(255, 255, 255, 01)";
-
   ctx.shadowColor = shadow_color;
-  ctx.shadowBlur = 10;
+  ctx.shadowBlur = 8;
   ctx.strokeStyle = strokestyle_color;
-  ctx.lineWidth = 7.5;
-  draw_paddle_rounded(ctx, paddle);
-  ctx.strokeStyle = strokestyle_color;
-  ctx.lineWidth = 6;
+  ctx.lineWidth = border_size_default;
+
   draw_paddle_rounded(ctx, paddle);
   ctx.strokeStyle = strokestyle_color;
-  ctx.lineWidth = 4.5;
-  draw_paddle_rounded(ctx, paddle);
-  ctx.strokeStyle = strokestyle_color;
-  ctx.lineWidth = 3;
-  draw_paddle_rounded(ctx, paddle);
-  ctx.strokeStyle = "#fff";
-  ctx.lineWidth = 1.5;
-  draw_paddle_rounded(ctx, paddle);
+}
+
+function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
+  ctx.beginPath();
+  ctx.fillStyle = white;
+  ctx.arc(IBall.x, IBall.y, rad, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function draw_paddle(
@@ -185,12 +186,5 @@ function draw_paddle(
   ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
   ctx.fillStyle = "black";
   draw_neon_paddle(ctx, paddle);
-  ctx.fill();
-}
-
-function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
-  ctx.beginPath();
-  ctx.fillStyle = white;
-  ctx.arc(IBall.x, IBall.y, rad, 0, Math.PI * 2);
   ctx.fill();
 }
