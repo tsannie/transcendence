@@ -117,6 +117,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
 
       socket.on("playerNotAvailable", (pseudo: string) => {
         toast.error(pseudo + " is no longer available");
+        console.log("playerNotAvailable");
         setRoom(null);
       });
 
@@ -159,6 +160,15 @@ export const GameProvider = ({ children }: GameContextProps) => {
       .get("/game/friends-log")
       .then((res: AxiosResponse) => {
         setFriendsLog(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    api
+      .get("/game/invitations")
+      .then((res: AxiosResponse) => {
+        setInviteReceived(res.data);
       })
       .catch((err) => {
         console.log(err);
