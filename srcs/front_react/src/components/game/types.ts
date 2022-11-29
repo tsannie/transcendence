@@ -32,13 +32,11 @@ export interface ICreateRoom {
 export interface Room {
   // TODO clean useless
   id: string;
+  private_room: boolean;
 
   status: RoomStatus;
   p1_id: string;
   p2_id: string;
-
-  //p1_SocketId: string;
-  //p2_SocketId: string;
 
   p1_score: number;
   p2_score: number;

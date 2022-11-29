@@ -46,19 +46,6 @@ export class GameController {
     return this.gameService.getFriendsLog(req.user);
   }
 
-  @Post('invite')
-  @SerializeOptions({ groups: ['user'] })
-  @UseGuards(JwtTwoFactorGuard)
-  invite(@Req() req: Request, @MessageBody() data: CreateRoomDto): string {
-    //TODO game mode
-    console.log(data);
-    return this.gameService.invite(
-      data.invitation_user_id,
-      data.mode,
-      req.user,
-    );
-  }
-
   /*@Get()
   async index(): Promise<RoomEntity[]> {
     return await this.gameService.findAll();
