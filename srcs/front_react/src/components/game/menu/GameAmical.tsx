@@ -30,6 +30,13 @@ function GameAmical() {
     }
   };
 
+  const handleAccept = (invitation: IInvitation) => {
+    if (socket) {
+      console.log(invitation);
+      socket.emit("acceptInvitation", invitation);
+    }
+  };
+
   if (friendsLog.length) {
     allInvitations = inviteReceived.map(
       (invite: IInvitation, index: number) => {
@@ -55,7 +62,7 @@ function GameAmical() {
                 <button
                   id={invite.mode === GameMode.CLASSIC ? "classic" : "trans"}
                   title="Accept"
-                  //onClick={() => handleAccept(friend.id)}
+                  onClick={() => handleAccept(invite)}
                 >
                   <CheckIcon />
                 </button>

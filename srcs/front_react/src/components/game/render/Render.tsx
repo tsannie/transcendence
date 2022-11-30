@@ -21,7 +21,7 @@ import {
 } from "../const/const";
 import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { ISetPaddle } from "../types";
+import { ISetPaddle, Room } from "../types";
 import {
   AuthContext,
   AuthContextType,
@@ -79,15 +79,25 @@ export function GameRender() {
     setDisplayRender(false);
   }
 
-  function setPaddle() {
-    const front_canvas_height: number = canvasRef.current
-      ?.clientHeight as number;
+  function setPaddle(room: Room) {
+    //if ()
+    const newPosY =
+      (position_y * canvas_back_height) /
+      (canvasRef.current?.clientHeight as number);
 
-    const data: ISetPaddle = {
-      room_id: room?.id as string,
-      posY: (position_y * canvas_back_height) / front_canvas_height,
-    };
-    socket?.emit("setPaddle", data);
+    if (
+      (user?.id === room.p1_id && room.p1_y_paddle !== newPosY) ||
+      (user?.id === room.p2_id && room.p2_y_paddle !== newPosY)
+    ) {
+      if (socket && room) {
+        const data: ISetPaddle = {
+          room_id: room.id,
+          posY: newPosY,
+        };
+        console.log("setPaddle");
+        socket.emit("setPaddle", data);
+      }
+    }
   }
 
   useEffect(() => {
@@ -99,7 +109,8 @@ export function GameRender() {
           if (room.status === RoomStatus.PLAYING) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (user?.id === room.p1_id || user?.id === room.p2_id) setPaddle();
+            if (user?.id === room.p1_id || user?.id === room.p2_id)
+              setPaddle(room);
 
             if (room.game_mode === GameMode.CLASSIC)
               draw_classic_game(ctx, canvas, room, 0);
