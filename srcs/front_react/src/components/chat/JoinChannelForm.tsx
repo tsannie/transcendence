@@ -36,7 +36,7 @@ function JoinChannelForm() {
   const [selectChannel, setSelectChannel] = useState<IChannel>();
   const [refresh, setRefresh] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
-  const { setMuted, setMuteDate, setDisplay, setCurrentConv, setIsChannel, setNewConv } =
+  const { setMuted, setMuteDate, setDisplay, setCurrentConv, setIsChannel, setNewConv, setRedirection, setTargetRedirection} =
     useContext(ChatDisplayContext);
   const { socket } = useContext(MessageContext);
 
@@ -61,8 +61,6 @@ function JoinChannelForm() {
             : { id: selectChannel.id, password: password }
         )
         .then((res: AxiosResponse) => {
-          setMuted(false);
-          setMuteDate(null);
           setCurrentConv(res.data.id);
           setIsChannel(true);
           setNewConv(res.data);
@@ -73,6 +71,13 @@ function JoinChannelForm() {
         });
     }
   };
+
+  useEffect( () => {
+    setMuted(false);
+    setMuteDate(null);
+    setRedirection(false);
+    setTargetRedirection("");
+  }, [])
 
   useEffect(() => {
     if (refresh) {

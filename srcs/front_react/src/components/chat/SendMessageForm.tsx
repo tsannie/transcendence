@@ -16,7 +16,7 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
     const { user } = useContext(AuthContext);
     const { isMuted, setMuted, muteDate, setMuteDate } = useContext(ChatDisplayContext);
     const { socket } = useContext(MessageContext);
-    const { isRedirection, setRedirection, targetRedirection, setCurrentConv } = useContext(ChatDisplayContext);
+    const { isRedirection, setRedirection, targetRedirection, setTargetRedirection, setCurrentConv } = useContext(ChatDisplayContext);
     const [ input, setInput ] = useState<string>("");
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
 
@@ -31,6 +31,7 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
         .post("/dm/create", {targetId: targetRedirection.toString()})
         .then((res) => {
           setRedirection(false);
+          setTargetRedirection("");
           setCurrentConv(res.data.id);
           createdId = res.data.id;
         })
@@ -91,6 +92,11 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
         return () => clearInterval(interval);
       }
     }, [muteDate])
+
+    useEffect( () => {
+      setMuted(false);
+      setMuteDate(null);
+    }, [isRedirection])
 
     const displayMinutesSeconds = (remainingTime : number) => {
       const minutes = Math.trunc((remainingTime / 1000) / 60);
