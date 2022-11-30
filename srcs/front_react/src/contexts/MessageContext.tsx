@@ -20,6 +20,8 @@ export interface MessageContextInterface {
   newMessage: IMessageReceived | null;
   chatList: (IChannel | IDm)[];
   setChatList: React.Dispatch<React.SetStateAction<(IChannel | IDm)[]>>;
+  channelNotification: boolean;
+  setChannelNotification: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface MessageProviderProps {
@@ -27,6 +29,7 @@ interface MessageProviderProps {
 }
 
 export const MessageProvider = ({ children }: MessageProviderProps) => {
+  const [ channelNotification, setChannelNotification ] = useState<boolean>(false);
   const [newMessage, setNewMessage] = useState<IMessageReceived | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
@@ -69,7 +72,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   }, [socket, user, displayLocation]);
 
   return (
-    <MessageContext.Provider value={{ socket, newMessage, chatList, setChatList }}>
+    <MessageContext.Provider value={{ socket, newMessage, chatList, setChatList, channelNotification, setChannelNotification}}>
       {children}
     </MessageContext.Provider>
   );

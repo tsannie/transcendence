@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./app.style.scss";
 import "./toastify.style.scss";
 import { MessageProvider } from "./contexts/MessageContext";
+import NotifProvider from "./contexts/ChatNotificationContext";
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -15,7 +16,9 @@ root.render(
     <AuthProvider>
       <TransitionProvider>
         <MessageProvider>
-          <App />
+          <NotifProvider>
+            <App />
+          </NotifProvider>
         </MessageProvider>
       </TransitionProvider>
     </AuthProvider>
