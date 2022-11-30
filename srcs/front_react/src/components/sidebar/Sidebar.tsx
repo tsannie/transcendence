@@ -15,10 +15,8 @@ import { MessageContext } from "../../contexts/MessageContext";
 
 export default function Sidebar() {
   const { logout, user } = useContext(AuthContext) as AuthContextType;
-  const { newMessage } = useContext(MessageContext);
+  const { newMessage, channelNotification, setChannelNotification } = useContext(MessageContext);
   const path = useLocation().pathname;
-
-  const [ channelNotification, setChannelNotification ] = useState<boolean>(false);
 
   const handleLogout = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -34,7 +32,7 @@ export default function Sidebar() {
   };
 
   useEffect(() => {
-    if (newMessage)
+    if (newMessage && newMessage.author?.id != user?.id && path != "/chat")
       setChannelNotification(true);
   }, [newMessage])
 
@@ -49,7 +47,9 @@ export default function Sidebar() {
           </Link>
           <Link to="/chat">
             <ChatIcon className={path === "/chat" ? "selected" : ""} onClick={() => {setChannelNotification(false)}} />
-            <div className="notif" />
+            { channelNotification && 
+              <div className="notif" style={{}}/>
+            }
           </Link>
           <Link to="/game">
             <GameIcon className={path === "/game" ? "selected" : ""} />
@@ -57,7 +57,9 @@ export default function Sidebar() {
           <Link to="/settings">
             <SettingsIcon className={path === "/settings" ? "selected" : ""} />
           </Link>
-          <LogOutIcon onClick={handleLogout} className="" />
+          <a>
+            <LogOutIcon onClick={handleLogout} className="" />
+          </a>
         </div>
 
         <div className="sidebar__bg"></div>

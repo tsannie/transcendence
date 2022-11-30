@@ -37,37 +37,43 @@
   border-style: dashed;
   position: relative;
 
-  .notif {
-    position: absolute;
-    border-radius: 100%;
-    height: 3%;
-    width: 30%;
-    top: 25.75%;
-    right: 7%;
-    background-color: $white-color;
-  }
+  a {
+    position: relative;
 
-  svg {
-    border-style: dashed;
-    border-radius: 50%;
-    border-color: transparent;
-    cursor: pointer;
+    .notif {
+      transition: 0.3s;
+      position: absolute;
+      border-radius: 100%;
+      height: 14%;
+      width: 25%;
+      top: 25.8%;
+      right: 62%;
+      background-color: $white-color;
 
-    transition: 0.3s;
-    width: calc(40 * var(--res));
-    padding: calc(3 * var(--res));
-    border-width: calc(3 * var(--res)) !important;
-    margin-bottom: calc(20 * var(--res));
-    margin-top: calc(20 * var(--res));
-  }
+    }
 
-  :hover {
-    filter: invert(40%);
-  }
+    svg {
+      border-style: dashed;
+      border-radius: 50%;
+      border-color: transparent;
+      cursor: pointer;
+  
+      transition: 0.3s;
+      width: calc(40 * var(--res));
+      padding: calc(3 * var(--res));
+      border-width: calc(3 * var(--res)) !important;
+      margin-bottom: calc(20 * var(--res));
+      margin-top: calc(20 * var(--res));
+    }
+  
+    &:hover {
+      filter: invert(40%);
+    }
+  
+    &:active {
+      filter: invert(70%);
+    }
 
-  :active {
-    filter: invert(70%);
-  }
 
   .selected {
     border-color: $white-color;
@@ -80,5 +86,5 @@
       75% { transform: scale(0.95, 1.05); }
     };
   }
-
+  }
 }
