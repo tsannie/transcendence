@@ -29,12 +29,10 @@ function ChatBody() {
 function Chat() {
   return (
     <div className="chat">
-      <MessageProvider>
-        <NotifProvider>
-          <ChannelList />
-          <ChatBody />
-        </NotifProvider>
-      </MessageProvider>
+      <NotifProvider>
+        <ChannelList />
+        <ChatBody />
+      </NotifProvider>
     </div>
   );
 }

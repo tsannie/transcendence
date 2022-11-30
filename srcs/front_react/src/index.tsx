@@ -6,6 +6,7 @@ import { TransitionProvider } from "./contexts/TransitionContext";
 import "react-toastify/dist/ReactToastify.css";
 import "./app.style.scss";
 import "./toastify.style.scss";
+import { MessageProvider } from "./contexts/MessageContext";
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -13,7 +14,9 @@ root.render(
   <BrowserRouter>
     <AuthProvider>
       <TransitionProvider>
-        <App />
+        <MessageProvider>
+          <App />
+        </MessageProvider>
       </TransitionProvider>
     </AuthProvider>
   </BrowserRouter>
