@@ -110,7 +110,7 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
           className="input__form"
           type="text"
           placeholder={isMuted ? 
-            muteDate ? `unmute in   ${displayMinutesSeconds(remainingTime)}` : "you're muted. Shushh, silence." :
+            muteDate ? `unmute in   ${displayMinutesSeconds(remainingTime)}` : "you're muted. Shushh." :
             "add message..."}
           value={input}
           onChange={actualize_input}

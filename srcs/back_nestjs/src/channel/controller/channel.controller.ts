@@ -163,7 +163,7 @@ export class ChannelController {
     //return await this.channelService.joinChannel(query_channel, req.user);
     const channel: ChannelEntity = await this.channelService.joinChannel(query_channel, req.user)
 
-    this.messageGateway.joinChannel(req.user, channel.id);
+    this.messageGateway.joinChannel(req.user, channel);
     return channel;
   }
 

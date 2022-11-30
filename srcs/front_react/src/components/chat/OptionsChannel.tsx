@@ -104,6 +104,11 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
                 if (channelId === props.currentConvId){
                     setUsers(addToList(users, target));
                     setMutedMembers(filterList(mutedMembers, target));
+                    
+                    if (user?.id === target.id) {
+                      setMuted(false);
+                      setMuteDate(null);
+                    }
                 }
                 if (user?.id === target.id)
                     setStatus("user");
@@ -144,9 +149,12 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
                 if (user?.id === target.id)
                     setStatus("user");
             });
-            socket.on("joinChannel", (target, channelId) => {
+            socket.on("joinChannel", (target, isMuted, channelId) => {
                 if (channelId === props.currentConvId) {
-                    setUsers(addToList(users, target));
+                    if (isMuted)
+                      setMutedMembers(addToList(mutedMembers, target));
+                    else
+                      setUsers(addToList(users, target));
                 }
             });
             socket.on("leaveChannel", (target, channelId, channelOwner) => {

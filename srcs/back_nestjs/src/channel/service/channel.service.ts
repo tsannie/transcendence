@@ -331,6 +331,7 @@ export class ChannelService {
       owner: true,
       users: true,
       banned: true,
+      muted: true,
     });
     let banned = await this.verifyBanned(channel, user.id);
     if (banned) {
