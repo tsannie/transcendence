@@ -85,7 +85,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
         false,
       );
 
-    const room = this.gameService.findRoomBySocket(client);
+    const room = this.gameService.getRoomBySocket(client);
     if (room && room.status === RoomStatus.WAITING && room.p1_id === user.id) {
       if (room.private_room) {
         const sockets: Socket[] = this.allUsers.get(room.p2_id);
@@ -131,7 +131,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException('Already in game');
     }
 
-    const room: Room = this.gameService.findRoom(user, data.mode);
+    const room: Room = this.gameService.searchRoom(user, data.mode);
     if (room && user) {
       if (
         room.status === RoomStatus.WAITING &&
@@ -214,6 +214,31 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server,
       username_invited,
     );
+  }
+
+  @SubscribeMessage('acceptInvitation')
+  async acceptInvitation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: IInvitation,
+  ) {
+    const user = await this.authService.validateSocket(client, {
+      friends: true,
+    });
+    if (!user) {
+      throw new WsException('User not found');
+    } else if (!this.gameService.checkUserIsAvailable(user.id)) {
+      throw new WsException('you are already in game or in queue');
+    }
+
+    const room = this.gameService.getRoomById(data.room_id);
+    if (room && room.status === RoomStatus.WAITING && room.private_room) {
+      room.status = RoomStatus.PLAYING;
+
+      this.gameService.joinRoom(room.id, client, this.server);
+      this.server.to(room.id).emit('updateGame', room);
+      this.server.to(room.id).emit('matchFound', user.username + ' accepted');
+      this.gameService.launchGame(room, this.server, this.allUsers);
+    }
   }
 
   @SubscribeMessage('joinRoom')

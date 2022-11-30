@@ -45,13 +45,9 @@ export class GameService {
   /* Socket, RoomID */
   private usersRoom: Map<Socket, string> = new Map();
 
-  /*   async findAll(): Promise<RoomEntity[]> {
-    return await this.all_game.find();
-  } */
-
-  //getInvitations(user_id: string):  {
-
-  findRoom(user: UserEntity, mode: GameMode): Room {
+  // try to search a room for the user and return it
+  // if no room is found, create a new one
+  searchRoom(user: UserEntity, mode: GameMode): Room {
     let room: Room;
 
     const size = this.gamesRoom.size;
@@ -134,14 +130,14 @@ export class GameService {
     }
   }
 
-  findRoomBySocket(socket: Socket): Room | undefined {
-    const room_id = this.usersRoom.get(socket);
-    if (room_id) return this.gamesRoom.get(room_id);
-    return undefined;
-  }
-
   getRoomById(room_id: string): Room | undefined {
     return this.gamesRoom.get(room_id);
+  }
+
+  getRoomBySocket(socket: Socket): Room | undefined {
+    const room_id = this.usersRoom.get(socket);
+    if (room_id) return this.getRoomById(room_id);
+    return undefined;
   }
 
   checkUserIsAvailable(user_id: string): boolean {
