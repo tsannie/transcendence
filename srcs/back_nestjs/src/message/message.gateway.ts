@@ -138,9 +138,12 @@ export class MessageGateway
     }
   }
 
-  joinChannel(user: UserEntity, channelId: string) {
-    this.joinAllSocketToChannel(user.id, channelId);
-    this.server.to(channelId).emit('joinChannel', user, channelId);
+  joinChannel(user: UserEntity, channel: ChannelEntity) {
+    let isMuted : boolean = false;
+    this.joinAllSocketToChannel(user.id, channel.id);
+    if (channel.muted && channel.muted.find( (elem) => elem.user.id === user.id))
+      isMuted = true;
+    this.server.to(channel.id).emit('joinChannel', user, isMuted, channel.id);
   }
 
   leaveChannel(user: UserEntity, channel: ChannelEntity) {
