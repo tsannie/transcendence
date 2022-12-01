@@ -11,12 +11,18 @@ import { Link } from "react-router-dom";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MessageContext } from "../../contexts/MessageContext";
+import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
+import { MessageContext, MessageProvider } from "../../contexts/MessageContext";
+import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 
 export default function Sidebar() {
   const { logout, user } = useContext(AuthContext) as AuthContextType;
-  const { newMessage, channelNotification, setChannelNotification } = useContext(MessageContext);
+  const { channels } = useContext(ChatNotifContext);
+  const { newMessage } = useContext(MessageContext);
+  const { currentConv } = useContext(ChatDisplayContext);
+
   const path = useLocation().pathname;
+  const [ channelNotification, setChannelNotification ] = useState<boolean>(false); 
 
   const handleLogout = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -32,9 +38,11 @@ export default function Sidebar() {
   };
 
   useEffect(() => {
-    if (newMessage && newMessage.author?.id != user?.id && path != "/chat")
+    if (channels && channels.length != 0)
       setChannelNotification(true);
-  }, [newMessage])
+    else
+      setChannelNotification(false);
+  }, [channels])
 
   return (
     <div className="sidebar">
@@ -46,9 +54,9 @@ export default function Sidebar() {
             />
           </Link>
           <Link to="/chat">
-            <ChatIcon className={path === "/chat" ? "selected" : ""} onClick={() => {setChannelNotification(false)}} />
+            <ChatIcon className={path === "/chat" ? "selected" : ""} />
             { channelNotification && 
-              <div className="notif" style={{}}/>
+              <div className="notif"/>
             }
           </Link>
           <Link to="/">
