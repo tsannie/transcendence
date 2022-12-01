@@ -124,7 +124,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
       });
 
       socket.on("playerRefuse", (pseudo: string) => {
-        console.log("playerRefuse");
         if (room) {
           toast.error(pseudo + " refuse your invitation");
           setRoom(null);
@@ -168,7 +167,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
 
   useEffect(() => {
     if (reloadInvitations) {
-      console.log("reloadInvitations");
       api
         .get("/game/friends-log")
         .then((res: AxiosResponse) => {
@@ -181,7 +179,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
       api
         .get("/game/invitations")
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           setInviteReceived(res.data);
         })
         .catch((err) => {

@@ -43,9 +43,6 @@ export function GameRender() {
 
   useEffect(() => {
     const getPlayers = async () => {
-      console.log("getPlayers");
-      console.log("room", room);
-
       const player1 = await api
         .get("/user/id", { params: { id: room?.p1_id } })
         .then((res: AxiosResponse) => {
@@ -66,7 +63,6 @@ export function GameRender() {
           console.log(err);
         });
 
-      console.log("players:", player1, player2);
       setPlayers([player1, player2]);
     };
 
@@ -96,7 +92,6 @@ export function GameRender() {
           room_id: room.id,
           posY: newPosY,
         };
-        console.log("setPaddle");
         socket.emit("setPaddle", data);
       }
     }
