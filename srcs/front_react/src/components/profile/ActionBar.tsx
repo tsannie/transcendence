@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ReactComponent as ChatIcon } from "../../assets/img/icon/chat.svg";
 import { ReactComponent as AddFriendIcon } from "../../assets/img/icon/add-friend.svg";
 import { ReactComponent as RemoveFriendIcon } from "../../assets/img/icon/remove-friend.svg";
@@ -17,12 +17,18 @@ import { AxiosError, AxiosResponse } from "axios";
 interface IProps {
   player: User | null;
   setReloadPlayer: (reload: boolean) => void;
+  setReloadUser: (reload: boolean) => void;
 }
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection, setCurrentConv } =
-    useContext(ChatDisplayContext) as ChatDisplayContextInterface;
+  const {
+    setIsChannel,
+    setDisplay,
+    setRedirection,
+    setTargetRedirection,
+    setCurrentConv,
+  } = useContext(ChatDisplayContext) as ChatDisplayContextInterface;
   const nav = useNavigate();
 
   const handleRemoveFriend = () => {
@@ -55,8 +61,8 @@ function ActionBar(props: IProps) {
           props.setReloadPlayer(true);
           toast.info("friend request sent !");
         })
-        .catch(() => {
-          toast.error("Friend request already sent");
+        .catch((error) => {
+          toast.error(error.response.data.message);
         });
     }
   };
@@ -68,6 +74,41 @@ function ActionBar(props: IProps) {
     setTargetRedirection(props.player?.id as string);
     setCurrentConv("");
     nav("/chat");
+  };
+
+  const handleBlock = () => {
+    api
+      .post("/user/block", { username: props.player?.username })
+      .then(() => {
+        props.setReloadUser(true);
+        props.setReloadPlayer(true);
+      })
+      .catch(() => {
+        toast.error("error while blocking user");
+      });
+  };
+
+  const handleUnBlock = () => {
+    api
+      .post("/user/unBlock", { username: props.player?.username })
+      .then(() => {
+        props.setReloadUser(true);
+        props.setReloadPlayer(true);
+      })
+      .catch(() => {
+        toast.error("error while unblocking user");
+      });
+  };
+
+  const isBlocked = (user: User | null, playerBlocked: User | null) => {
+    return (
+      user?.blocked.find(
+        (blocked_user) => blocked_user.id === playerBlocked?.id
+      ) ||
+      playerBlocked?.blocked.find(
+        (blocked_user) => blocked_user.id === user?.id
+      )
+    );
   };
 
   return (
@@ -87,18 +128,30 @@ function ActionBar(props: IProps) {
         </div>
       ) : (
         <div className="action-bar__item">
-          <button onClick={handleAddFriend}>
+          <button
+            onClick={handleAddFriend}
+            disabled={isBlocked(user, props.player) ? true : false}
+          >
             <AddFriendIcon alt="add-friend" />
           </button>
           <span>add friend</span>
         </div>
       )}
-      <div className="action-bar__item">
-        <button>
-          <BlockIcon alt="block" />
-        </button>
-        <span>block</span>
-      </div>
+      {user?.blocked.find((blocked) => blocked.id === props.player?.id) ? (
+        <div className="action-bar__item">
+          <button onClick={handleUnBlock}>
+            <BlockIcon alt="unblock" />
+          </button>
+          <span>unblock</span>
+        </div>
+      ) : (
+        <div className="action-bar__item">
+          <button onClick={handleBlock}>
+            <BlockIcon alt="block" />
+          </button>
+          <span>block</span>
+        </div>
+      )}
     </div>
   );
 }

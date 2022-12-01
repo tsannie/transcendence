@@ -59,13 +59,9 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
           toast.info(`new message from ${data.author.username}`)
       });
       socket.on("exception", (response) => {
-        toast.error("exception:" + response.message);
+        toast.error(response.message);
       });
-      /* socket.on("newChannel", (data) => {
-        console.log("newChannel === ", data);
-      }); */
       socket.on("inviteChannel", (channel, targetId) => {
-        console.log("aaaa");
         if (displayLocation.pathname !== "/chat" && (user?.id !== channel.owner.id)) {
           if (targetId !== channel.users.find( (elem: User) => elem.id === targetId)?.id &&
             targetId !== channel.admins.find( (elem: User) => elem.id === targetId)?.id &&

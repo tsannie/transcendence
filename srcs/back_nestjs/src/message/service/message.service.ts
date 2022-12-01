@@ -18,6 +18,7 @@ import { Socket } from 'socket.io';
 import { WsException } from '@nestjs/websockets';
 import { MuteEntity } from 'src/channel/models/ban.entity';
 import { MessageGateway } from '../message.gateway';
+import { DmService } from 'src/dm/service/dm.service';
 
 const LOADED_MESSAGES = 20;
 
@@ -30,6 +31,7 @@ export class MessageService {
     private banMuteService: BanMuteService,
     @Inject(forwardRef(() => MessageGateway))
     private readonly messageGateway: MessageGateway,
+    private dmService: DmService,
   ) {}
 
   /* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
@@ -158,6 +160,7 @@ export class MessageService {
       channels: true,
       admin_of: true,
       owner_of: true,
+      blocked: true,
     });
     if (!user)
       throw new UnprocessableEntityException(
@@ -165,9 +168,15 @@ export class MessageService {
       );
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
+    try {
+      await this.dmService.checkifBlocked(user, dm.users.find((elem) => elem.id !== user.id).id);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
     //TODO, AVOID sending message if user not friend;
 
     const message = new MessageEntity();
+
     message.content = data.content;
     message.author = user;
     message.dm = dm;
