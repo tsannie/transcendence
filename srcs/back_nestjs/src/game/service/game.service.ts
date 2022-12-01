@@ -17,6 +17,7 @@ import Room, {
   Winner,
   IGameStat,
   IInfoGame,
+  IInvitation,
 } from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
@@ -46,13 +47,9 @@ export class GameService {
   /* Socket, RoomID */
   private usersRoom: Map<Socket, string> = new Map();
 
-  /*   async findAll(): Promise<RoomEntity[]> {
-    return await this.all_game.find();
-  } */
-
-  //getInvitations(user_id: string):  {
-
-  findRoom(user: UserEntity, mode: GameMode): Room {
+  // try to search a room for the user and return it
+  // if no room is found, create a new one
+  searchRoom(user: UserEntity, mode: GameMode): Room {
     let room: Room;
 
     const size = this.gamesRoom.size;
@@ -77,12 +74,37 @@ export class GameService {
     return room;
   }
 
-  /*   async deleteUser(): Promise<void> {
-    const all_game = await this.all_game.find();
-    all_game.forEach(async (game) => {
-      await this.all_game.delete({ id: game.id });
-    });
-  } */
+  getInvitations(user_id: string): IInvitation[] {
+    const invitations: IInvitation[] = [];
+    for (const room of this.gamesRoom.values()) {
+      if (
+        room.p2_id === user_id &&
+        room.status === RoomStatus.WAITING &&
+        room.private_room
+      ) {
+        invitations.push({
+          user_id: room.p1_id,
+          room_id: room.id,
+          mode: room.game_mode,
+        });
+      }
+    }
+    return invitations;
+  }
+
+  validInvitation(invitation: IInvitation, user_id: string): boolean {
+    const invitations = this.getInvitations(user_id);
+    for (const inv of invitations) {
+      if (
+        inv.room_id === invitation.room_id &&
+        inv.user_id === invitation.user_id &&
+        inv.mode === invitation.mode
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   createPrivateRoom(user: UserEntity, p2: string, game_mode: GameMode): Room {
     const room = new Room(user.id, game_mode, true);
@@ -102,8 +124,18 @@ export class GameService {
     username_stalk: string,
   ) {
     let log: boolean = true;
+    let refuse: boolean = false;
+
     while (room && room.status === RoomStatus.WAITING) {
       log = this.gameGateway.getAllUsers().has(room.p2_id);
+      refuse = this.gamesRoom.has(room.id);
+
+      if (!refuse) {
+        this.leaveRoom(room.id, client);
+        server.to(client.id).emit('playerRefuse', username_stalk);
+        break;
+      }
+
       if (!this.checkUserIsAvailable(room.p2_id) || !log) {
         this.leaveRoom(room.id, client);
         this.deleteRoomById(room.id);
@@ -120,18 +152,18 @@ export class GameService {
         return;
       }
 
-      await new Promise((f) => setTimeout(f, 1000));
+      await new Promise((f) => setTimeout(f, 500));
     }
-  }
-
-  findRoomBySocket(socket: Socket): Room | undefined {
-    const room_id = this.usersRoom.get(socket);
-    if (room_id) return this.gamesRoom.get(room_id);
-    return undefined;
   }
 
   getRoomById(room_id: string): Room | undefined {
     return this.gamesRoom.get(room_id);
+  }
+
+  getRoomBySocket(socket: Socket): Room | undefined {
+    const room_id = this.usersRoom.get(socket);
+    if (room_id) return this.getRoomById(room_id);
+    return undefined;
   }
 
   checkUserIsAvailable(user_id: string): boolean {
@@ -148,6 +180,9 @@ export class GameService {
   }
 
   joinRoom(room_id: string, client: Socket, server: Server) {
+    if (!this.gamesRoom.has(room_id)) {
+      throw new WsException('Room not found');
+    }
     const room_to_leave = this.usersRoom.get(client);
     if (room_to_leave) {
       client.leave(room_to_leave);
@@ -396,11 +431,16 @@ export class GameService {
     const socketP2 = allUsers.get(room.p2_id);
     let score: number[] = [0, 0];
 
-    server.emit('updateCurrentRoom', await this.createInfoRoom(room));
+    while (room.countdown) {
+      server.in(room.id).emit('updateGame', room);
+      room.countdown--;
+      await new Promise((f) => setTimeout(f, 1000));
+    }
+
     while (room.status === RoomStatus.PLAYING) {
       score = [room.p1_score, room.p2_score];
       this.checkGiveUP(socketP1, socketP2, room);
-      room.gameLoop();
+      room.update();
       server.in(room.id).emit('updateGame', room);
 
       if (this.checkNewScore(score, room))
@@ -412,6 +452,7 @@ export class GameService {
     if (room.status === RoomStatus.CLOSED) {
       this.getStat(room);
       server.in(room.id).emit('updateGame', room);
+      server.emit('updateCurrentRoom', await this.createInfoRoom(room));
       this.gamesRoom.delete(room.id);
     }
   }

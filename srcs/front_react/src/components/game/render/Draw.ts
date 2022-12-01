@@ -27,7 +27,7 @@ export function draw_game(
   if (room.status === RoomStatus.CLOSED)
     draw_game_ended(ctx, room, user?.id as string, canvas.height, canvas.width);
   else {
-    if (room.countdown >= 1000) {
+    if (room.countdown) {
       draw_countdown(
         ctx,
         canvas.width,
@@ -189,7 +189,6 @@ function draw_countdown(
   countdown: number,
   fontFamily: string
 ) {
-  countdown = Math.floor(countdown / 1000);
   ctx.beginPath();
   ctx.font = canvas_width / 4 + fontFamily;
   ctx.fillStyle = white;

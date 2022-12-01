@@ -30,7 +30,6 @@ function ProfileHistory(props: IProps) {
 
   if (history.length !== 0) {
     allHistory = history.map((game, index) => {
-      // console.log("game", game);
       return (
         <Fragment key={index}>
           <div className="profile__body__history__item">

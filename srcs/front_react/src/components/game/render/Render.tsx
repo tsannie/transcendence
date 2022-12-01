@@ -20,7 +20,7 @@ import {
 } from "../const/const";
 import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { ISetPaddle } from "../types";
+import { ISetPaddle, Room } from "../types";
 import {
   AuthContext,
   AuthContextType,
@@ -42,9 +42,6 @@ export function GameRender() {
 
   useEffect(() => {
     const getPlayers = async () => {
-      console.log("getPlayers");
-      console.log("room", room);
-
       const player1 = await api
         .get("/user/id", { params: { id: room?.p1_id } })
         .then((res: AxiosResponse) => {
@@ -65,7 +62,6 @@ export function GameRender() {
           console.log(err);
         });
 
-      console.log("players:", player1, player2);
       setPlayers([player1, player2]);
     };
 
@@ -73,20 +69,31 @@ export function GameRender() {
   }, []);
 
   function leaveGame() {
-    socket?.emit("leaveRoom", room?.id);
-    setRoom(null);
+    if (socket && room) {
+      socket.emit("leaveRoom", room?.id);
+      setRoom(null);
+    }
     setDisplayRender(false);
   }
 
-  function setPaddle() {
-    const front_canvas_height: number = canvasRef.current
-      ?.clientHeight as number;
+  function setPaddle(room: Room) {
+    //if ()
+    const newPosY =
+      (position_y * canvas_back_height) /
+      (canvasRef.current?.clientHeight as number);
 
-    const data: ISetPaddle = {
-      room_id: room?.id as string,
-      posY: (position_y * canvas_back_height) / front_canvas_height,
-    };
-    socket?.emit("setPaddle", data);
+    if (
+      (user?.id === room.p1_id && room.p1_y_paddle !== newPosY) ||
+      (user?.id === room.p2_id && room.p2_y_paddle !== newPosY)
+    ) {
+      if (socket && room) {
+        const data: ISetPaddle = {
+          room_id: room.id,
+          posY: newPosY,
+        };
+        socket.emit("setPaddle", data);
+      }
+    }
   }
 
   useEffect(() => {
@@ -98,7 +105,7 @@ export function GameRender() {
           //if (room.status === RoomStatus.PLAYING) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           if (user && (user?.id === room.p1_id || user?.id === room.p2_id)) {
-            setPaddle();
+            setPaddle(room);
             draw_game(ctx, room, user, canvas);
           }
           //}
