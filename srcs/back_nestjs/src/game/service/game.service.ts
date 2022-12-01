@@ -178,6 +178,9 @@ export class GameService {
   }
 
   joinRoom(room_id: string, client: Socket, server: Server) {
+    if (!this.gamesRoom.has(room_id)) {
+      throw new WsException('Room not found');
+    }
     const room_to_leave = this.usersRoom.get(client);
     if (room_to_leave) {
       client.leave(room_to_leave);
@@ -442,6 +445,7 @@ export class GameService {
     if (room.status === RoomStatus.CLOSED) {
       this.getStat(room);
       server.in(room.id).emit('updateGame', room);
+      server.emit('updateCurrentRoom', await this.createInfoRoom(room));
       this.gamesRoom.delete(room.id);
     }
   }
