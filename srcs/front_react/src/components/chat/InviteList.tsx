@@ -6,11 +6,12 @@ import { IChannel } from "./types";
 import { api } from "../../const/const";
 import { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
+import { MessageContext } from "../../contexts/MessageContext";
 
 function InviteList() {
     const { setDisplay, setCurrentConv, setIsChannel, setNewConv, setMuted, setMuteDate } = useContext(ChatDisplayContext);
-    const { inviteList, setInvite } = useContext(ChatDisplayContext);
-    
+    const { inviteList, setInvite } = useContext(MessageContext);
+
     const acceptInvite = async  (channel: IChannel) => {
         await api
             .post('/channel/join', {id: channel.id})
