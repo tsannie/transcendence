@@ -9,7 +9,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { draw_classic_game, draw_game_ended } from "./Draw/DrawClassicGame";
 import {
   black,
   border_size_default,
@@ -27,10 +26,10 @@ import {
   AuthContextType,
   User,
 } from "../../../contexts/AuthContext";
-import { draw_trans_game } from "./Draw/DrawTransGame";
 import { api } from "../../../const/const";
 import { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
+import { draw_game, draw_game_ended } from "./Draw";
 
 let position_y: number = 0;
 export function GameRender() {
@@ -96,24 +95,13 @@ export function GameRender() {
       if (room && canvas) {
         const ctx = canvas.getContext("2d");
         if (ctx) {
-          if (room.status === RoomStatus.PLAYING) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (user?.id === room.p1_id || user?.id === room.p2_id) setPaddle();
-
-            if (room.game_mode === GameMode.CLASSIC)
-              draw_classic_game(ctx, canvas, room);
-            else if (room.game_mode === GameMode.TRANS)
-              draw_trans_game(ctx, canvas, room);
-          } else {
-            draw_game_ended(
-              ctx,
-              room,
-              user?.id as string,
-              canvas.height,
-              canvas.width
-            );
+          //if (room.status === RoomStatus.PLAYING) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          if (user && (user?.id === room.p1_id || user?.id === room.p2_id)) {
+            setPaddle();
+            draw_game(ctx, room, user, canvas);
           }
+          //}
         }
       }
     };
