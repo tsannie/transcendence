@@ -13,8 +13,8 @@ export interface IDatas{
 }
 
 function Conversation() {
-  const { setDisplay, currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const { chatList } = useContext(MessageContext);
+  const { setDisplay, currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDatas | IDm | null >(null);
 
   const loadContent = async () => {
@@ -44,13 +44,15 @@ function Conversation() {
   }
 
   useEffect( () => {
-    console.log(currentConv);
-    console.log(chatList);
+    console.log("MOUNTING CONVERSATION");
+    console.log("currentCOnv =", currentConv);
+    console.log("chatList =", chatList);
+    console.log("chatList lenght =", chatList.length);
     if (!currentConv) {
       console.log("zici");
       if (!chatList || chatList.length == 0) { 
         console.log("la");
-        setDisplay(ChatType.JOINFORM);
+        setDisplay(ChatType.CREATEFORM);
         return ;
       }
       else
