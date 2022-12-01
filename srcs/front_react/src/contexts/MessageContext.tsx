@@ -18,6 +18,7 @@ export const MessageContext = createContext<MessageContextInterface>(
 export interface MessageContextInterface {
   socket: Socket | null;
   newMessage: IMessageReceived | null;
+  setNewMessage: React.Dispatch<React.SetStateAction<IMessageReceived | null>>;
   chatList: (IChannel | IDm)[];
   setChatList: React.Dispatch<React.SetStateAction<(IChannel | IDm)[]>>;
   channelNotification: boolean;
@@ -63,21 +64,31 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       /* socket.on("newChannel", (data) => {
         console.log("newChannel === ", data);
       }); */
-      socket.on("inviteChannel", (channel, target) => {
-        console.log("channel === ", channel);
-        console.log("invite list === ", inviteList);
+      socket.on("inviteChannel", (channel, targetId) => {
+        console.log("aaaa");
         if (displayLocation.pathname !== "/chat" && (user?.id !== channel.owner.id)) {
-          toast.info(`${channel.owner.username} invited you to ${channel.name}`);
-          setChannelNotification(true);
-        }
-        // set invite only if target is not member of channel
-        if (target.id !== channel.users.find( (elem: User) => elem.id === target.id)?.id) {
-          console.log("pas la stp");
-          if (inviteList.length > 0) {
-            setInvite([...inviteList, channel]);
+          if (targetId !== channel.users.find( (elem: User) => elem.id === targetId)?.id &&
+            targetId !== channel.admins.find( (elem: User) => elem.id === targetId)?.id &&
+            inviteList.find( (elem: IChannel) => elem.id === channel.id) === undefined
+          ) { // if target is not in channel and channel is not in invite list
+            toast.info(`${channel.owner.username} invited you to ${channel.name}`);
+            setChannelNotification(true);
           }
-          else {
-            setInvite([channel]);
+        }
+        // set invite only if target is not member or admins of channel
+        if (targetId !== channel.users.find( (elem: User) => elem.id === targetId)?.id &&
+          targetId !== channel.admins.find( (elem: User) => elem.id === targetId)?.id &&
+          targetId !== channel.owner.id
+        ) {
+          //console.log("pas la stp");
+          // check if channel is not already in invite list
+          if (inviteList.find( (elem: IChannel) => elem.id === channel.id) === undefined) {
+            if (inviteList.length > 0) {
+              setInvite([...inviteList, channel]);
+            }
+            else {
+              setInvite([channel]);
+            }
           }
         }
         // add channel to the invite list
@@ -91,7 +102,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   }, [socket, user, displayLocation, channelNotification]);
 
   return (
-    <MessageContext.Provider value={{ socket, newMessage, chatList, setChatList, channelNotification, setChannelNotification, inviteList, setInvite}}>
+    <MessageContext.Provider value={{ socket, newMessage, setNewMessage, chatList, setChatList, channelNotification, setChannelNotification, inviteList, setInvite}}>
       {children}
     </MessageContext.Provider>
   );
