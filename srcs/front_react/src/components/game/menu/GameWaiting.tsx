@@ -14,11 +14,15 @@ export default function GameWaiting() {
   ) as GameContextType;
 
   function leaveRoom() {
-    if (room?.status === RoomStatus.WAITING) {
-      socket?.emit("leaveRoom", room.id);
+    if (room && room.status === RoomStatus.WAITING && socket) {
+      socket.emit("leaveRoom", room.id);
       setRoom(null);
     }
   }
+
+  useEffect(() => {
+    console.log("room", room);
+  }, [room]);
 
   return (
     <div className="waiting">

@@ -241,6 +241,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage('refuseInvitation')
+  async refuseInvitation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: IInvitation,
+  ) {
+    const user = await this.authService.validateSocket(client, {
+      friends: true,
+    });
+    if (!user) {
+      throw new WsException('User not found');
+    }
+    console.log('refuseInvitation', data);
+
+    client.emit('refuseInvitation', data);
+    this.gameService.deleteRoomById(data.room_id);
+  }
+
   @SubscribeMessage('joinRoom')
   async joinRoom(
     @ConnectedSocket() client: Socket,

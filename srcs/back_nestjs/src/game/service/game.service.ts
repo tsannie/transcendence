@@ -98,6 +98,7 @@ export class GameService {
   }
 
   deleteRoomById(room_id: string) {
+    console.log('DELETE');
     this.gamesRoom.delete(room_id);
   }
 
@@ -108,8 +109,20 @@ export class GameService {
     username_stalk: string,
   ) {
     let log: boolean = true;
+    let refuse: boolean = false;
+
     while (room && room.status === RoomStatus.WAITING) {
       log = this.gameGateway.getAllUsers().has(room.p2_id);
+      refuse = this.gamesRoom.has(room.id);
+
+      console.log('refuse : ' + refuse);
+
+      if (!refuse) {
+        this.leaveRoom(room.id, client);
+        server.to(client.id).emit('playerRefuse', username_stalk);
+        break;
+      }
+
       if (!this.checkUserIsAvailable(room.p2_id) || !log) {
         this.leaveRoom(room.id, client);
         this.deleteRoomById(room.id);
