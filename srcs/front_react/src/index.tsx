@@ -7,7 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "./app.style.scss";
 import "./toastify.style.scss";
 import { MessageProvider } from "./contexts/MessageContext";
-import NotifProvider from "./contexts/ChatNotificationContext";
+import ChatNotifProvider from "./contexts/ChatNotificationContext";
+import { ChatDisplayContext, ChatDisplayProvider } from "./contexts/ChatDisplayContext";
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -15,11 +16,13 @@ root.render(
   <BrowserRouter>
     <AuthProvider>
       <TransitionProvider>
-        <MessageProvider>
-          <NotifProvider>
-            <App />
-          </NotifProvider>
-        </MessageProvider>
+        <ChatNotifProvider>
+          <ChatDisplayProvider>
+            <MessageProvider>
+              <App />
+            </MessageProvider>
+          </ChatDisplayProvider>
+        </ChatNotifProvider>
       </TransitionProvider>
     </AuthProvider>
   </BrowserRouter>
