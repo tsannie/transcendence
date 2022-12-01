@@ -49,9 +49,6 @@ export const ChatDisplayProvider = ({ children }: ChatDisplayProviderProps) => {
   const [ targetRedirection, setTargetRedirection] = useState<string>("");
   const [ isMuted, setMuted ] = useState<boolean>(false);
   const [ muteDate, setMuteDate ] = useState<Date | null>(null);
-  //const [ inviteList, setInvite ] = useState<IChannel[]>([]);
-
-  //console.log("invite list ==   ", inviteList);
 
   return (
     <ChatDisplayContext.Provider
@@ -72,8 +69,6 @@ export const ChatDisplayProvider = ({ children }: ChatDisplayProviderProps) => {
         setMuted,
         muteDate,
         setMuteDate,
-        //inviteList,
-        //setInvite,
       }}
     >
       {children}

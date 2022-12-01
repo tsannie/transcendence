@@ -9,6 +9,7 @@ import { io, Socket } from "socket.io-client";
 import { IChannel, IDm, IMessageReceived } from "../components/chat/types";
 import { AuthContext, User } from "./AuthContext";
 import { ChatDisplayContext } from "./ChatDisplayContext";
+import { ChatNotifContext } from "./ChatNotificationContext";
 import { TransitionContext } from "./TransitionContext";
 
 export const MessageContext = createContext<MessageContextInterface>(
@@ -21,8 +22,6 @@ export interface MessageContextInterface {
   setNewMessage: React.Dispatch<React.SetStateAction<IMessageReceived | null>>;
   chatList: (IChannel | IDm)[];
   setChatList: React.Dispatch<React.SetStateAction<(IChannel | IDm)[]>>;
-  channelNotification: boolean;
-  setChannelNotification: React.Dispatch<React.SetStateAction<boolean>>;
   inviteList: IChannel[];
   setInvite: React.Dispatch<React.SetStateAction<IChannel[]>>;
 }
@@ -32,16 +31,15 @@ interface MessageProviderProps {
 }
 
 export const MessageProvider = ({ children }: MessageProviderProps) => {
-  const [ channelNotification, setChannelNotification ] = useState<boolean>(false);
   const [newMessage, setNewMessage] = useState<IMessageReceived | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
   const [ inviteList, setInvite ] = useState<IChannel[]>([]);
-  //const { inviteList, setInvite } = useContext(ChatDisplayContext);
-
+  const { currentConv } = useContext(ChatDisplayContext);
+  const { addChannel } = useContext(ChatNotifContext);
   const { displayLocation } = useContext(TransitionContext);
-  const { user } = useContext(AuthContext);
 
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const newSocket: any = io("http://localhost:4000/chat", {
@@ -54,6 +52,13 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   useEffect(() => {
     if (socket) {
       socket.on("message", (data) => {
+        if (data.author.id !== user?.id)
+        {
+          if (data.channel && data.channel.id !== currentConv)
+            addChannel(data.channel.id);
+          else if (data.dm && data.dm.id !== currentConv)
+            addChannel(data.dm.id);
+        }
         setNewMessage(data);
         if (displayLocation.pathname !== "/chat" && (user?.id !== data.author.id))
           toast.info(`new message from ${data.author.username}`)
@@ -72,7 +77,6 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
             inviteList.find( (elem: IChannel) => elem.id === channel.id) === undefined
           ) { // if target is not in channel and channel is not in invite list
             toast.info(`${channel.owner.username} invited you to ${channel.name}`);
-            setChannelNotification(true);
           }
         }
         // set invite only if target is not member or admins of channel
@@ -99,10 +103,10 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
         socket.off("inviteChannel");
       };
     }
-  }, [socket, user, displayLocation, channelNotification]);
+  }, [socket, user, currentConv, displayLocation, inviteList]);
 
   return (
-    <MessageContext.Provider value={{ socket, newMessage, setNewMessage, chatList, setChatList, channelNotification, setChannelNotification, inviteList, setInvite}}>
+    <MessageContext.Provider value={{ socket, newMessage, setNewMessage, chatList, setChatList, inviteList, setInvite}}>
       {children}
     </MessageContext.Provider>
   );
