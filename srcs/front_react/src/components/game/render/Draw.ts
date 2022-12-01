@@ -39,7 +39,11 @@ export function draw_game(
       if (room.game_mode === GameMode.TRANS) {
         draw_smasher(ctx, room.smasher);
         draw_wall(ctx, room.wall);
-      } else draw_line(ctx, canvas.height, canvas.width);
+        draw_borders_trans(ctx, canvas.height, canvas.width);
+      } else {
+        draw_line(ctx, canvas.height, canvas.width);
+        draw_borders(ctx, canvas.height, canvas.width);
+      }
       draw_ball(room, ctx, room.ball);
       draw_score(
         ctx,
@@ -49,17 +53,14 @@ export function draw_game(
         canvas.width,
         fontFamily
       );
+      draw_paddle(room, ctx, room.p1_y_paddle, paddle_margin);
+      draw_paddle(
+        room,
+        ctx,
+        room.p2_y_paddle,
+        canvas_back_width - paddle_margin - paddle_width
+      );
     }
-    if (room.game_mode === GameMode.TRANS)
-      draw_borders_trans(ctx, canvas.height, canvas.width);
-    else draw_borders(ctx, canvas.height, canvas.width);
-    draw_paddle(room, ctx, room.p1_y_paddle, paddle_margin);
-    draw_paddle(
-      room,
-      ctx,
-      room.p2_y_paddle,
-      canvas_back_width - paddle_margin - paddle_width
-    );
   }
 }
 
