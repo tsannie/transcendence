@@ -16,9 +16,8 @@ export default function GameMenu() {
       mode: game_mode,
     };
 
-    if (!room) {
-      console.log("socket id == ", socket?.id);
-      socket?.emit("matchmaking", data);
+    if (!room && socket) {
+      socket.emit("matchmaking", data);
       toast.info("join matchmaking ...");
     }
   }
