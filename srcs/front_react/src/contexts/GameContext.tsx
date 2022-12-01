@@ -6,16 +6,14 @@ import {
   useState,
 } from "react";
 import {
-  GameMode,
   IException,
   IInfoGame,
   IInvitation,
-  RoomStatus,
 } from "../components/game/const/const";
 import { Room } from "../components/game/types";
 import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
-import { User } from "./AuthContext";
+import { AuthContext, AuthContextType, User } from "./AuthContext";
 import { api } from "../const/const";
 import { AxiosResponse } from "axios";
 
@@ -44,6 +42,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
   const [info, setInfo] = useState<IInfoGame>();
   const [inviteReceived, setInviteReceived] = useState<IInvitation[]>([]);
   const [friendsLog, setFriendsLog] = useState<User[]>([]);
+  const { user } = useContext(AuthContext) as AuthContextType;
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [timeQueue, setTimeQueue] = useState<number>(0);
@@ -116,9 +115,21 @@ export const GameProvider = ({ children }: GameContextProps) => {
       });
 
       socket.on("playerNotAvailable", (pseudo: string) => {
-        toast.error(pseudo + " is no longer available");
-        console.log("playerNotAvailable");
-        setRoom(null);
+        console.log(room);
+        console.log("playerNotAvailable1");
+        if (room) {
+          console.log("playerNotAvailable2");
+          toast.error(pseudo + " is no longer available");
+          setRoom(null);
+        }
+      });
+
+      socket.on("playerRefuse", (pseudo: string) => {
+        console.log("playerRefuse");
+        if (room) {
+          toast.error(pseudo + " refuse your invitation");
+          setRoom(null);
+        }
       });
 
       socket.on("cancelInvitation", (room_id: string) => {
@@ -130,18 +141,19 @@ export const GameProvider = ({ children }: GameContextProps) => {
       });
 
       return () => {
-        socket.off("invite");
-        socket.off("friendsLogout");
-        socket.off("friendsLogin");
-        socket.off("infoGame");
-        socket.off("exception");
-        socket.off("matchFound");
         socket.off("joinQueue");
-        socket.off("cancelInvitation");
+        socket.off("matchFound");
+        socket.off("exception");
+        socket.off("infoGame");
+        socket.off("friendsLogin");
+        socket.off("friendsLogout");
+        socket.off("invite");
         socket.off("playerNotAvailable");
+        socket.off("playerRefuse");
+        socket.off("cancelInvitation");
       };
     }
-  }, [socket, inviteReceived, friendsLog]);
+  }, [socket, inviteReceived, friendsLog, room]);
 
   useEffect(() => {
     if (socket) {
@@ -173,7 +185,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [user?.friends]);
 
   return (
     <GameContext.Provider

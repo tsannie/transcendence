@@ -74,8 +74,10 @@ export function GameRender() {
   }, []);
 
   function leaveGame() {
-    socket?.emit("leaveRoom", room?.id);
-    setRoom(null);
+    if (socket && room) {
+      socket.emit("leaveRoom", room?.id);
+      setRoom(null);
+    }
     setDisplayRender(false);
   }
 
