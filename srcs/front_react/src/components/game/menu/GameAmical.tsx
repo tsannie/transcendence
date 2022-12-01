@@ -3,6 +3,8 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import { api } from "../../../const/const";
 import { User } from "../../../contexts/AuthContext";
 import { ReactComponent as BallIcon } from "../../../assets/img/icon/ball-reverse.svg";
+import { ReactComponent as CheckIcon } from "../../../assets/img/icon/reverse_check.svg";
+import { ReactComponent as RemoveIcon } from "../../../assets/img/icon/reverse_remove.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { Link } from "react-router-dom";
 import { GameMode, IInvitation } from "../const/const";
@@ -10,9 +12,13 @@ import { ICreateRoom } from "../types";
 import { toast } from "react-toastify";
 
 function GameAmical() {
-  const { socket, friendsLog, inviteReceived, setTimeQueue } = useContext(
-    GameContext
-  ) as GameContextType;
+  const {
+    socket,
+    friendsLog,
+    inviteReceived,
+    setTimeQueue,
+    setReloadInvitations,
+  } = useContext(GameContext) as GameContextType;
 
   let allFriends: JSX.Element[] = [];
   let allInvitations: JSX.Element[] = [];
@@ -25,6 +31,20 @@ function GameAmical() {
       };
       socket.emit("createPrivateRoom", data);
       setTimeQueue(0);
+    }
+  };
+
+  const handleAccept = (invitation: IInvitation) => {
+    if (socket) {
+      socket.emit("acceptInvitation", invitation);
+      setReloadInvitations(true);
+    }
+  };
+
+  const handleRefuse = (invitation: IInvitation) => {
+    if (socket) {
+      socket.emit("refuseInvitation", invitation);
+      setReloadInvitations(true);
     }
   };
 
@@ -53,16 +73,16 @@ function GameAmical() {
                 <button
                   id={invite.mode === GameMode.CLASSIC ? "classic" : "trans"}
                   title="Accept"
-                  //onClick={() => handleAccept(friend.id)}
+                  onClick={() => handleAccept(invite)}
                 >
-                  <BallIcon />
+                  <CheckIcon />
                 </button>
                 <button
                   id={invite.mode === GameMode.CLASSIC ? "classic" : "trans"}
                   title="Decline"
-                  //onClick={() => handleDecline(friend.id)}
+                  onClick={() => handleRefuse(invite)}
                 >
-                  <BallIcon />
+                  <RemoveIcon />
                 </button>
               </div>
             </div>
