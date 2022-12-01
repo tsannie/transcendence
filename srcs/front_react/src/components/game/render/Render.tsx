@@ -110,9 +110,9 @@ export function GameRender() {
               setPaddle(room);
 
             if (room.game_mode === GameMode.CLASSIC)
-              draw_classic_game(ctx, canvas, room, 0);
+              draw_classic_game(ctx, canvas, room);
             else if (room.game_mode === GameMode.TRANS)
-              draw_trans_game(ctx, canvas, room, 0);
+              draw_trans_game(ctx, canvas, room);
           } else {
             draw_game_ended(
               ctx,
@@ -180,8 +180,7 @@ export function GameRender() {
             height={canvas_back_height}
             width={canvas_back_width}
             onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: black }}
-          ></canvas>
+            style={{ backgroundColor: black }}></canvas>
         </div>
       </div>
     </div>

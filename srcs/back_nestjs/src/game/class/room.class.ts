@@ -1,6 +1,6 @@
 import { UserEntity } from 'src/user/models/user.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { victory_score } from '../const/const';
+import { frame_ms, victory_score } from '../const/const';
 import Ball from './ball.class';
 import Smasher from './smasher.class';
 import Wall from './wall.class';
@@ -79,6 +79,7 @@ export default class Room {
   ball: Ball;
   smasher: Smasher;
   wall: Wall;
+  countdown: number = 5000;
 
   constructor(p1_id: string, mode: GameMode, private_room: boolean = false) {
     this.id = uuidv4();
@@ -91,6 +92,12 @@ export default class Room {
       this.wall = new Wall();
       this.smasher = new Smasher();
     }
+  }
+
+  gameLoop() {
+    if (this.countdown >= 1000) {
+      this.countdown -= frame_ms;
+    } else this.ball.update(this);
   }
 
   updateScore(player: Winner) {
