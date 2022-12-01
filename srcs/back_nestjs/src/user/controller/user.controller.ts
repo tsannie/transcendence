@@ -137,13 +137,6 @@ export class UserController {
     return this.userService.getConversations(req.user);
   }
 
-  @Get('friendlist')
-  @SerializeOptions({ groups: ['user'] })
-  @UseGuards(JwtTwoFactorGuard)
-  async friendList(@Req() req: Request): Promise<UserEntity[]> {
-    return await this.userService.getFriendList(req.user);
-  }
-
   @Post('accept-friend-request')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)

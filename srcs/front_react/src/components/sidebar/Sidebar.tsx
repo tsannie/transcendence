@@ -51,8 +51,8 @@ export default function Sidebar() {
               <div className="notif" style={{}}/>
             }
           </Link>
-          <Link to="/game">
-            <GameIcon className={path === "/game" ? "selected" : ""} />
+          <Link to="/">
+            <GameIcon className={path === "/" ? "selected" : ""} />
           </Link>
           <Link to="/settings">
             <SettingsIcon className={path === "/settings" ? "selected" : ""} />

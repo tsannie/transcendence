@@ -41,7 +41,7 @@ export const TransitionProvider = ({ children }: IProps) => {
         return TransitionPageLvl.PROFILE;
       case "chat":
         return TransitionPageLvl.CHAT;
-      case "game":
+      case "":
         return TransitionPageLvl.GAME;
       case "settings":
         return TransitionPageLvl.SETTINGS;

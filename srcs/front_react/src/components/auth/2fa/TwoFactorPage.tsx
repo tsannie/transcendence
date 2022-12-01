@@ -26,7 +26,7 @@ export default function TwoFactorPage() {
   }, []);
 
   if (isAlreadyLog === true || is2FA === false || isLogin === true)
-    return <Navigate to="/game" />;
+    return <Navigate to="/" />;
 
   return (
     <div className="login">
