@@ -168,15 +168,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
   useEffect(() => {
     if (reloadInvitations) {
       api
-        .get("/game/friends-log")
-        .then((res: AxiosResponse) => {
-          setFriendsLog(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      api
         .get("/game/invitations")
         .then((res: AxiosResponse) => {
           setInviteReceived(res.data);
@@ -186,7 +177,19 @@ export const GameProvider = ({ children }: GameContextProps) => {
         });
       setReloadInvitations(false);
     }
-  }, [user?.friends, room, reloadInvitations]);
+  }, [reloadInvitations]);
+
+  useEffect(() => {
+    api
+      .get("/game/friends-log")
+      .then((res: AxiosResponse) => {
+        setFriendsLog(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setReloadInvitations(false);
+  }, [user?.friends]);
 
   return (
     <GameContext.Provider
