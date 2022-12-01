@@ -15,7 +15,7 @@ import InviteList from "./InviteList";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { newMessage, chatList, setChatList } = useContext(MessageContext);
+  const { newMessage, chatList, setChatList, setNewMessage } = useContext(MessageContext);
   const { addChannel, changeNotif, isNotif } = useContext(NotifContext);
   const {
     currentConv,
@@ -55,7 +55,7 @@ function ChannelList() {
     editable_room: IChannel | IDm
   ) => {
     if (newMessage) editable_room.updatedAt = newMessage.createdAt;
-    if (currentConv && editable_room.id != currentConv)
+    if (currentConv && editable_room.id !== currentConv)
       changeNotif(editable_room.id, true);
     newList.sort((a, b) => {
       if (a.updatedAt < b.updatedAt) return 1;
@@ -101,6 +101,7 @@ function ChannelList() {
     if (conv.name) setIsChannel(true);
     else setIsChannel(false);
     changeNotif(conv.id, false);
+    setNewMessage(null);
   };
 
   const displayNotif = (convId: string) => {
