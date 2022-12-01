@@ -16,20 +16,20 @@ export function draw_classic_game(
   canvas: any,
   room: Room
 ) {
-  if (room.countdown >= 1000)
+  if (room.countdown)
     draw_countdown(ctx, canvas.width, canvas.height, room.countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
     draw_ball(ctx, room.ball);
     draw_score(ctx, room.p1_score, room.p2_score, canvas.height, canvas.width);
+    draw_paddle(ctx, room.p1_y_paddle, paddle_margin);
+    draw_paddle(
+      ctx,
+      room.p2_y_paddle,
+      canvas_back_width - paddle_margin - paddle_width
+    );
   }
   draw_borders(ctx, canvas.height, canvas.width);
-  draw_paddle(ctx, room.p1_y_paddle, paddle_margin);
-  draw_paddle(
-    ctx,
-    room.p2_y_paddle,
-    canvas_back_width - paddle_margin - paddle_width
-  );
 }
 
 export function draw_game_ended(
@@ -112,7 +112,7 @@ function draw_countdown(
   canvas_width: number,
   countdown: number
 ) {
-  countdown = Math.floor(countdown / 1000);
+  countdown = countdown;
   ctx.beginPath();
   ctx.font = canvas_width / 4 + "px Arcade";
   ctx.fillStyle = white;
