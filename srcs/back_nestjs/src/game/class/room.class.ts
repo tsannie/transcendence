@@ -79,7 +79,7 @@ export default class Room {
   ball: Ball;
   smasher: Smasher;
   wall: Wall;
-  countdown: number = 5000;
+  countdown: number = 5;
 
   constructor(p1_id: string, mode: GameMode, private_room: boolean = false) {
     this.id = uuidv4();
@@ -94,10 +94,8 @@ export default class Room {
     }
   }
 
-  gameLoop() {
-    if (this.countdown >= 1000) {
-      this.countdown -= frame_ms;
-    } else this.ball.update(this);
+  update() {
+    this.ball.update(this);
   }
 
   updateScore(player: Winner) {
