@@ -18,6 +18,7 @@ import { api } from "../const/const";
 import { AxiosResponse } from "axios";
 
 export type GameContextType = {
+  setReloadInvitations: (reload: boolean) => void;
   setTimeQueue: (time: number) => void;
   timeQueue: number;
   room: Room | null;
@@ -39,6 +40,7 @@ interface GameContextProps {
 export const GameProvider = ({ children }: GameContextProps) => {
   const [room, setRoom] = useState<Room | null>(null);
   const [displayRender, setDisplayRender] = useState<boolean>(false);
+  const [reloadInvitations, setReloadInvitations] = useState<boolean>(true);
   const [info, setInfo] = useState<IInfoGame>();
   const [inviteReceived, setInviteReceived] = useState<IInvitation[]>([]);
   const [friendsLog, setFriendsLog] = useState<User[]>([]);
@@ -115,10 +117,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
       });
 
       socket.on("playerNotAvailable", (pseudo: string) => {
-        console.log(room);
-        console.log("playerNotAvailable1");
         if (room) {
-          console.log("playerNotAvailable2");
           toast.error(pseudo + " is no longer available");
           setRoom(null);
         }
@@ -168,24 +167,29 @@ export const GameProvider = ({ children }: GameContextProps) => {
   }, [socket]);
 
   useEffect(() => {
-    api
-      .get("/game/friends-log")
-      .then((res: AxiosResponse) => {
-        setFriendsLog(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (reloadInvitations) {
+      console.log("reloadInvitations");
+      api
+        .get("/game/friends-log")
+        .then((res: AxiosResponse) => {
+          setFriendsLog(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-    api
-      .get("/game/invitations")
-      .then((res: AxiosResponse) => {
-        setInviteReceived(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [user?.friends]);
+      api
+        .get("/game/invitations")
+        .then((res: AxiosResponse) => {
+          console.log(res.data);
+          setInviteReceived(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setReloadInvitations(false);
+    }
+  }, [user?.friends, room, reloadInvitations]);
 
   return (
     <GameContext.Provider
@@ -200,6 +204,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
         inviteReceived,
         friendsLog,
         setTimeQueue,
+        setReloadInvitations,
       }}
     >
       {children}

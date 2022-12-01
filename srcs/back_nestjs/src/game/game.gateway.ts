@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { forwardRef, Inject, Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -16,18 +10,11 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { canvas_back_height } from './const/const';
 import { GameService } from './service/game.service';
 import { PaddleDto } from './dto/paddle.dto';
 import { CreateRoomDto } from './dto/createRoom.dto';
 import { AuthService } from 'src/auth/service/auth.service';
-import Room, {
-  IInfoGame,
-  IInvitation,
-  RoomStatus,
-  Winner,
-} from './class/room.class';
-import { UserEntity } from 'src/user/models/user.entity';
+import Room, { IInvitation, RoomStatus } from './class/room.class';
 
 @WebSocketGateway({
   namespace: '/game',
@@ -228,7 +215,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new WsException('User not found');
     } else if (!this.gameService.checkUserIsAvailable(user.id)) {
       throw new WsException('you are already in game or in queue');
-    }
+    } else if (!this.gameService.validInvitation(data, user.id))
+      throw new WsException('invitation not found');
 
     const room = this.gameService.getRoomById(data.room_id);
     if (room && room.status === RoomStatus.WAITING && room.private_room) {
@@ -249,10 +237,9 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await this.authService.validateSocket(client, {
       friends: true,
     });
-    if (!user) {
-      throw new WsException('User not found');
-    }
-    console.log('refuseInvitation', data);
+    if (!user) throw new WsException('User not found');
+    else if (!this.gameService.validInvitation(data, user.id))
+      throw new WsException('invitation not found');
 
     client.emit('refuseInvitation', data);
     this.gameService.deleteRoomById(data.room_id);
