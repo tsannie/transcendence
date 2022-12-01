@@ -35,6 +35,7 @@ function ActionBar(props: IProps) {
     api.post("/user/remove-friend", { id: props.player?.id }).then(
       () => {
         props.setReloadPlayer(true);
+        //props.setReloadUser(true);
       },
       () => {
         toast.error("error while removing friend");
@@ -110,6 +111,8 @@ function ActionBar(props: IProps) {
       )
     );
   };
+  console.log("user blocked === ", user?.blocked);
+  console.log("player blocked === ", props.player?.blocked);
 
   return (
     <div className="action-bar">
