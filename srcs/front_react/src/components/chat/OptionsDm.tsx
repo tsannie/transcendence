@@ -15,7 +15,7 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
   const loadUser2 = async () => {
     await api
       .get("/user/id", { params: { id: targetRedirection}})
-      .then( (res) => { 
+      .then( (res) => {
         setUser2(res.data); })
       .catch(err => toast.error("HTTP error: " + err));
   }
@@ -23,7 +23,7 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
   const findUser2 = () => {
     if (isRedirection)
     {
-      const async_fct = async () => { 
+      const async_fct = async () => {
         await loadUser2()
       };
       async_fct();
@@ -52,9 +52,9 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
         <img src={user2?.profile_picture} />
       </Link>
     </button>
-    <div className="text"> 
+    <div className="text">
       <span>{user2?.username}</span>
-      {isRedirection? <div className="date">Draft Message</div> : <div className="date">conv started at: {dm?.createdAt?.toLocaleString()}</div>}
+      {/* {isRedirection? <div className="date">Draft Message</div> : <div className="date">conv started at: {dm?.createdAt?.toLocaleString()}</div>} */}
     </div>
   </div>);
 }

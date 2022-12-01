@@ -104,7 +104,7 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
                 if (channelId === props.currentConvId){
                     setUsers(addToList(users, target));
                     setMutedMembers(filterList(mutedMembers, target));
-                    
+
                     if (user?.id === target.id) {
                       setMuted(false);
                       setMuteDate(null);
@@ -293,10 +293,10 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
     <div className="conversation__options__title">
       <div className="text">
         <span>{channel.name}</span>
-        <div className="date">
+        {/* <div className="date">
           conv started at: {channel.createdAt.toLocaleString()}
-        </div>
-        <span className="owner">owned by: {owner?.username}</span>
+        </div> */}
+        {/* <span className="owner">owned by: {owner?.username}</span> */}
         <button className="clickable_profile">
           <Link
             style={{ textDecoration: "none" }}

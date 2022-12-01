@@ -15,7 +15,7 @@ import InviteList from "./InviteList";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { newMessage, chatList, setChatList } = useContext(MessageContext);
+  const { newMessage, chatList, setChatList, setNewMessage } = useContext(MessageContext);
   const { channels, removeChannel } = useContext(ChatNotifContext);
   const {
     currentConv,
@@ -88,12 +88,14 @@ function ChannelList() {
       setMuteDate(null);
     }
     setDisplay(ChatType.CONV);
+    console.log("clicked :", conv.id);
     setCurrentConv(conv.id);
     setRedirection(false);
     if (conv.name) setIsChannel(true);
     else setIsChannel(false);
     if (channels && channels.find( channelId => channelId === conv.id))
       removeChannel(conv.id);
+    setNewMessage(null);
   };
 
   const displayNotif = (convId: string) => {

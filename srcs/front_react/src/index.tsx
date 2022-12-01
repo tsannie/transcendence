@@ -6,9 +6,6 @@ import { TransitionProvider } from "./contexts/TransitionContext";
 import "react-toastify/dist/ReactToastify.css";
 import "./app.style.scss";
 import "./toastify.style.scss";
-import { MessageProvider } from "./contexts/MessageContext";
-import ChatNotifProvider from "./contexts/ChatNotificationContext";
-import { ChatDisplayContext, ChatDisplayProvider } from "./contexts/ChatDisplayContext";
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -16,13 +13,7 @@ root.render(
   <BrowserRouter>
     <AuthProvider>
       <TransitionProvider>
-        <ChatNotifProvider>
-          <ChatDisplayProvider>
-            <MessageProvider>
-              <App />
-            </MessageProvider>
-          </ChatDisplayProvider>
-        </ChatNotifProvider>
+        <App />
       </TransitionProvider>
     </AuthProvider>
   </BrowserRouter>

@@ -77,9 +77,9 @@ export class MessageGateway
         // join all channel of the user
         const channels = await this.channelService.getChannelsByUser(user.id);
 
-        channels.forEach((channel) => {
+        for (const channel of channels) {
           client.join(channel.id);
-        });
+        }
       }
     } catch {
       return client.disconnect();
@@ -98,11 +98,14 @@ export class MessageGateway
   private async disconnect(userId: string, client: Socket) {
     const channels = await this.channelService.getChannelsByUser(userId);
 
-    channels.forEach((channel) => {
+    for (const channel of channels) {
       client.leave(channel.id);
-    });
+    };
 
-    this.connectedUsers.delete(userId);
+    // delete user in map only if he has no more socket
+    if (!this.connectedUsers.has(userId)) {
+      this.connectedUsers.delete(userId);
+    }
     client.disconnect();
   }
 
@@ -157,14 +160,14 @@ export class MessageGateway
     this.server.to(channelId).emit('deleteChannel', channelId);
   }
 
-  async inviteChannel(targetId: string, channel: ChannelEntity) {
-    const target = await this.userService.findById(targetId); //TODO: change to find by id if i can send id by front
+  inviteChannel(targetId: string, channel: ChannelEntity) {
+    const socket = this.connectedUsers.get(targetId);
 
-    console.log('target == ', target);
-    this.connectedUsers.get(target.id).forEach((socket) => {
-      this.server.to(socket.id).emit('inviteChannel', channel);
-    });
-    //this.server.to(channelId).emit('inviteChannel', channelId);
+    if (socket) {
+      for (const client of socket) {
+        client.emit('inviteChannel', channel, targetId);
+      };
+    }
   }
 
   muteUser(mutedUser: MuteEntity) {
@@ -199,9 +202,9 @@ export class MessageGateway
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
-      sockets.forEach((client) => {
+      for (const client of sockets) {
         client.join(channelId);
-      });
+      };
     }
   }
 
@@ -209,9 +212,9 @@ export class MessageGateway
     const sockets = this.connectedUsers.get(userId);
 
     if (sockets) {
-      sockets.forEach((client) => {
+      for (const client of sockets) {
         client.leave(channelId);
-      });
+      };
     }
   }
 }
