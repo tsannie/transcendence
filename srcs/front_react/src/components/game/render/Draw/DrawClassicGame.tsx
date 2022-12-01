@@ -14,11 +14,10 @@ import { IBall, Room } from "../../types";
 export function draw_classic_game(
   ctx: CanvasRenderingContext2D,
   canvas: any,
-  room: Room,
-  countdown: number
+  room: Room
 ) {
-  if (countdown != 0)
-    draw_countdown(ctx, canvas.width, canvas.height, countdown);
+  if (room.countdown >= 1000)
+    draw_countdown(ctx, canvas.width, canvas.height, room.countdown);
   else {
     draw_line(ctx, canvas.height, canvas.width);
     draw_ball(ctx, room.ball);
@@ -68,10 +67,6 @@ export function draw_game_ended(
     );
 }
 
-////////////////////////////////////////
-////// DRAW LINES
-////////////////////////////////////////
-
 function draw_line(
   ctx: CanvasRenderingContext2D,
   canvas_height: number,
@@ -117,16 +112,13 @@ function draw_countdown(
   canvas_width: number,
   countdown: number
 ) {
+  countdown = Math.floor(countdown / 1000);
   ctx.beginPath();
   ctx.font = canvas_width / 4 + "px Arcade";
   ctx.fillStyle = white;
   ctx.textAlign = "center";
   ctx.fillText(countdown.toString(), canvas_height / 2, canvas_width / 2);
 }
-
-////////////////////////
-//// DRAW STATUS
-////////////////////////
 
 function draw_score(
   ctx: CanvasRenderingContext2D,
@@ -148,10 +140,6 @@ function draw_score(
   ctx.fill();
 }
 
-////////////////////////
-//////// DRAW ELEMENTS
-////////////////////////
-
 function draw_paddle(
   ctx: CanvasRenderingContext2D,
   y_paddle: number,
@@ -165,9 +153,6 @@ function draw_paddle(
 }
 
 function draw_ball(ctx: CanvasRenderingContext2D, IBall: IBall) {
-  IBall.x = IBall.x;
-  IBall.y = IBall.y;
-
   ctx.beginPath();
   ctx.fillStyle = white;
   ctx.rect(IBall.x - 2 * (rad / 2), IBall.y - 2 * (rad / 2), rad * 2, rad * 2);
