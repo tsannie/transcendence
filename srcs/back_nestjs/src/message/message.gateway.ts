@@ -162,7 +162,7 @@ export class MessageGateway
 
     console.log('target == ', target);
     this.connectedUsers.get(target.id).forEach((socket) => {
-      this.server.to(socket.id).emit('inviteChannel', channel);
+      this.server.to(socket.id).emit('inviteChannel', channel, target);
     });
     //this.server.to(channelId).emit('inviteChannel', channelId);
   }
