@@ -9,14 +9,14 @@ import {
   ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
-import { NotifContext } from "../../contexts/ChatNotificationContext";
+import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
 import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
 import InviteList from "./InviteList";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
   const { newMessage, chatList, setChatList, setNewMessage } = useContext(MessageContext);
-  const { addChannel, changeNotif, isNotif } = useContext(NotifContext);
+  const { channels, removeChannel } = useContext(ChatNotifContext);
   const {
     currentConv,
     isChannel,
@@ -41,22 +41,16 @@ function ChannelList() {
     await api
       .get("/user/conversations")
       .then((res) => {
-        const copy_data: IChannel[] = res.data;
-        copy_data.forEach((channel: IChannel) => {
-          addChannel(channel.id, false);
-        });
-        setChatList(copy_data);
+        setChatList(res.data);
       })
       .catch(() => console.log("Axios Error"));
   };
 
-  const actualizeChannelList = (
+  const reorderChannelList = (
     newList: (IChannel | IDm)[],
     editable_room: IChannel | IDm
   ) => {
     if (newMessage) editable_room.updatedAt = newMessage.createdAt;
-    if (currentConv && editable_room.id !== currentConv)
-      changeNotif(editable_room.id, true);
     newList.sort((a, b) => {
       if (a.updatedAt < b.updatedAt) return 1;
       else return -1;
@@ -69,8 +63,6 @@ function ChannelList() {
 
     if (newMessage?.dm) new_elem = newMessage.dm;
     if (newMessage?.channel) new_elem = newMessage?.channel;
-    if (newMessage?.author?.id === user?.id) addChannel(new_elem.id, false);
-    else addChannel(new_elem.id, true);
     newList = [new_elem, ...newList];
     return newList;
   };
@@ -85,7 +77,7 @@ function ChannelList() {
     let newList = [...chatList];
     let editable_room = newList.find((elem) => elem.id === received_id);
 
-    if (editable_room) newList = actualizeChannelList(newList, editable_room);
+    if (editable_room) newList = reorderChannelList(newList, editable_room);
     else newList = addToChannelList(newList);
     setChatList(newList);
   };
@@ -96,16 +88,20 @@ function ChannelList() {
       setMuteDate(null);
     }
     setDisplay(ChatType.CONV);
+    console.log("clicked :", conv.id);
     setCurrentConv(conv.id);
     setRedirection(false);
     if (conv.name) setIsChannel(true);
     else setIsChannel(false);
-    changeNotif(conv.id, false);
+    if (channels && channels.find( channelId => channelId === conv.id))
+      removeChannel(conv.id);
     setNewMessage(null);
   };
 
   const displayNotif = (convId: string) => {
-    if (isNotif(convId)) return <div className="notif" />;
+    if (channels && channels.find( channelId => channelId === convId) && currentConv !== convId) {
+      return <div className="notif" />;
+    }
     return null;
   };
 
