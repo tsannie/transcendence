@@ -88,7 +88,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.allUsers.has(user.id)) {
       const sockets = this.allUsers.get(user.id);
       const index = sockets.indexOf(client);
-      //console.log('sockets.length', sockets.length);
       if (index > -1) {
         sockets.splice(index, 1);
       }

@@ -93,14 +93,11 @@ export class GameService {
   validInvitation(invitation: IInvitation, user_id: string): boolean {
     const invitations = this.getInvitations(user_id);
     for (const inv of invitations) {
-      console.log(inv);
-      console.log(invitation);
       if (
         inv.room_id === invitation.room_id &&
         inv.user_id === invitation.user_id &&
         inv.mode === invitation.mode
       ) {
-        console.log('validInvitation');
         return true;
       }
     }
