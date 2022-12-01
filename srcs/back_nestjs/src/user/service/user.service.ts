@@ -220,19 +220,24 @@ export class UserService {
   async blockUser(target: string, requester: UserEntity): Promise<UserEntity> {
     if (target === requester.username)
       throw new UnprocessableEntityException(`Cannot ban yourself.`);
-    let toBan = await this.findByName(target);
-    if (!toBan)
+    let toBlock = await this.findByName(target, {
+      friends: true,
+    });
+    if (!toBlock)
       throw new UnprocessableEntityException(
         `Cannot find a ${target} in database.`,
       );
     else {
-      if (!requester.blocked) requester.blocked = [toBan];
+      if (requester.friends.find((friend) => friend.id === toBlock.id)) {
+        await this.removeFriend(requester, toBlock);
+      }
+      if (!requester.blocked) requester.blocked = [toBlock];
       else {
         if (requester.blocked.find((elem) => elem.username === target))
           throw new UnprocessableEntityException(
             `You've already blocked ${target}`,
           );
-        else requester.blocked.push(toBan);
+        else requester.blocked.push(toBlock);
       }
     }
     return await this.allUser.save(requester);
@@ -405,9 +410,6 @@ export class UserService {
         `You already sent a friend request to ${target.username}`,
       );
 
-    console.log("user.blocked", user.blocked);
-    console.log("target.blocked", target.blocked);
-    // if user is blocked by target or target is blocked by user throw error
     if (
       user.blocked &&
       user.blocked.find((elem) => elem.id === target.id)
