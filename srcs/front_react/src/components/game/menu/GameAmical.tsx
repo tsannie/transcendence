@@ -32,8 +32,13 @@ function GameAmical() {
 
   const handleAccept = (invitation: IInvitation) => {
     if (socket) {
-      console.log(invitation);
       socket.emit("acceptInvitation", invitation);
+    }
+  };
+
+  const handleRefuse = (invitation: IInvitation) => {
+    if (socket) {
+      socket.emit("refuseInvitation", invitation);
     }
   };
 
@@ -69,7 +74,7 @@ function GameAmical() {
                 <button
                   id={invite.mode === GameMode.CLASSIC ? "classic" : "trans"}
                   title="Decline"
-                  //onClick={() => handleDecline(friend.id)}
+                  onClick={() => handleRefuse(invite)}
                 >
                   <RemoveIcon />
                 </button>
