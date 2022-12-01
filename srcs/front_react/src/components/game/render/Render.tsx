@@ -102,13 +102,11 @@ export function GameRender() {
       if (room && canvas) {
         const ctx = canvas.getContext("2d");
         if (ctx) {
-          //if (room.status === RoomStatus.PLAYING) {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           if (user && (user?.id === room.p1_id || user?.id === room.p2_id)) {
             setPaddle(room);
             draw_game(ctx, room, user, canvas);
           }
-          //}
         }
       }
     };
@@ -137,7 +135,6 @@ export function GameRender() {
     }
   }
 
-  if (!room || !players || !user) return <span>loading...</span>;
   return (
     <div className="game">
       <div className="game__render">
@@ -145,19 +142,25 @@ export function GameRender() {
           <button id="leave" onClick={leaveGame}>
             <LogOutIcon />
           </button>
-          <div className="game__header__player" id="left">
-            <img src={players[0].profile_picture} alt="player1" />
-            <span>
-              {players[0].username}({players[0].elo})
-            </span>
-          </div>
+          {players ? (
+            <Fragment>
+              <div className="game__header__player" id="left">
+                <img src={players[0].profile_picture} alt="player1" />
+                <span>
+                  {players[0].username}({players[0].elo})
+                </span>
+              </div>
 
-          <div className="game__header__player" id="right">
-            <img src={players[1].profile_picture} alt="player2" />
-            <span>
-              {players[1].username}({players[1].elo})
-            </span>
-          </div>
+              <div className="game__header__player" id="right">
+                <img src={players[1].profile_picture} alt="player2" />
+                <span>
+                  {players[1].username}({players[1].elo})
+                </span>
+              </div>
+            </Fragment>
+          ) : (
+            <span>loading...</span>
+          )}
         </div>
 
         <div className="game__body">
