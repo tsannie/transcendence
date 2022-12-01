@@ -20,7 +20,7 @@ export interface ChatDisplayContextInterface {
 
   isRedirection: boolean;
   setRedirection: React.Dispatch<React.SetStateAction<boolean>>;
-  
+
   targetRedirection: string;
   setTargetRedirection: React.Dispatch<React.SetStateAction<string>>;
   isMuted: boolean;
@@ -28,8 +28,8 @@ export interface ChatDisplayContextInterface {
   muteDate: Date | null;
   setMuteDate: React.Dispatch<React.SetStateAction<Date | null>>;
 
-  inviteList: IChannel[];
-  setInvite: React.Dispatch<React.SetStateAction<IChannel[]>>;
+  //inviteList: IChannel[];
+  //setInvite: React.Dispatch<React.SetStateAction<IChannel[]>>;
 }
 
 export const ChatDisplayContext = createContext<ChatDisplayContextInterface>(
@@ -49,7 +49,9 @@ export const ChatDisplayProvider = ({ children }: ChatDisplayProviderProps) => {
   const [ targetRedirection, setTargetRedirection] = useState<string>("");
   const [ isMuted, setMuted ] = useState<boolean>(false);
   const [ muteDate, setMuteDate ] = useState<Date | null>(null);
-  const [ inviteList, setInvite ] = useState<IChannel[]>([]);
+  //const [ inviteList, setInvite ] = useState<IChannel[]>([]);
+
+  //console.log("invite list ==   ", inviteList);
 
   return (
     <ChatDisplayContext.Provider
@@ -68,10 +70,10 @@ export const ChatDisplayProvider = ({ children }: ChatDisplayProviderProps) => {
         setTargetRedirection,
         isMuted,
         setMuted,
-        muteDate, 
+        muteDate,
         setMuteDate,
-        inviteList,
-        setInvite,
+        //inviteList,
+        //setInvite,
       }}
     >
       {children}

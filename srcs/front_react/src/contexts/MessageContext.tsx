@@ -7,7 +7,7 @@ import React, {
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { IChannel, IDm, IMessageReceived } from "../components/chat/types";
-import { AuthContext } from "./AuthContext";
+import { AuthContext, User } from "./AuthContext";
 import { ChatDisplayContext } from "./ChatDisplayContext";
 import { TransitionContext } from "./TransitionContext";
 
@@ -22,6 +22,8 @@ export interface MessageContextInterface {
   setChatList: React.Dispatch<React.SetStateAction<(IChannel | IDm)[]>>;
   channelNotification: boolean;
   setChannelNotification: React.Dispatch<React.SetStateAction<boolean>>;
+  inviteList: IChannel[];
+  setInvite: React.Dispatch<React.SetStateAction<IChannel[]>>;
 }
 
 interface MessageProviderProps {
@@ -33,7 +35,8 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   const [newMessage, setNewMessage] = useState<IMessageReceived | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
-  const { inviteList, setInvite } = useContext(ChatDisplayContext);
+  const [ inviteList, setInvite ] = useState<IChannel[]>([]);
+  //const { inviteList, setInvite } = useContext(ChatDisplayContext);
 
   const { displayLocation } = useContext(TransitionContext);
   const { user } = useContext(AuthContext);
@@ -51,7 +54,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
     if (socket) {
       socket.on("message", (data) => {
         setNewMessage(data);
-        if (displayLocation.pathname != "/chat" && (user?.id != data.author.id))
+        if (displayLocation.pathname !== "/chat" && (user?.id !== data.author.id))
           toast.info(`new message from ${data.author.username}`)
       });
       socket.on("exception", (response) => {
@@ -60,8 +63,24 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       /* socket.on("newChannel", (data) => {
         console.log("newChannel === ", data);
       }); */
-      socket.on("inviteChannel", (channel) => {
-        setInvite([channel, ...inviteList]);
+      socket.on("inviteChannel", (channel, target) => {
+        console.log("channel === ", channel);
+        console.log("invite list === ", inviteList);
+        if (displayLocation.pathname !== "/chat" && (user?.id !== channel.owner.id)) {
+          toast.info(`${channel.owner.username} invited you to ${channel.name}`);
+          setChannelNotification(true);
+        }
+        // set invite only if target is not member of channel
+        if (target.id !== channel.users.find( (elem: User) => elem.id === target.id)?.id) {
+          console.log("pas la stp");
+          if (inviteList.length > 0) {
+            setInvite([...inviteList, channel]);
+          }
+          else {
+            setInvite([channel]);
+          }
+        }
+        // add channel to the invite list
       });
       return () => {
         socket.off("message");
@@ -69,10 +88,10 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
         socket.off("inviteChannel");
       };
     }
-  }, [socket, user, displayLocation]);
+  }, [socket, user, displayLocation, channelNotification]);
 
   return (
-    <MessageContext.Provider value={{ socket, newMessage, chatList, setChatList, channelNotification, setChannelNotification}}>
+    <MessageContext.Provider value={{ socket, newMessage, chatList, setChatList, channelNotification, setChannelNotification, inviteList, setInvite}}>
       {children}
     </MessageContext.Provider>
   );
