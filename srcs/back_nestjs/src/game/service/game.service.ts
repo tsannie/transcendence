@@ -90,6 +90,23 @@ export class GameService {
     return invitations;
   }
 
+  validInvitation(invitation: IInvitation, user_id: string): boolean {
+    const invitations = this.getInvitations(user_id);
+    for (const inv of invitations) {
+      console.log(inv);
+      console.log(invitation);
+      if (
+        inv.room_id === invitation.room_id &&
+        inv.user_id === invitation.user_id &&
+        inv.mode === invitation.mode
+      ) {
+        console.log('validInvitation');
+        return true;
+      }
+    }
+    return false;
+  }
+
   createPrivateRoom(user: UserEntity, p2: string, game_mode: GameMode): Room {
     const room = new Room(user.id, game_mode, true);
     room.p2_id = p2;
@@ -98,7 +115,6 @@ export class GameService {
   }
 
   deleteRoomById(room_id: string) {
-    console.log('DELETE');
     this.gamesRoom.delete(room_id);
   }
 
@@ -114,8 +130,6 @@ export class GameService {
     while (room && room.status === RoomStatus.WAITING) {
       log = this.gameGateway.getAllUsers().has(room.p2_id);
       refuse = this.gamesRoom.has(room.id);
-
-      console.log('refuse : ' + refuse);
 
       if (!refuse) {
         this.leaveRoom(room.id, client);
@@ -139,7 +153,7 @@ export class GameService {
         return;
       }
 
-      await new Promise((f) => setTimeout(f, 5000));
+      await new Promise((f) => setTimeout(f, 500));
     }
   }
 
