@@ -46,7 +46,7 @@ export default function App() {
           />
 
           <Route path="/chat" element={<PrivateRoute component={Chat} />} />
-          <Route path="/game" element={<PrivateRoute component={Game} />} />
+          <Route path="/" element={<PrivateRoute component={Game} />} />
           <Route
             path="/settings"
             element={<PrivateRoute component={Settings} />}
