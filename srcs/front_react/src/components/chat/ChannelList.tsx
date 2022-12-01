@@ -88,7 +88,6 @@ function ChannelList() {
       setMuteDate(null);
     }
     setDisplay(ChatType.CONV);
-    console.log("clicked :", conv.id);
     setCurrentConv(conv.id);
     setRedirection(false);
     if (conv.name) setIsChannel(true);
@@ -152,6 +151,7 @@ function ChannelList() {
     const async_fct = async () => await loadList();
 
     async_fct();
+    console.log("MOUNTING CHANNELLIST");
   }, []);
 
   useEffect(() => {
