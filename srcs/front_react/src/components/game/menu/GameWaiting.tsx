@@ -20,10 +20,6 @@ export default function GameWaiting() {
     }
   }
 
-  useEffect(() => {
-    console.log("room", room);
-  }, [room]);
-
   return (
     <div className="waiting">
       <div className="waiting__search">
