@@ -55,6 +55,7 @@ export class UserController {
   async getUserByUsername(@Query() body: TargetNameDto): Promise<UserEntity> {
     return await this.userService.findByName(body.username, {
       friends: true,
+      blocked: true,
     });
   }
 
@@ -79,7 +80,7 @@ export class UserController {
     return await this.userService.searchUser(body.username);
   }
 
-  @Post('blockUser') // TODO to lower cases everywhere
+  @Post('block') // TODO to lower cases everywhere
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async blockUser(
@@ -89,7 +90,7 @@ export class UserController {
     return await this.userService.blockUser(body.username, req.user);
   }
 
-  @Post('unBlockUser')
+  @Post('unBlock')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async unBlockUser(
@@ -177,6 +178,7 @@ export class UserController {
   ): Promise<UserEntity[]> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
+      blocked: true,
     });
 
     if (

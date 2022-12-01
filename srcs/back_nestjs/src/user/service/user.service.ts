@@ -405,6 +405,24 @@ export class UserService {
         `You already sent a friend request to ${target.username}`,
       );
 
+    console.log("user.blocked", user.blocked);
+    console.log("target.blocked", target.blocked);
+    // if user is blocked by target or target is blocked by user throw error
+    if (
+      user.blocked &&
+      user.blocked.find((elem) => elem.id === target.id)
+    )
+      throw new UnprocessableEntityException(
+        `You are blocked by ${target.username}`,
+      );
+    if (
+      target.blocked &&
+      target.blocked.find((elem) => elem.id === user.id)
+    )
+      throw new UnprocessableEntityException(
+        `${target.username} is blocked by you`,
+      );
+
     if (!target.friend_requests) target.friend_requests = [user];
     else target.friend_requests.push(user);
 
