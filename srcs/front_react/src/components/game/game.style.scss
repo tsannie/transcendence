@@ -1,10 +1,77 @@
+@import "../../const.style.scss";
+
 .game {
   display: flex;
   border-style: dashed;
-  padding: calc(10 * var(--res));
   width: calc(820 * var(--res));
-  height: calc(500 * var(--res));
+  height: calc(600 * var(--res));
+  padding: calc(10 * var(--res));
+
+  canvas {
+    display: flex;
+    flex: 0 0 80%;
+    width: 100%;
+  }
 }
+
+.game__render {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+
+  svg {
+    width: calc(30 * var(--res));
+  }
+
+  #leave {
+    position: absolute;
+    top: calc(15 * var(--res));
+    left: calc(15 * var(--res));
+  }
+
+  button {
+    display: flex;
+    border-radius: 50%;
+    padding: 1%;
+    border-width: calc(3 * var(--res)) !important;
+  }
+}
+
+.game__header {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  width: 100%;
+
+  #timer {
+    font-size: calc(50 * var(--res));
+  }
+}
+
+.game__header__player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(20 * var(--res));
+  font-weight: bold;
+  text-align: center;
+  min-width: 30%;
+  overflow: hidden;
+  span {
+    font-size: calc(15 * var(--res));
+    font-weight: normal;
+  }
+
+  img {
+    width: calc(100 * var(--res));
+    border-radius: 50%;
+  }
+}
+
 .game__menu {
   display: flex;
   flex: 0 0 30%;
@@ -37,6 +104,84 @@
   align-items: center;
   flex: 0 0 35%;
   border: dashed;
+  overflow: hidden;
+}
+
+.duel__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.duel__list__item {
+  display: flex;
+  border: dashed;
+  width: 90%;
+  padding: 1%;
+  margin: 1%;
+  border-width: calc(3 * var(--res)) !important;
+}
+
+.duel__list__item__info {
+  display: flex;
+  align-items: center;
+  flex: 0 0 70%;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  button {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+  img {
+    width: calc(35 * var(--res));
+    border-radius: 50%;
+    margin-right: calc(10 * var(--res));
+  }
+  span {
+    font-size: calc(17 * var(--res));
+    margin: 0;
+  }
+}
+
+.duel__list__item__action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+  svg {
+    width: calc(30 * var(--res));
+  }
+  #trans {
+    svg {
+      width: calc(30 * var(--res));
+
+      fill: $bg-color;
+      background: linear-gradient(
+        to right,
+        rgba(13, 213, 252),
+        rgba(243, 243, 21),
+        rgba(255, 153, 51)
+      );
+    }
+  }
+  #classic {
+    svg {
+      width: calc(30 * var(--res));
+      fill: $bg-color;
+      background: $white-color;
+    }
+  }
 }
 
 .current {
@@ -196,14 +341,15 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  .no-room {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    span {
-      font-size: calc(20 * var(--res));
-    }
+}
+
+.no-room {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  span {
+    font-size: calc(18 * var(--res));
   }
 }
 

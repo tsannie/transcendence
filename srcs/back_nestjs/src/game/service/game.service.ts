@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
@@ -12,6 +17,7 @@ import Room, {
   Winner,
   IGameStat,
   IInfoGame,
+  IInvitation,
 } from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
@@ -19,14 +25,18 @@ import smasher from '../class/smasher.class';
 import { RdbmsSchemaBuilder } from 'typeorm/schema-builder/RdbmsSchemaBuilder';
 import Wall from '../class/wall.class';
 import Smasher from '../class/smasher.class';
+import { GameGateway } from '../game.gateway';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(GameStatEntity)
     private gameStatRepository: Repository<GameStatEntity>,
-
     private readonly userService: UserService,
+    // add gae gateway
+    @Inject(forwardRef(() => GameGateway))
+    private readonly gameGateway: GameGateway,
   ) {}
 
   /* RoomID, room */
@@ -35,11 +45,9 @@ export class GameService {
   /* Socket, RoomID */
   private usersRoom: Map<Socket, string> = new Map();
 
-  /*   async findAll(): Promise<RoomEntity[]> {
-    return await this.all_game.find();
-  } */
-
-  findRoom(user: UserEntity, mode: GameMode): Room {
+  // try to search a room for the user and return it
+  // if no room is found, create a new one
+  searchRoom(user: UserEntity, mode: GameMode): Room {
     let room: Room;
 
     const size = this.gamesRoom.size;
@@ -48,7 +56,8 @@ export class GameService {
       for (const room_db of all_rooms) {
         if (
           room_db.status === RoomStatus.WAITING &&
-          room_db.game_mode === mode
+          room_db.game_mode === mode &&
+          !room_db.private_room
         ) {
           room = room_db;
           break;
@@ -63,34 +72,85 @@ export class GameService {
     return room;
   }
 
-  /*   async deleteUser(): Promise<void> {
-    const all_game = await this.all_game.find();
-    all_game.forEach(async (game) => {
-      await this.all_game.delete({ id: game.id });
-    });
-  } */
+  getInvitations(user_id: string): IInvitation[] {
+    const invitations: IInvitation[] = [];
+    for (const room of this.gamesRoom.values()) {
+      if (
+        room.p2_id === user_id &&
+        room.status === RoomStatus.WAITING &&
+        room.private_room
+      ) {
+        invitations.push({
+          user_id: room.p1_id,
+          room_id: room.id,
+          mode: room.game_mode,
+        });
+      }
+    }
+    return invitations;
+  }
+
+  createPrivateRoom(user: UserEntity, p2: string, game_mode: GameMode): Room {
+    const room = new Room(user.id, game_mode, true);
+    room.p2_id = p2;
+    this.gamesRoom.set(room.id, room);
+    return room;
+  }
 
   deleteRoomById(room_id: string) {
     this.gamesRoom.delete(room_id);
   }
 
-  findRoomBySocket(socket: Socket): Room | undefined {
-    const room_id = this.usersRoom.get(socket);
-    if (room_id) return this.gamesRoom.get(room_id);
-    return undefined;
-  }
+  async waitingResponse(
+    client: Socket,
+    room: Room,
+    server: Server,
+    username_stalk: string,
+  ) {
+    let log: boolean = true;
+    while (room && room.status === RoomStatus.WAITING) {
+      log = this.gameGateway.getAllUsers().has(room.p2_id);
+      if (!this.checkUserIsAvailable(room.p2_id) || !log) {
+        this.leaveRoom(room.id, client);
+        this.deleteRoomById(room.id);
+        server.to(client.id).emit('playerNotAvailable', username_stalk);
 
-  findRoomByUser(user: UserEntity): Room | undefined {
-    for (const room of this.gamesRoom.values()) {
-      if (room.p1_id === user.id || room.p2_id === user.id) {
-        return room;
+        if (log) {
+          const sockets: Socket[] = this.gameGateway
+            .getAllUsers()
+            .get(room.p2_id);
+          sockets.forEach((socket: Socket) => {
+            server.to(socket.id).emit('cancelInvitation', room.id);
+          });
+        }
+        return;
       }
+
+      await new Promise((f) => setTimeout(f, 5000));
     }
-    return undefined;
   }
 
   getRoomById(room_id: string): Room | undefined {
     return this.gamesRoom.get(room_id);
+  }
+
+  getRoomBySocket(socket: Socket): Room | undefined {
+    const room_id = this.usersRoom.get(socket);
+    if (room_id) return this.getRoomById(room_id);
+    return undefined;
+  }
+
+  checkUserIsAvailable(user_id: string): boolean {
+    for (const room of this.gamesRoom.values()) {
+      if (
+        ((room.p1_id === user_id || room.p2_id === user_id) &&
+          room.status === RoomStatus.PLAYING) ||
+        (room.p1_id === user_id && room.status === RoomStatus.WAITING)
+      ) {
+        return false;
+      }
+    }
+    return true;
   }
 
   joinRoom(room_id: string, client: Socket, server: Server) {
@@ -130,6 +190,64 @@ export class GameService {
     return current_rooms;
   }
 
+  preventConnexionOfFriends(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+    login: boolean = true,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    if (login) {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogin', user);
+      });
+    } else {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogout', user);
+      });
+    }
+  }
+
+  sendUserDisconnect(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    sockets.forEach((socket) => {
+      server.to(socket.id).emit('friendsDisconnect', user);
+    });
+  }
+
+  getSocketsOfFriends(user: UserEntity, allUsers: Map<string, Socket[]>) {
+    const friends: UserEntity[] = this.getFriendsLog(user);
+    // get all socket of his friends
+    const sockets: Socket[] = friends.reduce((acc, friend) => {
+      if (allUsers.has(friend.id)) {
+        acc.push(...allUsers.get(friend.id));
+      }
+      return acc;
+    }, []);
+    return sockets;
+  }
+
+  getFriendsLog(user: UserEntity): UserEntity[] {
+    const friends: UserEntity[] = user.friends;
+    const friendsLog: UserEntity[] = [];
+
+    // recall all users beacause getFriendsLog can be call by service
+    const allUsers: Map<string, Socket[]> = this.gameGateway.getAllUsers();
+
+    if (!friends) return friendsLog;
+
+    for (const friend of friends) {
+      if (allUsers.has(friend.id)) {
+        friendsLog.push(friend);
+      }
+    }
+    return friendsLog;
+  }
+
   getInfo(allUsers: Map<string, Socket[]>): IInfoGame {
     let player_in_game = 0;
     let player_in_waiting = 0;
@@ -137,7 +255,7 @@ export class GameService {
     for (const room of this.gamesRoom.values()) {
       if (room.status === RoomStatus.PLAYING) {
         player_in_game += 2;
-      } else if (room.status === RoomStatus.WAITING) {
+      } else if (room.status === RoomStatus.WAITING && !room.private_room) {
         player_in_waiting += 1;
       }
     }
@@ -294,7 +412,7 @@ export class GameService {
       if (this.checkNewScore(score, room))
         server.emit('updateCurrentRoom', await this.createInfoRoom(room));
 
-      await new Promise((f) => setTimeout(f, 8));
+      await new Promise((f) => setTimeout(f, 1000 / 60));
     }
 
     if (room.status === RoomStatus.CLOSED) {

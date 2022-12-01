@@ -18,53 +18,60 @@ import {
   GameMode,
   paddle_height,
   RoomStatus,
-  screen_ratio,
 } from "../const/const";
+import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { ISetPaddle, IPlayer, Room, IDrawResponsive } from "../types";
-import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
+import { ISetPaddle, Room } from "../types";
+import {
+  AuthContext,
+  AuthContextType,
+  User,
+} from "../../../contexts/AuthContext";
 import { draw_trans_game } from "./Draw/DrawTransGame";
+import { api } from "../../../const/const";
+import { AxiosResponse } from "axios";
+import { toast } from "react-toastify";
 
 let position_y: number = 0;
 export function GameRender() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [drawResponsive, setDrawResponsive] = useState<IDrawResponsive>();
-  //const [frameToDraw, setFrameToDraw] = useState<Frame>();
-
-  //const [gameObj] = useState<IGameObj>(initGameObj(ratio_width, ratio_height));
+  const [players, setPlayers] = useState<User[]>();
   const { room, socket, setDisplayRender, setRoom } = useContext(
     GameContext
   ) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
-  //let resize = new IResize();
-
-  function resize() {
-    const lowerSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
-
-    setDrawResponsive({
-      canvas_width: lowerSize,
-      canvas_height: lowerSize * screen_ratio,
-      ratio_width: lowerSize / canvas_back_width,
-      ratio_height: (lowerSize * screen_ratio) / canvas_back_height,
-      border_size:
-        border_size_default * (lowerSize / screen_ratio / canvas_back_height),
-    });
-  }
 
   useEffect(() => {
-    // for the first mount
-    resize();
-  }, []);
+    const getPlayers = async () => {
+      console.log("getPlayers");
+      console.log("room", room);
 
-  useEffect(() => {
-    window.addEventListener("resize", resize);
-    return () => {
-      window.removeEventListener("resize", resize);
+      const player1 = await api
+        .get("/user/id", { params: { id: room?.p1_id } })
+        .then((res: AxiosResponse) => {
+          return res.data;
+        })
+        .catch((err) => {
+          leaveGame();
+          console.log(err);
+        });
+
+      const player2 = await api
+        .get("/user/id", { params: { id: room?.p2_id } })
+        .then((res: AxiosResponse) => {
+          return res.data;
+        })
+        .catch((err) => {
+          leaveGame();
+          console.log(err);
+        });
+
+      console.log("players:", player1, player2);
+      setPlayers([player1, player2]);
     };
-  });
+
+    getPlayers();
+  }, []);
 
   function leaveGame() {
     socket?.emit("leaveRoom", room?.id);
@@ -72,30 +79,43 @@ export function GameRender() {
     setDisplayRender(false);
   }
 
-  function setPaddle() {
-    const data: ISetPaddle = {
-      room_id: room?.id as string,
-      positionY: position_y,
-      front_canvas_height: drawResponsive?.canvas_height as number,
-    };
-    socket?.emit("setPaddle", data);
+  function setPaddle(room: Room) {
+    //if ()
+    const newPosY =
+      (position_y * canvas_back_height) /
+      (canvasRef.current?.clientHeight as number);
+
+    if (
+      (user?.id === room.p1_id && room.p1_y_paddle !== newPosY) ||
+      (user?.id === room.p2_id && room.p2_y_paddle !== newPosY)
+    ) {
+      if (socket && room) {
+        const data: ISetPaddle = {
+          room_id: room.id,
+          posY: newPosY,
+        };
+        console.log("setPaddle");
+        socket.emit("setPaddle", data);
+      }
+    }
   }
 
   useEffect(() => {
     const render = () => {
       const canvas = canvasRef.current;
-      if (room && canvas && drawResponsive) {
+      if (room && canvas) {
         const ctx = canvas.getContext("2d");
         if (ctx) {
           if (room.status === RoomStatus.PLAYING) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (user?.id === room.p1_id || user?.id === room.p2_id) setPaddle();
+            if (user?.id === room.p1_id || user?.id === room.p2_id)
+              setPaddle(room);
 
-            if (room.game_mode === GameMode.PONG_CLASSIC)
-              draw_classic_game(ctx, canvas, room, drawResponsive, 0);
-            else if (room.game_mode === GameMode.PONG_TRANS)
-              draw_trans_game(ctx, canvas, room, drawResponsive, 0);
+            if (room.game_mode === GameMode.CLASSIC)
+              draw_classic_game(ctx, canvas, room, 0);
+            else if (room.game_mode === GameMode.TRANS)
+              draw_trans_game(ctx, canvas, room, 0);
           } else {
             draw_game_ended(
               ctx,
@@ -109,52 +129,64 @@ export function GameRender() {
       }
     };
 
-    if (drawResponsive && room) requestAnimationFrame(render);
-  }, [room, drawResponsive]);
+    if (room) requestAnimationFrame(render);
+  }, [room]);
 
   function mouv_mouse(e: any) {
-    if (!drawResponsive) return;
-
     const canvas = document.getElementById("canvas");
     const rect = canvas?.getBoundingClientRect() || { top: 0, left: 0 };
 
-    const tmp_pos =
-      e.clientY - rect?.top - (paddle_height * drawResponsive.ratio_height) / 2;
+    const front_canvas_height: number = canvasRef.current
+      ?.clientHeight as number;
+    const paddle: number =
+      paddle_height * (front_canvas_height / canvas_back_height);
+    const border: number =
+      border_size_default * (front_canvas_height / canvas_back_height);
 
-    if (tmp_pos <= drawResponsive.border_size) {
-      position_y = drawResponsive.border_size + 1;
-    } else if (
-      tmp_pos + paddle_height * drawResponsive.ratio_height >=
-      drawResponsive.canvas_height - drawResponsive.border_size
-    ) {
-      position_y =
-        drawResponsive.canvas_height -
-        1 -
-        drawResponsive.border_size -
-        paddle_height * drawResponsive.ratio_height;
+    const tmp_pos = e.clientY - rect?.top - paddle / 2;
+    if (tmp_pos <= border) {
+      position_y = border;
+    } else if (tmp_pos + paddle >= front_canvas_height - border) {
+      position_y = front_canvas_height - border - paddle;
     } else {
       position_y = tmp_pos;
     }
   }
 
+  if (!room || !players || !user) return <span>loading...</span>;
   return (
-    <Fragment>
-      {drawResponsive ? (
-        <Fragment>
+    <div className="game">
+      <div className="game__render">
+        <div className="game__header">
+          <button id="leave" onClick={leaveGame}>
+            <LogOutIcon />
+          </button>
+          <div className="game__header__player" id="left">
+            <img src={players[0].profile_picture} alt="player1" />
+            <span>
+              {players[0].username}({players[0].elo})
+            </span>
+          </div>
+
+          <div className="game__header__player" id="right">
+            <img src={players[1].profile_picture} alt="player2" />
+            <span>
+              {players[1].username}({players[1].elo})
+            </span>
+          </div>
+        </div>
+
+        <div className="game__body">
           <canvas
             id="canvas"
             ref={canvasRef}
-            height={drawResponsive.canvas_height}
-            width={drawResponsive.canvas_width}
+            height={canvas_back_height}
+            width={canvas_back_width}
             onMouseMove={(e) => mouv_mouse(e)}
             style={{ backgroundColor: black }}
           ></canvas>
-          <br />
-          <button onClick={leaveGame}>Leave The Game</button>
-        </Fragment>
-      ) : (
-        <div>loading...</div>
-      )}
-    </Fragment>
+        </div>
+      </div>
+    </div>
   );
 }

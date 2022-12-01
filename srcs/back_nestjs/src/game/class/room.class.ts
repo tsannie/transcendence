@@ -6,10 +6,9 @@ import Smasher from './smasher.class';
 import Wall from './wall.class';
 
 export enum RoomStatus {
-  EMPTY = 0,
-  WAITING = 1,
-  PLAYING = 2,
-  CLOSED = 3,
+  WAITING = 0,
+  PLAYING = 1,
+  CLOSED = 2,
 }
 
 export enum Winner {
@@ -19,8 +18,8 @@ export enum Winner {
 }
 
 export enum GameMode {
-  PONG_CLASSIC = 0,
-  PONG_TRANS = 1,
+  CLASSIC = 0,
+  TRANS = 1,
 }
 
 export interface IQuadrilateral {
@@ -54,10 +53,17 @@ export interface IInfoGame {
   online: number;
 }
 
+export interface IInvitation {
+  user_id: string;
+  room_id: string;
+  mode: GameMode;
+}
+
 export default class Room {
   id: string;
+  private_room: boolean;
 
-  status: RoomStatus = RoomStatus.EMPTY;
+  status: RoomStatus = RoomStatus.WAITING;
   p1_id: string;
   p2_id: string;
 
@@ -71,25 +77,28 @@ export default class Room {
   p2_y_paddle: number = 0;
 
   ball: Ball;
-  smasher: IQuadrilateral;
-  wall: IQuadrilateral;
+  smasher: Smasher;
+  wall: Wall;
 
-  constructor(p1_id: string, mode: GameMode) {
+  constructor(p1_id: string, mode: GameMode, private_room: boolean = false) {
     this.id = uuidv4();
     this.p1_id = p1_id;
     this.ball = new Ball();
     this.game_mode = mode;
+    this.private_room = private_room;
 
-    if (mode === GameMode.PONG_TRANS) {
+    if (mode === GameMode.TRANS) {
       this.wall = new Wall();
       this.smasher = new Smasher();
     }
   }
 
   updateScore(player: Winner) {
-    this.ball = new Ball();
-    if (this.game_mode === GameMode.PONG_TRANS) {
+    this.ball.reset();
+    if (this.game_mode === GameMode.TRANS) {
+      this.wall = null;
       this.wall = new Wall();
+      this.smasher = null;
       this.smasher = new Smasher();
     }
     if (player === Winner.P2) {
