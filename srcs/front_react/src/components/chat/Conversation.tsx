@@ -1,7 +1,8 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
-import { ChatDisplayContext, ChatDisplayContextInterface } from "../../contexts/ChatDisplayContext";
+import { ChatDisplayContext, ChatDisplayContextInterface, ChatType } from "../../contexts/ChatDisplayContext";
+import { MessageContext } from "../../contexts/MessageContext";
 import MessageBody from "./MessageBody";
 import Options from "./Options";
 import { IChannel, IDm } from "./types";
@@ -12,7 +13,8 @@ export interface IDatas{
 }
 
 function Conversation() {
-  const { currentConv, setCurrentConv, isChannel, targetRedirection, isRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
+  const { setDisplay, currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
+  const { chatList } = useContext(MessageContext);
   const [dm, setDm] = useState<IDatas | IDm | null >(null);
 
   const loadContent = async () => {
@@ -42,12 +44,23 @@ function Conversation() {
   }
 
   useEffect( () => {
-    if (!currentConv) return ;
+    console.log(currentConv);
+    console.log(chatList);
+    if (!currentConv) {
+      console.log("zici");
+      if (!chatList || chatList.length == 0) { 
+        console.log("la");
+        setDisplay(ChatType.JOINFORM);
+        return ;
+      }
+      else
+        setCurrentConv(chatList[0].id);
+    } ;
     const async_fct = async () => {
       await loadContent(); 
     }
     async_fct();
-  }, [currentConv])
+  }, [currentConv, chatList])
 
   useEffect( () => {
     if (!targetRedirection) return ;
