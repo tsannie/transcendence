@@ -12,9 +12,13 @@ import { ICreateRoom } from "../types";
 import { toast } from "react-toastify";
 
 function GameAmical() {
-  const { socket, friendsLog, inviteReceived, setTimeQueue } = useContext(
-    GameContext
-  ) as GameContextType;
+  const {
+    socket,
+    friendsLog,
+    inviteReceived,
+    setTimeQueue,
+    setReloadInvitations,
+  } = useContext(GameContext) as GameContextType;
 
   let allFriends: JSX.Element[] = [];
   let allInvitations: JSX.Element[] = [];
@@ -33,12 +37,14 @@ function GameAmical() {
   const handleAccept = (invitation: IInvitation) => {
     if (socket) {
       socket.emit("acceptInvitation", invitation);
+      setReloadInvitations(true);
     }
   };
 
   const handleRefuse = (invitation: IInvitation) => {
     if (socket) {
       socket.emit("refuseInvitation", invitation);
+      setReloadInvitations(true);
     }
   };
 
