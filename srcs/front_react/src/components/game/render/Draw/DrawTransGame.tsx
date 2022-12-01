@@ -14,7 +14,7 @@ export function draw_trans_game(
   canvas: any,
   room: Room
 ) {
-  if (room.countdown >= 1000)
+  if (room.countdown)
     draw_countdown(ctx, canvas.width, canvas.height, room.countdown);
   else {
     draw_smasher(ctx, room.smasher);
@@ -78,7 +78,7 @@ function draw_countdown(
   canvas_width: number,
   countdown: number
 ) {
-  countdown = Math.floor(countdown / 1000);
+  countdown = countdown;
   ctx.beginPath();
   ctx.font = canvas_width / 4 + "px system-ui";
   ctx.fillStyle = white;

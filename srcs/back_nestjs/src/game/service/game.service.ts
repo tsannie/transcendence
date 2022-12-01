@@ -431,11 +431,16 @@ export class GameService {
     const socketP2 = allUsers.get(room.p2_id);
     let score: number[] = [0, 0];
 
-    server.emit('updateCurrentRoom', await this.createInfoRoom(room));
+    while (room.countdown) {
+      server.in(room.id).emit('updateGame', room);
+      room.countdown--;
+      await new Promise((f) => setTimeout(f, 1000));
+    }
+
     while (room.status === RoomStatus.PLAYING) {
       score = [room.p1_score, room.p2_score];
       this.checkGiveUP(socketP1, socketP2, room);
-      room.gameLoop();
+      room.update();
       server.in(room.id).emit('updateGame', room);
 
       if (this.checkNewScore(score, room))
