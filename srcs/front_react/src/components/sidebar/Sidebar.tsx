@@ -12,14 +12,12 @@ import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
-import { MessageContext, MessageProvider } from "../../contexts/MessageContext";
-import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
+import { MessageContext } from "../../contexts/MessageContext";
 
 export default function Sidebar() {
   const { logout, user } = useContext(AuthContext) as AuthContextType;
   const { channels } = useContext(ChatNotifContext);
-  const { newMessage } = useContext(MessageContext);
-  const { currentConv } = useContext(ChatDisplayContext);
+  const { inviteList } = useContext(MessageContext);
 
   const path = useLocation().pathname;
   const [ channelNotification, setChannelNotification ] = useState<boolean>(false); 
@@ -38,11 +36,11 @@ export default function Sidebar() {
   };
 
   useEffect(() => {
-    if (channels && channels.length != 0)
+    if ((channels && channels.length > 0) || (inviteList && inviteList.length > 0))
       setChannelNotification(true);
     else
       setChannelNotification(false);
-  }, [channels])
+  }, [channels, inviteList])
 
   return (
     <div className="sidebar">
