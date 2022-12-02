@@ -24,10 +24,10 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
       setInput(event.target.value);
     };
 
-    const createConv = async () => {
+    const createConv = () => {
       let createdId : string | null = null;
 
-      await api
+      api
         .post("/dm/create", {targetId: targetRedirection.toString()})
         .then((res) => {
           setRedirection(false);
@@ -41,13 +41,13 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
         return createdId;
     }
 
-    const sendMessage = async (event: any) => {
+    const sendMessage = (event: any) => {
       let inputConvId : string | null = convId;
 
       event.preventDefault();
       if (input === "") return;
       if (isRedirection && targetRedirection)
-        inputConvId = await createConv();
+        inputConvId = createConv();
       if (!inputConvId)
         return ;
 

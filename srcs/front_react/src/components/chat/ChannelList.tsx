@@ -1,5 +1,5 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { IChannel, IDm, IMessageReceived } from "./types";
+import { useContext, useEffect, useRef } from "react";
+import { IChannel, IDm } from "./types";
 import { api } from "../../const/const";
 import "./chat.style.scss";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
@@ -37,12 +37,10 @@ function ChannelList() {
     }, 200);
   };
 
-  const loadList = async () => {
-    await api
+  const loadList = () => {
+    api
       .get("/user/conversations")
-      .then((res) => {
-        setChatList(res.data);
-      })
+      .then((res) => setChatList(res.data))
       .catch(() => console.log("Axios Error"));
   };
 
@@ -148,10 +146,7 @@ function ChannelList() {
   };
 
   useEffect(() => {
-    const async_fct = async () => await loadList();
-
-    async_fct();
-    console.log("MOUNTING CHANNELLIST");
+    loadList();
   }, []);
 
   useEffect(() => {
