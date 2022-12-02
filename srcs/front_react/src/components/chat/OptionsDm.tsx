@@ -17,7 +17,7 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
       .get("/user/id", { params: { id: targetRedirection}})
       .then( (res) => {
         setUser2(res.data); })
-      .catch(err => toast.error("HTTP error: " + err));
+      .catch(err => toast.error("HTTP error: " + err.response.data.message));
   }
 
   const findUser2 = () => {

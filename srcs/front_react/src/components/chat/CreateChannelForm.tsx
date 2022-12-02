@@ -36,7 +36,7 @@ function CreateChannelForm() {
         setNewConv(res.data);
         setDisplay(ChatType.CONV);
       })
-      .catch((err) => toast.error("HTTP error: " + err.response.data));
+      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
   };
 
   return (

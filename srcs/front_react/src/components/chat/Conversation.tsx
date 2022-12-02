@@ -26,7 +26,7 @@ function Conversation() {
         setDm(res.data);
       })
       .catch((err) => {
-          toast.error("HTTP error: " + err);
+          toast.error("HTTP error: " + err.response.data.message);
       })
   }
 

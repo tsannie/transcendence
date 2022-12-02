@@ -57,7 +57,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         setIsModifyPassword(false);
         setIsDeletePassword(false);
       })
-      .catch(() => toast.error("Wrong password"));
+      .catch((err: any) => toast.error("error: " + err.response.data.message));
     setChannelPassword("");
     setPasswordVerifier("");
   };
@@ -74,7 +74,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
         setIsDeletePassword(false);
         setNewChannelStatus(res.data.status);
       })
-      .catch(() => toast.error("Wrong password"));
+      .catch((err: any) => toast.error("error: " + err.response.data.message));
     setPasswordVerifier("");
   };
 

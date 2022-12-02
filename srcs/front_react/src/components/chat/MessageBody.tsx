@@ -69,7 +69,7 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
           })
         );
       })
-      .catch((err: any) => toast.error("HTTP error: " + err.response.data.message));
+      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {
