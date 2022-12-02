@@ -9,21 +9,21 @@ interface IProps {
 }
 
 function ProfileHeader(props: IProps) {
-  const [status, setStatus] = useState<string>("Private");
+  const [status, setStatus] = useState<string>("");
   const { friendsLog } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext) as AuthContextType;
 
   useEffect(() => {
-    if (friendsLog) {
-      const isOnline = friendsLog.find((friend) => {
-        return friend.id === props.player.id;
-      });
-      console.log(isOnline);
-      if (isOnline) {
-        setStatus("Online");
-      } else {
-        setStatus("Offline");
-      }
+    // if user id is not in user friends
+    if (
+      props.player.id === user?.id ||
+      friendsLog.find((friend) => friend.id === props.player.id)
+    ) {
+      setStatus("Online");
+    } else if (!user?.friends.find((friend) => friend.id === props.player.id)) {
+      setStatus("Private");
+    } else {
+      setStatus("Offline");
     }
   }, [friendsLog, user]);
 
