@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { AxiosError, AxiosResponse } from "axios";
 
 interface IProps {
-  player: User | null;
+  player: User;
   setReloadPlayer: (reload: boolean) => void;
   setReloadUser: (reload: boolean) => void;
 }
@@ -32,7 +32,7 @@ function ActionBar(props: IProps) {
   const nav = useNavigate();
 
   const handleRemoveFriend = () => {
-    api.post("/user/remove-friend", { id: props.player?.id }).then(
+    api.post("/user/remove-friend", { id: props.player.id }).then(
       () => {
         props.setReloadPlayer(true);
         //props.setReloadUser(true);
@@ -45,10 +45,10 @@ function ActionBar(props: IProps) {
 
   const handleAddFriend = () => {
     if (
-      user?.friend_requests.find((req_user) => req_user.id === props.player?.id)
+      user?.friend_requests.find((req_user) => req_user.id === props.player.id)
     ) {
       api
-        .post("/user/accept-friend-request", { id: props.player?.id })
+        .post("/user/accept-friend-request", { id: props.player.id })
         .then(() => {
           props.setReloadPlayer(true);
         })
@@ -57,7 +57,7 @@ function ActionBar(props: IProps) {
         });
     } else {
       api
-        .post("/user/create-friend-request", { id: props.player?.id })
+        .post("/user/create-friend-request", { id: props.player.id })
         .then(() => {
           props.setReloadPlayer(true);
           toast.info("friend request sent !");
@@ -72,14 +72,14 @@ function ActionBar(props: IProps) {
     setRedirection(true);
     setDisplay(ChatType.CONV);
     setIsChannel(false);
-    setTargetRedirection(props.player?.id as string);
+    setTargetRedirection(props.player.id as string);
     setCurrentConv("");
     nav("/chat");
   };
 
   const handleBlock = () => {
     api
-      .post("/user/block", { username: props.player?.username })
+      .post("/user/block", { username: props.player.username })
       .then(() => {
         props.setReloadUser(true);
         props.setReloadPlayer(true);
@@ -91,7 +91,7 @@ function ActionBar(props: IProps) {
 
   const handleUnBlock = () => {
     api
-      .post("/user/unBlock", { username: props.player?.username })
+      .post("/user/unBlock", { username: props.player.username })
       .then(() => {
         props.setReloadUser(true);
         props.setReloadPlayer(true);
@@ -123,7 +123,7 @@ function ActionBar(props: IProps) {
         </button>
         <span>chat</span>
       </div>
-      {props.player?.friends.find((friend) => friend.id === user?.id) ? (
+      {props.player.friends.find((friend) => friend.id === user?.id) ? (
         <div className="action-bar__item">
           <button onClick={handleRemoveFriend}>
             <RemoveFriendIcon alt="remove-friend" />
@@ -141,7 +141,7 @@ function ActionBar(props: IProps) {
           <span>add friend</span>
         </div>
       )}
-      {user?.blocked.find((blocked) => blocked.id === props.player?.id) ? (
+      {user?.blocked.find((blocked) => blocked.id === props.player.id) ? (
         <div className="action-bar__item">
           <button onClick={handleUnBlock}>
             <BlockIcon alt="unblock" />

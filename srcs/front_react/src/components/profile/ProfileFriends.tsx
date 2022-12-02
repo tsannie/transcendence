@@ -8,14 +8,14 @@ import { api } from "../../const/const";
 import { toast } from "react-toastify";
 
 interface IProps {
-  player: User | null;
+  player: User;
   isPerso: boolean;
   setReloadPlayer: (reload: boolean) => void;
 }
 
 function ProfileFriends(props: IProps) {
   let allFriendRequests: JSX.Element[] | undefined;
-  let allFriends = props.player?.friends.map((friend, index) => {
+  let allFriends = props.player.friends.map((friend, index) => {
     return (
       <Link to={"/profile/" + friend.username} key={index}>
         <img src={friend.profile_picture + "&size=small"} alt="avatar" />
@@ -55,7 +55,7 @@ function ProfileFriends(props: IProps) {
   };
 
   if (props.isPerso) {
-    allFriendRequests = props.player?.friend_requests.map(
+    allFriendRequests = props.player.friend_requests.map(
       (request: User, index: number) => {
         return (
           <Fragment key={index}>
@@ -100,10 +100,10 @@ function ProfileFriends(props: IProps) {
     <div className="profile__body__friends">
       <div className="profile__body__friends__title">
         <h3>friends </h3>
-        <span>{props.player?.friends.length}</span>
+        <span>{props.player.friends.length}</span>
       </div>
       <hr id="full" />
-      {props.isPerso && props.player?.friend_requests.length ? (
+      {props.isPerso && props.player.friend_requests.length ? (
         <div className="profile__body__friend__request">
           {allFriendRequests}
         </div>

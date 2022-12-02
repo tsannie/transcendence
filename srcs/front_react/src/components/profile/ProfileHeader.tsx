@@ -1,13 +1,32 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ReactComponent as MedalIcon } from "../../assets/img/icon/medal.svg";
-import { User } from "../../contexts/AuthContext";
+import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
+import { GameContext, GameContextType } from "../../contexts/GameContext";
 import SearchBarPlayer from "./SearchBarPlayer";
 
 interface IProps {
-  player: User | null;
+  player: User;
 }
 
 function ProfileHeader(props: IProps) {
+  const [status, setStatus] = useState<string>("Private");
+  const { friendsLog } = useContext(GameContext) as GameContextType;
+  const { user } = useContext(AuthContext) as AuthContextType;
+
+  useEffect(() => {
+    if (friendsLog) {
+      const isOnline = friendsLog.find((friend) => {
+        return friend.id === props.player.id;
+      });
+      console.log(isOnline);
+      if (isOnline) {
+        setStatus("Online");
+      } else {
+        setStatus("Offline");
+      }
+    }
+  }, [friendsLog, user]);
+
   return (
     <div className="profile__header">
       <div className="profile__header__user">
@@ -22,12 +41,7 @@ function ProfileHeader(props: IProps) {
             <h2>{props.player?.username}</h2>
           </div>
           <div className="info__player">
-            <div className="elo">
-              <div className="elo__item">
-                <MedalIcon />
-                <span>789 PP</span>
-              </div>
-            </div>
+            <span>{status}</span>
           </div>
         </div>
       </div>
