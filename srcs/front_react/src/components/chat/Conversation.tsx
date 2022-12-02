@@ -2,7 +2,6 @@ import { Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { ChatDisplayContext, ChatDisplayContextInterface, ChatType } from "../../contexts/ChatDisplayContext";
-import { MessageContext } from "../../contexts/MessageContext";
 import MessageBody from "./MessageBody";
 import Options from "./Options";
 import { IChannel, IDm } from "./types";
@@ -44,25 +43,12 @@ function Conversation() {
   }
 
   useEffect( () => {
-    console.log("MOUNTING CONVERSATION");
-    console.log("currentCOnv =", currentConv);
-    console.log("chatList =", chatList);
-    console.log("chatList lenght =", chatList.length);
-    if (!currentConv) {
-      console.log("zici");
-      if (!chatList || chatList.length == 0) { 
-        console.log("la");
-        setDisplay(ChatType.CREATEFORM);
-        return ;
-      }
-      else
-        setCurrentConv(chatList[0].id);
-    } ;
-    const async_fct = async () => {
-      await loadContent(); 
+    if (!currentConv && !isRedirection) {
+      setDisplay(ChatType.CREATEFORM);
+      return ;
     }
-    async_fct();
-  }, [currentConv, chatList])
+    loadContent();
+  }, [currentConv, isRedirection])
 
   useEffect( () => {
     if (!targetRedirection) return ;
