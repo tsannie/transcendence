@@ -2,26 +2,24 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  Get,
-  Logger,
-  Post,
+  Get, Post,
   Req,
   Res,
   SerializeOptions,
   UnauthorizedException,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
-import { UserService } from 'src/user/service/user.service';
+import { Request, Response } from 'express';
+import JwtGuard from 'src/auth/guard/jwt.guard';
+import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { AuthService } from 'src/auth/service/auth.service';
+import { UserEntity } from 'src/user/models/user.entity';
+import { UserService } from 'src/user/service/user.service';
+import { UpdateResult } from 'typeorm';
 import { logger2FA } from '../const/const';
 import { TokenDto } from '../dto/token.dto';
 import { TwoFactorService } from '../service/two-factor.service';
-import JwtGuard from 'src/auth/guard/jwt.guard';
-import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
-import { UserEntity } from 'src/user/models/user.entity';
-import { UpdateResult } from 'typeorm';
-import { Request, Response } from 'express';
 
 @Controller('2fa')
 @UseInterceptors(ClassSerializerInterceptor)

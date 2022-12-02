@@ -1,15 +1,12 @@
-import { AxiosError, AxiosResponse } from "axios";
-import React, { Fragment, useContext, useEffect, useState } from "react";
-import { api } from "../../../const/const";
-import { User } from "../../../contexts/AuthContext";
+import { Fragment, useContext } from "react";
+import { Link } from "react-router-dom";
 import { ReactComponent as BallIcon } from "../../../assets/img/icon/ball-reverse.svg";
 import { ReactComponent as CheckIcon } from "../../../assets/img/icon/reverse_check.svg";
 import { ReactComponent as RemoveIcon } from "../../../assets/img/icon/reverse_remove.svg";
+import { User } from "../../../contexts/AuthContext";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { Link } from "react-router-dom";
 import { GameMode, IInvitation } from "../const/const";
 import { ICreateRoom } from "../types";
-import { toast } from "react-toastify";
 
 function GameAmical() {
   const {

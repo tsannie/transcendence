@@ -1,34 +1,22 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   JoinChannelForm.tsx                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dodjian@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/23 14:20:39 by dodjian           #+#    #+#             */
-/*   Updated: 2022/11/28 10:11:43 by dodjian          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-import { AxiosError, AxiosResponse } from "axios";
-import React, {
+import { AxiosResponse } from "axios";
+import {
   ChangeEvent,
   FormEvent,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
-import { api } from "../../const/const";
-import ChannelTable from "./ChannelTable";
+import { toast } from "react-toastify";
 import { ReactComponent as RefreshIcon } from "../../assets/img/icon/refresh.svg";
-import { IChannel } from "./types";
-import SearchBarChannel from "./SearchBarChannel";
+import { api } from "../../const/const";
 import {
   ChatDisplayContext,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
-import { toast } from "react-toastify";
 import { MessageContext } from "../../contexts/MessageContext";
+import ChannelTable from "./ChannelTable";
+import SearchBarChannel from "./SearchBarChannel";
+import { IChannel } from "./types";
 
 function JoinChannelForm() {
   const [channelDictionnary, setChannelDictionnary] = useState<IChannel[]>([]);
@@ -36,8 +24,16 @@ function JoinChannelForm() {
   const [selectChannel, setSelectChannel] = useState<IChannel>();
   const [refresh, setRefresh] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
-  const { setMuted, setMuteDate, setDisplay, setCurrentConv, setIsChannel, setNewConv, setRedirection, setTargetRedirection} =
-    useContext(ChatDisplayContext);
+  const {
+    setMuted,
+    setMuteDate,
+    setDisplay,
+    setCurrentConv,
+    setIsChannel,
+    setNewConv,
+    setRedirection,
+    setTargetRedirection,
+  } = useContext(ChatDisplayContext);
   const { socket } = useContext(MessageContext);
 
   const sortChannel = (channels: IChannel[]): IChannel[] => {
@@ -58,7 +54,7 @@ function JoinChannelForm() {
           `/channel/join`,
           selectChannel.status === "Public"
             ? { id: selectChannel.id }
-            : { id: selectChannel.id , password: password }
+            : { id: selectChannel.id, password: password }
         )
         .then((res: AxiosResponse) => {
           setCurrentConv(res.data.id);
@@ -72,12 +68,12 @@ function JoinChannelForm() {
     }
   };
 
-  useEffect( () => {
+  useEffect(() => {
     setMuted(false);
     setMuteDate(null);
     setRedirection(false);
     setTargetRedirection("");
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (refresh) {

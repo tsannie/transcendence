@@ -1,21 +1,22 @@
 import { useContext, useEffect, useRef } from "react";
-import { IChannel, IDm } from "./types";
+import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
+import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { api } from "../../const/const";
-import "./chat.style.scss";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
-import { MessageContext } from "../../contexts/MessageContext";
 import {
   ChatDisplayContext,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
-import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
-import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
+import { MessageContext } from "../../contexts/MessageContext";
+import "./chat.style.scss";
 import InviteList from "./InviteList";
+import { IChannel, IDm } from "./types";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { newMessage, chatList, setChatList, setNewMessage } = useContext(MessageContext);
+  const { newMessage, chatList, setChatList, setNewMessage } =
+    useContext(MessageContext);
   const { channels, removeChannel } = useContext(ChatNotifContext);
   const {
     currentConv,
@@ -29,7 +30,6 @@ function ChannelList() {
     setMuteDate,
   } = useContext(ChatDisplayContext);
   const messagesTopRef = useRef<null | HTMLDivElement>(null);
-
 
   const scrollToTop = () => {
     setTimeout(() => {
@@ -81,7 +81,7 @@ function ChannelList() {
   };
 
   const clickItem = (conv: IChannel) => {
-    if (conv.id !== currentConv){
+    if (conv.id !== currentConv) {
       setMuted(false);
       setMuteDate(null);
     }
@@ -90,13 +90,17 @@ function ChannelList() {
     setRedirection(false);
     if (conv.name) setIsChannel(true);
     else setIsChannel(false);
-    if (channels && channels.find( channelId => channelId === conv.id))
+    if (channels && channels.find((channelId) => channelId === conv.id))
       removeChannel(conv.id);
     setNewMessage(null);
   };
 
   const displayNotif = (convId: string) => {
-    if (channels && channels.find( channelId => channelId === convId) && currentConv !== convId) {
+    if (
+      channels &&
+      channels.find((channelId) => channelId === convId) &&
+      currentConv !== convId
+    ) {
       return <div className="notif" />;
     }
     return null;

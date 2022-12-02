@@ -2,14 +2,14 @@ import { AxiosResponse } from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { api, COOKIE_NAME } from "../../const/const";
-import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import { ChatDisplayProvider } from "../../contexts/ChatDisplayContext";
 import ChatNotifProvider from "../../contexts/ChatNotificationContext";
 import { GameProvider } from "../../contexts/GameContext";
 import { MessageProvider } from "../../contexts/MessageContext";
 import {
   TransitionContext,
-  TransitionContextType,
+  TransitionContextType
 } from "../../contexts/TransitionContext";
 import Sidebar from "../sidebar/Sidebar";
 

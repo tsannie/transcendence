@@ -1,28 +1,28 @@
-import React, {
+import { AxiosResponse } from "axios";
+import {
   Fragment,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
+import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
+import { api } from "../../../const/const";
+import {
+  AuthContext,
+  AuthContextType,
+  User
+} from "../../../contexts/AuthContext";
+import { GameContext, GameContextType } from "../../../contexts/GameContext";
+import Draw from "../class/draw.class";
 import {
   black,
   border_size_default,
   canvas_back_height,
   canvas_back_width,
-  paddle_height,
+  paddle_height
 } from "../const/const";
-import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
-import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { ISetPaddle, Room } from "../types";
-import {
-  AuthContext,
-  AuthContextType,
-  User,
-} from "../../../contexts/AuthContext";
-import { api } from "../../../const/const";
-import { AxiosResponse } from "axios";
-import Draw from "../class/draw.class";
 
 let position_y: number = 0;
 export function GameRender() {
