@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api } from "../../const/const";
-import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
+import { User } from "../../contexts/AuthContext";
 
 interface IProps {
-  player: User | null;
+  player: User;
 }
 
 function ProfileStatsBar(props: IProps) {
   const [rank, setRank] = useState(0);
 
   function calculWinrate() {
-    if (props.player?.matches === 0) return 0;
-    return Math.round((props.player?.wins! / props.player?.matches!) * 100);
+    if (props.player.matches === 0) return 0;
+    return Math.round((props.player.wins! / props.player.matches!) * 100);
   }
 
   function getLeaderboardRank() {
@@ -27,7 +27,7 @@ function ProfileStatsBar(props: IProps) {
   return (
     <div className="profile__stats">
       <div className="profile__stats__item">
-        <h3 id="matches"> {props.player?.matches} </h3>
+        <h3 id="matches"> {props.player.matches} </h3>
         <span>Matches</span>
       </div>
       <div className="profile__stats__item">
@@ -35,7 +35,7 @@ function ProfileStatsBar(props: IProps) {
         <span>Win Rate</span>
       </div>
       <div className="profile__stats__item">
-        <h3 id="elo"> {props.player?.elo} </h3>
+        <h3 id="elo"> {props.player.elo} </h3>
         <span>elo</span>
       </div>
       <div className="profile__stats__item">
