@@ -73,11 +73,13 @@ function ProfileHistory(props: IProps) {
               />
             </Link>
 
-            <span>
-              {props.player?.id === game.p1.id
-                ? game.p1_score + " - " + game.p2_score
-                : game.p2_score + " - " + game.p1_score}
-            </span>
+            <div className="score">
+              <span>
+                {props.player?.id === game.p1.id
+                  ? game.p1_score + " - " + game.p2_score
+                  : game.p2_score + " - " + game.p1_score}
+              </span>
+            </div>
           </div>
           <hr />
         </Fragment>
