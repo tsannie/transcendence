@@ -80,7 +80,7 @@ export class UserEntity {
   @JoinTable()
   dms: DmEntity[];
 
-  @Expose({ groups: ['me'] })
+  @Expose({ groups: ['user', 'me'] })
   @ManyToMany(() => UserEntity)
   @JoinTable()
   blocked: UserEntity[];

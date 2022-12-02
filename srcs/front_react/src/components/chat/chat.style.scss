@@ -138,6 +138,7 @@ $width_chat: calc(450 * var(--res));
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
 }
 
 .conversation__messages__list {
@@ -197,55 +198,86 @@ $width_chat: calc(450 * var(--res));
   flex-direction: column;
   height: 100%;
   padding-top: 5%;
-  overflow-x: auto;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .category {
     display: flex;
-    position: relative;
+    flex: 0 0 15%;
     flex-direction: column;
     border-style: dashed;
     border-width: calc(3 * var(--res)) !important;
+    margin-bottom: 2%;
 
     .title {
       font-size: calc(14 * var(--res));
       align-self: center;
     }
 
-    .members {
+    .users {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-    }
 
-    .dropdown {
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      align-items: center;
-      background-color: $bg-color;
-      opacity: 0.954;
-      border-style: dashed;
-      height: fit-content;
-      z-index: 1;
-
-      .options {
+      .members {
         display: flex;
-        justify-content: center;
-        width: 100%;
-        border-bottom-style: dashed;
-        font-size: calc(18 * var(--res));
+        position: relative;
+        transition: 0.3s;
+        cursor: pointer;
+
+        // &:hover {
+        //   opacity: 0.6;
+        // }
       }
 
-      button {
-        font-size: calc(16 * var(--res));
-        padding: 1%;
+      .dropdown{
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        align-items: center;
+        background-color: $bg-color;
+        opacity: 0.954;
+        border-style: dashed;
+        border-width: calc(3 * var(--res)) !important;
+        width: calc(75 * var(--res));
+        height: fit-content;
+        z-index: 1;
+
+        .options{
+          width: 100%;
+          border-bottom-style: dashed;
+          border-width: calc(3 * var(--res)) !important;
+          font-size: calc(14 * var(--res));
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        button {
+          font-size: calc(13 * var(--res));
+          padding: 1%;
+        }
+
+        form {
+          border-style: none;
+          width: 100%;
+
+          input {
+            border-width: calc(1 * var(--res)) !important;
+            margin: 0% 8% 0% 8%;
+            font-size: calc(11 * var(--res));
+            width: 100%;
+          }
+        }
       }
     }
 
     button {
       width: fit-content;
       border-style: none;
-      padding: 0%;
+      padding: 0.6%;
     }
 
     img {
@@ -293,6 +325,30 @@ $width_chat: calc(450 * var(--res));
     .date {
       font-size: calc(11 * var(--res));
     }
+
+    .actions__channel { // TODO: a changer pour avoi un truc style
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      align-items: center;
+      position: relative;
+      width: 100%;
+
+      .action {
+        display: flex;
+        flex-direction: column;
+        border: none;
+
+        svg {
+          align-self: center;
+          width: calc(25 * var(--res))
+        }
+
+        span {
+          font-size: calc(12 * var(--res));
+        }
+      }
+    }
   }
 
   .clickable_profile {
@@ -332,6 +388,7 @@ form {
   padding-left: 2%;
   border-style: dashed;
   border-radius: calc(15 * var(--res));
+  max-width: 75%;
 }
 
 .send__button {
@@ -339,6 +396,13 @@ form {
   width: calc(30 * var(--res));
   height: calc(30 * var(--res));
 }
+
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 
 .create__channel {
   display: flex;
@@ -583,5 +647,113 @@ form {
     width: 30%;
     border-style: dashed;
     margin-right: 3%;
+  }
+}
+
+ .channel__change__password {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4%;
+  input {
+    margin: 2%;
+    width: 100%;
+    font-size: calc(15 * var(--res));
+    border-width: calc(2 * var(--res)) !important;
+  }
+}
+
+.channel__delete__password {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 55%;
+  margin-top: 4%;
+  input {
+    margin: 2%;
+    font-size: calc(18 * var(--res));
+  }
+}
+
+.invite{
+  width: 100%;
+  border-width: calc(2 * var(--res)) !important;
+  position: relative;
+}
+
+.invite-suggestion{
+  position: absolute;
+  border-width: calc(2 * var(--res)) !important;
+  width: 100%;
+
+  li {    
+    span {
+      font-size: calc(18 * var(--res)) !important;
+    }
+
+    img{
+      width: calc(25 * var(--res));
+      height: calc(25 * var(--res));
+    }
+  }
+
+  li:not(:last-of-type) {
+    border-bottom: dashed;
+    border-width: calc(2 * var(--res)) !important;
+  }
+}
+
+.invite-no-suggestions{
+  position: relative;
+  margin-top: 0;
+}
+
+.invitations {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  width: 100%;
+  scale: 0.95;
+
+  li {
+    display: flex;
+    border-style: dashed;
+    justify-content: space-around;
+
+    .invite_info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 3%;
+
+      .invite_title{
+        font-size: calc(18 * var(--res));
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      span{
+        font-size: calc(14 * var(--res)) !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .invite_buttons {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      flex: 0 0 30%;
+      
+      button {
+        border: none;
+      }
+
+      svg {
+        width: calc(25 * var(--res));
+      }
+    }
   }
 }

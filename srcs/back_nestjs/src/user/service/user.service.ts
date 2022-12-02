@@ -220,19 +220,24 @@ export class UserService {
   async blockUser(target: string, requester: UserEntity): Promise<UserEntity> {
     if (target === requester.username)
       throw new UnprocessableEntityException(`Cannot ban yourself.`);
-    let toBan = await this.findByName(target);
-    if (!toBan)
+    let toBlock = await this.findByName(target, {
+      friends: true,
+    });
+    if (!toBlock)
       throw new UnprocessableEntityException(
         `Cannot find a ${target} in database.`,
       );
     else {
-      if (!requester.blocked) requester.blocked = [toBan];
+      if (requester.friends.find((friend) => friend.id === toBlock.id)) {
+        await this.removeFriend(requester, toBlock);
+      }
+      if (!requester.blocked) requester.blocked = [toBlock];
       else {
         if (requester.blocked.find((elem) => elem.username === target))
           throw new UnprocessableEntityException(
             `You've already blocked ${target}`,
           );
-        else requester.blocked.push(toBan);
+        else requester.blocked.push(toBlock);
       }
     }
     return await this.allUser.save(requester);
@@ -372,6 +377,7 @@ export class UserService {
 
     return filteredSuggestions.map((suggestion) => {
       return {
+        id: suggestion.id,
         username: suggestion.username,
         picture: suggestion.profile_picture,
       };
@@ -402,6 +408,21 @@ export class UserService {
     )
       throw new UnprocessableEntityException(
         `You already sent a friend request to ${target.username}`,
+      );
+
+    if (
+      user.blocked &&
+      user.blocked.find((elem) => elem.id === target.id)
+    )
+      throw new UnprocessableEntityException(
+        `You are blocked by ${target.username}`,
+      );
+    if (
+      target.blocked &&
+      target.blocked.find((elem) => elem.id === user.id)
+    )
+      throw new UnprocessableEntityException(
+        `${target.username} is blocked by you`,
       );
 
     if (!target.friend_requests) target.friend_requests = [user];

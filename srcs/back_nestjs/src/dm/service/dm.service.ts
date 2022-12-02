@@ -22,7 +22,7 @@ export class DmService {
       user.blocked &&
       user.blocked.find((blocked_guys) => blocked_guys.id === target)
     )
-      throw new UnprocessableEntityException(`You've blocked ${target}`);
+      throw new UnprocessableEntityException(`You've blocked this user`);
     if (
       user2.blocked &&
       user2.blocked.find(
@@ -95,7 +95,7 @@ export class DmService {
         );
         if (convo) return await this.getDmById(convo.id);
       }
-      
+
     let new_dm = new DmEntity();
 
     new_dm.users = [user, user2];

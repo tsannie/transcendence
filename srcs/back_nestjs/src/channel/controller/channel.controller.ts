@@ -22,13 +22,14 @@ import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { BanEntity, MuteEntity } from '../models/ban.entity';
 import { Request } from 'express';
 import { MessageGateway } from 'src/message/message.gateway';
+import { UserEntity } from 'src/user/models/user.entity';
+import { ChannelInvitationDto } from '../dto/channelinvitation.dto';
 
 @Controller('channel')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ChannelController {
   constructor(
     private channelService: ChannelService,
-    @Inject(forwardRef(() => MessageGateway))
     private messageGateway: MessageGateway,
   ) {}
 
@@ -67,11 +68,12 @@ export class ChannelController {
     @Body() channel: CreateChannelDto,
     @Req() req: Request,
   ): Promise<void | ChannelEntity> {
-    return await this.channelService.createChannel(channel, req.user);
-    //const channelCreated: ChannelEntity | void =
 
-    //await this.channelService.createChannel(channel, req.user);
-    //return this.messageGateway.createChannel(channelCreated);
+      const newChannel = await this.channelService.createChannel(channel, req.user);
+
+      if (newChannel)
+        this.messageGateway.joinAllSocketToChannel(req.user.id, newChannel.id);
+      return newChannel;
   }
 
   @Post('ban')
@@ -81,7 +83,10 @@ export class ChannelController {
     @Body() ban_request: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<BanEntity> {
-    return await this.channelService.banUser(ban_request, req.user);
+    const bannedUser = await this.channelService.banUser(ban_request, req.user);
+
+    this.messageGateway.banUser(bannedUser);
+    return bannedUser;
   }
 
   @Post('unban')
@@ -91,17 +96,10 @@ export class ChannelController {
     @Body() ban_request: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<BanEntity> {
-    return await this.channelService.unBanUser(ban_request, req.user);
-  }
+    const unBannedUser = await this.channelService.unBanUser(ban_request, req.user);
 
-  @Post('makeAdmin')
-  @SerializeOptions({ groups: ['user'] })
-  @UseGuards(JwtTwoFactorGuard)
-  async makeAdmin(
-    @Body() channel: ChannelActionsDto,
-    @Req() req: Request,
-  ): Promise<ChannelEntity> {
-    return await this.channelService.makeAdmin(channel, req.user);
+    this.messageGateway.unBanUser(unBannedUser, ban_request.id);
+    return unBannedUser;
   }
 
   @Post('mute')
@@ -110,11 +108,11 @@ export class ChannelController {
   async muteUser(
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
-  ) {
-    //return await this.channelService.muteUser(channel, req.user);
+  ) : Promise<MuteEntity>{
     const userMuted: MuteEntity = await this.channelService.muteUser(channel, req.user);
 
     this.messageGateway.muteUser(userMuted);
+    return userMuted;
   }
 
   @Post('unmute')
@@ -124,7 +122,23 @@ export class ChannelController {
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<MuteEntity> {
-    return await this.channelService.unMuteUser(channel, req.user);
+    const unmutedUser : MuteEntity = await this.channelService.unMuteUser(channel, req.user);
+
+    this.messageGateway.unMuteUser(unmutedUser, channel.id);
+    return unmutedUser;
+  }
+
+  @Post('makeAdmin')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async makeAdmin(
+    @Body() channel: ChannelActionsDto,
+    @Req() req: Request,
+  ): Promise<ChannelEntity> {
+    const newAdmin = await this.channelService.makeAdmin(channel, req.user);
+
+    this.messageGateway.makeAdmin(newAdmin.target, newAdmin.channel.id);
+    return newAdmin.channel;
   }
 
   @Post('revokeAdmin')
@@ -134,7 +148,10 @@ export class ChannelController {
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<ChannelEntity> {
-    return await this.channelService.revokeAdmin(channel, req.user);
+    const oldAdmin = await this.channelService.revokeAdmin(channel, req.user);
+
+    this.messageGateway.revokeAdmin(oldAdmin.target, oldAdmin.channel.id);
+    return oldAdmin.channel;
   }
 
   //ENTER IN A PUBLIC ROOM,
@@ -142,21 +159,47 @@ export class ChannelController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async joinChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    return await this.channelService.joinChannel(query_channel, req.user);
+    const channel: ChannelEntity = await this.channelService.joinChannel(query_channel, req.user)
+
+    this.messageGateway.joinChannel(req.user, channel);
+    return channel;
   }
 
   @Post('leave')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async leaveChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    return await this.channelService.leaveChannel(query_channel, req.user);
+    const channel: ChannelEntity = await this.channelService.leaveChannel(query_channel, req.user)
+
+    if (!channel.id)
+      this.messageGateway.deleteChannel(query_channel.id);
+    else
+      this.messageGateway.leaveChannel(req.user, channel);
+    return channel;
   }
 
   @Post('delete')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async deleteChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    return await this.channelService.deleteChannel(query_channel, req.user);
+    const old_channel = await this.channelService.deleteChannel(query_channel, req.user);
+
+    this.messageGateway.deleteChannel(query_channel.id);
+    return old_channel;
+  }
+
+  @Post('invite')
+  @SerializeOptions({ groups: ['user'] })
+  @UseGuards(JwtTwoFactorGuard)
+  async inviteChannel(
+    @Body() query_channel: ChannelInvitationDto,
+    @Req() req: Request,
+  ): Promise<ChannelEntity> {
+    const channel: ChannelEntity = await this.channelService.inviteChannel(query_channel, req.user);
+
+    // find the user to invite with his id
+    this.messageGateway.inviteChannel(query_channel.targetId, channel);
+    return channel;
   }
 
   @Post('addPassword')
