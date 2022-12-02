@@ -301,9 +301,9 @@ export class GameService {
   // INGAME FUNCTIONS
   ////////////////////
 
-  async getHistory(user: UserEntity): Promise<IGameStat[]> {
+  async getHistory(user_id: string): Promise<IGameStat[]> {
     const history = await this.gameStatRepository.find({
-      where: [{ p1_id: user.id }, { p2_id: user.id }],
+      where: [{ p1_id: user_id }, { p2_id: user_id }],
     });
 
     // sort history by date

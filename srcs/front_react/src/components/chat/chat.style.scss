@@ -327,7 +327,6 @@ $width_chat: calc(450 * var(--res));
     }
 
     .actions__channel {
-      // TODO: a changer pour avoi un truc style
       display: flex;
       flex-wrap: wrap;
       justify-content: space-evenly;
@@ -719,7 +718,7 @@ form {
     border-style: dashed;
     justify-content: space-around;
     margin: 2.4% 0 2.4% 0;
-    
+
     .invite_info {
       display: flex;
       flex-direction: column;

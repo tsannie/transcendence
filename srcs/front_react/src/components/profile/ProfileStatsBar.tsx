@@ -15,14 +15,16 @@ function ProfileStatsBar(props: IProps) {
   }
 
   function getLeaderboardRank() {
-    api.get("user/leaderboard").then((res) => {
-      setRank(res.data);
-    });
+    api
+      .get("user/leaderboard", { params: { id: props.player.id } })
+      .then((res) => {
+        setRank(res.data);
+      });
   }
 
   useEffect(() => {
     getLeaderboardRank();
-  }, []);
+  }, [props.player]);
 
   return (
     <div className="profile__stats">
