@@ -4,8 +4,9 @@ import { api } from "../../const/const";
 import {
   ChatDisplayContext,
   ChatDisplayContextInterface,
-  ChatType
+  ChatType,
 } from "../../contexts/ChatDisplayContext";
+import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
 import MessageBody from "./MessageBody";
 import Options from "./Options";
 import { IChannel, IDm } from "./types";
@@ -26,6 +27,7 @@ function Conversation() {
     setRedirection,
   }: ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDatas | IDm | null>(null);
+  const { removeChannel } = useContext(ChatNotifContext);
 
   const loadContent = () => {
     if (!currentConv) return;
@@ -56,6 +58,7 @@ function Conversation() {
       setDisplay(ChatType.CREATEFORM);
       return;
     }
+    removeChannel(currentConv);
     loadContent();
   }, [currentConv, isRedirection]);
 
