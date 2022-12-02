@@ -17,8 +17,8 @@ export default function ActivationProcess() {
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
 
-  async function getQrCode() {
-    await api
+  function getQrCode() {
+    api
       .get("2fa/generate", {
         responseType: "arraybuffer",
       })
@@ -27,7 +27,7 @@ export default function ActivationProcess() {
         setQrCode(base64);
       })
       .catch(() => {
-        console.log("Impossible to get QR code");
+        toast.error("Impossible to get QR code");
       });
   }
 

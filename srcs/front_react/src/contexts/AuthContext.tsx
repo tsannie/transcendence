@@ -10,6 +10,7 @@ export type User = {
   enabled2FA: boolean;
   profile_picture: string;
   friends: User[];
+  blocked: User[];
   friend_requests: User[];
   elo: number;
   matches: number;
@@ -43,7 +44,6 @@ export const AuthProvider = ({ children }: IProps) => {
   };
 
   const logout = () => {
-    console.log("logout");
     setUser(null);
     setIsLogin(false);
   };

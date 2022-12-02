@@ -6,7 +6,7 @@ import { ChatType } from "../../contexts/ChatDisplayContext";
 import { toast } from "react-toastify";
 
 function CreateChannelForm() {
-  const { setDisplay, setCurrentConv, setIsChannel, setNewConv } =
+  const { setDisplay, setCurrentConv, setIsChannel, setNewConv, setMuteDate, setMuted } =
     useContext(ChatDisplayContext);
 
   const [channelName, setChannelName] = useState<string>("");
@@ -14,7 +14,7 @@ function CreateChannelForm() {
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
   const [selectType, setSelectType] = useState<string | null>(null);
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     if (channelPassword.length > 0 && channelPassword !== passwordVerifier) {
       toast.error("Passwords don't match");
@@ -26,15 +26,17 @@ function CreateChannelForm() {
     };
     if (selectType === "Protected") channel.password = channelPassword;
 
-    await api
+    api
       .post("channel/create", channel)
       .then((res) => {
+        setMuted(false);
+        setMuteDate(null);
         setCurrentConv(res.data.id);
         setIsChannel(true);
         setNewConv(res.data);
         setDisplay(ChatType.CONV);
       })
-      .catch((err) => toast.error("HTTP error: " + err.response.data));
+      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
   };
 
   return (

@@ -36,7 +36,6 @@ function Profile() {
       api
         .get("/user/username", { params: { username: params } })
         .then((res: AxiosResponse) => {
-          console.log(res.data);
           setPlayer(res.data as User);
           setisLoad(true);
         })
@@ -54,7 +53,6 @@ function Profile() {
 
   useEffect(() => {
     if (reloadPlayer && player && isLoad) {
-      console.log("reload");
       if (isPerso) {
         setReloadUser(true);
       } else {
@@ -71,13 +69,17 @@ function Profile() {
     }
   }, [reloadPlayer]);
 
-  if (isLoad) {
+  if (isLoad && player) {
     return (
       <div className="profile">
         <div className="profile__size" />
         <ProfileHeader player={player} />
         {!isPerso && (
-          <ActionBar player={player} setReloadPlayer={setReloadPlayer} />
+          <ActionBar
+            player={player}
+            setReloadPlayer={setReloadPlayer}
+            setReloadUser={setReloadUser}
+          />
         )}
         <hr id="full" />
         <ProfileStatsBar player={player} />

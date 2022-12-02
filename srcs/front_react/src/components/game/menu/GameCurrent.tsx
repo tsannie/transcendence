@@ -12,15 +12,23 @@ function GameCurrent() {
   ) as GameContextType;
   const [currentRooms, setCurrentRooms] = useState<IInfoRoom[]>([]);
   let allRooms: JSX.Element[];
-  //getCurrentRooms
 
   useEffect(() => {
-    socket?.on("updateCurrentRoom", (room: IInfoRoom) => {
-      const tmp = currentRooms.filter((r) => r.id !== room.id);
-      setCurrentRooms(
-        room.status === RoomStatus.PLAYING ? [...tmp, room] : tmp
-      );
-    });
+    if (socket) {
+      socket.on("updateCurrentRoom", (room: IInfoRoom) => {
+        const tmp = currentRooms.filter((r) => r.id !== room.id);
+        if (room.status !== RoomStatus.PLAYING) {
+          setCurrentRooms(tmp);
+        } else {
+          setCurrentRooms(
+            room.status === RoomStatus.PLAYING ? [...tmp, room] : tmp
+          );
+        }
+      });
+      return () => {
+        socket.off("updateCurrentRoom");
+      };
+    }
   }, [socket]);
 
   useEffect(() => {
@@ -31,8 +39,10 @@ function GameCurrent() {
 
   const handleJoinRoom = (e: MouseEvent<HTMLButtonElement>, id: string) => {
     e.preventDefault();
-    setDisplayRender(true);
-    socket?.emit("joinRoom", id);
+    if (socket) {
+      socket.emit("joinRoom", id);
+      setDisplayRender(true);
+    }
   };
 
   if (currentRooms.length) {

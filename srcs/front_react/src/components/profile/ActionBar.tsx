@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ReactComponent as ChatIcon } from "../../assets/img/icon/chat.svg";
 import { ReactComponent as AddFriendIcon } from "../../assets/img/icon/add-friend.svg";
 import { ReactComponent as RemoveFriendIcon } from "../../assets/img/icon/remove-friend.svg";
@@ -15,20 +15,27 @@ import { useNavigate } from "react-router-dom";
 import { AxiosError, AxiosResponse } from "axios";
 
 interface IProps {
-  player: User | null;
+  player: User;
   setReloadPlayer: (reload: boolean) => void;
+  setReloadUser: (reload: boolean) => void;
 }
 
 function ActionBar(props: IProps) {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { setIsChannel, setDisplay, setRedirection, setTargetRedirection } =
-    useContext(ChatDisplayContext) as ChatDisplayContextInterface;
+  const {
+    setIsChannel,
+    setDisplay,
+    setRedirection,
+    setTargetRedirection,
+    setCurrentConv,
+  } = useContext(ChatDisplayContext) as ChatDisplayContextInterface;
   const nav = useNavigate();
 
   const handleRemoveFriend = () => {
-    api.post("/user/remove-friend", { id: props.player?.id }).then(
+    api.post("/user/remove-friend", { id: props.player.id }).then(
       () => {
         props.setReloadPlayer(true);
+        //props.setReloadUser(true);
       },
       () => {
         toast.error("error while removing friend");
@@ -38,10 +45,10 @@ function ActionBar(props: IProps) {
 
   const handleAddFriend = () => {
     if (
-      user?.friend_requests.find((req_user) => req_user.id === props.player?.id)
+      user?.friend_requests.find((req_user) => req_user.id === props.player.id)
     ) {
       api
-        .post("/user/accept-friend-request", { id: props.player?.id })
+        .post("/user/accept-friend-request", { id: props.player.id })
         .then(() => {
           props.setReloadPlayer(true);
         })
@@ -50,13 +57,13 @@ function ActionBar(props: IProps) {
         });
     } else {
       api
-        .post("/user/create-friend-request", { id: props.player?.id })
+        .post("/user/create-friend-request", { id: props.player.id })
         .then(() => {
           props.setReloadPlayer(true);
           toast.info("friend request sent !");
         })
-        .catch(() => {
-          toast.error("Friend request already sent");
+        .catch((error) => {
+          toast.error(error.response.data.message);
         });
     }
   };
@@ -65,19 +72,58 @@ function ActionBar(props: IProps) {
     setRedirection(true);
     setDisplay(ChatType.CONV);
     setIsChannel(false);
-    setTargetRedirection(props.player?.id as string);
+    setTargetRedirection(props.player.id as string);
+    setCurrentConv("");
     nav("/chat");
+  };
+
+  const handleBlock = () => {
+    api
+      .post("/user/block", { username: props.player.username })
+      .then(() => {
+        props.setReloadUser(true);
+        props.setReloadPlayer(true);
+      })
+      .catch(() => {
+        toast.error("error while blocking user");
+      });
+  };
+
+  const handleUnBlock = () => {
+    api
+      .post("/user/unBlock", { username: props.player.username })
+      .then(() => {
+        props.setReloadUser(true);
+        props.setReloadPlayer(true);
+      })
+      .catch(() => {
+        toast.error("error while unblocking user");
+      });
+  };
+
+  const isBlocked = (user: User | null, playerBlocked: User | null) => {
+    return (
+      user?.blocked.find(
+        (blocked_user) => blocked_user.id === playerBlocked?.id
+      ) ||
+      playerBlocked?.blocked.find(
+        (blocked_user) => blocked_user.id === user?.id
+      )
+    );
   };
 
   return (
     <div className="action-bar">
       <div className="action-bar__item">
-        <button onClick={handleDm}>
+        <button
+          onClick={handleDm}
+          disabled={isBlocked(user, props.player) ? true : false}
+        >
           <ChatIcon alt="chat" />
         </button>
         <span>chat</span>
       </div>
-      {props.player?.friends.find((friend) => friend.id === user?.id) ? (
+      {props.player.friends.find((friend) => friend.id === user?.id) ? (
         <div className="action-bar__item">
           <button onClick={handleRemoveFriend}>
             <RemoveFriendIcon alt="remove-friend" />
@@ -86,18 +132,30 @@ function ActionBar(props: IProps) {
         </div>
       ) : (
         <div className="action-bar__item">
-          <button onClick={handleAddFriend}>
+          <button
+            onClick={handleAddFriend}
+            disabled={isBlocked(user, props.player) ? true : false}
+          >
             <AddFriendIcon alt="add-friend" />
           </button>
           <span>add friend</span>
         </div>
       )}
-      <div className="action-bar__item">
-        <button>
-          <BlockIcon alt="block" />
-        </button>
-        <span>block</span>
-      </div>
+      {user?.blocked.find((blocked) => blocked.id === props.player.id) ? (
+        <div className="action-bar__item">
+          <button onClick={handleUnBlock}>
+            <BlockIcon alt="unblock" />
+          </button>
+          <span>unblock</span>
+        </div>
+      ) : (
+        <div className="action-bar__item">
+          <button onClick={handleBlock}>
+            <BlockIcon alt="block" />
+          </button>
+          <span>block</span>
+        </div>
+      )}
     </div>
   );
 }
