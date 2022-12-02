@@ -1,33 +1,25 @@
-import userEvent from "@testing-library/user-event";
 import {
-  ChangeEvent,
   Fragment,
   useContext,
-  useEffect,
-  useRef,
-  useState,
+  useEffect, useState
 } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
+import { ReactComponent as PlusIcon } from "../../assets/img/icon/circle_plus.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import {
   ChatDisplayContext,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { IDatas } from "./Conversation";
 import UserOptions from "./OptionsChannelActions";
-import { IChannel } from "./types";
-import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
-import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
-import { ReactComponent as PlusIcon } from "../../assets/img/icon/circle_plus.svg";
-import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
-import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
-import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
-import { AxiosResponse } from "axios";
 import ChannelPassword from "./OptionsChannelPassword";
 import SearchBarPlayerInvitation from "./SearchBarPlayerInvitation";
+import { IChannel } from "./types";
 
 export interface IMemberProps {
   type: string;

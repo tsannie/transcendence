@@ -1,12 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import {
-  AuthContext,
-  AuthContextType,
-  User,
-} from "../../../contexts/AuthContext";
-import { RoomStatus } from "../const/const";
+import { useContext } from "react";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
+import { RoomStatus } from "../const/const";
 
 export default function GameWaiting() {
   const { room, setRoom, socket, timeQueue } = useContext(

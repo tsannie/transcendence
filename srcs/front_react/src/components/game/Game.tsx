@@ -1,14 +1,13 @@
-import React, { useContext } from "react";
-import { GameRender } from "./render/Render";
-import { RoomStatus } from "./const/const";
+import { useContext } from "react";
 import { GameContext, GameContextType } from "../../contexts/GameContext";
+import { RoomStatus } from "./const/const";
 import "./game.style.scss";
-import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import GameCurrent from "./menu/GameCurrent";
+import GameAmical from "./menu/GameAmical";
 import GameContentHeader from "./menu/GameContentHeader";
+import GameCurrent from "./menu/GameCurrent";
 import GameMatchmaking from "./menu/GameMatchmaking";
 import GameWaiting from "./menu/GameWaiting";
-import GameAmical from "./menu/GameAmical";
+import { GameRender } from "./render/Render";
 
 export default function Game() {
   const { room, displayRender } = useContext(GameContext) as GameContextType;

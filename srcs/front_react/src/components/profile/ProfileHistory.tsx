@@ -1,10 +1,10 @@
-import { User } from "../../contexts/AuthContext";
-import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
-import { Fragment, useEffect, useState } from "react";
-import { api } from "../../const/const";
-import { IGameStat, Winner } from "../game/const/const";
 import { AxiosResponse } from "axios";
+import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ReactComponent as TrophyIcon } from "../../assets/img/icon/trophy.svg";
+import { api } from "../../const/const";
+import { User } from "../../contexts/AuthContext";
+import { IGameStat, Winner } from "../game/const/const";
 
 interface IProps {
   player: User;

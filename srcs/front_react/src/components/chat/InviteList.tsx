@@ -1,15 +1,15 @@
-import { Fragment, useContext, useEffect } from "react";
-import {
-  ChatDisplayContext,
-  ChatType,
-} from "../../contexts/ChatDisplayContext";
+import { AxiosResponse } from "axios";
+import { useContext } from "react";
+import { toast } from "react-toastify";
 import { ReactComponent as AcceptIcon } from "../../assets/img/icon/check.svg";
 import { ReactComponent as RefuseIcon } from "../../assets/img/icon/remove.svg";
-import { IChannel } from "./types";
 import { api } from "../../const/const";
-import { AxiosError, AxiosResponse } from "axios";
-import { toast } from "react-toastify";
+import {
+  ChatDisplayContext,
+  ChatType
+} from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
+import { IChannel } from "./types";
 
 function InviteList() {
   const {

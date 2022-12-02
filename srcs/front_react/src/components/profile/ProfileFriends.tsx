@@ -1,11 +1,10 @@
-import userEvent from "@testing-library/user-event";
-import React, { Fragment, MouseEvent, useContext } from "react";
-import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
+import { Fragment, MouseEvent } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ReactComponent as AddIcon } from "../../assets/img/icon/check.svg";
 import { ReactComponent as RemoveIcon } from "../../assets/img/icon/remove.svg";
-import { Link } from "react-router-dom";
 import { api } from "../../const/const";
-import { toast } from "react-toastify";
+import { User } from "../../contexts/AuthContext";
 
 interface IProps {
   player: User;

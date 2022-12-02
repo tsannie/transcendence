@@ -9,7 +9,7 @@ import {
   rad,
   RoomStatus,
   white,
-  Winner,
+  Winner
 } from "../const/const";
 import { IQuadrilateral, Room } from "../types";
 
