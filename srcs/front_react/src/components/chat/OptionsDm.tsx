@@ -55,11 +55,13 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
     <div className="text">
       <span>{user2?.username}</span>
     </div>
-    <button className="duel">
-      <Link style={{textDecoration: 'none'}} to={"/game"}>
-        {/* <img src={user2?.profile_picture} /> */}
-      </Link>
-    </button>
+    { user?.friends.find( (elem) => elem.id === user2?.id) &&
+      <button className="duel">
+        <Link style={{textDecoration: 'none'}} to={"/game"}>
+          {/* <img src={user2?.profile_picture} /> */}
+        </Link>
+      </button>
+    }
   </div>);
 }
 
