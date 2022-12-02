@@ -111,8 +111,6 @@ function ActionBar(props: IProps) {
       )
     );
   };
-  console.log("user blocked === ", user?.blocked);
-  console.log("player blocked === ", props.player?.blocked);
 
   return (
     <div className="action-bar">
