@@ -6,10 +6,10 @@ export const victory_score: number = 10;
 
 // BALL DATA
 export const rad: number = 20;
-export const gravity: number = 15;
+export const gravity: number = 3;
 export const speed_spawn: number = 10;
-export const speed: number = 25;
-export const speed_smasher: number = 40;
+export const speed: number = 20;
+export const speed_smasher: number = 35;
 
 // PADDLE DATA
 export const paddle_margin: number = 100;
