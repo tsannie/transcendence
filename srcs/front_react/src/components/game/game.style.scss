@@ -162,26 +162,6 @@
   svg {
     width: calc(30 * var(--res));
   }
-  #trans {
-    svg {
-      width: calc(30 * var(--res));
-
-      fill: $bg-color;
-      background: linear-gradient(
-        to right,
-        rgba(13, 213, 252),
-        rgba(243, 243, 21),
-        rgba(255, 153, 51)
-      );
-    }
-  }
-  #classic {
-    svg {
-      width: calc(30 * var(--res));
-      fill: $bg-color;
-      background: $white-color;
-    }
-  }
 }
 
 .current {
