@@ -247,28 +247,4 @@ export class ChannelController {
   async deletePassword(@Body() channel: ChannelDto, @Req() req: Request) {
     return await this.channelService.deletePassword(channel, req.user);
   }
-
-  /*PLEASE DELETE THESE ROUTE LATER, TEST ROUTES*/
-
-  /*to use that route, send an object as such:
-	{
-		ChannelDTO{
-			name
-		},
-		username
-	}
-	*/
-  @Post('falseUsergenerator')
-  @SerializeOptions({ groups: ['user'] })
-  async addFalseUser(@Body() data) {
-    let new_user = await this.channelService.createFalseUser(data.username);
-    return await this.channelService.joinChannel(data.channel, new_user);
-  }
-
-  //RETURN ALL ROOMS AVAILABLE (PUBLIC/PRIVATE/ETC...)
-  @Get('all')
-  @SerializeOptions({ groups: ['user'] })
-  async getAllChannels(): Promise<ChannelEntity[]> {
-    return this.channelService.getAllChannels();
-  }
 }

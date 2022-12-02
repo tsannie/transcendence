@@ -56,7 +56,7 @@ function JoinChannelForm() {
           setDisplay(ChatType.CONV);
         })
         .catch((err) => {
-          toast.error("HTTP error: " + err.response.data.message);
+          toast.error(err.response.data.message);
         });
     }
   };

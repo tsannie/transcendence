@@ -1,7 +1,10 @@
 import { ChangeEvent, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
-import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
+import {
+  ChatDisplayContext,
+  ChatType,
+} from "../../contexts/ChatDisplayContext";
 import { ICreateChannel } from "./types";
 
 function CreateChannelForm() {
@@ -41,7 +44,7 @@ function CreateChannelForm() {
         setNewConv(res.data);
         setDisplay(ChatType.CONV);
       })
-      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
+      .catch((err) => toast.error(err.response.data.message));
   };
 
   return (
