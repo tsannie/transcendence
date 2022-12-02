@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -11,14 +13,12 @@ import { UserEntity } from 'src/user/models/user.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { BanMuteService } from 'src/channel/service/banmute.service';
-import { DmService } from 'src/dm/service/dm.service';
-import { Server } from 'socket.io';
-import { ChannelService } from 'src/channel/service/channel.service';
 import { MessageDto } from '../dto/message.dto';
 import { Socket } from 'socket.io';
-import { Console } from 'console';
-
-const LOADED_MESSAGES = 20;
+import { WsException } from '@nestjs/websockets';
+import { MuteEntity } from 'src/channel/models/ban.entity';
+import { MessageGateway } from '../message.gateway';
+import { DmService } from 'src/dm/service/dm.service';
 
 @Injectable()
 export class MessageService {
@@ -26,8 +26,10 @@ export class MessageService {
     @InjectRepository(MessageEntity)
     private allMessages: Repository<MessageEntity>,
     private userService: UserService,
-    private channelService: ChannelService,
     private banMuteService: BanMuteService,
+    @Inject(forwardRef(() => MessageGateway))
+    private readonly messageGateway: MessageGateway,
+    private dmService: DmService,
   ) {}
 
   /* This fonction checks if user requesting messages in fct loadMessages is allowed to load them */
@@ -43,7 +45,7 @@ export class MessageService {
         return null;
       else return dm;
     } else if (type === 'channel') {
-      let owner_of = user.owner_of.find((elem) => elem.id === inputed_id); // TODO check if == is ok
+      let owner_of = user.owner_of.find((elem) => elem.id === inputed_id);
       let admin_of = user.admin_of.find((elem) => elem.id === inputed_id);
       let user_of = user.channels.find((elem) => elem.id === inputed_id);
       if (!owner_of && !admin_of && !user_of)
@@ -57,7 +59,6 @@ export class MessageService {
   async loadMessages(
     type: string,
     inputed_id: string,
-    offset: number,
     user: UserEntity,
   ): Promise<MessageEntity[]> {
     if (!this.checkUserValidity(type, inputed_id, user))
@@ -76,8 +77,6 @@ export class MessageService {
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
       .orderBy('message.createdAt', 'DESC')
-      .skip(offset * LOADED_MESSAGES)
-      .take(LOADED_MESSAGES)
       .getMany();
 
     return messages;
@@ -111,7 +110,7 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(socket: Server, clientId: string, data: MessageDto, userId: string): Promise<MessageEntity | null> {
+  async addMessagetoChannel(data: MessageDto, userId: string): Promise<MessageEntity > {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -130,12 +129,14 @@ export class MessageService {
     if (!channel)
       throw new UnauthorizedException("you are not part of this channel");
 
-    console.log("HEERREEE = ", clientId);
-    if (await this.banMuteService.isMuted(channel, user))
-    {
-      //TODO send back error Message
-      socket.to(clientId).emit("error", "You've Been Muted ! Shhhh. silence.");
-      return null;
+    let responseStatus = await this.banMuteService.isMuted(channel, user);
+    //TODO SWITCH TO WS THROWABLE ERROR
+    if (responseStatus === true){
+      throw new WsException("You've Been Muted ! Shhhh. silence.")
+    }
+    if (responseStatus instanceof MuteEntity){
+      responseStatus.user = user;
+      this.messageGateway.unMuteUser(responseStatus, channel.id)
     }
 
     const message = new MessageEntity();
@@ -154,6 +155,7 @@ export class MessageService {
       channels: true,
       admin_of: true,
       owner_of: true,
+      blocked: true,
     });
     if (!user)
       throw new UnprocessableEntityException(
@@ -161,9 +163,15 @@ export class MessageService {
       );
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
+    try {
+      await this.dmService.checkifBlocked(user, dm.users.find((elem) => elem.id !== user.id).id);
+    } catch (error) {
+      throw new WsException(error.message);
+    }
     //TODO, AVOID sending message if user not friend;
 
     const message = new MessageEntity();
+
     message.content = data.content;
     message.author = user;
     message.dm = dm;

@@ -106,6 +106,8 @@ export class AuthService {
     socket: Socket,
     relations_ToLoad: FindOptionsRelations<UserEntity> = undefined,
   ): Promise<UserEntity> {
+    if (!socket.handshake.headers.cookie)
+      return null;
     const authenticationToken = parse(socket.handshake.headers.cookie)[
       process.env.COOKIE_NAME
     ];

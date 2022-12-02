@@ -8,7 +8,7 @@ function PageNotFound() {
 
   useEffect(() => {
     toast.warning("page not found !");
-    nav("/game");
+    nav("/");
   }, []);
   return <>redirection</>;
 }

@@ -4,8 +4,7 @@ import { UserEntity } from '../../user/models/user.entity';
 
 @Entity()
 export abstract class BanMuteEntity {
-    //TODO switch to UUID
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     id: string;
 
     @Column()
@@ -21,12 +20,12 @@ export abstract class BanMuteEntity {
 
 @Entity()
 export class MuteEntity extends BanMuteEntity {
-    @ManyToOne( () => ChannelEntity, (channel) => channel.muted )
+    @ManyToOne( () => ChannelEntity, (channel) => channel.muted, {onDelete: "CASCADE"} )
     channel: ChannelEntity;
 }
 
 @Entity()
 export class BanEntity extends BanMuteEntity {
-    @ManyToOne( () => ChannelEntity, (channel) => channel.banned )
+    @ManyToOne( () => ChannelEntity, (channel) => channel.banned, {onDelete: "CASCADE"} )
     channel: ChannelEntity;
 }
