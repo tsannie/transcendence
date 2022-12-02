@@ -2,7 +2,6 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  Delete,
   Get,
   MaxFileSizeValidator,
   ParseFilePipe,
@@ -27,7 +26,6 @@ import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express, Request, Response } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
 import { IUserSearch } from '../models/iusersearch.interface';
-import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 

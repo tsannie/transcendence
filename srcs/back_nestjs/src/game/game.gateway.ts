@@ -64,7 +64,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!user) return;
 
     // if user dont have other socket send to his friends that he is offline
-    if (this.allUsers.get(user.id).length === 1)
+    if (this.allUsers.get(user.id)?.length === 1)
       this.gameService.preventConnexionOfFriends(
         this.server,
         user,

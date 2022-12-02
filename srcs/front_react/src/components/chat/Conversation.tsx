@@ -1,7 +1,7 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
-import { ChatDisplayContext, ChatDisplayContextInterface } from "../../contexts/ChatDisplayContext";
+import { ChatDisplayContext, ChatDisplayContextInterface, ChatType } from "../../contexts/ChatDisplayContext";
 import MessageBody from "./MessageBody";
 import Options from "./Options";
 import { IChannel, IDm } from "./types";
@@ -12,26 +12,26 @@ export interface IDatas{
 }
 
 function Conversation() {
-  const { currentConv, setCurrentConv, isChannel, targetRedirection, isRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
+  const { setDisplay, currentConv, setCurrentConv, isChannel, targetRedirection, isRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDatas | IDm | null >(null);
 
-  const loadContent = async () => {
-    let route: string = isChannel? "channel/datas" : "dm/datas";
-    
+  const loadContent = () => {
     if (!currentConv)
       return ;
-    await api
+    let route: string = isChannel? "channel/datas" : "dm/datas";
+
+    api
       .get(route, {params: {id: currentConv}})
       .then((res) => {
         setDm(res.data);
       })
       .catch((err) => {
-          toast.error("HTTP error: " + err);
+          toast.error("HTTP error: " + err.response.data.message);
       })
   }
 
-  const searchExistingConv = async () => {
-    await api
+  const searchExistingConv = () => {
+    api
       .get("/dm/target", {params: {targetId: targetRedirection}})
       .then((res) => {
         if (!res.data) 
@@ -42,19 +42,17 @@ function Conversation() {
   }
 
   useEffect( () => {
-    if (!currentConv) return ;
-    const async_fct = async () => {
-      await loadContent(); 
+    if (!currentConv && !isRedirection) {
+      setDisplay(ChatType.CREATEFORM);
+      return ;
     }
-    async_fct();
-  }, [currentConv])
+    loadContent();
+  }, [currentConv, isRedirection])
 
   useEffect( () => {
     if (!targetRedirection) return ;
-    const async_fct = async () => {
-      await searchExistingConv();
-    }
-    async_fct();
+   
+    searchExistingConv();
   }, [targetRedirection])
 
     return (
