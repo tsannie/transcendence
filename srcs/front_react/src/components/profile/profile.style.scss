@@ -48,16 +48,6 @@ $search_bar_size: calc(250 * var(--res));
     flex: 0 0 50%;
   }
 
-  .elo {
-    display: flex;
-    flex: 0 0 50%;
-    align-items: flex-start;
-    .elo__item {
-      display: flex;
-      align-items: center;
-    }
-  }
-
   margin-left: calc(30 * var(--res));
 }
 
@@ -180,6 +170,12 @@ $height__title: calc(60 * var(--res));
   }
   svg {
     width: calc(35 * var(--res));
+  }
+
+  .score {
+    display: flex;
+    justify-content: center;
+    min-width: 20%;
   }
 }
 
@@ -321,8 +317,8 @@ $height__title: calc(60 * var(--res));
 
 .action-bar {
   display: flex;
-  justify-content: space-between;
-  width: 60%;
+  justify-content: space-evenly;
+  width: 100%;
   margin-bottom: calc(5 * var(--res));
   svg {
     width: calc(35 * var(--res));
@@ -333,6 +329,7 @@ $height__title: calc(60 * var(--res));
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    min-width: 20%;
     span {
       font-size: calc(15 * var(--res));
     }

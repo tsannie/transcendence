@@ -36,7 +36,6 @@ export class DmController {
     @Body() data: DmTargetDto,
     @Req() req: Request,
   ): Promise<DmEntity> {
-    console.log('create DM');
     return await this.dmService.createDm(data, req.user);
   }
 

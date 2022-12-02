@@ -2,7 +2,6 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  Delete,
   Get,
   MaxFileSizeValidator,
   ParseFilePipe,
@@ -27,7 +26,6 @@ import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
 import { Express, Request, Response } from 'express';
 import { AvatarFormatValidator } from '../pipes/filevalidation.validator';
 import { IUserSearch } from '../models/iusersearch.interface';
-import { GameStatEntity } from 'src/game/entity/gameStat.entity';
 import { ChannelEntity } from 'src/channel/models/channel.entity';
 import { DmEntity } from 'src/dm/models/dm.entity';
 
@@ -55,6 +53,7 @@ export class UserController {
   async getUserByUsername(@Query() body: TargetNameDto): Promise<UserEntity> {
     return await this.userService.findByName(body.username, {
       friends: true,
+      blocked: true,
     });
   }
 
@@ -79,7 +78,7 @@ export class UserController {
     return await this.userService.searchUser(body.username);
   }
 
-  @Post('blockUser') // TODO to lower cases everywhere
+  @Post('block') // TODO to lower cases everywhere
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async blockUser(
@@ -89,7 +88,7 @@ export class UserController {
     return await this.userService.blockUser(body.username, req.user);
   }
 
-  @Post('unBlockUser')
+  @Post('unBlock')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async unBlockUser(
@@ -137,13 +136,6 @@ export class UserController {
     return this.userService.getConversations(req.user);
   }
 
-  @Get('friendlist')
-  @SerializeOptions({ groups: ['user'] })
-  @UseGuards(JwtTwoFactorGuard)
-  async friendList(@Req() req: Request): Promise<UserEntity[]> {
-    return await this.userService.getFriendList(req.user);
-  }
-
   @Post('accept-friend-request')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
@@ -177,6 +169,7 @@ export class UserController {
   ): Promise<UserEntity[]> {
     const userTarget = await this.userService.findById(target.id, {
       friend_requests: true,
+      blocked: true,
     });
 
     if (

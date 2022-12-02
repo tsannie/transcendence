@@ -12,13 +12,13 @@ function GameMatchmaking() {
   };
   const handleMatchClassic = () => {
     joinMatchmaking({
-      mode: GameMode.PONG_CLASSIC,
+      mode: GameMode.CLASSIC,
     });
   };
 
   const handleMatchTrans = () => {
     joinMatchmaking({
-      mode: GameMode.PONG_TRANS,
+      mode: GameMode.TRANS,
     });
   };
 

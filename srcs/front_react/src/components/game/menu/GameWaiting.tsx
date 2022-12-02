@@ -1,6 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
+import {
+  AuthContext,
+  AuthContextType,
+  User,
+} from "../../../contexts/AuthContext";
 import { RoomStatus } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 
@@ -10,8 +14,8 @@ export default function GameWaiting() {
   ) as GameContextType;
 
   function leaveRoom() {
-    if (room?.status === RoomStatus.WAITING) {
-      socket?.emit("leaveRoom", room.id);
+    if (room && room.status === RoomStatus.WAITING && socket) {
+      socket.emit("leaveRoom", room.id);
       setRoom(null);
     }
   }
@@ -20,7 +24,7 @@ export default function GameWaiting() {
     <div className="waiting">
       <div className="waiting__search">
         <div className="waiting__search__title">
-          <h3>searching </h3>
+          <h3>{room?.private_room ? "pending" : "searching"}</h3>
           <div className="dot">
             <h3 id="dot1">.</h3>
             <h3 id="dot2">.</h3>
