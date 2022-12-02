@@ -10,8 +10,6 @@ export const paddle_margin: number = 100;
 export const paddle_width: number = 40;
 export const paddle_height: number = 200;
 
-//export const victory_score: number = 5;
-
 export const white = "#fff8dc";
 export const black = "#1d1d1d";
 
