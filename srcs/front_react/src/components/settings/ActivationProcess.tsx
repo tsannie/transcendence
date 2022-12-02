@@ -17,8 +17,8 @@ export default function ActivationProcess() {
   const [token, setToken] = useState("");
   const [qrCode, setQrCode] = useState("");
 
-  async function getQrCode() {
-    await api
+  function getQrCode() {
+    api
       .get("2fa/generate", {
         responseType: "arraybuffer",
       })

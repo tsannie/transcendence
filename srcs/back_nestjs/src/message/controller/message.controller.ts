@@ -31,7 +31,6 @@ export class MessageController {
     return await this.messageService.loadMessages(
       'dm',
       data.id,
-      data.offset,
       req.user,
     );
   }
@@ -46,7 +45,6 @@ export class MessageController {
     return await this.messageService.loadMessages(
       'channel',
       data.id,
-      data.offset,
       req.user,
     );
   }

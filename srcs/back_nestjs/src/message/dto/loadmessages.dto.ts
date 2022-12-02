@@ -6,10 +6,4 @@ export class LoadMessagesDto {
   @IsNotEmpty()
   @Type(() => String)
   id: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @Type(() => Number)
-  @Min(0)
-  offset: number;
 }
