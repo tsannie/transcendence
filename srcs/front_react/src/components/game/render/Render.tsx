@@ -91,11 +91,8 @@ export function GameRender() {
   }
 
   useEffect(() => {
-    if (canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d");
-      if (room && user && ctx) {
-        setDraw(new Draw(room.game_mode, user.id, ctx));
-      }
+    if (canvasRef && room && user) {
+      setDraw(new Draw(canvasRef, room.game_mode, user.id));
     }
   }, []);
 
@@ -105,7 +102,7 @@ export function GameRender() {
         if (user?.id === room.p1_id || user?.id === room.p2_id) {
           setPaddle(room);
         }
-        draw.render(room, canvasRef);
+        draw.render(room);
       }
     };
     requestAnimationFrame(render);

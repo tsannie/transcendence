@@ -14,38 +14,40 @@ import {
 import { IQuadrilateral, Room } from "../types";
 
 export default class Draw {
+  private canvas: any;
   private ctx: CanvasRenderingContext2D;
-  private fontFamily: string;
   private user_id: string;
+  private fontFamily: string;
 
   constructor(
+    canvasRef: React.RefObject<HTMLCanvasElement>,
     game_mode: GameMode,
-    user_id: string,
-    ctx: CanvasRenderingContext2D
+    user_id: string
   ) {
     this.fontFamily =
       game_mode === GameMode.TRANS ? "px system-ui" : "px Arcade";
-    this.ctx = ctx;
+    this.canvas = canvasRef.current;
+    this.ctx = this.canvas.getContext("2d");
     this.user_id = user_id;
   }
 
-  render(room: Room, canvasRef: any) {
-    const canvas = canvasRef.current;
-    if (canvas && this.ctx) {
-      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (room.game_mode === GameMode.TRANS)
-        this.draw_game_transcendence(room, canvas);
-      else if (room.game_mode === GameMode.CLASSIC)
-        this.draw_game_classic(room, canvas);
+  render(room: Room) {
+    if (this.canvas && this.ctx) {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      if (room.game_mode === GameMode.TRANS) {
+        this.draw_game_transcendence(room);
+      } else if (room.game_mode === GameMode.CLASSIC) {
+        this.draw_game_classic(room);
+      }
     }
   }
 
-  private draw_game_classic(room: Room, canvas: HTMLCanvasElement) {
-    this.draw_countdown(room, canvas);
+  private draw_game_classic(room: Room) {
+    this.draw_countdown(room);
     if (!room.countdown && room.status == RoomStatus.PLAYING) {
-      this.draw_score(room, canvas);
-      this.draw_line(canvas);
-      this.draw_borders(canvas);
+      this.draw_score(room);
+      this.draw_line();
+      this.draw_borders();
       this.draw_ball(room);
       this.draw_paddle(room, paddle_margin, room.p1_y_paddle);
       this.draw_paddle(
@@ -54,16 +56,16 @@ export default class Draw {
         room.p2_y_paddle
       );
     }
-    this.draw_game_over(room, canvas);
+    this.draw_game_over(room);
   }
 
-  private draw_game_transcendence(room: Room, canvas: HTMLCanvasElement) {
-    this.draw_countdown(room, canvas);
+  private draw_game_transcendence(room: Room) {
+    this.draw_countdown(room);
     if (!room.countdown && room.status == RoomStatus.PLAYING) {
-      this.draw_score(room, canvas);
+      this.draw_score(room);
       this.draw_smasher(room);
       this.draw_wall(room);
-      this.draw_borders_trans(canvas);
+      this.draw_borders_trans();
       this.draw_ball(room);
       this.draw_paddle(room, paddle_margin, room.p1_y_paddle);
       this.draw_paddle(
@@ -72,7 +74,7 @@ export default class Draw {
         room.p2_y_paddle
       );
     }
-    this.draw_game_over(room, canvas);
+    this.draw_game_over(room);
   }
 
   private draw_smasher(room: Room) {
@@ -96,42 +98,47 @@ export default class Draw {
     this.ctx.stroke();
   }
 
-  private draw_line(canvas: HTMLCanvasElement) {
+  private draw_line() {
     this.ctx.beginPath();
     for (
-      let x = canvas.height / 50;
-      x <= canvas.height + canvas.height / 2;
-      x += canvas.height / 12
+      let x = this.canvas.height / 50;
+      x <= this.canvas.height + this.canvas.height / 2;
+      x += this.canvas.height / 12
     )
       this.ctx.rect(
-        canvas.width / 2 - canvas.width / 100 / 2,
+        this.canvas.width / 2 - this.canvas.width / 100 / 2,
         x,
-        canvas.width / 100,
-        canvas.height / 20
+        this.canvas.width / 100,
+        this.canvas.height / 20
       );
     this.ctx.fillStyle = white;
     this.ctx.fill();
   }
-  private draw_borders(canvas: HTMLCanvasElement) {
+  private draw_borders() {
     this.ctx.beginPath();
-    this.ctx.rect(0, 0, canvas.width, border_size_default);
+    this.ctx.rect(0, 0, this.canvas.width, border_size_default);
     this.ctx.rect(
       0,
-      canvas.height - border_size_default,
-      canvas.width,
+      this.canvas.height - border_size_default,
+      this.canvas.width,
       border_size_default
     );
     this.ctx.fillStyle = white;
     this.ctx.fill();
   }
 
-  private draw_borders_trans(canvas: HTMLCanvasElement) {
+  private draw_borders_trans() {
     this.ctx.beginPath();
-    this.ctx.rect(2, 2, canvas.width - 4, canvas.height - 4);
+    this.ctx.rect(2, 2, this.canvas.width - 4, this.canvas.height - 4);
     this.ctx.closePath();
     this.ctx.fillStyle = "rgba(0, 0, 0, 0)";
 
-    let grd = this.ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    let grd = this.ctx.createLinearGradient(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
     grd.addColorStop(0, "rgba(13,213,252)");
     grd.addColorStop(0.5, "rgba(243,243,21)");
     grd.addColorStop(1, "rgba(255,153,51)");
@@ -157,20 +164,20 @@ export default class Draw {
     this.ctx.stroke();
   }
 
-  private draw_score(room: Room, canvas: HTMLCanvasElement) {
+  private draw_score(room: Room) {
     this.ctx.beginPath();
-    this.ctx.font = canvas.width / 10 + this.fontFamily;
+    this.ctx.font = this.canvas.width / 10 + this.fontFamily;
     this.ctx.fillStyle = white;
     this.ctx.textAlign = "center";
     this.ctx.fillText(
       room.p1_score.toString(),
-      canvas.width / 4,
-      canvas.height / 4
+      this.canvas.width / 4,
+      this.canvas.height / 4
     );
     this.ctx.fillText(
       room.p2_score.toString(),
-      canvas.width - canvas.width / 4,
-      canvas.height / 4
+      this.canvas.width - this.canvas.width / 4,
+      this.canvas.height / 4
     );
     this.ctx.fill();
   }
@@ -232,40 +239,52 @@ export default class Draw {
     this.ctx.fill();
   }
 
-  private draw_countdown(room: Room, canvas: HTMLCanvasElement) {
+  private draw_countdown(room: Room) {
     if (room.countdown) {
       this.ctx.beginPath();
-      this.ctx.font = canvas.width / 4 + this.fontFamily;
+      this.ctx.font = this.canvas.width / 4 + this.fontFamily;
       this.ctx.fillStyle = white;
       this.ctx.textAlign = "center";
       this.ctx.fillText(
         room.countdown.toString(),
-        canvas.width / 2,
-        canvas.height / 2
+        this.canvas.width / 2,
+        this.canvas.height / 2
       );
     }
   }
 
-  private draw_game_over(room: Room, canvas: HTMLCanvasElement) {
+  private draw_game_over(room: Room) {
     if (room.status === RoomStatus.CLOSED) {
       this.ctx.beginPath();
-      this.ctx.rect(0, 0, canvas.width, canvas.height);
+      this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = black;
       this.ctx.fill();
-      this.ctx.font = canvas.width / 10 + this.fontFamily;
+      this.ctx.font = this.canvas.width / 10 + this.fontFamily;
       this.ctx.fillStyle = white;
       this.ctx.textAlign = "center";
-      this.ctx.fillText("Game Ended", canvas.width / 2, canvas.height / 3);
+      this.ctx.fillText(
+        "Game Ended",
+        this.canvas.width / 2,
+        this.canvas.height / 3
+      );
       if (
         (room.won === Winner.P1 && room.p1_id === this.user_id) ||
         (room.won === Winner.P2 && room.p2_id === this.user_id)
       )
-        this.ctx.fillText("you won!", canvas.width / 2, canvas.height / 2);
+        this.ctx.fillText(
+          "you won!",
+          this.canvas.width / 2,
+          this.canvas.height / 1.5
+        );
       else if (
         (room.won === Winner.P2 && room.p1_id === this.user_id) ||
         (room.won === Winner.P1 && room.p2_id === this.user_id)
       )
-        this.ctx.fillText("you lost !", canvas.width / 2, canvas.height / 2);
+        this.ctx.fillText(
+          "you lost !",
+          this.canvas.width / 2,
+          this.canvas.height / 1.5
+        );
     }
   }
 }
