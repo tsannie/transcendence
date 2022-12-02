@@ -45,8 +45,8 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
     setIsModifyPassword(false);
   };
 
-  const modifyPassword = async () => {
-    await api
+  const modifyPassword = () => {
+    api
       .post("/channel/modifyPassword", {
         id: channel.id,
         current_password: channelPassword,
@@ -62,8 +62,8 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
     setPasswordVerifier("");
   };
 
-  const deletePassword = async () => {
-    await api
+  const deletePassword = () => {
+    api
       .post("/channel/deletePassword", {
         id: channel.id,
         password: passwordVerifier,

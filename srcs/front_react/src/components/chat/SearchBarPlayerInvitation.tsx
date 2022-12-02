@@ -32,20 +32,20 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
   const searchInput = createRef<HTMLInputElement>();
   const {channel} = props;
 
-  const inviteChannel = async (targetId: string) => {
-    await api
+  const inviteChannel = (targetId: string) => {
+    api
       .post("/channel/invite", {
         id: channel.id,
         targetId: targetId,
       })
-      .catch((error: any) => toast.error("HTTP error:" + error));
+      .catch((error: any) => toast.error("HTTP error:" + error.message));
   };
 
   let suggestionsListComponent = [];
 
-  const handleClick = async (e: MouseEvent, user: IUserSearch) => {
+  const handleClick = (e: MouseEvent, user: IUserSearch) => {
     e.preventDefault();
-    await inviteChannel(user.id);
+    inviteChannel(user.id);
     // Reset props
     setActiveSuggestion(-1);
     searchInput.current?.blur();

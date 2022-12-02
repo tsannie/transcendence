@@ -12,8 +12,8 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
   const {isRedirection} = useContext(ChatDisplayContext);
   const [ user2, setUser2 ] = useState<User>({} as User);
 
-  const loadUser2 = async () => {
-    await api
+  const loadUser2 = () => {
+    api
       .get("/user/id", { params: { id: targetRedirection}})
       .then( (res) => {
         setUser2(res.data); })
@@ -22,12 +22,7 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
 
   const findUser2 = () => {
     if (isRedirection)
-    {
-      const async_fct = async () => {
-        await loadUser2()
-      };
-      async_fct();
-    }
+        loadUser2()
     else
     {
       if (!dm || !dm?.users)

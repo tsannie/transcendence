@@ -12,26 +12,26 @@ function UserOptions(props: IMemberProps) {
     const buttonRef = useRef<HTMLDivElement>(null);
     const dropdownStyle = useRef<React.CSSProperties>()
 
-    const unBanUser = async () => {
-        await api
+    const unBanUser = () => {
+        api
         .post("/channel/unban", { id: channelId, targetId: user.id })
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const unMuteUser = async () => {
-        await api
+    const unMuteUser = () => {
+        api
         .post("/channel/unmute", { id: channelId, targetId: user.id })
         .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
-    const makeAdmin = async () => {
-        await api
+    const makeAdmin = () => {
+        api
         .post("/channel/makeAdmin", { id: channelId, targetId: user.id })
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const revokeAdmin = async () => {
-        await api
+    const revokeAdmin = () => {
+        api
         .post("/channel/revokeAdmin", { id: channelId, targetId: user.id })
         .catch((error: any) => toast.error("HTTP error:" + error));
     }

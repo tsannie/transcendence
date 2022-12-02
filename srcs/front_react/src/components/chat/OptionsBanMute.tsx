@@ -14,7 +14,7 @@ function BanMuteButton(props: {type : string, channelId: string, user : User}) {
     const [ timer, setTimer ] = useState<number>(0);
     const [ timerOption, setTimerOption ] = useState<boolean>(false);
 
-    const muteUser = async () => {
+    const muteUser = () => {
         let data : IMuteBan | Partial<IMuteBan>;
 
         if (timer === 0)
@@ -22,13 +22,13 @@ function BanMuteButton(props: {type : string, channelId: string, user : User}) {
         else
             data = {id: channelId, targetId: user.id, duration: timer};
 
-        await api
+        api
         .post("/channel/mute", data)
         .then(() => toast.info(`${user.username} has been muted`))
         .catch((error: any) => toast.error("HTTP error:" + error));
     }
 
-    const banUser = async () => {
+    const banUser = () => {
         let data : IMuteBan | Partial<IMuteBan>;
 
         if (timer === 0)
@@ -36,7 +36,7 @@ function BanMuteButton(props: {type : string, channelId: string, user : User}) {
         else
             data = {id: channelId, targetId: user.id, duration: timer};
 
-        await api
+        api
         .post("/channel/ban", data)
         .then(() => toast.info(`${user.username} has been banned`))
         .catch((error: any) => toast.error("HTTP error:" + error));
