@@ -91,8 +91,10 @@ export function GameRender() {
   }
 
   useEffect(() => {
-    if (canvasRef && room && user) {
-      setDraw(new Draw(canvasRef, room.game_mode, user.id));
+    if (canvasRef.current && room && user) {
+      const ctx: CanvasRenderingContext2D | null =
+        canvasRef.current.getContext("2d");
+      if (ctx) setDraw(new Draw(canvasRef, ctx, room.game_mode, user.id));
     }
   }, []);
 
