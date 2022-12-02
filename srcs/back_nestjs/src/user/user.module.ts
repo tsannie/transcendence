@@ -11,8 +11,8 @@ import { DmModule } from 'src/dm/dm.module';
 
 @Module({
   imports: [
-    forwardRef( () => DmModule),
-    forwardRef( () => ChannelModule),
+    forwardRef(() => DmModule),
+    forwardRef(() => ChannelModule),
     HttpModule,
     TypeOrmModule.forFeature([DmEntity, UserEntity, GameStatEntity]),
   ],

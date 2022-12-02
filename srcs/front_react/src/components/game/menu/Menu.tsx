@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../contexts/AuthContext";
-import { GameMode, RoomStatus } from "../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
+import { GameMode } from "../const/const";
 import { ICreateRoom } from "../types";
 
 export default function GameMenu() {

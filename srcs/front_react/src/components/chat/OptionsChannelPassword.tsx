@@ -1,19 +1,13 @@
-import {
-  ChangeEvent,
-  Fragment,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { AxiosResponse } from "axios";
+import { ChangeEvent, Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
+import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
+import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { IChannel } from "./types";
-import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
-import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
-import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
-import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
-import { AxiosResponse } from "axios";
 
 function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
   const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
@@ -125,9 +119,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
           <button
             className="action"
             onClick={modifyPassword}
-            disabled={
-              !channelPassword || !passwordVerifier || !channel.name
-            }
+            disabled={!channelPassword || !passwordVerifier || !channel.name}
           >
             <VerifIcon />
           </button>

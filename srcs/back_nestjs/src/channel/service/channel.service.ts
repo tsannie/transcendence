@@ -26,8 +26,8 @@ import { ChannelInvitationDto } from '../dto/channelinvitation.dto';
 import { MessageGateway } from 'src/message/message.gateway';
 
 export interface IAdmin {
-  target: UserEntity,
-  channel: ChannelEntity,
+  target: UserEntity;
+  channel: ChannelEntity;
 }
 
 @Injectable()
@@ -39,8 +39,8 @@ export class ChannelService {
     private channelRepository: Repository<ChannelEntity>,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
-    @Inject(forwardRef( () => MessageGateway))
-    private readonly messageGateway: MessageGateway
+    @Inject(forwardRef(() => MessageGateway))
+    private readonly messageGateway: MessageGateway,
   ) {}
 
   /* This function return all the public datas of channel */
@@ -251,14 +251,12 @@ export class ChannelService {
       if (channel.admins && channel.admins[0]) {
         channel.owner = channel.admins[0];
         channel.admins = channel.admins.filter(
-          (channel_admins) =>
-            channel_admins.id !== channel.admins[0].id,
+          (channel_admins) => channel_admins.id !== channel.admins[0].id,
         );
       } else if (channel.users && channel.users[0]) {
         channel.owner = channel.users[0];
         channel.users = channel.users.filter(
-          (channel_users) =>
-            channel_users.id !== channel.users[0].id,
+          (channel_users) => channel_users.id !== channel.users[0].id,
         );
       } else return await this.deleteChannel(requested_channel, user);
     }
@@ -294,9 +292,7 @@ export class ChannelService {
     user: UserEntity,
   ): Promise<ChannelEntity> {
     if (this.isOwner(requested_channel.id, user)) {
-      user.owner_of.find(
-        (channel) => channel.id === requested_channel.id,
-      );
+      user.owner_of.find((channel) => channel.id === requested_channel.id);
       const channel = await this.getChannel(requested_channel.id, {
         owner: true,
         admins: true,
@@ -427,7 +423,7 @@ export class ChannelService {
       throw new UnprocessableEntityException(
         `${target.username} is not banned.`,
       );
-    else return await this.banmuteService.remove(banned) as BanEntity;
+    else return (await this.banmuteService.remove(banned)) as BanEntity;
   }
 
   /* This function allows to ban a user, based on level of clearance of caller.
@@ -498,7 +494,9 @@ export class ChannelService {
     });
     let muted = this.findMuted(channel, userToUnMute.id);
     if (!muted)
-      throw new UnprocessableEntityException(`${request.targetId} is not muted.`);
+      throw new UnprocessableEntityException(
+        `${request.targetId} is not muted.`,
+      );
     else return (await this.banmuteService.remove(muted)) as MuteEntity;
   }
 
@@ -529,7 +527,8 @@ export class ChannelService {
 
     if (channel.admins.find((elem) => elem.id === request.targetId)) {
       channel.admins = channel.admins.filter(
-      (elem) => elem.id !== request.targetId);
+        (elem) => elem.id !== request.targetId,
+      );
       channel.users = [...channel.users, userToMute];
     }
     await this.channelRepository.save(channel);
@@ -597,12 +596,10 @@ export class ChannelService {
       );
 
     this.addToAdmins(channel, future_admin);
-    channel.users = channel.users.filter(
-      (user) => user.id !== future_admin.id,
-    );
+    channel.users = channel.users.filter((user) => user.id !== future_admin.id);
     return {
       target: future_admin,
-      channel: await this.channelRepository.save(channel)
+      channel: await this.channelRepository.save(channel),
     };
   }
 
@@ -628,13 +625,11 @@ export class ChannelService {
       admins: true,
       users: true,
     });
-    channel.admins = channel.admins.filter(
-      (elem) => elem.id !== target.id,
-    );
+    channel.admins = channel.admins.filter((elem) => elem.id !== target.id);
     this.addToUsers(channel, target);
     return {
       target: target,
-      channel: await this.channelRepository.save(channel)
+      channel: await this.channelRepository.save(channel),
     };
   }
 
@@ -750,7 +745,6 @@ export class ChannelService {
   }
 
   async getChannelsByUser(userId: string): Promise<ChannelEntity[]> {
-
     // get all channels where user is member or admin or owner
     return await this.channelRepository
       .createQueryBuilder('channel')
@@ -768,7 +762,8 @@ export class ChannelService {
     let user = new UserEntity();
     user.username = username;
     user.email = username + '@student.42.fr';
-    user.profile_picture = "https://pyxis.nymag.com/v1/imgs/882/0b5/2df62e812b846c05049fd0f9f456c13b5d-22-gandalf-wedding-ian-mckellan.rsquare.w700.jpg"
+    user.profile_picture =
+      'https://pyxis.nymag.com/v1/imgs/882/0b5/2df62e812b846c05049fd0f9f456c13b5d-22-gandalf-wedding-ian-mckellan.rsquare.w700.jpg';
     user = await this.userService.add(user);
     return await this.getUser(user.id, { channels: true });
   }

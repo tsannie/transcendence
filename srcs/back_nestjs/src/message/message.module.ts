@@ -16,7 +16,7 @@ import { ChannelModule } from 'src/channel/channel.module';
     TypeOrmModule.forFeature([MessageEntity, DmEntity, UserEntity]),
     UserModule,
     DmModule,
-    forwardRef( () => ChannelModule),
+    forwardRef(() => ChannelModule),
     AuthModule,
   ],
   controllers: [MessageController],

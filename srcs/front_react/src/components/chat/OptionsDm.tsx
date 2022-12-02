@@ -1,14 +1,14 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReactComponent as BallIcon } from "../../assets/img/icon/ball-reverse.svg";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
-import { IDm } from "./types";
-import { ReactComponent as BallIcon } from "../../assets/img/icon/ball-reverse.svg";
 import { GameContext, GameContextType } from "../../contexts/GameContext";
 import { GameMode } from "../game/const/const";
 import { ICreateRoom } from "../game/types";
+import { IDm } from "./types";
 
 function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
   const { user } = useContext(AuthContext);

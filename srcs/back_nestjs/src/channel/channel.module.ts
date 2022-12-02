@@ -14,12 +14,19 @@ import { ChannelService } from './service/channel.service';
 
 @Module({
   imports: [
-    forwardRef( () => UserModule),
-    TypeOrmModule.forFeature([DmEntity, ChannelEntity, UserEntity, MessageEntity, BanEntity, MuteEntity]),
-    forwardRef( () => MessageModule),
+    forwardRef(() => UserModule),
+    TypeOrmModule.forFeature([
+      DmEntity,
+      ChannelEntity,
+      UserEntity,
+      MessageEntity,
+      BanEntity,
+      MuteEntity,
+    ]),
+    forwardRef(() => MessageModule),
   ],
   controllers: [ChannelController],
   providers: [ChannelService, BanMuteService],
-  exports: [ChannelService, BanMuteService]
+  exports: [ChannelService, BanMuteService],
 })
 export class ChannelModule {}

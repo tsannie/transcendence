@@ -1,13 +1,13 @@
-import "./chat.style.scss";
+import { useContext } from "react";
 import {
   ChatDisplayContext,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
-import { useContext } from "react";
+import ChannelList from "./ChannelList";
+import "./chat.style.scss";
 import Conversation from "./Conversation";
 import CreateChannelForm from "./CreateChannelForm";
 import JoinChannelForm from "./JoinChannelForm";
-import ChannelList from "./ChannelList";
 
 function ChatBody() {
   const { display } = useContext(ChatDisplayContext);

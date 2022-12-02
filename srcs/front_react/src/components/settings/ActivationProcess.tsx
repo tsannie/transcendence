@@ -1,16 +1,16 @@
-import React, {
+import { AxiosResponse } from "axios";
+import { Buffer } from "buffer";
+import {
   ChangeEvent,
   FormEvent,
   Fragment,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
-import { Buffer } from "buffer";
+import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import { toast } from "react-toastify";
-import { AxiosResponse } from "axios";
 
 export default function ActivationProcess() {
   const { setReloadUser } = useContext(AuthContext) as AuthContextType;

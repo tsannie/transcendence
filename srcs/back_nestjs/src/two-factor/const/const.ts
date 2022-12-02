@@ -1,3 +1,3 @@
-import { Logger } from "@nestjs/common";
+import { Logger } from '@nestjs/common';
 
-export const logger2FA = new Logger('2FA')
+export const logger2FA = new Logger('2FA');

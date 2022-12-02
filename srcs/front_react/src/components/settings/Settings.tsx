@@ -1,9 +1,9 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
 import ActivationProcess from "./ActivationProcess";
+import EditUsername from "./EditUsername";
 import "./settings.style.scss";
 import SettingsPicture from "./SettingsPicture";
-import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import EditUsername from "./EditUsername";
 
 export default function Settings() {
   // request api on profile to set new state

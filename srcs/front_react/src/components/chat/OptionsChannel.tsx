@@ -1,33 +1,25 @@
-import userEvent from "@testing-library/user-event";
 import {
-  ChangeEvent,
   Fragment,
   useContext,
-  useEffect,
-  useRef,
-  useState,
+  useEffect, useState
 } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
+import { ReactComponent as PlusIcon } from "../../assets/img/icon/circle_plus.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import {
   ChatDisplayContext,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { IDatas } from "./Conversation";
 import UserOptions from "./OptionsChannelActions";
-import { IChannel } from "./types";
-import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
-import { ReactComponent as DeleteIcon } from "../../assets/img/icon/circle_remove.svg";
-import { ReactComponent as PlusIcon } from "../../assets/img/icon/circle_plus.svg";
-import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
-import { ReactComponent as EditIcon } from "../../assets/img/icon/edit.svg";
-import { ReactComponent as VerifIcon } from "../../assets/img/icon/check.svg";
-import { AxiosResponse } from "axios";
 import ChannelPassword from "./OptionsChannelPassword";
 import SearchBarPlayerInvitation from "./SearchBarPlayerInvitation";
+import { IChannel } from "./types";
 
 export interface IMemberProps {
   type: string;
@@ -60,19 +52,24 @@ function MemberCategory(props: {
   }
 }
 
-function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, owner: User | null, setOwner: React.Dispatch<React.SetStateAction<User | null>>}) {
-    const loadedStatus = props.receivedChannel.status;
-    const channel = props.receivedChannel.data;
+function ChannelMembers(props: {
+  receivedChannel: IDatas;
+  currentConvId: string;
+  owner: User | null;
+  setOwner: React.Dispatch<React.SetStateAction<User | null>>;
+}) {
+  const loadedStatus = props.receivedChannel.status;
+  const channel = props.receivedChannel.data;
 
-    const { setMuted, setMuteDate, setDisplay } = useContext(ChatDisplayContext);
-    const { socket, chatList, setChatList } = useContext(MessageContext);
-    const { user } = useContext(AuthContext);
+  const { setMuted, setMuteDate, setDisplay } = useContext(ChatDisplayContext);
+  const { socket, chatList, setChatList } = useContext(MessageContext);
+  const { user } = useContext(AuthContext);
 
-    const [ status, setStatus ] = useState<string | null>(null);
-    const [ admins, setAdmins ] = useState<User[] | null>(null);
-    const [ users, setUsers ] = useState<User[] | null>(null);
-    const [ mutedMembers, setMutedMembers ] = useState<User[] | null>(null);
-    const [ banned, setBanned ] = useState<User[] | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [admins, setAdmins] = useState<User[] | null>(null);
+  const [users, setUsers] = useState<User[] | null>(null);
+  const [mutedMembers, setMutedMembers] = useState<User[] | null>(null);
+  const [banned, setBanned] = useState<User[] | null>(null);
 
   const filterList = (list: User[] | null, target: User) => {
     if (!list) return null;
@@ -84,81 +81,73 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
     else return [...list, target];
   };
 
-    useEffect( () => {
-        if (socket)
-        {
-            socket.on("muteUser", (target, channelId, end) => {
-                if (channelId === props.currentConvId){
-                    setAdmins(filterList(admins, target));
-                    setUsers(filterList(users, target));
-                    setMutedMembers(addToList(mutedMembers, target));
-                }
-                if (user?.id === target.id){
-                    setStatus("user");
-                    setMuted(true);
-                    if (end)
-                        setMuteDate(end);
-                }
-            });
-            socket.on("unMuteUser", (target, channelId) => {
-                if (channelId === props.currentConvId){
-                    setUsers(addToList(users, target));
-                    setMutedMembers(filterList(mutedMembers, target));
+  useEffect(() => {
+    if (socket) {
+      socket.on("muteUser", (target, channelId, end) => {
+        if (channelId === props.currentConvId) {
+          setAdmins(filterList(admins, target));
+          setUsers(filterList(users, target));
+          setMutedMembers(addToList(mutedMembers, target));
+        }
+        if (user?.id === target.id) {
+          setStatus("user");
+          setMuted(true);
+          if (end) setMuteDate(end);
+        }
+      });
+      socket.on("unMuteUser", (target, channelId) => {
+        if (channelId === props.currentConvId) {
+          setUsers(addToList(users, target));
+          setMutedMembers(filterList(mutedMembers, target));
 
-                    if (user?.id === target.id) {
-                      setMuted(false);
-                      setMuteDate(null);
-                    }
-                }
-                if (user?.id === target.id)
-                    setStatus("user");
-            });
-            socket.on("banUser", (target, channelId) => {
-                if (channelId === props.currentConvId) {
-                    setAdmins(filterList(admins, target));
-                    setUsers(filterList(users, target));
-                    setMutedMembers(filterList(mutedMembers, target));
-                    setBanned(addToList(banned, target));
-                }
-                if (user?.id === target.id) {
-                    setChatList(chatList.filter(chat => chat.id !== channelId));
-                    setDisplay(ChatType.EMPTY);
-                    setStatus("user");
-                }
-            });
-            socket.on("unBanUser", (target, channelId) => {
-                if (channelId === props.currentConvId) {
-                    setBanned(filterList(banned, target));
-                }
-                if (user?.id === target.id)
-                    setStatus("user");
-            });
-            socket.on("makeAdmin", (target, channelId) => {
-                if (channelId === props.currentConvId) {
-                    setAdmins(addToList(admins, target));
-                    setUsers(filterList(users, target));
-                }
-                if (user?.id === target.id)
-                    setStatus("admin");
-            });
-            socket.on("revokeAdmin", (target, channelId) => {
-                if (channelId === props.currentConvId) {
-                    setAdmins(filterList(admins, target));
-                    setUsers(addToList(users, target));
-                }
-                if (user?.id === target.id)
-                    setStatus("user");
-            });
-            socket.on("joinChannel", (target, isMuted, channelId) => {
-                if (channelId === props.currentConvId) {
-                    if (isMuted)
-                      setMutedMembers(addToList(mutedMembers, target));
-                    else
-                      setUsers(addToList(users, target));
-                }
-            });
-            socket.on("leaveChannel", (target, channelId, channelOwner) => {
-                const oldOwner = props.owner;
+          if (user?.id === target.id) {
+            setMuted(false);
+            setMuteDate(null);
+          }
+        }
+        if (user?.id === target.id) setStatus("user");
+      });
+      socket.on("banUser", (target, channelId) => {
+        if (channelId === props.currentConvId) {
+          setAdmins(filterList(admins, target));
+          setUsers(filterList(users, target));
+          setMutedMembers(filterList(mutedMembers, target));
+          setBanned(addToList(banned, target));
+        }
+        if (user?.id === target.id) {
+          setChatList(chatList.filter((chat) => chat.id !== channelId));
+          setDisplay(ChatType.EMPTY);
+          setStatus("user");
+        }
+      });
+      socket.on("unBanUser", (target, channelId) => {
+        if (channelId === props.currentConvId) {
+          setBanned(filterList(banned, target));
+        }
+        if (user?.id === target.id) setStatus("user");
+      });
+      socket.on("makeAdmin", (target, channelId) => {
+        if (channelId === props.currentConvId) {
+          setAdmins(addToList(admins, target));
+          setUsers(filterList(users, target));
+        }
+        if (user?.id === target.id) setStatus("admin");
+      });
+      socket.on("revokeAdmin", (target, channelId) => {
+        if (channelId === props.currentConvId) {
+          setAdmins(filterList(admins, target));
+          setUsers(addToList(users, target));
+        }
+        if (user?.id === target.id) setStatus("user");
+      });
+      socket.on("joinChannel", (target, isMuted, channelId) => {
+        if (channelId === props.currentConvId) {
+          if (isMuted) setMutedMembers(addToList(mutedMembers, target));
+          else setUsers(addToList(users, target));
+        }
+      });
+      socket.on("leaveChannel", (target, channelId, channelOwner) => {
+        const oldOwner = props.owner;
 
         if (channelId === props.currentConvId) {
           let newUsers: User[] | null = users;
@@ -190,18 +179,19 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
         }
       });
 
-        return (() => {
-            socket.off("muteUser");
-            socket.off("unMuteUser");
-            socket.off("makeAdmin");
-            socket.off("revokeAdmin");
-            socket.off("banUser");
-            socket.off("unBanUser");
-            socket.off("joinChannel");
-            socket.off("leaveChannel");
-            socket.off("deleteChannel");
-        })}
-    }, [mutedMembers, users, banned, admins, socket])
+      return () => {
+        socket.off("muteUser");
+        socket.off("unMuteUser");
+        socket.off("makeAdmin");
+        socket.off("revokeAdmin");
+        socket.off("banUser");
+        socket.off("unBanUser");
+        socket.off("joinChannel");
+        socket.off("leaveChannel");
+        socket.off("deleteChannel");
+      };
+    }
+  }, [mutedMembers, users, banned, admins, socket]);
 
   useEffect(() => {
     if (channel.id !== props.currentConvId) return;
@@ -211,12 +201,12 @@ function ChannelMembers(props: {receivedChannel: IDatas, currentConvId: string, 
     setAdmins(channel.admins);
     if (channel.banned) setBanned(channel.banned.map((elem) => elem.user));
 
-        if (channel.muted){
-            muted = channel.muted.map((elem) => elem.user);
-            setMutedMembers(muted);
-        }
-        if (channel.users){
-            let mutedIds : string[];
+    if (channel.muted) {
+      muted = channel.muted.map((elem) => elem.user);
+      setMutedMembers(muted);
+    }
+    if (channel.users) {
+      let mutedIds: string[];
 
       if (muted.length != 0) {
         mutedIds = muted.map((elem) => elem.id);
@@ -270,24 +260,28 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   const { currentConv } = useContext(ChatDisplayContext);
   const { channel, owner } = props;
   const { user } = useContext(AuthContext);
-  const [ searchBar, setSearchBar ] = useState<boolean>(false);
+  const [searchBar, setSearchBar] = useState<boolean>(false);
 
   const leaveChannel = () => {
     api
       .post("/channel/leave", { id: channel.id })
-      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
+      .catch((error: any) =>
+        toast.error("HTTP error:" + error.response.data.message)
+      );
   };
 
   const deleteChannel = () => {
     api
       .post("/channel/delete", { id: channel.id })
-      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
+      .catch((error: any) =>
+        toast.error("HTTP error:" + error.response.data.message)
+      );
   };
 
-  useEffect( () => {
+  useEffect(() => {
     if (!currentConv) return;
     setSearchBar(false);
-  }, [currentConv])
+  }, [currentConv]);
 
   return (
     <div className="conversation__options__title">
@@ -313,19 +307,12 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
             </button>
           )}
           {owner?.id === user?.id && channel.status === "Private" && (
-            <button
-              className="action"
-              onClick={() => setSearchBar(!searchBar)}
-            >
+            <button className="action" onClick={() => setSearchBar(!searchBar)}>
               <PlusIcon />
               <span>invite</span>
             </button>
           )}
-          {
-            searchBar && (
-              <SearchBarPlayerInvitation channel={channel}/>
-            )
-          }
+          {searchBar && <SearchBarPlayerInvitation channel={channel} />}
           <ChannelPassword owner={owner} channel={channel} />
         </div>
         <div></div>
@@ -340,10 +327,10 @@ function ChannelOptions(props: {
 }) {
   const [owner, setOwner] = useState<User | null>(null);
 
-    useEffect(() => {
-        if (props.receivedChannel && props.receivedChannel.data)
-            setOwner(props.receivedChannel.data.owner);
-    }, [props.receivedChannel])
+  useEffect(() => {
+    if (props.receivedChannel && props.receivedChannel.data)
+      setOwner(props.receivedChannel.data.owner);
+  }, [props.receivedChannel]);
 
   if (!props.receivedChannel || !props.receivedChannel.data)
     return <Fragment />;
