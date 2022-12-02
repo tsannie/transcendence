@@ -15,7 +15,9 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
   const { dm, targetRedirection } = props;
   const { isRedirection } = useContext(ChatDisplayContext);
   const [user2, setUser2] = useState<User>({} as User);
-  const { socket, setTimeQueue } = useContext(GameContext) as GameContextType;
+  const { socket, setTimeQueue, friendsLog } = useContext(
+    GameContext
+  ) as GameContextType;
   const nav = useNavigate();
 
   const loadUser2 = async () => {
@@ -75,7 +77,10 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
           title="Invite in classic mode"
           onClick={() => handleInvite(user2.id, GameMode.CLASSIC)}
           disabled={
-            user?.friends?.find((elem) => elem.id === user2.id) ? false : true
+            user?.friends?.find((elem) => elem.id === user2.id) &&
+            friendsLog.find((elem) => elem.id === user2.id)
+              ? false
+              : true
           }
           id="classic"
         >
@@ -85,7 +90,10 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
           title="Invite in trans mode"
           onClick={() => handleInvite(user2.id, GameMode.TRANS)}
           disabled={
-            user?.friends?.find((elem) => elem.id === user2.id) ? false : true
+            user?.friends?.find((elem) => elem.id === user2.id) &&
+            friendsLog.find((elem) => elem.id === user2.id)
+              ? false
+              : true
           }
           id="trans"
         >
