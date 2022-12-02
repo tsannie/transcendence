@@ -21,10 +21,7 @@ import { TwoFactorController } from './two-factor/controller/two-factor.controll
 import { DmController } from './dm/controller/dm.controller';
 import { DmService } from './dm/service/dm.service';
 import { DmModule } from './dm/dm.module';
-import { DmEntity } from './dm/models/dm.entity';
 import { HttpModule } from '@nestjs/axios';
-import { GameStatEntity } from './game/entity/gameStat.entity';
-import { ChannelService } from './channel/service/channel.service';
 import { TwoFactorModule } from './two-factor/two-factor.module';
 
 @Module({
