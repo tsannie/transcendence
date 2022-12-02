@@ -46,7 +46,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       transports: ["websocket"],
     });
     setSocket(newSocket);
-    return () => newSocket.disconnect(); // disconnect old socket
+    return () => newSocket.disconnect();
   }, []);
 
   useEffect(() => {
@@ -54,14 +54,18 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
       socket.on("message", (data) => {
         if (data.author.id !== user?.id)
         {
-          if (data.channel && data.channel.id !== currentConv)
+          if (displayLocation.pathname !== "/chat")
+            toast.info(`new message from ${data.author.username}`)
+          if (data.channel && 
+            (data.channel.id !== currentConv 
+              || (data.channel.id === currentConv && displayLocation.pathname !== "/chat")))
             addChannel(data.channel.id);
-          else if (data.dm && data.dm.id !== currentConv)
+          else if (data.dm && 
+            (data.dm.id !== currentConv
+              || (data.dm.id === currentConv && displayLocation.pathname !== "/chat")))
             addChannel(data.dm.id);
         }
         setNewMessage(data);
-        if (displayLocation.pathname !== "/chat" && (user?.id !== data.author.id))
-          toast.info(`new message from ${data.author.username}`)
       });
       socket.on("exception", (response) => {
         toast.error(response.message);
