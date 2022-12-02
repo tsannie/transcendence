@@ -14,6 +14,7 @@ import {
 import { MessageBody } from '@nestjs/websockets';
 import { Request } from 'express';
 import JwtTwoFactorGuard from 'src/auth/guard/jwtTwoFactor.guard';
+import { TargetIdDto } from 'src/user/dto/target.dto';
 import { UserEntity } from 'src/user/models/user.entity';
 import {
   IGameStat,
@@ -40,8 +41,11 @@ export class GameController {
   @Get('history')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
-  async getHistory(@Req() req: Request): Promise<IGameStat[]> {
-    return this.gameService.getHistory(req.user);
+  async getHistory(
+    @Req() req: Request,
+    @Query() userTarget: TargetIdDto,
+  ): Promise<IGameStat[]> {
+    return this.gameService.getHistory(userTarget.id);
   }
 
   @Get('friends-log')

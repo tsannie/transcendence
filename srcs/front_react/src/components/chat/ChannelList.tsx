@@ -5,7 +5,7 @@ import { api } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
 import {
   ChatDisplayContext,
-  ChatType
+  ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
 import { MessageContext } from "../../contexts/MessageContext";
@@ -67,13 +67,12 @@ function ChannelList() {
 
   const updateList = () => {
     if (!newMessage) return;
-    else
-      var received_id = newMessage.channel // TODO change var to let
-        ? newMessage.channel.id
-        : newMessage.dm.id;
+    const received_id = newMessage.channel
+      ? newMessage.channel.id
+      : newMessage.dm.id;
 
     let newList = [...chatList];
-    let editable_room = newList.find((elem) => elem.id === received_id);
+    const editable_room = newList.find((elem) => elem.id === received_id);
 
     if (editable_room) newList = reorderChannelList(newList, editable_room);
     else newList = addToChannelList(newList);

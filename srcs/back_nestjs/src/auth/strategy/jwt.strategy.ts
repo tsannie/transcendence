@@ -22,14 +22,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: IPayload) {
-    return await this.userService.findById(payload.sub, {
-      owner_of: true, // TODO nothing for jwt ?
-      admin_of: true,
-      channels: true,
-      blocked: true,
-      dms: true,
-      friends: true,
-      friend_requests: true,
-    });
+    return await this.userService.findById(payload.sub);
   }
 }

@@ -181,20 +181,6 @@ export class UserService {
     return user;
   }
 
-  // TODO DELETE
-  async getAllUser(): Promise<UserEntity[]> {
-    return await this.allUser.find({
-      relations: {
-        owner_of: true,
-        channels: true,
-        blocked: true,
-        admin_of: true,
-        friend_requests: true,
-        friends: true,
-      },
-    });
-  }
-
   async getAllUsersWithElo(): Promise<UserEntity[]> {
     return await this.allUser.find();
   }

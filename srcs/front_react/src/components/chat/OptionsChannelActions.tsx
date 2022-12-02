@@ -140,7 +140,6 @@ function UserOptions(props: IMemberProps) {
     return <Fragment>{adminOptionsJSX}</Fragment>;
   };
 
-  // TODO: button redirect to profile page of user
   const displayOptions = () => {
     return (
       <div className="dropdown" style={dropdownStyle.current}>
