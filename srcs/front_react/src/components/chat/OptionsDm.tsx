@@ -54,8 +54,12 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
     </button>
     <div className="text">
       <span>{user2?.username}</span>
-      {/* {isRedirection? <div className="date">Draft Message</div> : <div className="date">conv started at: {dm?.createdAt?.toLocaleString()}</div>} */}
     </div>
+    <button className="duel">
+      <Link style={{textDecoration: 'none'}} to={"/game"}>
+        {/* <img src={user2?.profile_picture} /> */}
+      </Link>
+    </button>
   </div>);
 }
 
