@@ -53,17 +53,3 @@ export interface Room {
   wall: IQuadrilateral;
   countdown: number;
 }
-
-export interface IDrawResponsive {
-  canvas_width: number;
-  canvas_height: number;
-  ratio_width: number;
-  ratio_height: number;
-  border_size: number;
-}
-
-/*export interface IFrameResponsive {
-  p1_paddle: IQuadrilateral;
-  p2_paddle: IQuadrilateral;
-  ball: IBall;
-}*/
