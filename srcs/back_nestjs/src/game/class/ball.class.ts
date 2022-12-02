@@ -64,10 +64,10 @@ export default class Ball {
       this.y += gravity * this.direction_y;
     } else if (this.hit_smasher === true) {
       this.x += speed_smasher * this.direction_x;
-      this.y += this.gravity * 2 * this.direction_y;
+      this.y += this.gravity * gravity * 2 * this.direction_y;
     } else {
       this.x += speed * this.direction_x;
-      this.y += this.gravity * this.direction_y;
+      this.y += this.gravity * gravity * this.direction_y;
     }
     this.touchWall();
   }
