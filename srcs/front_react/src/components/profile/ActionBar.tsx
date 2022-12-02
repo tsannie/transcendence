@@ -117,7 +117,10 @@ function ActionBar(props: IProps) {
   return (
     <div className="action-bar">
       <div className="action-bar__item">
-        <button onClick={handleDm}>
+        <button
+          onClick={handleDm}
+          disabled={isBlocked(user, props.player) ? true : false}
+        >
           <ChatIcon alt="chat" />
         </button>
         <span>chat</span>
