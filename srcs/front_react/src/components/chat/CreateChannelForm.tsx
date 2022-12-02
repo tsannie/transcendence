@@ -61,6 +61,7 @@ function CreateChannelForm() {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setChannelName(e.target.value)
           }
+          maxLength={50}
         />
         <div className="create__chan__status">
           <button
@@ -107,6 +108,7 @@ function CreateChannelForm() {
                 setChannelPassword(e.target.value)
               }
               disabled={!channelName}
+              maxLength={50}
             />
             <input
               type="password"
@@ -116,6 +118,7 @@ function CreateChannelForm() {
                 setPasswordVerifier(e.target.value)
               }
               disabled={!channelName}
+              maxLength={50}
             />
           </div>
         )}
