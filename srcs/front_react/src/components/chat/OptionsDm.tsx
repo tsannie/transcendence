@@ -6,12 +6,16 @@ import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { IDm } from "./types";
 import { ReactComponent as BallIcon } from "../../assets/img/icon/ball-reverse.svg";
+import { GameContext, GameContextType } from "../../contexts/GameContext";
+import { GameMode } from "../game/const/const";
+import { ICreateRoom } from "../game/types";
 
 function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
   const { user } = useContext(AuthContext);
   const { dm, targetRedirection } = props;
   const { isRedirection } = useContext(ChatDisplayContext);
   const [user2, setUser2] = useState<User>({} as User);
+  const { socket, setTimeQueue } = useContext(GameContext) as GameContextType;
 
   const loadUser2 = async () => {
     await api
@@ -40,6 +44,17 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
     findUser2();
   }, [isRedirection, dm]);
 
+  const handleInvite = (friend_id: string, mode: GameMode) => {
+    if (socket) {
+      const data: ICreateRoom = {
+        mode: mode,
+        invitation_user_id: friend_id,
+      };
+      socket.emit("createPrivateRoom", data);
+      setTimeQueue(0);
+    }
+  };
+
   return (
     <div className="conversation__options__title">
       <button className="clickable_profile">
@@ -54,13 +69,19 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
         <span>{user2?.username}</span>
       </div>
       <div className="amical_match">
-        <button title="Invite in classic mode">
-          <Link to={"/game"} id="classic">
+        <button
+          title="Invite in classic mode"
+          onClick={() => handleInvite(user2.id, GameMode.CLASSIC)}
+        >
+          <Link to="/" id="classic">
             <BallIcon />
           </Link>
         </button>
-        <button title="Invite in trans mode">
-          <Link to={"/game"} id="trans">
+        <button
+          title="Invite in trans mode"
+          onClick={() => handleInvite(user2.id, GameMode.TRANS)}
+        >
+          <Link to="/" id="trans">
             <BallIcon />
           </Link>
         </button>
