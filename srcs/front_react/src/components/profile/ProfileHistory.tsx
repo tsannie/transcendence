@@ -18,7 +18,7 @@ function ProfileHistory(props: IProps) {
   useEffect(() => {
     if (props.player) {
       api
-        .get("/game/history")
+        .get("/game/history", { params: { id: props.player.id } })
         .then((res: AxiosResponse) => {
           setHistory(res.data);
         })
@@ -26,7 +26,7 @@ function ProfileHistory(props: IProps) {
           console.log(err);
         });
     }
-  }, []);
+  }, [props.player]);
 
   if (history.length !== 0) {
     allHistory = history.map((game, index) => {

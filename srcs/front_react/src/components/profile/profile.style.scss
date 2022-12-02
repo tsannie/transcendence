@@ -277,6 +277,7 @@ $height__title: calc(60 * var(--res));
   margin: 0;
   padding: 0;
   list-style: none;
+  z-index: 3;
   cursor: pointer;
 
   li {

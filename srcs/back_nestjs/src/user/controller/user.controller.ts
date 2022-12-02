@@ -65,12 +65,6 @@ export class UserController {
     });
   }
 
-  @Get()
-  @SerializeOptions({ groups: ['user'] })
-  async getAllUser(): Promise<UserEntity[]> {
-    return await this.userService.getAllUser();
-  }
-
   @Get('search')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
@@ -78,7 +72,7 @@ export class UserController {
     return await this.userService.searchUser(body.username);
   }
 
-  @Post('block') // TODO to lower cases everywhere
+  @Post('block')
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async blockUser(
@@ -204,9 +198,12 @@ export class UserController {
 
   @Get('leaderboard')
   @UseGuards(JwtTwoFactorGuard)
-  async getLeaderboard(@Req() req: Request): Promise<number> {
+  async getLeaderboard(
+    @Req() req: Request,
+    @Query() userTarget: TargetIdDto,
+  ): Promise<number> {
     const allUsers = await this.userService.getAllUsersWithElo();
 
-    return this.userService.getLeaderBoard(req.user.id, allUsers);
+    return this.userService.getLeaderBoard(userTarget.id, allUsers);
   }
 }

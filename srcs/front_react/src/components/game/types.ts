@@ -30,7 +30,6 @@ export interface ICreateRoom {
 }
 
 export interface Room {
-  // TODO clean useless
   id: string;
   private_room: boolean;
 

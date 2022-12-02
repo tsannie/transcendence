@@ -1,17 +1,11 @@
 import { AxiosResponse } from "axios";
-import {
-  ChangeEvent,
-  FormEvent,
-  useContext,
-  useEffect,
-  useState
-} from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as RefreshIcon } from "../../assets/img/icon/refresh.svg";
 import { api } from "../../const/const";
 import {
   ChatDisplayContext,
-  ChatType
+  ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import ChannelTable from "./ChannelTable";
@@ -47,7 +41,6 @@ function JoinChannelForm() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO password
     if (selectChannel) {
       api
         .post(

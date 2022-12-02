@@ -109,6 +109,7 @@
 
 .duel__list {
   display: flex;
+  overflow: overlay;
   flex-direction: column;
   align-items: center;
   width: 100%;

@@ -110,13 +110,10 @@ export class MessageService {
       .getOne();
   }
 
-  /* Created two functions to add message to channel or dm, because of the way the database is structured,
-	Might necessit refactoring later. TODO*/
   async addMessagetoChannel(
     data: MessageDto,
     userId: string,
   ): Promise<MessageEntity> {
-    //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
       channels: {
@@ -135,7 +132,6 @@ export class MessageService {
       throw new UnauthorizedException('you are not part of this channel');
 
     let responseStatus = await this.banMuteService.isMuted(channel, user);
-    //TODO SWITCH TO WS THROWABLE ERROR
     if (responseStatus === true) {
       throw new WsException("You've Been Muted ! Shhhh. silence.");
     }
@@ -152,12 +148,10 @@ export class MessageService {
     return await this.allMessages.save(message);
   }
 
-  /* TODO modify input */
   async addMessagetoDm(
     data: MessageDto,
     userId: string,
   ): Promise<MessageEntity> {
-    //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
       channels: true,
@@ -179,7 +173,6 @@ export class MessageService {
     } catch (error) {
       throw new WsException(error.message);
     }
-    //TODO, AVOID sending message if user not friend;
 
     const message = new MessageEntity();
 
