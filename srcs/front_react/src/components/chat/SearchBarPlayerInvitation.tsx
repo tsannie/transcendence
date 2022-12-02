@@ -6,7 +6,7 @@ import {
   KeyboardEvent,
   MouseEvent,
   useContext,
-  useState
+  useState,
 } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
@@ -38,9 +38,7 @@ function SearchBarPlayerInvitation(props: { channel: IChannel }) {
         id: channel.id,
         targetId: targetId,
       })
-      .catch((error: any) =>
-        toast.error("HTTP error:" + error.response.data.message)
-      );
+      .catch((error: any) => toast.error(error.response.data.message));
   };
 
   let suggestionsListComponent = [];
