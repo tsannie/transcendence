@@ -1,11 +1,4 @@
-import {
-  canvas_back_height,
-  canvas_back_width,
-  GameMode,
-  RoomStatus,
-  screen_ratio,
-  Winner,
-} from "./const/const";
+import { GameMode, RoomStatus, Winner } from "./const/const";
 
 export interface IBall {
   x: number;
@@ -28,24 +21,22 @@ export interface IPlayer {
 
 export interface ISetPaddle {
   room_id: string;
-  positionY: number;
-  front_canvas_height: number;
+  posY: number;
 }
 
 export interface ICreateRoom {
   mode: GameMode;
+  invitation_user_id?: string;
 }
 
 export interface Room {
   // TODO clean useless
   id: string;
+  private_room: boolean;
 
   status: RoomStatus;
   p1_id: string;
   p2_id: string;
-
-  //p1_SocketId: string;
-  //p2_SocketId: string;
 
   p1_score: number;
   p2_score: number;
@@ -60,6 +51,7 @@ export interface Room {
 
   smasher: IQuadrilateral;
   wall: IQuadrilateral;
+  countdown: number;
 }
 
 export interface IDrawResponsive {
