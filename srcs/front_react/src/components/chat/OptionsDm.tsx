@@ -54,12 +54,12 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
         <span>{user2?.username}</span>
       </div>
       <div className="amical_match">
-        <button className="duel">
+        <button title="Invite in classic mode">
           <Link to={"/game"} id="classic">
             <BallIcon />
           </Link>
         </button>
-        <button className="duel">
+        <button title="Invite in trans mode">
           <Link to={"/game"} id="trans">
             <BallIcon />
           </Link>
