@@ -24,8 +24,8 @@ function InviteList() {
                 setMuted(false);
                 setMuteDate(null);
                 })
-                .catch((err: AxiosError) => {
-                toast.error("HTTP error: " + err.message);
+                .catch((err) => {
+                    toast.error("HTTP error: " + err.response.data.message);
                 });
     }
 

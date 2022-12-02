@@ -38,7 +38,7 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
         id: channel.id,
         targetId: targetId,
       })
-      .catch((error: any) => toast.error("HTTP error:" + error.message));
+      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
   };
 
   let suggestionsListComponent = [];

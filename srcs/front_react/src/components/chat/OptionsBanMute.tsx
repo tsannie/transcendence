@@ -25,7 +25,7 @@ function BanMuteButton(props: {type : string, channelId: string, user : User}) {
         api
         .post("/channel/mute", data)
         .then(() => toast.info(`${user.username} has been muted`))
-        .catch((error: any) => toast.error("HTTP error:" + error));
+        .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
     const banUser = () => {
@@ -39,7 +39,7 @@ function BanMuteButton(props: {type : string, channelId: string, user : User}) {
         api
         .post("/channel/ban", data)
         .then(() => toast.info(`${user.username} has been banned`))
-        .catch((error: any) => toast.error("HTTP error:" + error));
+        .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
     useEffect( () => {
