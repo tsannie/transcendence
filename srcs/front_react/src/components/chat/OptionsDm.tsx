@@ -20,22 +20,18 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
   ) as GameContextType;
   const nav = useNavigate();
 
-  const loadUser2 = async () => {
-    await api
+  const loadUser2 = () => {
+    api
       .get("/user/id", { params: { id: targetRedirection } })
       .then((res) => {
         setUser2(res.data);
       })
-      .catch((err) => toast.error("HTTP error: " + err));
+      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
   };
 
   const findUser2 = () => {
-    if (isRedirection) {
-      const async_fct = async () => {
-        await loadUser2();
-      };
-      async_fct();
-    } else {
+    if (isRedirection) loadUser2();
+    else {
       if (!dm || !dm?.users) return;
       let searched_user = dm?.users?.find((elem) => elem.id !== user?.id);
       if (searched_user) setUser2(searched_user);

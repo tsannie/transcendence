@@ -36,20 +36,18 @@ function SendMessageForm(props: {
   };
 
   const createConv = async () => {
-    let createdId: string | null = null;
-
-    await api
+    const createdId: string = await api
       .post("/dm/create", { targetId: targetRedirection.toString() })
       .then((res) => {
         setRedirection(false);
         setTargetRedirection("");
         setCurrentConv(res.data.id);
-        createdId = res.data.id;
+        return res.data.id;
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        toast.error("HTTP error: " + err.response.data.message);
       });
-    return createdId;
+    return createdId ? createdId : null;
   };
 
   const sendMessage = async (event: any) => {

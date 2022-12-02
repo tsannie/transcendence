@@ -20,8 +20,6 @@ import { MuteEntity } from 'src/channel/models/ban.entity';
 import { MessageGateway } from '../message.gateway';
 import { DmService } from 'src/dm/service/dm.service';
 
-const LOADED_MESSAGES = 20;
-
 @Injectable()
 export class MessageService {
   constructor(
@@ -61,7 +59,6 @@ export class MessageService {
   async loadMessages(
     type: string,
     inputed_id: string,
-    offset: number,
     user: UserEntity,
   ): Promise<MessageEntity[]> {
     if (!this.checkUserValidity(type, inputed_id, user))
@@ -80,8 +77,6 @@ export class MessageService {
       .addSelect(`${type}.id`)
       .where(`message.${type}.id = :id`, { id: inputed_id })
       .orderBy('message.createdAt', 'DESC')
-      .skip(offset * LOADED_MESSAGES)
-      .take(LOADED_MESSAGES)
       .getMany();
 
     return messages;

@@ -272,16 +272,16 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   const { user } = useContext(AuthContext);
   const [ searchBar, setSearchBar ] = useState<boolean>(false);
 
-  const leaveChannel = async () => {
-    await api
+  const leaveChannel = () => {
+    api
       .post("/channel/leave", { id: channel.id })
-      .catch((error: any) => toast.error("HTTP error:" + error));
+      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
   };
 
-  const deleteChannel = async () => {
-    await api
+  const deleteChannel = () => {
+    api
       .post("/channel/delete", { id: channel.id })
-      .catch((error: any) => toast.error("HTTP error:" + error));
+      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
   };
 
   useEffect( () => {
@@ -293,10 +293,6 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
     <div className="conversation__options__title">
       <div className="text">
         <span>{channel.name}</span>
-        {/* <div className="date">
-          conv started at: {channel.createdAt.toLocaleString()}
-        </div> */}
-        {/* <span className="owner">owned by: {owner?.username}</span> */}
         <button className="clickable_profile">
           <Link
             style={{ textDecoration: "none" }}
