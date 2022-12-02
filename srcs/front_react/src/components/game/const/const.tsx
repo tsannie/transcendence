@@ -1,12 +1,11 @@
 import { User } from "../../../contexts/AuthContext";
 
 export const canvas_back_width: number = 1920;
-export const screen_ratio: number = 9 / 16;
-export const canvas_back_height: number = canvas_back_width * screen_ratio;
+export const canvas_back_height: number = (canvas_back_width * 9) / 16;
 
 export const rad: number = 20;
 
-export const border_size_default: number = 5;
+export const border_size_default: number = 10;
 export const paddle_margin: number = 100;
 export const paddle_width: number = 40;
 export const paddle_height: number = 200;
@@ -22,15 +21,14 @@ export interface IException {
 }
 
 export enum GameMode {
-  PONG_CLASSIC = 0,
-  PONG_TRANS = 1,
+  CLASSIC = 0,
+  TRANS = 1,
 }
 
 export enum RoomStatus {
-  EMPTY = 0,
-  WAITING = 1,
-  PLAYING = 2,
-  CLOSED = 3,
+  WAITING = 0,
+  PLAYING = 1,
+  CLOSED = 2,
 }
 
 export enum Winner {
@@ -43,6 +41,12 @@ export interface IInfoGame {
   search: number;
   ingame: number;
   online: number;
+}
+
+export interface IInvitation {
+  user_id: string;
+  room_id: string;
+  mode: GameMode;
 }
 
 export interface IInfoRoom {

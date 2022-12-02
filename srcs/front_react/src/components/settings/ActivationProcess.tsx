@@ -27,7 +27,7 @@ export default function ActivationProcess() {
         setQrCode(base64);
       })
       .catch(() => {
-        console.log("Impossible to get QR code");
+        toast.error("Impossible to get QR code");
       });
   }
 
