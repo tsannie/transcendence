@@ -14,20 +14,21 @@ import {
 import { IQuadrilateral, Room } from "../types";
 
 export default class Draw {
-  private canvas: any;
+  private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private user_id: string;
   private fontFamily: string;
 
   constructor(
     canvasRef: React.RefObject<HTMLCanvasElement>,
+    ctx: CanvasRenderingContext2D,
     game_mode: GameMode,
     user_id: string
   ) {
     this.fontFamily =
       game_mode === GameMode.TRANS ? "px system-ui" : "px Arcade";
-    this.canvas = canvasRef.current;
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = canvasRef.current as HTMLCanvasElement;
+    this.ctx = ctx;
     this.user_id = user_id;
   }
 
@@ -60,6 +61,8 @@ export default class Draw {
   }
 
   private draw_game_transcendence(room: Room) {
+    if (!this.ctx) return;
+
     this.draw_countdown(room);
     if (!room.countdown && room.status == RoomStatus.PLAYING) {
       this.draw_score(room);
@@ -78,6 +81,8 @@ export default class Draw {
   }
 
   private draw_smasher(room: Room) {
+    if (!this.ctx) return;
+
     this.ctx.beginPath();
     this.ctx.fillStyle = white;
     this.ctx.rect(
