@@ -2,6 +2,7 @@ import { Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { ChatDisplayContext, ChatDisplayContextInterface, ChatType } from "../../contexts/ChatDisplayContext";
+import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
 import MessageBody from "./MessageBody";
 import Options from "./Options";
 import { IChannel, IDm } from "./types";
@@ -14,6 +15,7 @@ export interface IDatas{
 function Conversation() {
   const { setDisplay, currentConv, setCurrentConv, isChannel, targetRedirection, isRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDatas | IDm | null >(null);
+  const { removeChannel } = useContext(ChatNotifContext);
 
   const loadContent = () => {
     if (!currentConv)
@@ -46,6 +48,7 @@ function Conversation() {
       setDisplay(ChatType.CREATEFORM);
       return ;
     }
+    removeChannel(currentConv);
     loadContent();
   }, [currentConv, isRedirection])
 
