@@ -2,14 +2,14 @@ export const canvas_back_width: number = 1920;
 export const canvas_back_height: number = (canvas_back_width * 9) / 16;
 export const frame_ms = 1000 / 60; // 60 fps
 
-export const victory_score: number = 200;
+export const victory_score: number = 10;
 
 // BALL DATA
 export const rad: number = 20;
-export const gravity: number = 5;
+export const gravity: number = 15;
 export const speed_spawn: number = 10;
 export const speed: number = 25;
-export const speed_smasher: number = 35;
+export const speed_smasher: number = 40;
 
 // PADDLE DATA
 export const paddle_margin: number = 100;
