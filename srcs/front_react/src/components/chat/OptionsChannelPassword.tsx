@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  Fragment,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, Fragment, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
@@ -125,9 +119,7 @@ function ChannelPassword(props: { channel: IChannel; owner: User | null }) {
           <button
             className="action"
             onClick={modifyPassword}
-            disabled={
-              !channelPassword || !passwordVerifier || !channel.name
-            }
+            disabled={!channelPassword || !passwordVerifier || !channel.name}
           >
             <VerifIcon />
           </button>

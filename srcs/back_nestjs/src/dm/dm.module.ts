@@ -10,7 +10,7 @@ import { DmService } from './service/dm.service';
 
 @Module({
   imports: [
-    forwardRef( () => UserModule),
+    forwardRef(() => UserModule),
     TypeOrmModule.forFeature([
       DmEntity,
       ChannelEntity,

@@ -7,9 +7,9 @@ import { TwoFactorController } from './controller/two-factor.controller';
 import { TwoFactorService } from './service/two-factor.service';
 
 @Module({
-    imports: [UserModule, AuthModule],
-    controllers: [TwoFactorController],
-    providers: [TwoFactorService],
-    exports: [TwoFactorService],
+  imports: [UserModule, AuthModule],
+  controllers: [TwoFactorController],
+  providers: [TwoFactorService],
+  exports: [TwoFactorService],
 })
 export class TwoFactorModule {}

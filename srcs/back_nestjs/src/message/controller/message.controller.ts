@@ -28,11 +28,7 @@ export class MessageController {
     @Query() data: LoadMessagesDto,
     @Req() req: Request,
   ): Promise<MessageEntity[]> {
-    return await this.messageService.loadMessages(
-      'dm',
-      data.id,
-      req.user,
-    );
+    return await this.messageService.loadMessages('dm', data.id, req.user);
   }
 
   @Get('channel')
@@ -42,10 +38,6 @@ export class MessageController {
     @Query() data: LoadMessagesDto,
     @Req() req: Request,
   ) {
-    return await this.messageService.loadMessages(
-      'channel',
-      data.id,
-      req.user,
-    );
+    return await this.messageService.loadMessages('channel', data.id, req.user);
   }
 }

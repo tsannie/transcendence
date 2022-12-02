@@ -41,15 +41,13 @@ export class MessageService {
   ): DmEntity | ChannelEntity | null {
     if (type === 'dm') {
       let dm = user.dms.find((elem) => elem.id === inputed_id);
-      if (!dm)
-        return null;
+      if (!dm) return null;
       else return dm;
     } else if (type === 'channel') {
       let owner_of = user.owner_of.find((elem) => elem.id === inputed_id);
       let admin_of = user.admin_of.find((elem) => elem.id === inputed_id);
       let user_of = user.channels.find((elem) => elem.id === inputed_id);
-      if (!owner_of && !admin_of && !user_of)
-        return null;
+      if (!owner_of && !admin_of && !user_of) return null;
       else return owner_of ? owner_of : admin_of ? admin_of : user_of;
     }
   }
@@ -62,7 +60,9 @@ export class MessageService {
     user: UserEntity,
   ): Promise<MessageEntity[]> {
     if (!this.checkUserValidity(type, inputed_id, user))
-      throw new UnauthorizedException(`you are not allowed to load ${inputed_id}'s messages`)
+      throw new UnauthorizedException(
+        `you are not allowed to load ${inputed_id}'s messages`,
+      );
 
     const messages = await this.allMessages
       .createQueryBuilder('message')
@@ -89,7 +89,9 @@ export class MessageService {
     user: UserEntity,
   ): Promise<MessageEntity> {
     if (!this.checkUserValidity(type, inputed_id, user))
-      throw new UnauthorizedException(`you are not allowed to load ${inputed_id}'s messages`)
+      throw new UnauthorizedException(
+        `you are not allowed to load ${inputed_id}'s messages`,
+      );
 
     return await this.allMessages
       .createQueryBuilder('message')
@@ -110,7 +112,10 @@ export class MessageService {
 
   /* Created two functions to add message to channel or dm, because of the way the database is structured,
 	Might necessit refactoring later. TODO*/
-  async addMessagetoChannel(data: MessageDto, userId: string): Promise<MessageEntity > {
+  async addMessagetoChannel(
+    data: MessageDto,
+    userId: string,
+  ): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -127,16 +132,16 @@ export class MessageService {
     ) as ChannelEntity;
 
     if (!channel)
-      throw new UnauthorizedException("you are not part of this channel");
+      throw new UnauthorizedException('you are not part of this channel');
 
     let responseStatus = await this.banMuteService.isMuted(channel, user);
     //TODO SWITCH TO WS THROWABLE ERROR
-    if (responseStatus === true){
-      throw new WsException("You've Been Muted ! Shhhh. silence.")
+    if (responseStatus === true) {
+      throw new WsException("You've Been Muted ! Shhhh. silence.");
     }
-    if (responseStatus instanceof MuteEntity){
+    if (responseStatus instanceof MuteEntity) {
       responseStatus.user = user;
-      this.messageGateway.unMuteUser(responseStatus, channel.id)
+      this.messageGateway.unMuteUser(responseStatus, channel.id);
     }
 
     const message = new MessageEntity();
@@ -148,7 +153,10 @@ export class MessageService {
   }
 
   /* TODO modify input */
-  async addMessagetoDm(data: MessageDto, userId: string): Promise<MessageEntity> {
+  async addMessagetoDm(
+    data: MessageDto,
+    userId: string,
+  ): Promise<MessageEntity> {
     //TODO change input type(DTO over interface) and load less from user
     const user = await this.userService.findById(userId, {
       dms: true,
@@ -164,7 +172,10 @@ export class MessageService {
     const dm = this.checkUserValidity('dm', data.convId, user) as DmEntity;
 
     try {
-      await this.dmService.checkifBlocked(user, dm.users.find((elem) => elem.id !== user.id).id);
+      await this.dmService.checkifBlocked(
+        user,
+        dm.users.find((elem) => elem.id !== user.id).id,
+      );
     } catch (error) {
       throw new WsException(error.message);
     }

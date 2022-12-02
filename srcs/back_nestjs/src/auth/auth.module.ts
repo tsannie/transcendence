@@ -33,7 +33,7 @@ import { GameStatEntity } from 'src/game/entity/gameStat.entity';
     JwtStrategy,
     FortyTwoStrategy,
     GoogleStrategy,
-    JwtTwoFactorStrategy
+    JwtTwoFactorStrategy,
   ],
   exports: [AuthService, JwtService],
 })

@@ -1,7 +1,6 @@
-import { IsAlphanumeric, IsDefined, IsNotEmpty, Length } from "class-validator";
+import { IsAlphanumeric, IsDefined, IsNotEmpty, Length } from 'class-validator';
 
 export class NewUsernameDto {
-
   @IsNotEmpty()
   @IsDefined()
   @IsAlphanumeric()

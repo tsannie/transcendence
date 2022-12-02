@@ -100,7 +100,7 @@ export class MessageGateway
 
     for (const channel of channels) {
       client.leave(channel.id);
-    };
+    }
 
     // delete user in map only if he has no more socket
     if (!this.connectedUsers.has(userId)) {
@@ -142,9 +142,9 @@ export class MessageGateway
   }
 
   joinChannel(user: UserEntity, channel: ChannelEntity) {
-    let isMuted : boolean = false;
+    let isMuted: boolean = false;
     this.joinAllSocketToChannel(user.id, channel.id);
-    if (channel.muted && channel.muted.find( (elem) => elem.user.id === user.id))
+    if (channel.muted && channel.muted.find((elem) => elem.user.id === user.id))
       isMuted = true;
     this.server.to(channel.id).emit('joinChannel', user, isMuted, channel.id);
   }
@@ -166,7 +166,7 @@ export class MessageGateway
     if (socket) {
       for (const client of socket) {
         client.emit('inviteChannel', channel, targetId);
-      };
+      }
     }
   }
 
@@ -204,7 +204,7 @@ export class MessageGateway
     if (sockets) {
       for (const client of sockets) {
         client.join(channelId);
-      };
+      }
     }
   }
 
@@ -214,7 +214,7 @@ export class MessageGateway
     if (sockets) {
       for (const client of sockets) {
         client.leave(channelId);
-      };
+      }
     }
   }
 }
