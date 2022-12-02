@@ -232,7 +232,7 @@ $width_chat: calc(450 * var(--res));
         // }
       }
 
-      .dropdown{
+      .dropdown {
         display: flex;
         flex-direction: column;
         position: absolute;
@@ -245,7 +245,7 @@ $width_chat: calc(450 * var(--res));
         height: fit-content;
         z-index: 1;
 
-        .options{
+        .options {
           width: 100%;
           border-bottom-style: dashed;
           border-width: calc(3 * var(--res)) !important;
@@ -326,7 +326,8 @@ $width_chat: calc(450 * var(--res));
       font-size: calc(11 * var(--res));
     }
 
-    .actions__channel { // TODO: a changer pour avoi un truc style
+    .actions__channel {
+      // TODO: a changer pour avoi un truc style
       display: flex;
       flex-wrap: wrap;
       justify-content: space-evenly;
@@ -341,7 +342,7 @@ $width_chat: calc(450 * var(--res));
 
         svg {
           align-self: center;
-          width: calc(25 * var(--res))
+          width: calc(25 * var(--res));
         }
 
         span {
@@ -397,12 +398,10 @@ form {
   height: calc(30 * var(--res));
 }
 
-
 .disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 
 .create__channel {
   display: flex;
@@ -650,7 +649,7 @@ form {
   }
 }
 
- .channel__change__password {
+.channel__change__password {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -675,23 +674,23 @@ form {
   }
 }
 
-.invite{
+.invite {
   width: 100%;
   border-width: calc(2 * var(--res)) !important;
   position: relative;
 }
 
-.invite-suggestion{
+.invite-suggestion {
   position: absolute;
   border-width: calc(2 * var(--res)) !important;
   width: 100%;
 
-  li {    
+  li {
     span {
       font-size: calc(18 * var(--res)) !important;
     }
 
-    img{
+    img {
       width: calc(25 * var(--res));
       height: calc(25 * var(--res));
     }
@@ -703,7 +702,7 @@ form {
   }
 }
 
-.invite-no-suggestions{
+.invite-no-suggestions {
   position: relative;
   margin-top: 0;
 }
@@ -719,21 +718,22 @@ form {
     display: flex;
     border-style: dashed;
     justify-content: space-around;
-
+    margin: 2.4% 0 2.4% 0;
+    
     .invite_info {
       display: flex;
       flex-direction: column;
       min-width: 0;
       padding: 3%;
 
-      .invite_title{
+      .invite_title {
         font-size: calc(18 * var(--res));
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
 
-      span{
+      span {
         font-size: calc(14 * var(--res)) !important;
         white-space: nowrap;
         overflow: hidden;
@@ -746,7 +746,7 @@ form {
       justify-content: space-evenly;
       align-items: center;
       flex: 0 0 30%;
-      
+
       button {
         border: none;
       }
@@ -755,5 +755,16 @@ form {
         width: calc(25 * var(--res));
       }
     }
+  }
+}
+
+.amical_match {
+  width: 50%;
+  align-self: center;
+  margin-top: 5%;
+  display: flex;
+  justify-content: space-evenly;
+  button {
+    border: none;
   }
 }
