@@ -275,13 +275,13 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   const leaveChannel = () => {
     api
       .post("/channel/leave", { id: channel.id })
-      .catch((error: any) => toast.error("HTTP error:" + error));
+      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
   };
 
   const deleteChannel = () => {
     api
       .post("/channel/delete", { id: channel.id })
-      .catch((error: any) => toast.error("HTTP error:" + error));
+      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
   };
 
   useEffect( () => {

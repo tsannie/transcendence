@@ -36,7 +36,7 @@ function SendMessageForm(props: {convId: string, isChannel: boolean, data: IDm |
           createdId = res.data.id;
         })
         .catch((err) => {
-          toast.error("HTTP error: " + err);
+          toast.error("HTTP error: " + err.response.data.message);
         })
         return createdId;
     }

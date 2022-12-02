@@ -15,7 +15,7 @@ function UserOptions(props: IMemberProps) {
     const unBanUser = () => {
         api
         .post("/channel/unban", { id: channelId, targetId: user.id })
-        .catch((error: any) => toast.error("HTTP error:" + error));
+        .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
     const unMuteUser = () => {
@@ -27,13 +27,13 @@ function UserOptions(props: IMemberProps) {
     const makeAdmin = () => {
         api
         .post("/channel/makeAdmin", { id: channelId, targetId: user.id })
-        .catch((error: any) => toast.error("HTTP error:" + error));
+        .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
     const revokeAdmin = () => {
         api
         .post("/channel/revokeAdmin", { id: channelId, targetId: user.id })
-        .catch((error: any) => toast.error("HTTP error:" + error));
+        .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
     }
 
     const adminOptions = () => {
