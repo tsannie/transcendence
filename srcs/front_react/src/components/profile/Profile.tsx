@@ -69,13 +69,17 @@ function Profile() {
     }
   }, [reloadPlayer]);
 
-  if (isLoad) {
+  if (isLoad && player) {
     return (
       <div className="profile">
         <div className="profile__size" />
         <ProfileHeader player={player} />
         {!isPerso && (
-          <ActionBar player={player} setReloadPlayer={setReloadPlayer} setReloadUser={setReloadUser} />
+          <ActionBar
+            player={player}
+            setReloadPlayer={setReloadPlayer}
+            setReloadUser={setReloadUser}
+          />
         )}
         <hr id="full" />
         <ProfileStatsBar player={player} />

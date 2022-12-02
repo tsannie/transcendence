@@ -139,7 +139,11 @@ export function GameRender() {
     <div className="game">
       <div className="game__render">
         <div className="game__header">
-          <button id="leave" onClick={leaveGame}>
+          <button
+            id="leave"
+            onClick={leaveGame}
+            disabled={room?.countdown !== 0}
+          >
             <LogOutIcon />
           </button>
           {players ? (
@@ -170,7 +174,8 @@ export function GameRender() {
             height={canvas_back_height}
             width={canvas_back_width}
             onMouseMove={(e) => mouv_mouse(e)}
-            style={{ backgroundColor: black }}></canvas>
+            style={{ backgroundColor: black }}
+          ></canvas>
         </div>
       </div>
     </div>

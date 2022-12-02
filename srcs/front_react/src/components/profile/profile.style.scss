@@ -48,16 +48,6 @@ $search_bar_size: calc(250 * var(--res));
     flex: 0 0 50%;
   }
 
-  .elo {
-    display: flex;
-    flex: 0 0 50%;
-    align-items: flex-start;
-    .elo__item {
-      display: flex;
-      align-items: center;
-    }
-  }
-
   margin-left: calc(30 * var(--res));
 }
 
