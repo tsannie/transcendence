@@ -1,5 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
@@ -16,6 +16,7 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
   const { isRedirection } = useContext(ChatDisplayContext);
   const [user2, setUser2] = useState<User>({} as User);
   const { socket, setTimeQueue } = useContext(GameContext) as GameContextType;
+  const nav = useNavigate();
 
   const loadUser2 = async () => {
     await api
@@ -52,6 +53,7 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
       };
       socket.emit("createPrivateRoom", data);
       setTimeQueue(0);
+      nav("/");
     }
   };
 
@@ -72,18 +74,22 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
         <button
           title="Invite in classic mode"
           onClick={() => handleInvite(user2.id, GameMode.CLASSIC)}
+          disabled={
+            user?.friends?.find((elem) => elem.id === user2.id) ? false : true
+          }
+          id="classic"
         >
-          <Link to="/" id="classic">
-            <BallIcon />
-          </Link>
+          <BallIcon />
         </button>
         <button
           title="Invite in trans mode"
           onClick={() => handleInvite(user2.id, GameMode.TRANS)}
+          disabled={
+            user?.friends?.find((elem) => elem.id === user2.id) ? false : true
+          }
+          id="trans"
         >
-          <Link to="/" id="trans">
-            <BallIcon />
-          </Link>
+          <BallIcon />
         </button>
       </div>
     </div>
