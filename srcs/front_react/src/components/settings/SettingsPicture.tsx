@@ -1,5 +1,5 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
-import { toast, ToastContainer, ToastOptions } from "react-toastify";
+import { ChangeEvent, useContext, useState } from "react";
+import { toast } from "react-toastify";
 import { ReactComponent as UploadIcon } from "../../assets/img/icon/up.svg";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";

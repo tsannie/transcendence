@@ -1,10 +1,10 @@
 import { AxiosResponse } from "axios";
-import React, { MouseEvent, useContext, useEffect, useState } from "react";
-import { api } from "../../../const/const";
+import { MouseEvent, useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ReactComponent as SpectateIcon } from "../../../assets/img/icon/read.svg";
+import { api } from "../../../const/const";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { IInfoRoom, RoomStatus } from "../const/const";
-import { Link } from "react-router-dom";
 
 function GameCurrent() {
   const { socket, setDisplayRender } = useContext(

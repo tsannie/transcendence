@@ -1,4 +1,4 @@
-import React, { ChangeEvent, createRef, Fragment, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
 import { IChannel } from "./types";
 

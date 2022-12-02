@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { authenticator } from 'otplib';
-import { UserService } from 'src/user/service/user.service';
-import { toFileStream } from 'qrcode';
 import { Response } from 'express';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
 import { UserEntity } from 'src/user/models/user.entity';
+import { UserService } from 'src/user/service/user.service';
 
 @Injectable()
 export class TwoFactorService {

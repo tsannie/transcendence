@@ -1,11 +1,9 @@
-import { AxiosResponse } from "axios";
-import React, { createRef, useEffect, useRef, useState } from "react";
-import { api } from "../../const/const";
-import "./chat.style.scss";
-import { IChannel } from "./types";
+import { useRef } from "react";
+import { Link } from "react-router-dom";
 import { ReactComponent as LockIcon } from "../../assets/img/icon/lock.svg";
 import { ReactComponent as UnlockIcon } from "../../assets/img/icon/unlock.svg";
-import { Link } from "react-router-dom";
+import "./chat.style.scss";
+import { IChannel } from "./types";
 
 interface IProps {
   data: IChannel[];

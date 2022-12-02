@@ -12,7 +12,7 @@ export interface ChatDisplayContextInterface {
   display: ChatType;
   setDisplay: React.Dispatch<React.SetStateAction<ChatType>>;
   currentConv: string;
-  setCurrentConv: React.Dispatch<React.SetStateAction<string>>
+  setCurrentConv: React.Dispatch<React.SetStateAction<string>>;
   isChannel: boolean;
   setIsChannel: React.Dispatch<React.SetStateAction<boolean>>;
   newConv: IChannel | IDm;
@@ -38,14 +38,14 @@ interface ChatDisplayProviderProps {
 }
 
 export const ChatDisplayProvider = ({ children }: ChatDisplayProviderProps) => {
-  const [ display, setDisplay] = useState<ChatType>(ChatType.CONV);
-  const [ currentConv, setCurrentConv] = useState<string>("");
-  const [ isChannel, setIsChannel] = useState<boolean>(false);
-  const [ newConv, setNewConv] = useState<IChannel | IDm>({} as IChannel | IDm);
-  const [ isRedirection, setRedirection] = useState<boolean>(false);
-  const [ targetRedirection, setTargetRedirection] = useState<string>("");
-  const [ isMuted, setMuted ] = useState<boolean>(false);
-  const [ muteDate, setMuteDate ] = useState<Date | null>(null);
+  const [display, setDisplay] = useState<ChatType>(ChatType.CONV);
+  const [currentConv, setCurrentConv] = useState<string>("");
+  const [isChannel, setIsChannel] = useState<boolean>(false);
+  const [newConv, setNewConv] = useState<IChannel | IDm>({} as IChannel | IDm);
+  const [isRedirection, setRedirection] = useState<boolean>(false);
+  const [targetRedirection, setTargetRedirection] = useState<string>("");
+  const [isMuted, setMuted] = useState<boolean>(false);
+  const [muteDate, setMuteDate] = useState<Date | null>(null);
 
   return (
     <ChatDisplayContext.Provider

@@ -410,17 +410,11 @@ export class UserService {
         `You already sent a friend request to ${target.username}`,
       );
 
-    if (
-      user.blocked &&
-      user.blocked.find((elem) => elem.id === target.id)
-    )
+    if (user.blocked && user.blocked.find((elem) => elem.id === target.id))
       throw new UnprocessableEntityException(
         `You are blocked by ${target.username}`,
       );
-    if (
-      target.blocked &&
-      target.blocked.find((elem) => elem.id === user.id)
-    )
+    if (target.blocked && target.blocked.find((elem) => elem.id === user.id))
       throw new UnprocessableEntityException(
         `${target.username} is blocked by you`,
       );

@@ -1,13 +1,18 @@
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { api } from "../../const/const";
-import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
-import { ICreateChannel } from "./types";
-import { ChatType } from "../../contexts/ChatDisplayContext";
+import { ChangeEvent, useContext, useState } from "react";
 import { toast } from "react-toastify";
+import { api } from "../../const/const";
+import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
+import { ICreateChannel } from "./types";
 
 function CreateChannelForm() {
-  const { setDisplay, setCurrentConv, setIsChannel, setNewConv, setMuteDate, setMuted } =
-    useContext(ChatDisplayContext);
+  const {
+    setDisplay,
+    setCurrentConv,
+    setIsChannel,
+    setNewConv,
+    setMuteDate,
+    setMuted,
+  } = useContext(ChatDisplayContext);
 
   const [channelName, setChannelName] = useState<string>("");
   const [channelPassword, setChannelPassword] = useState<string>("");

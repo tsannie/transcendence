@@ -1,12 +1,12 @@
 import { AxiosResponse } from "axios";
-import React, {
+import {
   createRef,
   FormEvent,
   Fragment,
   KeyboardEvent,
   MouseEvent,
   useContext,
-  useState,
+  useState
 } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
@@ -20,7 +20,7 @@ interface IUserSearch {
   picture: string;
 }
 
-function SearchBarPlayerInvitation(props: {channel: IChannel}) {
+function SearchBarPlayerInvitation(props: { channel: IChannel }) {
   const { user } = useContext(AuthContext);
 
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
@@ -30,7 +30,7 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
   const [userInput, setUserInput] = useState<string>("");
 
   const searchInput = createRef<HTMLInputElement>();
-  const {channel} = props;
+  const { channel } = props;
 
   const inviteChannel = (targetId: string) => {
     api
@@ -38,7 +38,9 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
         id: channel.id,
         targetId: targetId,
       })
-      .catch((error: any) => toast.error("HTTP error:" + error.response.data.message));
+      .catch((error: any) =>
+        toast.error("HTTP error:" + error.response.data.message)
+      );
   };
 
   let suggestionsListComponent = [];
@@ -54,9 +56,15 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
 
   if (showSuggestion && userInput) {
     if (suggestions.length) {
-      const rec = document.getElementsByClassName("actions__channel")[0].getBoundingClientRect();
+      const rec = document
+        .getElementsByClassName("actions__channel")[0]
+        .getBoundingClientRect();
       suggestionsListComponent.push(
-        <ul style={{top: rec.height, left: 0}} className="suggestions invite-suggestion" key="on">
+        <ul
+          style={{ top: rec.height, left: 0 }}
+          className="suggestions invite-suggestion"
+          key="on"
+        >
           {suggestions.map((suggestion, index) => {
             let className;
 
@@ -107,18 +115,20 @@ function SearchBarPlayerInvitation(props: {channel: IChannel}) {
   const handleOnChange = async (e: FormEvent<HTMLInputElement>) => {
     const userInput: string = e.currentTarget.value;
     let dictionary = await getDictionary(userInput);
-    
+
     if (channel && channel.admins && channel.users && channel.banned) {
-      let adminsId : string[], memberId : string[], bannedId: string[];
-      
-      adminsId = channel.admins.map( elem => elem.id);
-      memberId = channel.users.map(elem => elem.id);
-      bannedId = channel.banned.map(elem => elem.user.id);
-      dictionary = dictionary.filter( (foundUser) => 
-      foundUser.id !== user?.id 
-      && !adminsId.includes(foundUser.id)
-      && !memberId.includes(foundUser.id)
-      && !bannedId.includes(foundUser.id) );
+      let adminsId: string[], memberId: string[], bannedId: string[];
+
+      adminsId = channel.admins.map((elem) => elem.id);
+      memberId = channel.users.map((elem) => elem.id);
+      bannedId = channel.banned.map((elem) => elem.user.id);
+      dictionary = dictionary.filter(
+        (foundUser) =>
+          foundUser.id !== user?.id &&
+          !adminsId.includes(foundUser.id) &&
+          !memberId.includes(foundUser.id) &&
+          !bannedId.includes(foundUser.id)
+      );
     }
 
     setLengthDictionary(dictionary.length);

@@ -1,5 +1,4 @@
-import React, { useContext } from "react";
-import { toast } from "react-toastify";
+import { useContext } from "react";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
 import { GameMode } from "../const/const";
 import { ICreateRoom } from "../types";

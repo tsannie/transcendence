@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/models/user.entity';
 import { UserService } from 'src/user/service/user.service';
@@ -25,9 +30,7 @@ export class DmService {
       throw new UnprocessableEntityException(`You've blocked this user`);
     if (
       user2.blocked &&
-      user2.blocked.find(
-        (blocked_guys) => blocked_guys.id === user.id,
-      )
+      user2.blocked.find((blocked_guys) => blocked_guys.id === user.id)
     )
       throw new UnprocessableEntityException(
         `You've been blocked by ${user2.username}`,
@@ -50,11 +53,14 @@ export class DmService {
   }
 
   /* This function loads the Dm based on name of target*/
-  async getDmByTarget(data: DmTargetDto, user: UserEntity): Promise<DmEntity | null> {
+  async getDmByTarget(
+    data: DmTargetDto,
+    user: UserEntity,
+  ): Promise<DmEntity | null> {
     if (user.dms) {
       let convo = user.dms.find(
-        (dm) => (dm.users[0].id === data.targetId ||
-          dm.users[1].id === data.targetId)
+        (dm) =>
+          dm.users[0].id === data.targetId || dm.users[1].id === data.targetId,
       );
       if (convo) return await this.getDmById(convo.id);
     }
@@ -85,16 +91,14 @@ export class DmService {
   async createDm(data: DmTargetDto, user: UserEntity): Promise<DmEntity> {
     let user2 = await this.checkifBlocked(user, data.targetId);
     if (user.dms) {
-        //TODO SIMPLIFY
-        const convo = user.dms.find(
-          (dm) =>
-            (dm.users[0].id === user.id &&
-              dm.users[1].id === data.targetId) ||
-            (dm.users[0].id === data.targetId &&
-              dm.users[1].id === user.id),
-        );
-        if (convo) return await this.getDmById(convo.id);
-      }
+      //TODO SIMPLIFY
+      const convo = user.dms.find(
+        (dm) =>
+          (dm.users[0].id === user.id && dm.users[1].id === data.targetId) ||
+          (dm.users[0].id === data.targetId && dm.users[1].id === user.id),
+      );
+      if (convo) return await this.getDmById(convo.id);
+    }
 
     let new_dm = new DmEntity();
 

@@ -1,14 +1,13 @@
-import "./chat.style.scss";
-import { MessageContext } from "../../contexts/MessageContext";
-import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
-import { useContext, useState } from "react";
-import { IChannel, IDm, IMessageSent } from "./types";
-import { api } from "../../const/const";
-import { ReactComponent as SendIcon } from "../../assets/img/icon/send.svg";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { IDatas } from "./Conversation";
-import { useEffect } from "react";
+import { ReactComponent as SendIcon } from "../../assets/img/icon/send.svg";
+import { api } from "../../const/const";
 import { AuthContext } from "../../contexts/AuthContext";
+import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
+import { MessageContext } from "../../contexts/MessageContext";
+import "./chat.style.scss";
+import { IDatas } from "./Conversation";
+import { IChannel, IDm, IMessageSent } from "./types";
 
 function SendMessageForm(props: {
   convId: string;
