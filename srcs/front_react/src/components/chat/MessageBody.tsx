@@ -72,7 +72,7 @@ function MessageBody(props: {
           })
         );
       })
-      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
+      .catch((err) => toast.error(err.response.data.message));
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {

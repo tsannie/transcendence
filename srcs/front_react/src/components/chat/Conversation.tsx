@@ -39,7 +39,7 @@ function Conversation() {
         setDm(res.data);
       })
       .catch((err) => {
-        toast.error("HTTP error: " + err.response.data.message);
+        toast.error(err.response.data.message);
       });
   };
 

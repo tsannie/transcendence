@@ -6,7 +6,7 @@ import { ReactComponent as RefuseIcon } from "../../assets/img/icon/remove.svg";
 import { api } from "../../const/const";
 import {
   ChatDisplayContext,
-  ChatType
+  ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { IChannel } from "./types";
@@ -35,7 +35,7 @@ function InviteList() {
         setMuteDate(null);
       })
       .catch((err) => {
-        toast.error("HTTP error: " + err.response.data.message);
+        toast.error(err.response.data.message);
       });
   };
 

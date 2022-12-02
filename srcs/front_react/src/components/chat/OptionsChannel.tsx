@@ -1,8 +1,4 @@
-import {
-  Fragment,
-  useContext,
-  useEffect, useState
-} from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ReactComponent as LeaveIcon } from "../../assets/img/icon/circle_minus.svg";
@@ -12,7 +8,7 @@ import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import {
   ChatDisplayContext,
-  ChatType
+  ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { MessageContext } from "../../contexts/MessageContext";
 import { IDatas } from "./Conversation";
@@ -265,17 +261,13 @@ function ChannelProfile(props: { channel: IChannel; owner: User | null }) {
   const leaveChannel = () => {
     api
       .post("/channel/leave", { id: channel.id })
-      .catch((error: any) =>
-        toast.error("HTTP error:" + error.response.data.message)
-      );
+      .catch((error: any) => toast.error(error.response.data.message));
   };
 
   const deleteChannel = () => {
     api
       .post("/channel/delete", { id: channel.id })
-      .catch((error: any) =>
-        toast.error("HTTP error:" + error.response.data.message)
-      );
+      .catch((error: any) => toast.error(error.response.data.message));
   };
 
   useEffect(() => {

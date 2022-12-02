@@ -44,7 +44,7 @@ function SendMessageForm(props: {
         return res.data.id;
       })
       .catch((err) => {
-        toast.error("HTTP error: " + err.response.data.message);
+        toast.error(err.response.data.message);
       });
     return createdId ? createdId : null;
   };
