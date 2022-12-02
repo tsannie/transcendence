@@ -344,7 +344,8 @@ export class GameService {
     statGame.p2_score = room.p2_score;
     if (room.won === Winner.P1) statGame.winner_id = p1.id;
     else statGame.winner_id = p2.id;
-    statGame.eloDiff = this.getElo(room, p1, p2);
+    if (!room.private_room) statGame.eloDiff = this.getElo(room, p1, p2);
+    else statGame.eloDiff = 0;
     return statGame;
   }
 
