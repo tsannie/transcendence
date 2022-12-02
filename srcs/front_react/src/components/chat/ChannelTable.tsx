@@ -36,7 +36,17 @@ function ChannelTable(props: IProps) {
             style={{ textDecoration: "none" }}
             to={`/profile/${channel.owner?.username}`}
           >
-            <span>{channel.owner?.username}</span>
+            <span
+              title={
+                channel.owner?.username && channel.owner?.username.length > 5
+                  ? channel.owner?.username
+                  : ""
+              }
+            >
+              {channel.owner?.username && channel.owner?.username.length > 10
+                ? channel.owner?.username.slice(0, 5) + "..."
+                : channel.owner?.username}
+            </span>
           </Link>
         </div>
         <div className="table__item__status">
