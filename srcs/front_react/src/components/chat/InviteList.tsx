@@ -12,8 +12,8 @@ function InviteList() {
     const { setDisplay, setCurrentConv, setIsChannel, setNewConv, setMuted, setMuteDate } = useContext(ChatDisplayContext);
     const { inviteList, setInvite } = useContext(MessageContext);
 
-    const acceptInvite = async  (channel: IChannel) => {
-        await api
+    const acceptInvite = (channel: IChannel) => {
+        api
             .post('/channel/join', {id: channel.id})
             .then((res: AxiosResponse) => {
                 setInvite(inviteList.filter( elem => elem.id !== channel.id));
@@ -23,10 +23,10 @@ function InviteList() {
                 setNewConv(res.data);
                 setMuted(false);
                 setMuteDate(null);
-              })
-              .catch((err: AxiosError) => {
+                })
+                .catch((err: AxiosError) => {
                 toast.error("HTTP error: " + err.message);
-              });
+                });
     }
 
     const declineInvite = (channel: IChannel) => {

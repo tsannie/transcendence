@@ -12,16 +12,15 @@ export interface IDatas{
 }
 
 function Conversation() {
-  const { chatList } = useContext(MessageContext);
-  const { setDisplay, currentConv, setCurrentConv, isChannel, targetRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
+  const { setDisplay, currentConv, setCurrentConv, isChannel, targetRedirection, isRedirection, setRedirection } : ChatDisplayContextInterface = useContext(ChatDisplayContext);
   const [dm, setDm] = useState<IDatas | IDm | null >(null);
 
-  const loadContent = async () => {
-    let route: string = isChannel? "channel/datas" : "dm/datas";
-    
+  const loadContent = () => {
     if (!currentConv)
       return ;
-    await api
+    let route: string = isChannel? "channel/datas" : "dm/datas";
+
+    api
       .get(route, {params: {id: currentConv}})
       .then((res) => {
         setDm(res.data);
@@ -31,8 +30,8 @@ function Conversation() {
       })
   }
 
-  const searchExistingConv = async () => {
-    await api
+  const searchExistingConv = () => {
+    api
       .get("/dm/target", {params: {targetId: targetRedirection}})
       .then((res) => {
         if (!res.data) 
@@ -52,10 +51,8 @@ function Conversation() {
 
   useEffect( () => {
     if (!targetRedirection) return ;
-    const async_fct = async () => {
-      await searchExistingConv();
-    }
-    async_fct();
+   
+    searchExistingConv();
   }, [targetRedirection])
 
     return (

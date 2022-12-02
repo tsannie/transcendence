@@ -14,7 +14,7 @@ function CreateChannelForm() {
   const [passwordVerifier, setPasswordVerifier] = useState<string>("");
   const [selectType, setSelectType] = useState<string | null>(null);
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     if (channelPassword.length > 0 && channelPassword !== passwordVerifier) {
       toast.error("Passwords don't match");
@@ -26,7 +26,7 @@ function CreateChannelForm() {
     };
     if (selectType === "Protected") channel.password = channelPassword;
 
-    await api
+    api
       .post("channel/create", channel)
       .then((res) => {
         setMuted(false);
