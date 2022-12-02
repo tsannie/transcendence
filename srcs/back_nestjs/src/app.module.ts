@@ -33,7 +33,7 @@ import { TwoFactorModule } from './two-factor/two-factor.module';
       type: 'postgres',
       url: process.env.POSTGRES_FORCE,
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
     }),
     HttpModule,
     UserModule,
