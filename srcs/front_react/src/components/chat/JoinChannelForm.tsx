@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   JoinChannelForm.tsx                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dodjian <dodjian@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/23 14:20:39 by dodjian           #+#    #+#             */
+/*   Updated: 2022/11/28 10:11:43 by dodjian          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 import { AxiosError, AxiosResponse } from "axios";
 import React, {
   ChangeEvent,
@@ -16,6 +28,7 @@ import {
   ChatType,
 } from "../../contexts/ChatDisplayContext";
 import { toast } from "react-toastify";
+import { MessageContext } from "../../contexts/MessageContext";
 
 function JoinChannelForm() {
   const [channelDictionnary, setChannelDictionnary] = useState<IChannel[]>([]);
@@ -23,8 +36,9 @@ function JoinChannelForm() {
   const [selectChannel, setSelectChannel] = useState<IChannel>();
   const [refresh, setRefresh] = useState<boolean>(true);
   const [password, setPassword] = useState<string>("");
-  const { setDisplay, setCurrentConv, setIsChannel, setNewConv } =
+  const { setMuted, setMuteDate, setDisplay, setCurrentConv, setIsChannel, setNewConv, setRedirection, setTargetRedirection} =
     useContext(ChatDisplayContext);
+  const { socket } = useContext(MessageContext);
 
   const sortChannel = (channels: IChannel[]): IChannel[] => {
     const sort = channels.sort((a, b) => {
@@ -47,17 +61,23 @@ function JoinChannelForm() {
             : { id: selectChannel.id, password: password }
         )
         .then((res: AxiosResponse) => {
-          toast.success("Channel joined");
-          setDisplay(ChatType.CONV);
           setCurrentConv(res.data.id);
           setIsChannel(true);
           setNewConv(res.data);
+          setDisplay(ChatType.CONV);
         })
         .catch((err: AxiosError) => {
-          toast.error("Wrong password");
+          toast.error("HTTP error: " + err.message);
         });
     }
   };
+
+  useEffect( () => {
+    setMuted(false);
+    setMuteDate(null);
+    setRedirection(false);
+    setTargetRedirection("");
+  }, [])
 
   useEffect(() => {
     if (refresh) {

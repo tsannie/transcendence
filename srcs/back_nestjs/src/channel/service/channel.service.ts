@@ -20,18 +20,27 @@ import { ChannelActionsDto } from '../dto/channelactions.dto';
 import { UserService } from 'src/user/service/user.service';
 import { ChannelPasswordDto } from '../dto/channelpassword.dto';
 import { IChannelReturn } from '../models/channel_return.interface';
-import { BanEntity, BanMuteEntity, MuteEntity } from '../models/ban.entity';
+import { BanEntity, MuteEntity } from '../models/ban.entity';
 import { BanMuteService } from './banmute.service';
+import { ChannelInvitationDto } from '../dto/channelinvitation.dto';
+import { MessageGateway } from 'src/message/message.gateway';
+
+export interface IAdmin {
+  target: UserEntity,
+  channel: ChannelEntity,
+}
 
 @Injectable()
 @Catch()
 export class ChannelService {
   constructor(
+    private readonly banmuteService: BanMuteService,
     @InjectRepository(ChannelEntity)
     private channelRepository: Repository<ChannelEntity>,
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
-    private readonly banmuteService: BanMuteService,
+    @Inject(forwardRef( () => MessageGateway))
+    private readonly messageGateway: MessageGateway
   ) {}
 
   /* This function return all the public datas of channel */
@@ -39,16 +48,6 @@ export class ChannelService {
     const channel = await this.getChannel(query_channel.id, {
       owner: true,
       users: true,
-    });
-    return channel;
-  }
-
-  /* This function gets all the data for a normal user. No sensitive information here */
-  async getUserData(query_channel: ChannelDto): Promise<ChannelEntity> {
-    const channel = await this.getChannel(query_channel.id, {
-      owner: true,
-      users: true,
-      admins: true,
     });
     return channel;
   }
@@ -84,12 +83,11 @@ export class ChannelService {
     } else {
       if (isUser) {
         response.status = 'user';
-        response.data = await this.getUserData(query_channel);
       } else {
         if (isOwner) response.status = 'owner';
         if (isAdmin) response.status = 'admin';
-        response.data = await this.getPrivateData(query_channel);
       }
+      response.data = await this.getPrivateData(query_channel);
     }
     return response;
   }
@@ -202,25 +200,6 @@ export class ChannelService {
     else return returned_channel;
   }
 
-  // get a channel by id (used for message)
-  async getChannelById(inputed_id: string): Promise<ChannelEntity> {
-    let ret = await this.channelRepository
-      .createQueryBuilder('channel')
-      .where('channel.id = :id', { id: inputed_id })
-      .leftJoin('channel.users', 'users')
-      .addSelect('users.id')
-      .addSelect('users.username')
-      .leftJoin('channel.admins', 'admins')
-      .addSelect('admins.id')
-      .addSelect('admins.username')
-      .leftJoin('channel.owner', 'owner')
-      .addSelect('owner.username')
-      .addSelect('owner.id')
-      .getOne();
-
-    return ret;
-  }
-
   /* This function compares hashed password in db, with the one the user just typed */
   async checkPassword(inputed_password: string, channel_password: string) {
     if (!inputed_password)
@@ -265,6 +244,7 @@ export class ChannelService {
       owner: true,
       admins: true,
       users: true,
+      muted: true,
     });
 
     if (this.isOwner(requested_channel.id, user)) {
@@ -290,7 +270,7 @@ export class ChannelService {
       channel.users = channel.users.filter(
         (channel_users) => channel_users.id !== user.id,
       );
-    await this.channelRepository.save(channel);
+    return await this.channelRepository.save(channel);
   }
 
   /* This function delete channel, only if the requester is owner of this channel */
@@ -306,6 +286,27 @@ export class ChannelService {
     } else
       throw new ForbiddenException(
         'Only the owner of the channel can delete the channel.',
+      );
+  }
+
+  async inviteChannel(
+    requested_channel: ChannelInvitationDto,
+    user: UserEntity,
+  ): Promise<ChannelEntity> {
+    if (this.isOwner(requested_channel.id, user)) {
+      user.owner_of.find(
+        (channel) => channel.id === requested_channel.id,
+      );
+      const channel = await this.getChannel(requested_channel.id, {
+        owner: true,
+        admins: true,
+        users: true,
+      });
+
+      return channel;
+    } else
+      throw new ForbiddenException(
+        'Only the owner of the channel can invite someone to the channel.',
       );
   }
 
@@ -330,8 +331,13 @@ export class ChannelService {
       owner: true,
       users: true,
       banned: true,
+      muted: true,
     });
-    await this.verifyBanned(channel, user.id);
+    let banned = await this.verifyBanned(channel, user.id);
+    if (banned) {
+      banned.user = user;
+      this.messageGateway.unBanUser(banned, channel.id);
+    }
 
     if (channel.status === 'Protected') {
       returned_channel = await this.joinProtectedChannels(
@@ -421,7 +427,7 @@ export class ChannelService {
       throw new UnprocessableEntityException(
         `${target.username} is not banned.`,
       );
-    else return (await this.banmuteService.remove(banned)) as BanEntity;
+    else return await this.banmuteService.remove(banned) as BanEntity;
   }
 
   /* This function allows to ban a user, based on level of clearance of caller.
@@ -521,9 +527,11 @@ export class ChannelService {
         `${userToMute.username} is already muted`,
       );
 
-    channel.admins = channel.admins.filter(
-      (elem) => elem.id !== request.targetId,
-    );
+    if (channel.admins.find((elem) => elem.id === request.targetId)) {
+      channel.admins = channel.admins.filter(
+      (elem) => elem.id !== request.targetId);
+      channel.users = [...channel.users, userToMute];
+    }
     await this.channelRepository.save(channel);
 
     return await this.banmuteService.generate(
@@ -554,7 +562,7 @@ export class ChannelService {
   async makeAdmin(
     req_channel: ChannelActionsDto,
     user: UserEntity,
-  ): Promise<ChannelEntity> {
+  ): Promise<IAdmin> {
     const future_admin = await this.getUser(req_channel.targetId, {
       owner_of: true,
       admin_of: true,
@@ -592,13 +600,16 @@ export class ChannelService {
     channel.users = channel.users.filter(
       (user) => user.id !== future_admin.id,
     );
-    return await this.channelRepository.save(channel);
+    return {
+      target: future_admin,
+      channel: await this.channelRepository.save(channel)
+    };
   }
 
   async revokeAdmin(
     req_channel: ChannelActionsDto,
     user: UserEntity,
-  ): Promise<ChannelEntity> {
+  ): Promise<IAdmin> {
     if (!this.isOwner(req_channel.id, user))
       throw new UnauthorizedException(
         `Only owner of channel can revoke administration rights of ${req_channel.targetId}`,
@@ -621,7 +632,10 @@ export class ChannelService {
       (elem) => elem.id !== target.id,
     );
     this.addToUsers(channel, target);
-    return await this.channelRepository.save(channel);
+    return {
+      target: target,
+      channel: await this.channelRepository.save(channel)
+    };
   }
 
   isOwner(searched_channel: string, user: UserEntity): boolean {
@@ -683,13 +697,14 @@ export class ChannelService {
   async verifyBanned(
     channel: ChannelEntity,
     targetId: string,
-  ): Promise<BanEntity> {
+  ): Promise<BanEntity | null> {
     let banned: BanEntity;
     if ((banned = this.findBanned(channel, targetId))) {
       if (!this.banmuteService.checkDuration(banned))
         throw new ForbiddenException(`Target is banned from ${channel.name}`);
       else return (await this.banmuteService.remove(banned)) as BanEntity;
     }
+    return null;
   }
 
   findBanned(channel: ChannelEntity, targetId: string): BanEntity {
@@ -734,11 +749,26 @@ export class ChannelService {
     else channel.admins = [user];
   }
 
+  async getChannelsByUser(userId: string): Promise<ChannelEntity[]> {
+
+    // get all channels where user is member or admin or owner
+    return await this.channelRepository
+      .createQueryBuilder('channel')
+      .leftJoinAndSelect('channel.users', 'users')
+      .leftJoinAndSelect('channel.admins', 'admins')
+      .leftJoinAndSelect('channel.owner', 'owner')
+      .where('users.id = :userId', { userId: userId })
+      .orWhere('admins.id = :userId', { userId: userId })
+      .orWhere('owner.id = :userId', { userId: userId })
+      .getMany();
+  }
+
   //DELETEMEAFTERTESTING :
   async createFalseUser(username: string): Promise<UserEntity> {
     let user = new UserEntity();
     user.username = username;
     user.email = username + '@student.42.fr';
+    user.profile_picture = "https://pyxis.nymag.com/v1/imgs/882/0b5/2df62e812b846c05049fd0f9f456c13b5d-22-gandalf-wedding-ian-mckellan.rsquare.w700.jpg"
     user = await this.userService.add(user);
     return await this.getUser(user.id, { channels: true });
   }

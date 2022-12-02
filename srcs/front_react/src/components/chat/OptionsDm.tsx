@@ -1,4 +1,5 @@
 import { Fragment, useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
@@ -14,7 +15,7 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
   const loadUser2 = async () => {
     await api
       .get("/user/id", { params: { id: targetRedirection}})
-      .then( (res) => { 
+      .then( (res) => {
         setUser2(res.data); })
       .catch(err => toast.error("HTTP error: " + err));
   }
@@ -22,7 +23,7 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
   const findUser2 = () => {
     if (isRedirection)
     {
-      const async_fct = async () => { 
+      const async_fct = async () => {
         await loadUser2()
       };
       async_fct();
@@ -46,11 +47,19 @@ function DmUserProfile(props: {dm: IDm | null, targetRedirection: string}) {
 
   return (
   <div className="conversation__options__title">
-    <img src={user2?.profile_picture} />
-    <div className="text"> 
+    <button className="clickable_profile">
+      <Link style={{textDecoration: 'none'}} to={"/profile/" + user2?.username}>
+        <img src={user2?.profile_picture} />
+      </Link>
+    </button>
+    <div className="text">
       <span>{user2?.username}</span>
-      {isRedirection? <div className="date">Draft Message</div> : <div className="date">conv started at: {dm?.createdAt?.toLocaleString()}</div>}
     </div>
+    <button className="duel">
+      <Link style={{textDecoration: 'none'}} to={"/game"}>
+        {/* <img src={user2?.profile_picture} /> */}
+      </Link>
+    </button>
   </div>);
 }
 
