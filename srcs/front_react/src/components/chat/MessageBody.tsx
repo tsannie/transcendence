@@ -37,8 +37,12 @@ function MessageList(props: any) {
   );
 }
 
-function MessageBody(props: {currentConvId: string, isChannel: boolean, data: IDm|IDatas|null}) {
-  const {currentConvId, isChannel, data} = props;
+function MessageBody(props: {
+  currentConvId: string;
+  isChannel: boolean;
+  data: IDm | IDatas | null;
+}) {
+  const { currentConvId, isChannel, data } = props;
   const { user } = useContext(AuthContext) as AuthContextType;
   const { newMessage } = useContext(MessageContext);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -54,12 +58,12 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
 
   const loadMessage = async () => {
     let route: string;
-  
+
     if (isChannel) route = "/message/channel";
     else route = "/message/dm";
 
     api
-      .get(route, { params: { id: currentConvId} })
+      .get(route, { params: { id: currentConvId } })
       .then((res) => {
         const unorderedMessages: IMessageReceived[] = res.data;
         setMessages(
@@ -73,12 +77,13 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {
-    if (newMessage && !messages.map( (elem) => elem.id).includes(newMessage.id)) setMessages([...messages, newMessage]);
+    if (newMessage && !messages.map((elem) => elem.id).includes(newMessage.id))
+      setMessages([...messages, newMessage]);
   };
 
   useEffect(() => {
     if (!currentConvId) return;
-    
+
     loadMessage();
     scrollToBottom();
   }, [currentConvId]);
@@ -86,8 +91,8 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
   useEffect(() => {
     if (!newMessage) return;
     if (
-      (newMessage?.dm?.id == currentConvId ||
-        newMessage?.channel?.id == currentConvId)
+      newMessage?.dm?.id == currentConvId ||
+      newMessage?.channel?.id == currentConvId
     ) {
       addMessage(newMessage);
       scrollToBottom(true);
@@ -101,7 +106,11 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
           <MessageList messages={messages} user={user} />
           <div ref={messagesEndRef} />
         </ul>
-        <SendMessageForm convId={currentConvId} isChannel={isChannel} data={data}/>
+        <SendMessageForm
+          convId={currentConvId}
+          isChannel={isChannel}
+          data={data}
+        />
       </div>
     </Fragment>
   );

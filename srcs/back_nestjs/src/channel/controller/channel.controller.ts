@@ -68,12 +68,14 @@ export class ChannelController {
     @Body() channel: CreateChannelDto,
     @Req() req: Request,
   ): Promise<void | ChannelEntity> {
+    const newChannel = await this.channelService.createChannel(
+      channel,
+      req.user,
+    );
 
-      const newChannel = await this.channelService.createChannel(channel, req.user);
-
-      if (newChannel)
-        this.messageGateway.joinAllSocketToChannel(req.user.id, newChannel.id);
-      return newChannel;
+    if (newChannel)
+      this.messageGateway.joinAllSocketToChannel(req.user.id, newChannel.id);
+    return newChannel;
   }
 
   @Post('ban')
@@ -96,7 +98,10 @@ export class ChannelController {
     @Body() ban_request: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<BanEntity> {
-    const unBannedUser = await this.channelService.unBanUser(ban_request, req.user);
+    const unBannedUser = await this.channelService.unBanUser(
+      ban_request,
+      req.user,
+    );
 
     this.messageGateway.unBanUser(unBannedUser, ban_request.id);
     return unBannedUser;
@@ -108,8 +113,11 @@ export class ChannelController {
   async muteUser(
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
-  ) : Promise<MuteEntity>{
-    const userMuted: MuteEntity = await this.channelService.muteUser(channel, req.user);
+  ): Promise<MuteEntity> {
+    const userMuted: MuteEntity = await this.channelService.muteUser(
+      channel,
+      req.user,
+    );
 
     this.messageGateway.muteUser(userMuted);
     return userMuted;
@@ -122,7 +130,10 @@ export class ChannelController {
     @Body() channel: ChannelActionsDto,
     @Req() req: Request,
   ): Promise<MuteEntity> {
-    const unmutedUser : MuteEntity = await this.channelService.unMuteUser(channel, req.user);
+    const unmutedUser: MuteEntity = await this.channelService.unMuteUser(
+      channel,
+      req.user,
+    );
 
     this.messageGateway.unMuteUser(unmutedUser, channel.id);
     return unmutedUser;
@@ -159,7 +170,10 @@ export class ChannelController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async joinChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    const channel: ChannelEntity = await this.channelService.joinChannel(query_channel, req.user)
+    const channel: ChannelEntity = await this.channelService.joinChannel(
+      query_channel,
+      req.user,
+    );
 
     this.messageGateway.joinChannel(req.user, channel);
     return channel;
@@ -169,12 +183,13 @@ export class ChannelController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async leaveChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    const channel: ChannelEntity = await this.channelService.leaveChannel(query_channel, req.user)
+    const channel: ChannelEntity = await this.channelService.leaveChannel(
+      query_channel,
+      req.user,
+    );
 
-    if (!channel.id)
-      this.messageGateway.deleteChannel(query_channel.id);
-    else
-      this.messageGateway.leaveChannel(req.user, channel);
+    if (!channel.id) this.messageGateway.deleteChannel(query_channel.id);
+    else this.messageGateway.leaveChannel(req.user, channel);
     return channel;
   }
 
@@ -182,7 +197,10 @@ export class ChannelController {
   @SerializeOptions({ groups: ['user'] })
   @UseGuards(JwtTwoFactorGuard)
   async deleteChannel(@Body() query_channel: ChannelDto, @Req() req: Request) {
-    const old_channel = await this.channelService.deleteChannel(query_channel, req.user);
+    const old_channel = await this.channelService.deleteChannel(
+      query_channel,
+      req.user,
+    );
 
     this.messageGateway.deleteChannel(query_channel.id);
     return old_channel;
@@ -195,7 +213,10 @@ export class ChannelController {
     @Body() query_channel: ChannelInvitationDto,
     @Req() req: Request,
   ): Promise<ChannelEntity> {
-    const channel: ChannelEntity = await this.channelService.inviteChannel(query_channel, req.user);
+    const channel: ChannelEntity = await this.channelService.inviteChannel(
+      query_channel,
+      req.user,
+    );
 
     // find the user to invite with his id
     this.messageGateway.inviteChannel(query_channel.targetId, channel);

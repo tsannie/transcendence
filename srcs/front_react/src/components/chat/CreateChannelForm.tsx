@@ -6,8 +6,14 @@ import { ChatType } from "../../contexts/ChatDisplayContext";
 import { toast } from "react-toastify";
 
 function CreateChannelForm() {
-  const { setDisplay, setCurrentConv, setIsChannel, setNewConv, setMuteDate, setMuted } =
-    useContext(ChatDisplayContext);
+  const {
+    setDisplay,
+    setCurrentConv,
+    setIsChannel,
+    setNewConv,
+    setMuteDate,
+    setMuted,
+  } = useContext(ChatDisplayContext);
 
   const [channelName, setChannelName] = useState<string>("");
   const [channelPassword, setChannelPassword] = useState<string>("");
