@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Server, Socket } from 'socket.io';
 import { UserEntity } from 'src/user/models/user.entity';
@@ -12,6 +17,7 @@ import Room, {
   Winner,
   IGameStat,
   IInfoGame,
+  IInvitation,
 } from '../class/room.class';
 import Ball from '../class/ball.class';
 import wall from '../class/wall.class';
@@ -19,14 +25,20 @@ import smasher from '../class/smasher.class';
 import { RdbmsSchemaBuilder } from 'typeorm/schema-builder/RdbmsSchemaBuilder';
 import Wall from '../class/wall.class';
 import Smasher from '../class/smasher.class';
+import { GameGateway } from '../game.gateway';
+import { WsException } from '@nestjs/websockets';
+import { interval } from 'rxjs';
+import { frame_ms } from '../const/const';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(GameStatEntity)
     private gameStatRepository: Repository<GameStatEntity>,
-
     private readonly userService: UserService,
+    // add gae gateway
+    @Inject(forwardRef(() => GameGateway))
+    private readonly gameGateway: GameGateway,
   ) {}
 
   /* RoomID, room */
@@ -35,11 +47,9 @@ export class GameService {
   /* Socket, RoomID */
   private usersRoom: Map<Socket, string> = new Map();
 
-  /*   async findAll(): Promise<RoomEntity[]> {
-    return await this.all_game.find();
-  } */
-
-  findRoom(user: UserEntity, mode: GameMode): Room {
+  // try to search a room for the user and return it
+  // if no room is found, create a new one
+  searchRoom(user: UserEntity, mode: GameMode): Room {
     let room: Room;
 
     const size = this.gamesRoom.size;
@@ -48,7 +58,8 @@ export class GameService {
       for (const room_db of all_rooms) {
         if (
           room_db.status === RoomStatus.WAITING &&
-          room_db.game_mode === mode
+          room_db.game_mode === mode &&
+          !room_db.private_room
         ) {
           room = room_db;
           break;
@@ -63,37 +74,115 @@ export class GameService {
     return room;
   }
 
-  /*   async deleteUser(): Promise<void> {
-    const all_game = await this.all_game.find();
-    all_game.forEach(async (game) => {
-      await this.all_game.delete({ id: game.id });
-    });
-  } */
+  getInvitations(user_id: string): IInvitation[] {
+    const invitations: IInvitation[] = [];
+    for (const room of this.gamesRoom.values()) {
+      if (
+        room.p2_id === user_id &&
+        room.status === RoomStatus.WAITING &&
+        room.private_room
+      ) {
+        invitations.push({
+          user_id: room.p1_id,
+          room_id: room.id,
+          mode: room.game_mode,
+        });
+      }
+    }
+    return invitations;
+  }
+
+  validInvitation(invitation: IInvitation, user_id: string): boolean {
+    const invitations = this.getInvitations(user_id);
+    for (const inv of invitations) {
+      if (
+        inv.room_id === invitation.room_id &&
+        inv.user_id === invitation.user_id &&
+        inv.mode === invitation.mode
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  createPrivateRoom(user: UserEntity, p2: string, game_mode: GameMode): Room {
+    const room = new Room(user.id, game_mode, true);
+    room.p2_id = p2;
+    this.gamesRoom.set(room.id, room);
+    return room;
+  }
 
   deleteRoomById(room_id: string) {
     this.gamesRoom.delete(room_id);
   }
 
-  findRoomBySocket(socket: Socket): Room | undefined {
-    const room_id = this.usersRoom.get(socket);
-    if (room_id) return this.gamesRoom.get(room_id);
-    return undefined;
-  }
+  async waitingResponse(
+    client: Socket,
+    room: Room,
+    server: Server,
+    username_stalk: string,
+  ) {
+    let log: boolean = true;
+    let refuse: boolean = false;
 
-  findRoomByUser(user: UserEntity): Room | undefined {
-    for (const room of this.gamesRoom.values()) {
-      if (room.p1_id === user.id || room.p2_id === user.id) {
-        return room;
+    while (room && room.status === RoomStatus.WAITING) {
+      log = this.gameGateway.getAllUsers().has(room.p2_id);
+      refuse = this.gamesRoom.has(room.id);
+
+      if (!refuse) {
+        this.leaveRoom(room.id, client);
+        server.to(client.id).emit('playerRefuse', username_stalk);
+        break;
       }
+
+      if (!this.checkUserIsAvailable(room.p2_id) || !log) {
+        this.leaveRoom(room.id, client);
+        this.deleteRoomById(room.id);
+        server.to(client.id).emit('playerNotAvailable', username_stalk);
+
+        if (log) {
+          const sockets: Socket[] = this.gameGateway
+            .getAllUsers()
+            .get(room.p2_id);
+          sockets.forEach((socket: Socket) => {
+            server.to(socket.id).emit('cancelInvitation', room.id);
+          });
+        }
+        return;
+      }
+
+      await new Promise((f) => setTimeout(f, 500));
     }
-    return undefined;
   }
 
   getRoomById(room_id: string): Room | undefined {
     return this.gamesRoom.get(room_id);
   }
 
+  getRoomBySocket(socket: Socket): Room | undefined {
+    const room_id = this.usersRoom.get(socket);
+    if (room_id) return this.getRoomById(room_id);
+    return undefined;
+  }
+
+  checkUserIsAvailable(user_id: string): boolean {
+    for (const room of this.gamesRoom.values()) {
+      if (
+        ((room.p1_id === user_id || room.p2_id === user_id) &&
+          room.status === RoomStatus.PLAYING) ||
+        (room.p1_id === user_id && room.status === RoomStatus.WAITING)
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   joinRoom(room_id: string, client: Socket, server: Server) {
+    if (!this.gamesRoom.has(room_id)) {
+      throw new WsException('Room not found');
+    }
     const room_to_leave = this.usersRoom.get(client);
     if (room_to_leave) {
       client.leave(room_to_leave);
@@ -130,6 +219,64 @@ export class GameService {
     return current_rooms;
   }
 
+  preventConnexionOfFriends(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+    login: boolean = true,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    if (login) {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogin', user);
+      });
+    } else {
+      sockets.forEach((socket) => {
+        server.to(socket.id).emit('friendsLogout', user);
+      });
+    }
+  }
+
+  sendUserDisconnect(
+    server: Server,
+    user: UserEntity,
+    allUsers: Map<string, Socket[]>,
+  ) {
+    const sockets: Socket[] = this.getSocketsOfFriends(user, allUsers);
+    sockets.forEach((socket) => {
+      server.to(socket.id).emit('friendsDisconnect', user);
+    });
+  }
+
+  getSocketsOfFriends(user: UserEntity, allUsers: Map<string, Socket[]>) {
+    const friends: UserEntity[] = this.getFriendsLog(user);
+    // get all socket of his friends
+    const sockets: Socket[] = friends.reduce((acc, friend) => {
+      if (allUsers.has(friend.id)) {
+        acc.push(...allUsers.get(friend.id));
+      }
+      return acc;
+    }, []);
+    return sockets;
+  }
+
+  getFriendsLog(user: UserEntity): UserEntity[] {
+    const friends: UserEntity[] = user.friends;
+    const friendsLog: UserEntity[] = [];
+
+    // recall all users beacause getFriendsLog can be call by service
+    const allUsers: Map<string, Socket[]> = this.gameGateway.getAllUsers();
+
+    if (!friends) return friendsLog;
+
+    for (const friend of friends) {
+      if (allUsers.has(friend.id)) {
+        friendsLog.push(friend);
+      }
+    }
+    return friendsLog;
+  }
+
   getInfo(allUsers: Map<string, Socket[]>): IInfoGame {
     let player_in_game = 0;
     let player_in_waiting = 0;
@@ -137,7 +284,7 @@ export class GameService {
     for (const room of this.gamesRoom.values()) {
       if (room.status === RoomStatus.PLAYING) {
         player_in_game += 2;
-      } else if (room.status === RoomStatus.WAITING) {
+      } else if (room.status === RoomStatus.WAITING && !room.private_room) {
         player_in_waiting += 1;
       }
     }
@@ -197,7 +344,8 @@ export class GameService {
     statGame.p2_score = room.p2_score;
     if (room.won === Winner.P1) statGame.winner_id = p1.id;
     else statGame.winner_id = p2.id;
-    statGame.eloDiff = this.getElo(room, p1, p2);
+    if (!room.private_room) statGame.eloDiff = this.getElo(room, p1, p2);
+    else statGame.eloDiff = 0;
     return statGame;
   }
 
@@ -284,22 +432,28 @@ export class GameService {
     const socketP2 = allUsers.get(room.p2_id);
     let score: number[] = [0, 0];
 
-    server.emit('updateCurrentRoom', await this.createInfoRoom(room));
+    while (room.countdown) {
+      server.in(room.id).emit('updateGame', room);
+      room.countdown--;
+      await new Promise((f) => setTimeout(f, 1000));
+    }
+
     while (room.status === RoomStatus.PLAYING) {
       score = [room.p1_score, room.p2_score];
       this.checkGiveUP(socketP1, socketP2, room);
-      room.ball.update(room);
+      room.update();
       server.in(room.id).emit('updateGame', room);
 
       if (this.checkNewScore(score, room))
         server.emit('updateCurrentRoom', await this.createInfoRoom(room));
 
-      await new Promise((f) => setTimeout(f, 8));
+      await new Promise((f) => setTimeout(f, frame_ms));
     }
 
     if (room.status === RoomStatus.CLOSED) {
       this.getStat(room);
       server.in(room.id).emit('updateGame', room);
+      server.emit('updateCurrentRoom', await this.createInfoRoom(room));
       this.gamesRoom.delete(room.id);
     }
   }

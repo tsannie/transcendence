@@ -9,22 +9,21 @@ export default function GameMenu() {
   const { socket, room } = useContext(GameContext) as GameContextType;
   const { user } = useContext(AuthContext);
 
-  let game_mode = GameMode.PONG_CLASSIC;
+  let game_mode = GameMode.CLASSIC;
 
   function matchmakingClassic() {
     let data: ICreateRoom = {
       mode: game_mode,
     };
 
-    if (!room) {
-      console.log("socket id == ", socket?.id);
-      socket?.emit("matchmaking", data);
+    if (!room && socket) {
+      socket.emit("matchmaking", data);
       toast.info("join matchmaking ...");
     }
   }
 
   function matchmakingTrans() {
-    game_mode = GameMode.PONG_TRANS;
+    game_mode = GameMode.TRANS;
     matchmakingClassic();
   }
 
