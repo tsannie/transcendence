@@ -1,17 +1,17 @@
 import { useContext, useEffect, useRef } from "react";
-import { IChannel, IDm } from "./types";
+import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
+import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { api } from "../../const/const";
-import "./chat.style.scss";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
-import { MessageContext } from "../../contexts/MessageContext";
 import {
   ChatDisplayContext,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
-import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
-import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
+import { MessageContext } from "../../contexts/MessageContext";
+import "./chat.style.scss";
 import InviteList from "./InviteList";
+import { IChannel, IDm } from "./types";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;

@@ -1,34 +1,22 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   JoinChannelForm.tsx                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: dodjian <dodjian@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/23 14:20:39 by dodjian           #+#    #+#             */
-/*   Updated: 2022/11/28 10:11:43 by dodjian          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-import { AxiosError, AxiosResponse } from "axios";
-import React, {
+import { AxiosResponse } from "axios";
+import {
   ChangeEvent,
   FormEvent,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
-import { api } from "../../const/const";
-import ChannelTable from "./ChannelTable";
+import { toast } from "react-toastify";
 import { ReactComponent as RefreshIcon } from "../../assets/img/icon/refresh.svg";
-import { IChannel } from "./types";
-import SearchBarChannel from "./SearchBarChannel";
+import { api } from "../../const/const";
 import {
   ChatDisplayContext,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
-import { toast } from "react-toastify";
 import { MessageContext } from "../../contexts/MessageContext";
+import ChannelTable from "./ChannelTable";
+import SearchBarChannel from "./SearchBarChannel";
+import { IChannel } from "./types";
 
 function JoinChannelForm() {
   const [channelDictionnary, setChannelDictionnary] = useState<IChannel[]>([]);

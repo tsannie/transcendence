@@ -4,7 +4,7 @@ import { api } from "../../const/const";
 import {
   ChatDisplayContext,
   ChatDisplayContextInterface,
-  ChatType,
+  ChatType
 } from "../../contexts/ChatDisplayContext";
 import MessageBody from "./MessageBody";
 import Options from "./Options";

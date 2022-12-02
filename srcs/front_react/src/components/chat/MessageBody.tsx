@@ -1,13 +1,12 @@
-import "./chat.style.scss";
-import { MessageContext } from "../../contexts/MessageContext";
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
-import { IChannel, IDm, IMessageReceived } from "./types";
+import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, AuthContextType, User } from "../../contexts/AuthContext";
-import SendMessageForm from "./SendMessageForm";
-import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
-import { toast } from "react-toastify";
+import { MessageContext } from "../../contexts/MessageContext";
+import "./chat.style.scss";
 import { IDatas } from "./Conversation";
+import SendMessageForm from "./SendMessageForm";
+import { IDm, IMessageReceived } from "./types";
 
 function MessageList(props: any) {
   const user: User = props.user;

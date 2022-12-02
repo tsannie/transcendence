@@ -1,13 +1,13 @@
 import { AxiosResponse } from "axios";
-import React, {
+import {
   createRef,
   FormEvent,
   Fragment,
   KeyboardEvent,
   MouseEvent,
-  useState,
+  useState
 } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../../assets/img/icon/search.svg";
 import { api } from "../../const/const";
 
