@@ -58,7 +58,7 @@ function JoinChannelForm() {
           `/channel/join`,
           selectChannel.status === "Public"
             ? { id: selectChannel.id }
-            : { id: selectChannel.id, password: password }
+            : { id: selectChannel.id , password: password }
         )
         .then((res: AxiosResponse) => {
           setCurrentConv(res.data.id);
@@ -66,8 +66,8 @@ function JoinChannelForm() {
           setNewConv(res.data);
           setDisplay(ChatType.CONV);
         })
-        .catch((err: AxiosError) => {
-          toast.error("HTTP error: " + err.message);
+        .catch((err) => {
+          toast.error("HTTP error: " + err.response.data.message);
         });
     }
   };

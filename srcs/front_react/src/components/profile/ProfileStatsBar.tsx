@@ -14,8 +14,8 @@ function ProfileStatsBar(props: IProps) {
     return Math.round((props.player?.wins! / props.player?.matches!) * 100);
   }
 
-  async function getLeaderboardRank() {
-    await api.get("user/leaderboard").then((res) => {
+  function getLeaderboardRank() {
+    api.get("user/leaderboard").then((res) => {
       setRank(res.data);
     });
   }

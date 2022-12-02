@@ -1,34 +1,37 @@
 import { Fragment, useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../const/const";
 import { AuthContext, User } from "../../contexts/AuthContext";
 import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
 import { IDm } from "./types";
 import { ReactComponent as BallIcon } from "../../assets/img/icon/ball-reverse.svg";
+import { GameContext, GameContextType } from "../../contexts/GameContext";
+import { GameMode } from "../game/const/const";
+import { ICreateRoom } from "../game/types";
 
 function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
   const { user } = useContext(AuthContext);
   const { dm, targetRedirection } = props;
   const { isRedirection } = useContext(ChatDisplayContext);
   const [user2, setUser2] = useState<User>({} as User);
+  const { socket, setTimeQueue, friendsLog } = useContext(
+    GameContext
+  ) as GameContextType;
+  const nav = useNavigate();
 
-  const loadUser2 = async () => {
-    await api
+  const loadUser2 = () => {
+    api
       .get("/user/id", { params: { id: targetRedirection } })
       .then((res) => {
         setUser2(res.data);
       })
-      .catch((err) => toast.error("HTTP error: " + err));
+      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
   };
 
   const findUser2 = () => {
-    if (isRedirection) {
-      const async_fct = async () => {
-        await loadUser2();
-      };
-      async_fct();
-    } else {
+    if (isRedirection) loadUser2();
+    else {
       if (!dm || !dm?.users) return;
       let searched_user = dm?.users?.find((elem) => elem.id !== user?.id);
       if (searched_user) setUser2(searched_user);
@@ -39,6 +42,18 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
   useEffect(() => {
     findUser2();
   }, [isRedirection, dm]);
+
+  const handleInvite = (friend_id: string, mode: GameMode) => {
+    if (socket) {
+      const data: ICreateRoom = {
+        mode: mode,
+        invitation_user_id: friend_id,
+      };
+      socket.emit("createPrivateRoom", data);
+      setTimeQueue(0);
+      nav("/");
+    }
+  };
 
   return (
     <div className="conversation__options__title">
@@ -54,15 +69,31 @@ function DmUserProfile(props: { dm: IDm | null; targetRedirection: string }) {
         <span>{user2?.username}</span>
       </div>
       <div className="amical_match">
-        <button className="duel">
-          <Link to={"/game"} id="classic">
-            <BallIcon />
-          </Link>
+        <button
+          title="Invite in classic mode"
+          onClick={() => handleInvite(user2.id, GameMode.CLASSIC)}
+          disabled={
+            user?.friends?.find((elem) => elem.id === user2.id) &&
+            friendsLog.find((elem) => elem.id === user2.id)
+              ? false
+              : true
+          }
+          id="classic"
+        >
+          <BallIcon />
         </button>
-        <button className="duel">
-          <Link to={"/game"} id="trans">
-            <BallIcon />
-          </Link>
+        <button
+          title="Invite in trans mode"
+          onClick={() => handleInvite(user2.id, GameMode.TRANS)}
+          disabled={
+            user?.friends?.find((elem) => elem.id === user2.id) &&
+            friendsLog.find((elem) => elem.id === user2.id)
+              ? false
+              : true
+          }
+          id="trans"
+        >
+          <BallIcon />
         </button>
       </div>
     </div>

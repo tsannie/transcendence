@@ -181,6 +181,12 @@ $height__title: calc(60 * var(--res));
   svg {
     width: calc(35 * var(--res));
   }
+
+  .score {
+    display: flex;
+    justify-content: center;
+    min-width: 20%;
+  }
 }
 
 .profile__body__friends {

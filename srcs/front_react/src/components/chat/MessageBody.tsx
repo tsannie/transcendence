@@ -43,7 +43,6 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
   const { newMessage } = useContext(MessageContext);
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
-  const [offset, setOffset] = useState<number>(0);
   const [messages, setMessages] = useState<IMessageReceived[]>([]);
 
   const scrollToBottom = (smooth: boolean = false) => {
@@ -59,8 +58,8 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
     if (isChannel) route = "/message/channel";
     else route = "/message/dm";
 
-    await api
-      .get(route, { params: { id: currentConvId, offset: offset } })
+    api
+      .get(route, { params: { id: currentConvId} })
       .then((res) => {
         const unorderedMessages: IMessageReceived[] = res.data;
         setMessages(
@@ -69,9 +68,8 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
             else return 1;
           })
         );
-        setOffset(0);
       })
-      .catch((err: any) => toast.error("HTTP error: " + err.response.data.message));
+      .catch((err) => toast.error("HTTP error: " + err.response.data.message));
   };
 
   const addMessage = (newMessage: IMessageReceived | null) => {
@@ -80,11 +78,8 @@ function MessageBody(props: {currentConvId: string, isChannel: boolean, data: ID
 
   useEffect(() => {
     if (!currentConvId) return;
-    const async_func = async () => {
-      await loadMessage();
-    };
-
-    async_func();
+    
+    loadMessage();
     scrollToBottom();
   }, [currentConvId]);
 

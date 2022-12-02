@@ -1,52 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export const NotifContext = React.createContext<INotifContext>({} as INotifContext);
-
-export interface INotif {
-    id: string;
-    notif: boolean;
-}
+export const ChatNotifContext = React.createContext<INotifContext>({} as INotifContext);
 
 export interface INotifContext {
-    channels: INotif[];
-    addChannel: (convId: string, notif: boolean) => void;
-    changeNotif: (convId: string, notif: boolean) => void;
-    isNotif : (convId: string) => boolean;
+    channels: string[];
+    addChannel: (convId: string) => void;
+    removeChannel : (convId: string) => void;
 }
 
-interface NotifProvider {
+interface ChatNotifProvider {
     children: JSX.Element | JSX.Element[];
   }
 
-const NotifProvider = ({ children }: NotifProvider) => {
-    const [channels, setChannels] = useState<INotif[]>([]);
+const ChatNotifProvider = ({ children }: ChatNotifProvider) => {
+    const [channels, setChannels] = useState<string[]>([]);
 
-    const addChannel = ( convId: string, notif: boolean ) => {
-        const copyChan = channels;
-        if (copyChan.find((channel) => channel.id === convId))
+    const addChannel = ( convId: string) => {
+        if (channels.find((channelId) => channelId === convId))
             return ;
-        copyChan.push({id: convId, notif: notif});
-        setChannels(copyChan);
+        setChannels([...channels, convId]);
     }
 
-    const changeNotif = (convId: string, notif: boolean) => {
-        const copyChan = channels.map( (channel: INotif) => {
-            if (channel.id === convId)
-                channel.notif = notif;
-            return channel;
-        })
-        setChannels(copyChan);
-    }
-
-    const isNotif = (convId: string) => {
-        let channel = channels.find( (channel) => channel.id === convId);
-
-        return channel?.notif;
+    const removeChannel = ( convId : string ) => {
+        if (!channels)
+            return ;
+        setChannels(channels.filter( channelId => channelId != convId));
     }
 
     return (
-        <NotifContext.Provider value={{ channels, addChannel, changeNotif, isNotif } as INotifContext}>{children}</NotifContext.Provider>
+        <ChatNotifContext.Provider value={{ channels, addChannel, removeChannel} as INotifContext}>{children}</ChatNotifContext.Provider>
     );
 }
 
-export default NotifProvider;
+export default ChatNotifProvider;
