@@ -1,9 +1,8 @@
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { api } from "../../const/const";
-import { ChatDisplayContext } from "../../contexts/ChatDisplayContext";
-import { ICreateChannel } from "./types";
-import { ChatType } from "../../contexts/ChatDisplayContext";
+import { ChangeEvent, useContext, useState } from "react";
 import { toast } from "react-toastify";
+import { api } from "../../const/const";
+import { ChatDisplayContext, ChatType } from "../../contexts/ChatDisplayContext";
+import { ICreateChannel } from "./types";
 
 function CreateChannelForm() {
   const {

@@ -1,20 +1,17 @@
 import { MouseEvent, useContext, useEffect, useState } from "react";
-import { ReactComponent as HomeIcon } from "../../assets/img/icon/home.svg";
+import { Link, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ReactComponent as ChatIcon } from "../../assets/img/icon/chat.svg";
+import { ReactComponent as LogOutIcon } from "../../assets/img/icon/logout.svg";
 import { ReactComponent as GameIcon } from "../../assets/img/icon/play.svg";
 import { ReactComponent as SettingsIcon } from "../../assets/img/icon/settings.svg";
-import { ReactComponent as LogOutIcon } from "../../assets/img/icon/logout.svg";
 import { ReactComponent as ProfileIcon } from "../../assets/img/icon/user.svg";
 import { api } from "../../const/const";
-import "./sidebar.style.scss";
-import { Link } from "react-router-dom";
 import { AuthContext, AuthContextType } from "../../contexts/AuthContext";
-import { useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
 import { ChatNotifContext } from "../../contexts/ChatNotificationContext";
-import { MessageContext } from "../../contexts/MessageContext";
 import { GameContext } from "../../contexts/GameContext";
-import { channel } from "diagnostics_channel";
+import { MessageContext } from "../../contexts/MessageContext";
+import "./sidebar.style.scss";
 
 export default function Sidebar() {
   const { logout, user } = useContext(AuthContext) as AuthContextType;

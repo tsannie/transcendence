@@ -1,8 +1,5 @@
-import { AxiosResponse } from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { api } from "../../../const/const";
+import { useContext } from "react";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
-import { IInfoGame } from "../const/const";
 
 function GameContentHeader() {
   const { socket, info } = useContext(GameContext) as GameContextType;

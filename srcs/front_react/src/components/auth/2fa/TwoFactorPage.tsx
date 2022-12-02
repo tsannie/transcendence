@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { api, COOKIE_NAME } from "../../../const/const";
 import { AuthContext, AuthContextType } from "../../../contexts/AuthContext";
