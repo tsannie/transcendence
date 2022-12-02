@@ -44,7 +44,6 @@ export const AuthProvider = ({ children }: IProps) => {
   };
 
   const logout = () => {
-    console.log("logout");
     setUser(null);
     setIsLogin(false);
   };
