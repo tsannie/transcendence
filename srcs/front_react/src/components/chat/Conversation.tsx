@@ -20,7 +20,7 @@ function Conversation() {
     
     if (!currentConv)
       return ;
-    api
+    await api
       .get(route, {params: {id: currentConv}})
       .then((res) => {
         setDm(res.data);
@@ -50,7 +50,7 @@ function Conversation() {
   }, [currentConv])
 
   useEffect( () => {
-    if (!targetRedirection || !isRedirection) return ;
+    if (!targetRedirection) return ;
     const async_fct = async () => {
       await searchExistingConv();
     }
@@ -59,7 +59,7 @@ function Conversation() {
 
     return (
       <Fragment>
-        <MessageBody currentConvId={currentConv} isChannel={isChannel}/>
+        <MessageBody currentConvId={currentConv} isChannel={isChannel} data={dm}/>
         <Options currentConvId={currentConv} isChannel={isChannel} data={dm} targetRedirection={targetRedirection}/>
       </Fragment>);
   }

@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import React, { createContext, useState } from "react";
 import { IChannel, IDm } from "../components/chat/types";
 
 export enum ChatType {
@@ -20,9 +20,16 @@ export interface ChatDisplayContextInterface {
 
   isRedirection: boolean;
   setRedirection: React.Dispatch<React.SetStateAction<boolean>>;
-  
+
   targetRedirection: string;
   setTargetRedirection: React.Dispatch<React.SetStateAction<string>>;
+  isMuted: boolean;
+  setMuted: React.Dispatch<React.SetStateAction<boolean>>;
+  muteDate: Date | null;
+  setMuteDate: React.Dispatch<React.SetStateAction<Date | null>>;
+
+  //inviteList: IChannel[];
+  //setInvite: React.Dispatch<React.SetStateAction<IChannel[]>>;
 }
 
 export const ChatDisplayContext = createContext<ChatDisplayContextInterface>(
@@ -34,12 +41,17 @@ interface ChatDisplayProviderProps {
 }
 
 export const ChatDisplayProvider = ({ children }: ChatDisplayProviderProps) => {
-  const [display, setDisplay] = useState<ChatType>(ChatType.EMPTY);
-  const [currentConv, setCurrentConv] = useState<string>("");
-  const [isChannel, setIsChannel] = useState<boolean>(false);
-  const [newConv, setNewConv] = useState<IChannel | IDm>({} as IChannel | IDm);
-  const [isRedirection, setRedirection] = useState<boolean>(false);
-  const [targetRedirection, setTargetRedirection] = useState<string>("");
+  const [ display, setDisplay] = useState<ChatType>(ChatType.EMPTY);
+  const [ currentConv, setCurrentConv] = useState<string>("");
+  const [ isChannel, setIsChannel] = useState<boolean>(false);
+  const [ newConv, setNewConv] = useState<IChannel | IDm>({} as IChannel | IDm);
+  const [ isRedirection, setRedirection] = useState<boolean>(false);
+  const [ targetRedirection, setTargetRedirection] = useState<string>("");
+  const [ isMuted, setMuted ] = useState<boolean>(false);
+  const [ muteDate, setMuteDate ] = useState<Date | null>(null);
+  //const [ inviteList, setInvite ] = useState<IChannel[]>([]);
+
+  //console.log("invite list ==   ", inviteList);
 
   return (
     <ChatDisplayContext.Provider
@@ -56,6 +68,12 @@ export const ChatDisplayProvider = ({ children }: ChatDisplayProviderProps) => {
         setRedirection,
         targetRedirection,
         setTargetRedirection,
+        isMuted,
+        setMuted,
+        muteDate,
+        setMuteDate,
+        //inviteList,
+        //setInvite,
       }}
     >
       {children}

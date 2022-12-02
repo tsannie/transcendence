@@ -11,10 +11,11 @@ import {
 import { ReactComponent as GroupChatIcon } from "../../assets/img/icon/user.svg";
 import { NotifContext } from "../../contexts/ChatNotificationContext";
 import { ReactComponent as CirclePlusIcon } from "../../assets/img/icon/plus.svg";
+import InviteList from "./InviteList";
 
 function ChannelList() {
   const { user } = useContext(AuthContext) as AuthContextType;
-  const { newMessage } = useContext(MessageContext);
+  const { newMessage, chatList, setChatList, setNewMessage } = useContext(MessageContext);
   const { addChannel, changeNotif, isNotif } = useContext(NotifContext);
   const {
     currentConv,
@@ -24,10 +25,11 @@ function ChannelList() {
     setIsChannel,
     newConv,
     setRedirection,
+    setMuted,
+    setMuteDate,
   } = useContext(ChatDisplayContext);
   const messagesTopRef = useRef<null | HTMLDivElement>(null);
 
-  const [chatList, setChatList] = useState<(IChannel | IDm)[]>([]);
 
   const scrollToTop = () => {
     setTimeout(() => {
@@ -53,7 +55,7 @@ function ChannelList() {
     editable_room: IChannel | IDm
   ) => {
     if (newMessage) editable_room.updatedAt = newMessage.createdAt;
-    if (currentConv && editable_room.id != currentConv)
+    if (currentConv && editable_room.id !== currentConv)
       changeNotif(editable_room.id, true);
     newList.sort((a, b) => {
       if (a.updatedAt < b.updatedAt) return 1;
@@ -89,12 +91,17 @@ function ChannelList() {
   };
 
   const clickItem = (conv: IChannel) => {
+    if (conv.id !== currentConv){
+      setMuted(false);
+      setMuteDate(null);
+    }
     setDisplay(ChatType.CONV);
     setCurrentConv(conv.id);
     setRedirection(false);
     if (conv.name) setIsChannel(true);
     else setIsChannel(false);
     changeNotif(conv.id, false);
+    setNewMessage(null);
   };
 
   const displayNotif = (convId: string) => {
@@ -172,6 +179,7 @@ function ChannelList() {
       </div>
       <ul className="chat__list__body">
         <div ref={messagesTopRef} />
+        <InviteList />
         {MessageListItems}
       </ul>
     </div>
