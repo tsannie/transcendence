@@ -78,7 +78,6 @@ export default class Draw {
   private draw_smasher(room: Room) {
     this.ctx.beginPath();
     this.ctx.fillStyle = white;
-
     this.ctx.rect(
       room.smasher.x,
       room.smasher.y,
@@ -92,7 +91,6 @@ export default class Draw {
   private draw_wall(room: Room) {
     this.ctx.beginPath();
     this.ctx.fillStyle = white;
-
     this.ctx.rect(room.wall.x, room.wall.y, room.wall.width, room.wall.height);
     this.ctx.fill();
     this.ctx.stroke();
@@ -129,10 +127,8 @@ export default class Draw {
 
   private draw_borders_trans(canvas: HTMLCanvasElement) {
     this.ctx.beginPath();
-
     this.ctx.rect(2, 2, canvas.width - 4, canvas.height - 4);
     this.ctx.closePath();
-
     this.ctx.fillStyle = "rgba(0, 0, 0, 0)";
 
     let grd = this.ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
@@ -140,7 +136,6 @@ export default class Draw {
     grd.addColorStop(0.5, "rgba(243,243,21)");
     grd.addColorStop(1, "rgba(255,153,51)");
     this.ctx.strokeStyle = grd;
-
     this.ctx.stroke();
     this.ctx.fill();
     this.ctx.closePath();
@@ -187,7 +182,6 @@ export default class Draw {
     if (paddle.height < 2 * radius) radius = paddle.height / 2;
     this.ctx.beginPath();
     this.ctx.moveTo(paddle.x + radius, paddle.y);
-
     this.ctx.arcTo(
       paddle.x + paddle.width,
       paddle.y,
@@ -202,7 +196,6 @@ export default class Draw {
       paddle.y + paddle.height,
       radius
     );
-
     this.ctx.arcTo(
       paddle.x,
       paddle.y + paddle.height,
@@ -217,7 +210,6 @@ export default class Draw {
       paddle.y,
       radius
     );
-
     this.ctx.lineWidth = paddle.height / 10;
     this.ctx.stroke();
     this.ctx.closePath();
@@ -263,29 +255,17 @@ export default class Draw {
       this.ctx.font = canvas.width / 10 + this.fontFamily;
       this.ctx.fillStyle = white;
       this.ctx.textAlign = "center";
-      this.ctx.fillText(
-        "Game Ended\n\n\n\n\n\n",
-        canvas.width / 2,
-        canvas.height / 2
-      );
+      this.ctx.fillText("Game Ended", canvas.width / 2, canvas.height / 3);
       if (
         (room.won === Winner.P1 && room.p1_id === this.user_id) ||
         (room.won === Winner.P2 && room.p2_id === this.user_id)
       )
-        this.ctx.fillText(
-          "you won !",
-          canvas.width / 2,
-          canvas.height / 2 + canvas.height / 4
-        );
+        this.ctx.fillText("you won!", canvas.width / 2, canvas.height / 2);
       else if (
         (room.won === Winner.P2 && room.p1_id === this.user_id) ||
         (room.won === Winner.P1 && room.p2_id === this.user_id)
       )
-        this.ctx.fillText(
-          "you lost !",
-          canvas.width / 2,
-          canvas.height / 2 + canvas.height / 4
-        );
+        this.ctx.fillText("you lost !", canvas.width / 2, canvas.height / 2);
     }
   }
 }

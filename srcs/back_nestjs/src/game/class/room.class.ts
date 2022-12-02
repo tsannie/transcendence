@@ -1,6 +1,6 @@
 import { UserEntity } from 'src/user/models/user.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { frame_ms, victory_score } from '../const/const';
+import { victory_score } from '../const/const';
 import Ball from './ball.class';
 import Smasher from './smasher.class';
 import Wall from './wall.class';
