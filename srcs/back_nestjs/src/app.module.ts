@@ -49,8 +49,6 @@ import { TwoFactorModule } from './two-factor/two-factor.module';
     TwoFactorModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

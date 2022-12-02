@@ -23,9 +23,11 @@ export default function Sidebar() {
   const { inviteReceived } = useContext(GameContext);
 
   const path = useLocation().pathname;
-  const [ channelNotification, setChannelNotification ] = useState<boolean>(false); 
-  const [ profileNotification, setProfileNotification ] = useState<boolean>(false);
-  const [ gameNotification, setGameNotification ] = useState<boolean>(false);
+  const [channelNotification, setChannelNotification] =
+    useState<boolean>(false);
+  const [profileNotification, setProfileNotification] =
+    useState<boolean>(false);
+  const [gameNotification, setGameNotification] = useState<boolean>(false);
 
   const handleLogout = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -41,25 +43,23 @@ export default function Sidebar() {
   };
 
   useEffect(() => {
-    if ((channels && channels.length > 0) || (inviteList && inviteList.length > 0))
+    if (
+      (channels && channels.length > 0) ||
+      (inviteList && inviteList.length > 0)
+    )
       setChannelNotification(true);
-    else
-      setChannelNotification(false);
-  }, [channels, inviteList])
+    else setChannelNotification(false);
+  }, [channels, inviteList]);
 
-  useEffect( () => {
+  useEffect(() => {
     if (user?.friend_requests && user?.friend_requests.length > 0)
       setProfileNotification(true);
-    else
-      setProfileNotification(false);
+    else setProfileNotification(false);
   }, [user?.friend_requests]);
 
-
-  useEffect( () => {
-    if (inviteReceived && inviteReceived.length > 0)
-      setGameNotification(true);
-    else
-      setGameNotification(false);
+  useEffect(() => {
+    if (inviteReceived && inviteReceived.length > 0) setGameNotification(true);
+    else setGameNotification(false);
   }, [inviteReceived]);
 
   return (
@@ -70,21 +70,15 @@ export default function Sidebar() {
             <ProfileIcon
               className={path.slice(0, 8) === "/profile" ? "selected" : ""}
             />
-            { profileNotification && 
-              <div className="notif"/>
-            }
+            {profileNotification && <div className="notif" />}
           </Link>
           <Link to="/chat">
             <ChatIcon className={path === "/chat" ? "selected" : ""} />
-            { channelNotification && 
-              <div className="notif"/>
-            }
+            {channelNotification && <div className="notif" />}
           </Link>
           <Link to="/">
             <GameIcon className={path === "/" ? "selected" : ""} />
-            { gameNotification && 
-              <div className="notif"/>
-            }
+            {gameNotification && <div className="notif" />}
           </Link>
           <Link to="/settings">
             <SettingsIcon className={path === "/settings" ? "selected" : ""} />

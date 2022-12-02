@@ -11,15 +11,23 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (document.cookie.includes(COOKIE_NAME)) {
-      api.get("auth/profile").then(() => {
-        setIsAlreadyLog(true);
-      })
-      .catch( (err: AxiosError) => { return console.log(err); })
+      api
+        .get("auth/profile")
+        .then(() => {
+          setIsAlreadyLog(true);
+        })
+        .catch((err: AxiosError) => {
+          return console.log(err);
+        });
 
-      api.get("auth/isTwoFactor").then(() => {
-        setIs2FA(true);
-      })
-      .catch( (err: AxiosError) => { return console.log(err); })
+      api
+        .get("auth/isTwoFactor")
+        .then(() => {
+          setIs2FA(true);
+        })
+        .catch((err: AxiosError) => {
+          return console.log(err);
+        });
     }
   }, []);
 
