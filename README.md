@@ -26,17 +26,3 @@
 - https://www.passportjs.org/packages/passport-42/ passeport42
 
 - https://circumicons.com/ icon
-
-TO DO:
-
-- Messages history, barre de recherche pour chercher les conversations existantes, bouton + qui demande d'ecrire un nom d'user (connecte ou non) et ouvre une conv (nouvelle ou non)
-
-- Listes des users (connectes ou non)
-
-- Lier le process de connection avec 42 avec le chat
-
-LATER:
-
-- Right click on user can offer 2 options:
-  - Profile
-  - Invite (to play a game)
