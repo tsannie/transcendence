@@ -1,9 +1,5 @@
 import React, {
-  CanvasHTMLAttributes,
-  createRef,
   Fragment,
-  MouseEvent,
-  RefObject,
   useContext,
   useEffect,
   useRef,
@@ -14,9 +10,7 @@ import {
   border_size_default,
   canvas_back_height,
   canvas_back_width,
-  GameMode,
   paddle_height,
-  RoomStatus,
 } from "../const/const";
 import { ReactComponent as LogOutIcon } from "../../../assets/img/icon/logout.svg";
 import { GameContext, GameContextType } from "../../../contexts/GameContext";
@@ -28,11 +22,11 @@ import {
 } from "../../../contexts/AuthContext";
 import { api } from "../../../const/const";
 import { AxiosResponse } from "axios";
-import { toast } from "react-toastify";
-import { draw_game, draw_game_ended } from "./Draw";
+import Draw from "../class/draw.class";
 
 let position_y: number = 0;
 export function GameRender() {
+  const [draw, setDraw] = useState<Draw | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [players, setPlayers] = useState<User[]>();
   const { room, socket, setDisplayRender, setRoom } = useContext(
@@ -97,22 +91,25 @@ export function GameRender() {
   }
 
   useEffect(() => {
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext("2d");
+      if (room && user && ctx) {
+        setDraw(new Draw(room.game_mode, user.id, ctx));
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const render = () => {
-      const canvas = canvasRef.current;
-      if (room && canvas) {
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          if (user && (user?.id === room.p1_id || user?.id === room.p2_id)) {
-            setPaddle(room);
-            draw_game(ctx, room, user, canvas);
-          }
+      if (draw && room) {
+        if (user?.id === room.p1_id || user?.id === room.p2_id) {
+          setPaddle(room);
         }
+        draw.render(room, canvasRef);
       }
     };
-
-    if (room) requestAnimationFrame(render);
-  }, [room]);
+    requestAnimationFrame(render);
+  }, [room, draw]);
 
   function mouv_mouse(e: any) {
     const canvas = document.getElementById("canvas");
