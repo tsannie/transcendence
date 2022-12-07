@@ -16,8 +16,6 @@ services:
     container_name: react_transcendence
     image: react
     build: ./srcs/front_react
-    depends_on:
-      - nestjs
     networks:
       - transproxy
     volumes:
@@ -28,12 +26,13 @@ services:
     container_name: nestjs_transcendence
     image: nestjs
     build: ./srcs/back_nestjs
-    depends_on:
-      - postgres
     networks:
       - transcendence
+      - transproxy
     volumes:
       - ./srcs/back_nestjs:/nestjs
+    env_file:
+      - .env
     restart: always
 
   postgres:
@@ -41,6 +40,8 @@ services:
     image: postgres:14.2-alpine
     networks:
       - transcendence
+    env_file:
+      - .env
 
 networks:
   transcendence:
