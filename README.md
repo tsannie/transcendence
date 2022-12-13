@@ -1,6 +1,8 @@
+# Transcendence WebApp
+
 We are Guillaume, Theo, Dov and Philippe and this README explains what we did to make this project happend. Let's go 🚀
 
-# General
+## General
 
 The aim of this project was to construct a __fullstack webapp__ based on the classic first-ever videogame : __Pong__. 
 
@@ -18,9 +20,10 @@ The game, is really just a pretext to make us work on everything that revolves a
 
 ***
 
-# The Stack
-
-![TypeScript | 100](https://blog.jeremylikness.com/blog/2019-03-05_typescript-for-javascript-developers-by-refactoring-part-1-of-2/images/1.jpeg) ![React | 100](https://logos-download.com/wp-content/uploads/2016/09/React_logo_logotype_emblem.png) ![NestJs | 100](https://docs.nestjs.com/assets/logo-small.svg)  ![TypeORM | 200](https://github.com/typeorm/typeorm/raw/master/resources/logo_big.png)  ![CSS | 100](https://clipground.com/images/css-3-logo-clipart.jpg) 
+## The Stack
+<img src="https://blog.jeremylikness.com/blog/2019-03-05_typescript-for-javascript-developers-by-refactoring-part-1-of-2/images/1.jpeg" width="100"><img src="https://logos-download.com/wp-content/uploads/2016/09/React_logo_logotype_emblem.png" width="100"><img src="https://docs.nestjs.com/assets/logo-small.svg" width="100"><img src="https://github.com/typeorm/typeorm/raw/master/resources/logo_big.png" width="100"><img src="https://clipground.com/images/css-3-logo-clipart.jpg" width="100">
+<br />
+<br />
 
 - __Typescript__ instead of Javascript to manage compilation error during development time and not at runtime. It also allowed us to use `enum`, `interfaces`, `null checking`.
 
@@ -34,23 +37,30 @@ The game, is really just a pretext to make us work on everything that revolves a
 
 ***
 
-# Deployment
+## Deployment
 
-![Docker | 100](https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png)
+<img src="https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png" width="100">
+<br />
+<br />
 
-To run, this project relies on Docker and uses 3 micro-services, contained in 3 differents docker container :
+To run, this project relies on **Docker** and uses 3 micro-services, contained in 3 differents docker container :
 
-1. PostgreSQL
-2. NestJs
-3. ReactJs
+1. _PostgreSQL_
+2. _NestJs_
+3. _ReactJs_
 
 We also used 2 additional micro-services, for developpment mode only (not shown in the diagram) :
+
 4. __PGadmin__, to monitor datas in our database
 5. __ngrock__, to test our webapp over the internet
 
+<br />
+
 > This is the configuration and architecture we used during development... :
 
-![developpment](./README_IMAGES/dev_diagram.png)
+![developpment](./README_images/dev_diagram.png)
+
+<br />
 
 > ...but for production we are using this kind of setup, through an nginx reverse proxy :
 
@@ -63,7 +73,7 @@ Nginx act as a reverse proxy. It forwards the request to nestjs if the patern `/
 
 ***
 
-# The Code
+## The Code
 
 things to talk about : 
 - [ ] JWT token
