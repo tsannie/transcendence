@@ -1,28 +1,77 @@
-- https://theophile-ordinas.fr/javascript-seo-ssr-ou-csr/ (ssr ou csr ?)
+We are Guillaume, Theo, Dov and Philippe and this README explains what we did to make this project happend. Let's go 🚀
 
-- https://fr.wikipedia.org/wiki/Representational_state_transfer api rest
+# General
 
-- https://medium.com/@gausmann.simon/nestjs-typeorm-and-postgresql-full-example-development-and-project-setup-working-with-database-c1a2b1b11b8f typeorm pg
+The aim of this project was to construct a __fullstack webapp__ based on the classic first-ever videogame : __Pong__. 
 
-- https://www.digitalocean.com/community/tutorials/react-axios-react-fr axios (faire des requetes pour react a nest)
-- https://www.arubacloud.com/tutorial/how-to-make-http-requests-with-axios-and-reactjs.aspx req react to nest
+The game, is really just a pretext to make us work on everything that revolves around the build of a webapp, such as :  
 
-- https://developer.mozilla.org/fr/docs/Web/JavaScript/A_re-introduction_to_JavaScript doc js incr
-- https://fr.reactjs.org/docs/hello-world.html doc react incr
+- establishing an architecture 🏗️
+- code as a group 🧑🏻‍💻👨‍💻👨🏻‍💻🧑🏽‍💻
+- receive and create complex HTTP requests and responses
+- manage and edit a database
+- connect users through websockets
+- secure access to site and datas in database ⚔️
+- and many more...
 
-- https://www.postgresqltutorial.com/postgresql-administration/psql-commands/ doc cmd postgre
-- https://levelup.gitconnected.com/how-to-create-a-nestjs-app-with-authentication-c0ae845ff6ac auth
+> let's now review how we tackled all these challenges
 
-- https://progressivecoder.com/how-to-implement-nestjs-jwt-authentication-using-jwt-strategy/ jwt
+***
 
-- https://react.semantic-ui.com/ template d'elements html avec react
+# The Stack
 
-- https://www.newline.co/@bespoyasov/how-to-use-react-hook-form-with-typescript--af5ca316 form react
+![TypeScript | 100](https://blog.jeremylikness.com/blog/2019-03-05_typescript-for-javascript-developers-by-refactoring-part-1-of-2/images/1.jpeg) ![React | 100](https://logos-download.com/wp-content/uploads/2016/09/React_logo_logotype_emblem.png) ![NestJs | 100](https://docs.nestjs.com/assets/logo-small.svg)  ![TypeORM | 200](https://github.com/typeorm/typeorm/raw/master/resources/logo_big.png)  ![CSS | 100](https://clipground.com/images/css-3-logo-clipart.jpg) 
 
-- https://blog.logrocket.com/persistent-login-in-react-using-refresh-token-rotation/ react
+- __Typescript__ instead of Javascript to manage compilation error during development time and not at runtime. It also allowed us to use `enum`, `interfaces`, `null checking`.
 
-- https://fr.wikipedia.org/wiki/OAuth#:~:text=OAuth%20est%20un%20protocole%20libre,%C2%AB%20d%C3%A9l%C3%A9gation%20d'autorisation%20%C2%BB. OAuth
+- __React__ seemed a fairly good choice : it is one of the most used languages for front-end web developping right now.
 
-- https://www.passportjs.org/packages/passport-42/ passeport42
+- __NestJs__, as it is a really well made and documented framework. 
 
-- https://circumicons.com/ icon
+- __TypeORM__ was kind of a default choice and suggested by **NestJs**' tutorial. To be fair the typeorm documentation is pretty erratic and raises a lot of questions, that only got answered by looking at pending/closed Pull Requests or Issues on TypeORM's GitHub. We heard about __prismaORM__ or __mikroORM__ later, but it was too late...
+
+- __CSS__ was extensively used to build our site identity. Every animations, or looks is based on it.
+
+***
+
+# Deployment
+
+![Docker | 100](https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png)
+
+To run, this project relies on Docker and uses 3 micro-services, contained in 3 differents docker container :
+
+1. PostgreSQL
+2. NestJs
+3. ReactJs
+
+We also used 2 additional micro-services, for developpment mode only (not shown in the diagram) :
+4. __PGadmin__, to monitor datas in our database
+5. __ngrock__, to test our webapp over the internet
+
+> This is the configuration and architecture we used during development... :
+
+![developpment](./README_IMAGES/dev_diagram.png)
+
+> ...but for production we are using this kind of setup, through an nginx reverse proxy :
+
+![production](./README_images/production_diagram.png)
+
+As you can see, only port __80__ and __443__ are accessible.
+Nginx act as a reverse proxy. It forwards the request to nestjs if the patern `/api` is detected :
+
+ > HTTP request to  `www.example.com/api/user/create` would be translated into an internal request to `nestjs:4000/api/user/create`
+
+***
+
+# The Code
+
+things to talk about : 
+- [ ] JWT token
+- [ ] authentification / 2FA
+- [ ] channels - chat
+- [ ] websockets
+- [ ] encryption through the entire project
+- [ ] data safety (serialization and shit)
+- [ ] game developpment
+
+## 
