@@ -75,13 +75,98 @@ Nginx act as a reverse proxy. It forwards the request to nestjs if the patern `/
 
 ## The Code
 
-things to talk about : 
-- [ ] JWT token
-- [ ] authentification / 2FA
-- [ ] channels - chat
-- [ ] websockets
-- [ ] encryption through the entire project
-- [ ] data safety (serialization and shit)
-- [ ] game developpment
+### backend-wise
 
-## 
+these were the main topic we had to compose with : 
+- JWT token
+- authentification / 2FA
+- channels - chat
+- database/entity management
+- websockets
+- encryption through the entire project
+- data safety (serialization)
+- game developpment
+
+### frontend-wise
+
+...and these were the ones we had to compose with, frontend-wise :
+- CSS animations
+- routing/navigation
+- notifications
+
+## Database
+
+We used **typeorm** to manage and edit our postgresql database. 
+
+The library sounded pretty solid at first but we discovered, through usage, that the documentation lacked a lot of useful informations, that were only findable in pull requests of the project on Github or in the changelogs of the project...
+
+Nevertheless, we managed to get the most out of typeorm, and to always load the **minimum** amount of needed relations to avoid slow and crappy database access.
+
+Here is a visualizer of our database, with relations : 
+
+![db](./README_images/database_tables.png)
+
+## Channels & Chat
+
+Here is the channel entity that contains all the information that exists in a channel. Chat is pretty similar, as is it just a channel with 2 users, without possibility to block, mute, add a password to the conv etc,etc... 
+
+``` javascript
+@Entity()
+export class ChannelEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @Column({ nullable: false, unique: true })
+  name: string;
+
+  @Column({ nullable: false })
+  status: string;
+
+  @Exclude()
+  @Column({ select: false, nullable: true })
+  password: string;
+
+  @ManyToOne(() => UserEntity, (user) => user.owner_of)
+  owner: UserEntity;
+
+  @ManyToMany(() => UserEntity, (user) => user.admin_of)
+  @JoinTable()
+  admins: UserEntity[];
+
+  @ManyToMany(() => UserEntity, (user) => user.channels)
+  users: UserEntity[];
+
+  @OneToMany(() => MessageEntity, (message) => message.channel)
+  messages: MessageEntity[];
+
+  @OneToMany(() => MuteEntity, (mute) => mute.channel)
+  muted: MuteEntity[];
+
+  @OneToMany(() => BanEntity, (ban) => ban.channel)
+  banned: BanEntity[];
+}
+```
+
+There are many **endpoints** available through API requests, at the following route (dev environment) :
+`http://localhost:4000/channel/<ACTION>`
+such as :
+- `/addPassword`
+- `/create`
+- `/join`
+- `/delete`
+- `/banUser`
+- etc...
+
+Some of our **nestjs controllers** in this project also uses **websocket** to provide instantaneous data actualization. 
+
+This is the case here, as it allows us to communicate to connected users that the list of channel members has been actualized or that this or that member leaved the channel for example.
+
+## Encryption
+
+## Data Safety
