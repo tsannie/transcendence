@@ -2,6 +2,25 @@
 
 We are Guillaume, Theo, Dov and Philippe and this README explains what we did to make this project happend. Let's go 🚀
 
+<p align="center">
+  <img src="./README_images/Transcendence_Homepage.png" width="80%">
+</p>
+
+## Try it Yourself
+
+1. Clone this repository with `git clone git@github.com:tsannie/transcendence.git`
+1. Make sure you have `docker` installed on your machine
+2. use the makefile with the `make` command
+3. after a few seconds launch your browser and type [http://localhost:3000](http://localhost:3000) to access the WebApp. It might need a little time to deploy, so don't hesitate to refresh the page.
+4. enjoy it !
+
+## Features
+
+- **Multiplayer mode** : play in real time against other players online in a Pong game, thanks to websockets. [Socket.io](http://socket.io/).
+- **SSO Auth** : connect to your 42 or Google Account and access your game stats and your profile parameters. 2FA is available.
+- **Instant chat** : chat with other players in a private message or in channels with multiple users.
+- **Game profile** : check your game stats, such as number of played games, victory rate, E.L.O score, ranking against other players, using a PostgreSQL database to store those datas.
+
 ## General
 
 The aim of this project was to construct a __fullstack webapp__ based on the classic first-ever videogame : __Pong__. 
@@ -84,7 +103,7 @@ these were the main topic we had to compose with :
 - [data filtering](#data-safety-and-serialization)
 - JWT token
 - authentification / 2FA
-- websockets
+- [websockets](#websockets)
 - game developpment
 
 ### frontend-wise
@@ -217,6 +236,31 @@ export class UserEntity {
 
 With the `@Exclude`, we are sure that only the requester get access to his own email (`groups: ['me']`), and that **NO ONE** get access to the secret2FA string, explaining the empty `@Exclude()` rule.
 
+## Websockets
+
+### Definition:
+
+WebSockets is a protocol for providing bi-directional, full-duplex communication channels over a single TCP connection. This allows for real-time communication between a client (such as a web browser) and a server.
+
+In the case of private messaging, they can be used to establish a secure and persistent connection between two parties, allowing them to send and receive messages in real time.
+
+In the case of chat in channels, they can be used to broadcast messages to all users connected to a particular channel, allowing for real-time, multi-user communication.
+
+They are particularly useful for these types of applications because they allow for efficient and low-latency communication.
+
+### What library i used ?
+
+We used **Socket.IO** for this project.
+
+**Socket.IO** is a JavaScript library that allows for **real-time**, **bi-directional** communication between web clients and servers.
+
+We used it because it provides an easy-to-use API that makes it simple to establish and maintain WebSocket connections.
+
+### Architecture
+
+<p align="center">
+  <img src="./README_images/websocket.svg" width="50%">
+</p>
 
 </br>
 </br>
