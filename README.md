@@ -99,12 +99,12 @@ Nginx act as a reverse proxy. It forwards the request to nestjs if the patern `/
 these were the main topic we had to compose with : 
 - [database/entity management](#database)
 - [channels - chat](#channels-and-chat)
+- [game development](#game-development)
 - [encryption](#hashing-and-encryption)
 - [data filtering](#data-safety-and-serialization)
 - JWT token
 - authentification / 2FA
 - [websockets](#websockets)
-- game developpment
 
 ### frontend-wise
 
@@ -195,6 +195,32 @@ Data protection is **primary**. Throughout this project we learned the differenc
 - end-to-end **Encryption** wasn't used : it seemed a bit overkill for small conversations in a pong game. It would've been implemented in another context.
 
 We used `bcrypt` to hash our datas, store and compare them safely in our db. No password can be read if database is compromised.
+
+## Game Development
+
+The game is a multiplayer game based on **the classic Pong** that allows two players to play against each other in real-time. The goal of the game is to score more points than your opponent by hitting the ball past their paddle. The game ends when one player reaches 10 points.
+
+To build the game, we used HTML5 canvas to render the game board and handle user mouses. We used websockets, specifically Socket.io, to enable real-time multiplayer gameplay and typescript to handle the game logic.
+
+In addition to the game itself, we also implemented a game profile feature that allows users to view their game stats, such as the number of games played, victory rate, and ranking against other players. This information is stored in a PostgreSQL database.
+
+### There are two different games
+- The first one is based on **the classic Pong game**.
+- The second one is a **trancendence** version on the game with a **new map**, square **smasher** ball that makes the ball go faster and a new **wall** that is randomly generated on the map to make the game more challenging. 
+
+<p float="right">
+  <img src="https://user-images.githubusercontent.com/52048966/211352963-76d4d5d8-c379-4445-b272-16597f6996d2.gif" width="450" height="350"/>
+  <img src="https://user-images.githubusercontent.com/52048966/211353008-a9f611e6-f2ab-4c2f-94eb-b0b8fe02bc6a.gif" width="450" height="350"/>
+</p>
+
+### In the menu game window
+ - There is two buttons, one to play the **CLASSIC Pong game** and the other to play the **TRANSCENDENCE** version of the game.
+ - There is a **AMICAL** system that allows players to play against each if they are friends.
+ - The **CURRENT** window that shows the games that are currently played by other players on the website.
+
+<img src="https://user-images.githubusercontent.com/52048966/211353736-c0df80d5-68b5-40d7-a945-1b0e49314155.png" width="550" height="450"/>
+
+
 
 ## Data Safety and Serialization
 
