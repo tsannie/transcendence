@@ -33,7 +33,7 @@ import { UserService } from 'src/user/service/user.service';
 // cree une websocket sur le port par defaut
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONT_URL,
   },
   namespace: 'chat',
 })

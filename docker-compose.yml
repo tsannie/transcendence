@@ -9,7 +9,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - "8080:80"
+      - "8081:80"
     restart: always
 
   react:
@@ -20,6 +20,8 @@ services:
       - transproxy
     volumes:
       - ./srcs/front_react:/react
+    env_file:
+      - .env
     restart: always
 
   nestjs:

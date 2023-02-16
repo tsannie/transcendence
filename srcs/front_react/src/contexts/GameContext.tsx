@@ -14,7 +14,7 @@ import { Room } from "../components/game/types";
 import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
 import { AuthContext, AuthContextType, User } from "./AuthContext";
-import { api } from "../const/const";
+import { api, BACK_URL } from "../const/const";
 import { AxiosResponse } from "axios";
 
 export type GameContextType = {
@@ -58,9 +58,10 @@ export const GameProvider = ({ children }: GameContextProps) => {
   }, []);
 
   useEffect((): ReturnType<EffectCallback> => {
-    const newSocket: any = io("http://localhost:4000/game", {
+    const newSocket: any = io("http://localhost:8081/game", {
       transports: ["websocket"],
     });
+    console.log("new socket", newSocket);
     setSocket(newSocket);
     return () => newSocket.disconnect(); // disconnect old socket
   }, [setSocket]); // create a new socket only once

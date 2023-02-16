@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { IChannel, IDm, IMessageReceived } from "../components/chat/types";
+import { BACK_URL } from "../const/const";
 import { AuthContext, User } from "./AuthContext";
 import { ChatDisplayContext } from "./ChatDisplayContext";
 import { ChatNotifContext } from "./ChatNotificationContext";
@@ -37,7 +38,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const newSocket: any = io("http://localhost:4000/chat", {
+    const newSocket: any = io("http://localhost:8081/chat", {
       transports: ["websocket"],
     });
     setSocket(newSocket);

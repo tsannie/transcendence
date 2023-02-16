@@ -19,7 +19,7 @@ import Room, { IInvitation, RoomStatus } from './class/room.class';
 @WebSocketGateway({
   namespace: '/game',
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONT_URL,
   },
 })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
