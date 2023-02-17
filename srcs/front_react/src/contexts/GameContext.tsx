@@ -61,7 +61,6 @@ export const GameProvider = ({ children }: GameContextProps) => {
     const newSocket: any = io("http://localhost:8081/game", {
       transports: ["websocket"],
     });
-    console.log("new socket", newSocket);
     setSocket(newSocket);
     return () => newSocket.disconnect(); // disconnect old socket
   }, [setSocket]); // create a new socket only once
