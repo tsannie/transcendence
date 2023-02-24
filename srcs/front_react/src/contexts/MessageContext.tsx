@@ -38,7 +38,7 @@ export const MessageProvider = ({ children }: MessageProviderProps) => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const newSocket: any = io("http://localhost:8081/chat", {
+    const newSocket: any = io("https://transcendence.sannie.fr:443/chat", {
       transports: ["websocket"],
     });
     setSocket(newSocket);

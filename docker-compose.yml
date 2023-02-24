@@ -3,13 +3,15 @@ version: "3.8"
 services:
   nginx:
     container_name: nginx_transcendence
-    image: nginx:latest
+    image: nginx_ssl
+    build: ./srcs/nginx
     networks:
       - transproxy
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./srcs/nginx/volumes:/datas
     ports:
       - "8081:80"
+      - "8082:443"
     restart: always
 
   react:
@@ -18,10 +20,6 @@ services:
     build: ./srcs/front_react
     networks:
       - transproxy
-    volumes:
-      - ./srcs/front_react:/react
-    env_file:
-      - .env
     restart: always
 
   nestjs:
@@ -33,6 +31,7 @@ services:
       - transproxy
     volumes:
       - ./srcs/back_nestjs:/nestjs
+      - pictures:/nestjs/datas/users/avatars
     env_file:
       - .env
     restart: always
@@ -44,6 +43,22 @@ services:
       - transcendence
     env_file:
       - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /volume1/docker/transcendence/db
+  pictures:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /volume1/docker/transcendence/pictures
 
 networks:
   transcendence:

@@ -1,5 +1,16 @@
+# BUILD REACT APP
 FROM node:17-alpine
 
-WORKDIR /react
+RUN mkdir -p /etc/app
+WORKDIR /etc/app
+COPY ./ ./
+RUN yarn install
+RUN yarn build
+RUN yarn global add serve
 
-CMD ["sh", "launch-dev.sh"]
+RUN mkdir /app
+WORKDIR /app
+RUN mv /etc/app/build /app/build
+RUN rm -rf /etc/app
+
+CMD ["serve", "-s", "build", "-l", "3000"]

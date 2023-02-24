@@ -58,7 +58,7 @@ export const GameProvider = ({ children }: GameContextProps) => {
   }, []);
 
   useEffect((): ReturnType<EffectCallback> => {
-    const newSocket: any = io("http://localhost:8081/game", {
+    const newSocket: any = io("https://transcendence.sannie.fr:443/game", {
       transports: ["websocket"],
     });
     setSocket(newSocket);
